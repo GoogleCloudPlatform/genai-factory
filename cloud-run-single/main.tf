@@ -38,11 +38,11 @@ resource "google_compute_security_policy" "default" {
 
   dynamic "rule" {
     for_each    = var.allowed_ip_ranges == null ? [] : [""]
-    description = "Allowed IP ranges."
 
     content {
       action   = "allow"
       priority = "100"
+      description = "Allowed IP ranges."
 
       match {
         versioned_expr = "SRC_IPS_V1"

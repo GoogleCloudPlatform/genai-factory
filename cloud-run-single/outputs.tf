@@ -20,9 +20,9 @@ output "commands" {
 
   gcloud run deploy ${var.name} \
     --source ./apps/chat \
-    --set-env-vars \
-      PROJECT_ID=${local.project.project_id},\
-      REGION=${var.region} \
+    --set-env-vars "
+      PROJECT_ID=${local.project.project_id},
+      REGION=${var.region}" \
     --project ${local.project.project_id} \
     --region ${var.region} \
     --build-service-account ${module.projects.service_accounts["project/gf-srun-build-0"].id} \
