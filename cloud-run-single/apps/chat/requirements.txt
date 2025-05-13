@@ -4,3 +4,4 @@ vertexai>=0.1.0                  # New unified Vertex AI SDK (includes language 
 fastapi==0.115.12
 uvicorn[standard]==0.34.2
 google-cloud-logging==3.12.1
+gunicorn==23.0.0

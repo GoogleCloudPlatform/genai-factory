@@ -34,5 +34,4 @@ EXPOSE $PORT
 
 # Set the default command to run the application using Gunicorn
 # Cloud Run injects the PORT environment variable.
-# Using exec form to make Gunicorn the main process (PID 1)
-CMD uvicorn main:app --host 0.0.0.0 --port $PORT
+CMD exec gunicorn main:app --workers 1 --threads 8 --timeout 0 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT
