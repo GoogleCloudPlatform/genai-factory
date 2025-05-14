@@ -1,7 +1,4 @@
-google-cloud-aiplatform>=1.38.1  # Check for the latest version
-protobuf>=3.19.5                 # Often needed by google-cloud libraries
-vertexai>=0.1.0                  # New unified Vertex AI SDK (includes language models)
-fastapi==0.115.12
-uvicorn[standard]==0.34.2
+google-cloud-aiplatform>=1.71.1 
+fastapi[standard]==0.115.12
 google-cloud-logging==3.12.1
 gunicorn==23.0.0

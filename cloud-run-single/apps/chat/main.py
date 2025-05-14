@@ -14,7 +14,7 @@
 
 import logging
 import os
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 import google.api_core.exceptions as exceptions
 from google.cloud import aiplatform
 import google.cloud.logging
@@ -24,8 +24,8 @@ from vertexai.generative_models import (
     GenerativeModel,
 )
 import uvicorn
-import config
-from request_model import Prompt
+import src.config as config
+from src.request_model import Prompt
 
 
 app = FastAPI(title=__name__)
@@ -33,12 +33,10 @@ app = FastAPI(title=__name__)
 
 # Configure logging
 client = google.cloud.logging.Client()
-client.setup_logging()
+client.setup_logging(log_level=logging.INFO)
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger()
 logger.setLevel(logging.INFO)
-handler = google.cloud.logging.handlers.CloudLoggingHandler(client=client)
-logger.addHandler(handler)
 
 
 logger.info(
@@ -46,12 +44,12 @@ logger.info(
     config.PROJECT_ID,
     config.REGION,
 )
-
 aiplatform.init(project=config.PROJECT_ID, location=config.REGION)
 logger.info("Vertex AI client initialized successfully.")
-model = GenerativeModel(config.MODEL_NAME)
+
+vertex_model = GenerativeModel(config.MODEL_NAME)
 logger.info("Loaded Vertex AI model: %s", config.MODEL_NAME)
-parameters = GenerationConfig(
+vertex_parameters = GenerationConfig(
     temperature=config.TEMPERATURE,
     top_p=config.TOP_P,
     top_k=config.TOP_K,
@@ -76,24 +74,31 @@ async def root():
 async def predict_route(request: Prompt):
     """Endpoint to make a prediction using Vertex AI."""
 
+    if vertex_model is None or vertex_parameters is None:
+        logger.error("Vertex AI model not initialized.")
+        raise HTTPException(
+            status_code=500, detail="Internal server error: Model not initialized."
+        )
+
     prompt_text = request.prompt
-    logger.info("Received prediction request with prompt: '%s...'", prompt_text[:50])
+    logger.info("Received prediction request with prompt: '%s...'", prompt_text[:100])
 
     try:
-        response = model.generate_content(prompt_text, generation_config=parameters)
+        response = vertex_model.generate_content(
+            prompt_text, generation_config=vertex_parameters
+        )
 
         # --- Process Response ---
         prediction_text = (
             response.text
-        )  # Adapt based on the exact model/response structure
+        )
         logger.info(
             "Successfully received prediction from Vertex AI: %s",
-            prediction_text,
+            prediction_text[:100],
         )
 
     except exceptions.GoogleAPIError as e:
         logger.error("Vertex AI API call failed: %s", e, exc_info=True)
-        # Provide more specific error details if possible
         prediction_text = "Failed to get an answer, please try again."
 
     return {"prompt": prompt_text, "prediction": prediction_text}
