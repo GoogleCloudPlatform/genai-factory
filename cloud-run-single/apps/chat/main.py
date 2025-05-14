@@ -16,15 +16,12 @@ import logging
 import os
 from fastapi import FastAPI, HTTPException
 import google.api_core.exceptions as exceptions
-from google.cloud import aiplatform
+from google import genai
+from google.genai import types
 import google.cloud.logging
 
-from vertexai.generative_models import (
-    GenerationConfig,
-    GenerativeModel,
-)
 import uvicorn
-import src.config as config
+from src import config
 from src.request_model import Prompt
 
 
@@ -40,16 +37,17 @@ logger.setLevel(logging.INFO)
 
 
 logger.info(
-    "Initializing Vertex AI client for project=%s, region=%s",
+    "Initializing Google GenAI client for project=%s, region=%s",
     config.PROJECT_ID,
     config.REGION,
 )
-aiplatform.init(project=config.PROJECT_ID, location=config.REGION)
+genai_client = genai.Client(
+    vertexai=True, project=config.PROJECT_ID, location=config.REGION
+)
 logger.info("Vertex AI client initialized successfully.")
 
-vertex_model = GenerativeModel(config.MODEL_NAME)
-logger.info("Loaded Vertex AI model: %s", config.MODEL_NAME)
-vertex_parameters = GenerationConfig(
+MODEL_NAME = config.MODEL_NAME
+MODEL_CONFIG = types.GenerateContentConfig(
     temperature=config.TEMPERATURE,
     top_p=config.TOP_P,
     top_k=config.TOP_K,
@@ -74,24 +72,25 @@ async def root():
 async def predict_route(request: Prompt):
     """Endpoint to make a prediction using Vertex AI."""
 
-    if vertex_model is None or vertex_parameters is None:
+    if MODEL_NAME is None or MODEL_CONFIG is None:
         logger.error("Vertex AI model not initialized.")
         raise HTTPException(
             status_code=500, detail="Internal server error: Model not initialized."
         )
 
-    prompt_text = request.prompt
-    logger.info("Received prediction request with prompt: '%s...'", prompt_text[:100])
+    logger.info(
+        "Received prediction request with prompt: '%s...'", request.prompt[:100]
+    )
 
     try:
-        response = vertex_model.generate_content(
-            prompt_text, generation_config=vertex_parameters
+        response = genai_client.models.generate_content(
+            model=MODEL_NAME,
+            contents=request.prompt,
+            config=MODEL_CONFIG,
         )
 
         # --- Process Response ---
-        prediction_text = (
-            response.text
-        )
+        prediction_text = response.text
         logger.info(
             "Successfully received prediction from Vertex AI: %s",
             prediction_text[:100],
@@ -101,7 +100,7 @@ async def predict_route(request: Prompt):
         logger.error("Vertex AI API call failed: %s", e, exc_info=True)
         prediction_text = "Failed to get an answer, please try again."
 
-    return {"prompt": prompt_text, "prediction": prediction_text}
+    return {"prompt": request.prompt, "prediction": prediction_text}
 
 
 if __name__ == "__main__":

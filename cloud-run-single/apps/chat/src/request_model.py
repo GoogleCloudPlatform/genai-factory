@@ -22,9 +22,7 @@ class Prompt(BaseModel):
     """
 
     prompt: str = Field(
-        ...,
+        default="",
         title="User Prompt",
         description="The text prompt to send to the generative model for a response.",
-        min_length=1,
-        examples=["What is the capital of France?", "Explain quantum computing in simple terms."]
-    )
+        min_length=1,    )
