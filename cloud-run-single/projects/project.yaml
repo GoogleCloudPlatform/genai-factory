@@ -44,8 +44,6 @@ iam:
   roles/logging.logWriter:
     - gf-srun-0
 
-
-
 # roles/aiplatform.user is authoritatively granted
 # by aiplatform APIs when activated
 iam_bindings_additive:
