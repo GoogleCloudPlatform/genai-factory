@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: gf-srun-0 # gf-rrag-0
+name: gf-srun-0
 
 services:
   - aiplatform.googleapis.com
