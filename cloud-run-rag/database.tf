@@ -39,9 +39,16 @@ module "dns_private_zone_cloudsql" {
       client_networks = [local.vpc_id]
     }
   }
-  recordsets = {
-    ("A ${module.cloudsql.dns_name}") = { records = [google_compute_address.cloudsql_address.address] }
-  }
+  recordsets = {}
+}
+
+resource "google_dns_record_set" "cloudsql_dns_record_set" {
+  project      = local.project.project_id
+  managed_zone = module.dns_private_zone_cloudsql.name
+  name         = module.cloudsql.dns_name
+  type         = "A"
+  ttl          = 300
+  rrdatas      = [google_compute_address.cloudsql_address.address]
 }
 
 resource "google_compute_address" "cloudsql_address" {
