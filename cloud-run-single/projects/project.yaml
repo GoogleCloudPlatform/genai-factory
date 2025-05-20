@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: gf-srun-0
+name: fp-gf-srun-0
 
 services:
   - aiplatform.googleapis.com
@@ -23,6 +23,8 @@ services:
   - cloudresourcemanager.googleapis.com
   - run.googleapis.com
   - serviceusage.googleapis.com
+  - privateca.googleapis.com
+  - certificatemanager.googleapis.com
 
 service_accounts:
   gf-srun-0:

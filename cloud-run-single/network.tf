@@ -37,10 +37,16 @@ module "vpc" {
       region        = var.region
     }
   ]
+  subnets_proxy_only = [
+    {
+      ip_cidr_range = var.proxy_only_networking_config.subnet_cidr
+      name          = var.proxy_only_networking_config.subnet_id
+      region        = var.region
+    }
+  ]
 }
 
 # DNS policies for Google APIs
-
 module "dns_policy_googleapis" {
   source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/dns-response-policy"
   count      = var.networking_config.create ? 1 : 0

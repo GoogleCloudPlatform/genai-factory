@@ -57,6 +57,7 @@ variable "name" {
   default     = "gf-srun-0"
 }
 
+
 variable "networking_config" {
   description = "The networking configuration."
   type = object({
@@ -64,6 +65,16 @@ variable "networking_config" {
     subnet_cidr = optional(string, "10.0.0.0/24")
     subnet_id   = optional(string, "sub-0")
     vpc_id      = optional(string, "net-0")
+  })
+  nullable = false
+  default  = {}
+}
+
+variable "proxy_only_networking_config" {
+  description = "The proxy-only networking configuration."
+  type = object({
+    subnet_cidr = optional(string, "10.20.0.0/24")
+    subnet_id   = optional(string, "sub-proxy-only-0")
   })
   nullable = false
   default  = {}
@@ -105,4 +116,39 @@ variable "region" {
   description = "The GCP region where to deploy the resources."
   nullable    = false
   default     = "europe-west1"
+}
+
+variable "expose_external" {
+  description = "Whether to expose function externally or not."
+  type        = bool
+  nullable    = false
+  default     = false
+}
+
+variable "expose_internal" {
+  description = "Whether to expose function internally or not."
+  type        = bool
+  nullable    = false
+  default     = false
+}
+
+variable "private_root_domain" {
+  type        = string
+  description = "The root domain for internal DNS."
+  nullable    = false
+  default     = "example.com"
+}
+
+variable "private_domains" {
+  type        = list(string)
+  description = "The list of domains connected to the private load balancer."
+  nullable    = false
+  default     = ["test.example.com"]
+}
+
+variable "customer_name" {
+  type        = string
+  description = "The string used to identify the customer."
+  nullable    = false
+  default     = "pso"
 }
