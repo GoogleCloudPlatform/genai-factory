@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+project_number = "${projects.project.number}"
 project_id = "${projects.project.id}"
 service_accounts = {
 %{ for k,v in service_accounts ~}

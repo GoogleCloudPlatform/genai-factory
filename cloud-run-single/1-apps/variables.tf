@@ -69,8 +69,24 @@ variable "networking_config" {
   default  = {}
 }
 
+variable "proxy_only_networking_config" {
+  description = "The proxy-only networking configuration."
+  type = object({
+    subnet_cidr = optional(string, "10.20.0.0/24")
+    subnet_id   = optional(string, "sub-proxy-only-0")
+  })
+  nullable = false
+  default  = {}
+}
+
 variable "project_id" {
-  description = "The project if where to create the resources."
+  description = "The project id where to create the resources."
+  type        = string
+  nullable    = false
+}
+
+variable "project_number" {
+  description = "The project number where to create the resources."
   type        = string
   nullable    = false
 }
@@ -97,4 +113,39 @@ variable "service_accounts" {
     id        = string
   }))
   default = {}
+}
+
+variable "expose_external" {
+  description = "Whether to expose function externally or not."
+  type        = bool
+  nullable    = false
+  default     = false
+}
+
+variable "expose_internal" {
+  description = "Whether to expose function internally or not."
+  type        = bool
+  nullable    = false
+  default     = false
+}
+
+variable "private_root_domain" {
+  type        = string
+  description = "The root domain for internal DNS."
+  nullable    = false
+  default     = "example.com"
+}
+
+variable "private_domains" {
+  type        = list(string)
+  description = "The list of domains connected to the private load balancer."
+  nullable    = false
+  default     = ["test.example.com"]
+}
+
+variable "customer_name" {
+  type        = string
+  description = "The string used to identify the customer."
+  nullable    = false
+  default     = "pso"
 }

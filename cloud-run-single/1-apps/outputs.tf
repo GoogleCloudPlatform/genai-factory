@@ -29,10 +29,18 @@ output "commands" {
   EOT
 }
 
-output "ip_address" {
+output "external_ip_address" {
   description = "The load balancer IP address."
   value = (var.ip_address == null
     ? google_compute_global_address.address[0].address
     : var.ip_address
+  )
+}
+
+output "internal_ip_address" {
+  description = "The load balancer IP address."
+  value = (var.expose_internal == true
+    ? module.ilb-l7[0].address
+    : "Not exposed internally"
   )
 }
