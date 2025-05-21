@@ -14,13 +14,18 @@
  * limitations under the License.
  */
 
-project_id = "${projects.project.id}"
-service_accounts = {
-%{ for k,v in service_accounts ~}
-  "${k}" = {
-    email     = "${v.email}"
-    iam_email = "${v.iam_email}"
-    id        = "${v.id}"
+# Project id:     ${project_id}
+# Project number: ${project_number}
+
+terraform {
+  backend "gcs" {
+    bucket                      = "${bucket}"
+    impersonate_service_account = "${service_account}"
   }
-%{ endfor ~}
+}
+provider "google" {
+  impersonate_service_account = "${service_account}"
+}
+provider "google-beta" {
+  impersonate_service_account = "${service_account}"
 }

@@ -1,4 +1,0 @@
-project_config = {
-  billing_account_id = "YOUR_BILLING_ID"
-  parent             = "organizations/ORGANIZATION_ID"
-}

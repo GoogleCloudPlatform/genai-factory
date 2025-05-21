@@ -12,22 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-locals {
-  project = module.projects.projects["project"]
-}
-
 module "projects" {
   source = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/project-factory?ref=fast-dev"
   data_defaults = {
-    billing_account = var.project_config.billing_account_id
-    parent          = var.project_config.parent
-    prefix          = var.project_config.prefix
-    project_reuse   = var.project_config.create ? null : {}
-  }
-  data_merges = {
-    services = var.networking_config.create ? ["dns.googleapis.com"] : []
+    billing_account  = var.project_config.billing_account_id
+    parent           = var.project_config.parent
+    prefix           = var.project_config.prefix
+    project_reuse    = var.project_config.create ? null : {}
+    storage_location = var.region
   }
   factories_config = {
-    projects_data_path = "./projects"
+    projects_data_path = "./data"
   }
 }

@@ -28,7 +28,7 @@ locals {
 module "vpc" {
   source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-vpc"
   count      = var.networking_config.create ? 1 : 0
-  project_id = local.project.project_id
+  project_id = var.project_id
   name       = var.networking_config.vpc_id
   subnets = [
     {
@@ -44,7 +44,7 @@ module "vpc" {
 module "dns_policy_googleapis" {
   source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/dns-response-policy"
   count      = var.networking_config.create ? 1 : 0
-  project_id = local.project.project_id
+  project_id = var.project_id
   name       = "googleapis"
   networks   = { "${var.name}" = local.vpc_id }
   factories_config = {

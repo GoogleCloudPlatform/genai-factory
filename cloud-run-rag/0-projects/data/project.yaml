@@ -14,33 +14,42 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: gf-srun-0
+name: gf-rrag-0
 
 # Enable APIs
 services:
   - aiplatform.googleapis.com
   - artifactregistry.googleapis.com
+  - bigquery.googleapis.com
   - cloudbuild.googleapis.com
   - cloudresourcemanager.googleapis.com
-  - compute.googleapis.com
+  - cloudscheduler.googleapis.com
   - dns.googleapis.com
   - run.googleapis.com
-  - serviceusage.googleapis.com
+  - sqladmin.googleapis.com
 
 # Create application SAs
 service_accounts:
-  gf-srun-0:
+  gf-rrag-fe-0:
     iam:
       roles/iam.serviceAccountUser:
         - automation/rw
-  gf-srun-build-0:
+  gf-rrag-fe-build-0:
+  gf-rrag-ing-0:
+    iam:
+      roles/iam.serviceAccountUser:
+        - automation/rw
+  gf-rrag-ing-build-0:
+  gf-rrag-ing-sched-0:
+    iam:
+      roles/iam.serviceAccountUser:
+        - automation/rw
 
 # Define buckets and SAs for automation
 automation:
   service_accounts:
     rw:
   bucket:
-    name: gf-srun-0
     description: Terraform state bucket
     iam:
       roles/storage.objectAdmin:
@@ -51,23 +60,41 @@ automation:
 # Grant roles
 iam_by_principals:
   automation/rw:
-    - roles/dns.admin
+    - roles/bigquery.admin
+    - roles/cloudscheduler.admin
+    - roles/cloudsql.admin
     - roles/compute.loadBalancerAdmin
     - roles/compute.networkAdmin
     - roles/compute.securityAdmin
+    - roles/dns.admin
     - roles/run.admin
-  gf-srun-0:
-    - roles/logging.logWriter
-  gf-srun-build-0:
-    - roles/run.admin
+  gf-rrag-fe-0:
+    - roles/cloudsql.client
+    - roles/cloudsql.instanceUser
+  gf-rrag-fe-build-0:
+    - roles/artifactregistry.writer
     - roles/cloudbuild.builds.editor
+    - roles/run.admin
+    - roles/storage.admin
     - roles/storage.objectCreator
     - roles/storage.objectViewer
+  gf-rrag-ing-0:
+    - roles/bigquery.dataViewer
+    - roles/bigquery.jobUser
+    - roles/cloudsql.client
+    - roles/cloudsql.instanceUser
+  gf-rrag-ing-build-0:
     - roles/artifactregistry.writer
-    - roles/iam.serviceAccountUser
+    - roles/cloudbuild.builds.editor
+    - roles/run.admin
+    - roles/storage.admin
+    - roles/storage.objectCreator
+    - roles/storage.objectViewer
 
 # Grant roles/aiplatform.user as additive,
 # as it is authoritatively granted by aiplatform APIs to default SA
 iam_bindings_additive:
-  - member: gf-srun-0
+  - member: gf-rrag-fe-0
+    role: roles/aiplatform.user
+  - member: gf-rrag-ing-0
     role: roles/aiplatform.user

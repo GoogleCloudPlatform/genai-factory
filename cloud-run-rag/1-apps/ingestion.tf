@@ -14,12 +14,12 @@
 
 module "cloud_run_ingestion" {
   source              = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/cloud-run-v2"
-  project_id          = local.project.project_id
+  project_id          = var.project_id
   name                = "${var.name}-ingestion"
   region              = var.region
   create_job          = true
   ingress             = var.cloud_run_configs.ingestion.ingress
-  service_account     = module.projects.service_accounts["project/gf-rrag-ing-0"].email
+  service_account     = var.service_accounts["project/gf-rrag-ing-0"].email
   managed_revision    = false
   deletion_protection = var.enable_deletion_protection
   containers = merge({
@@ -44,7 +44,7 @@ module "cloud_run_ingestion" {
   )
   iam = {
     "roles/run.invoker" = concat(
-      [module.projects.service_accounts["project/gf-rrag-ing-sched-0"].iam_email],
+      [var.service_accounts["project/gf-rrag-ing-sched-0"].iam_email],
       var.cloud_run_configs.ingestion.service_invokers
     )
   }
@@ -73,7 +73,7 @@ resource "google_cloud_scheduler_job" "ingestion_scheduler" {
   schedule         = var.ingestion_schedule_configs.schedule
   attempt_deadline = var.ingestion_schedule_configs.attempt_deadline
   region           = var.region
-  project          = local.project.project_id
+  project          = var.project_id
 
   retry_config {
     retry_count = var.ingestion_schedule_configs.retry_count
@@ -81,10 +81,10 @@ resource "google_cloud_scheduler_job" "ingestion_scheduler" {
 
   http_target {
     http_method = "POST"
-    uri         = "https://${var.region}-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/${local.project.project_id}/jobs/${module.cloud_run_ingestion.job.name}:run"
+    uri         = "https://${var.region}-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/${var.project_id}/jobs/${module.cloud_run_ingestion.job.name}:run"
 
     oauth_token {
-      service_account_email = module.projects.service_accounts["project/gf-rrag-ing-sched-0"].email
+      service_account_email = var.service_accounts["project/gf-rrag-ing-sched-0"].email
     }
   }
 }

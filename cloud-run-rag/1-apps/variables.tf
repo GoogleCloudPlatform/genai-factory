@@ -26,6 +26,11 @@ variable "cloud_run_configs" {
       containers = optional(map(any), {
         frontend = {
           image = "us-docker.pkg.dev/cloudrun/container/hello"
+          ports = {
+            frontend = {
+              container_port = 8080
+            }
+          }
         }
       })
       deletion_protection = optional(bool, true)
@@ -111,23 +116,10 @@ variable "networking_config" {
   default  = {}
 }
 
-variable "project_config" {
-  description = "The project configuration. Billing id and parent are mandatory if "
-  type = object({
-    billing_account_id = optional(string)     # if create or control equals true
-    control            = optional(bool, true) # control an existing project
-    create             = optional(bool, true) # create and control project
-    parent             = optional(string)     # if control equals true
-    prefix             = optional(string)
-  })
-  nullable = false
-  validation {
-    condition = (
-      var.project_config.parent == null ||
-      can(regex("(organizations|folders)/[0-9]+", var.project_config.parent))
-    )
-    error_message = "Parent must be of the form folders/folder_id or organizations/organization_id."
-  }
+variable "project_id" {
+  description = "The project if where to create the resources."
+  type        = string
+  nullable    = false
 }
 
 variable "public_domains" {
@@ -142,4 +134,14 @@ variable "region" {
   description = "The GCP region where to deploy the resources."
   nullable    = false
   default     = "europe-west1"
+}
+
+variable "service_accounts" {
+  description = "The pre-created service accounts used by the blueprint."
+  type = map(object({
+    email     = string
+    iam_email = string
+    id        = string
+  }))
+  default = {}
 }
