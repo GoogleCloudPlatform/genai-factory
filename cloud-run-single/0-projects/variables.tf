@@ -15,7 +15,7 @@
 variable "project_config" {
   description = "The project configuration."
   type = object({
-    billing_account_id = optional(string)     # if create or control equal true
+    billing_account_id = optional(string)     # if create or control equals true
     control            = optional(bool, true) # to control an existing project
     create             = optional(bool, true) # to create the project
     parent             = optional(string)     # if control equals true
