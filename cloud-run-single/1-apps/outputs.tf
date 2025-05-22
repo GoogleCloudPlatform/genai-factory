@@ -20,9 +20,9 @@ output "commands" {
 
   gcloud run deploy ${var.name} \
     --source ./apps/chat \
-    --set-env-vars PROJECT_ID=${var.project_id} \
+    --set-env-vars PROJECT_ID=${var.project_config.project_id} \
     --set-env-vars REGION=${var.region} \
-    --project ${var.project_id} \
+    --project ${var.project_config.project_id} \
     --region ${var.region} \
     --build-service-account ${var.service_accounts["project/gf-srun-build-0"].id} \
     --quiet
@@ -39,7 +39,7 @@ output "external_ip_address" {
 
 output "internal_ip_address" {
   description = "The load balancer IP address."
-  value = (var.expose_internal == true
+  value = (var.expose_internal
     ? module.ilb-l7[0].address
     : "Not exposed internally"
   )

@@ -14,20 +14,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: fp-gf-srun-1
+name: gf-srun-0
 
 # Enable APIs
 services:
   - aiplatform.googleapis.com
   - artifactregistry.googleapis.com
+  - certificatemanager.googleapis.com
   - cloudbuild.googleapis.com
   - cloudresourcemanager.googleapis.com
   - compute.googleapis.com
   - dns.googleapis.com
+  - privateca.googleapis.com
   - run.googleapis.com
   - serviceusage.googleapis.com
-  - privateca.googleapis.com
-  - certificatemanager.googleapis.com
 
 # Create application SAs
 service_accounts:
@@ -39,11 +39,10 @@ service_accounts:
 
 # Define buckets and SAs for automation
 automation:
-  project: fp-gf-srun-1
   service_accounts:
     rw:
   bucket:
-    name: fp-gf-srun-1
+    name: gf-srun-0
     description: Terraform state bucket
     iam:
       roles/storage.objectAdmin:

@@ -57,6 +57,7 @@ variable "name" {
   default     = "gf-srun-0"
 }
 
+/*
 variable "networking_config" {
   description = "The networking configuration."
   type = object({
@@ -90,6 +91,39 @@ variable "project_number" {
   type        = string
   nullable    = false
 }
+*/
+
+variable "project_config" {
+  description = "The project id where to create the resources."
+  type = object({
+    project_id     = optional(string, "project_id")
+    project_number = optional(string, "project_number")
+  })
+  nullable = false
+  default  = {}
+}
+
+variable "networking_config" {
+  description = "The networking configuration."
+  type = object({
+  create      = optional(bool, true)
+  vpc_id      = optional(string, "net-0")
+  subnets = optional(list(object({
+    ip_cidr_range = optional(string, "10.0.0.0/24")
+    name          = optional(string, "sub-0")
+    region        = optional(string, "europe-west1")
+  })))
+  subnets_proxy_only = optional(list(object({
+    ip_cidr_range = optional(string, "10.20.0.0/24")
+    name          = optional(string, "proxy-only-sub-0")
+    region        = optional(string, "europe-west1")
+  })))
+  })
+  nullable = false
+  default  = {}
+}
+
+
 
 variable "public_domains" {
   type        = list(string)
@@ -140,7 +174,7 @@ variable "private_domains" {
   type        = list(string)
   description = "The list of domains connected to the private load balancer."
   nullable    = false
-  default     = ["test.example.com"]
+  default     = ["internal.example.com"]
 }
 
 variable "customer_name" {

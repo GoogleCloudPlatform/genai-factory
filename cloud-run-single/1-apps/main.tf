@@ -1,6 +1,6 @@
 module "cloud_run" {
   source           = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/cloud-run-v2"
-  project_id       = var.project_id
+  project_id       = var.project_config.project_id
   name             = var.name
   region           = var.region
   ingress          = var.cloud_run_configs.ingress

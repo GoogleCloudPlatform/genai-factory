@@ -17,7 +17,7 @@
 
 resource "google_compute_security_policy" "default" {
   name    = var.name
-  project = var.project_id
+  project = var.project_config.project_id
 
   dynamic "rule" {
     for_each    = var.allowed_ip_ranges == null ? [] : [""]
@@ -54,15 +54,15 @@ resource "google_compute_security_policy" "default" {
 
 resource "google_compute_global_address" "address" {
   count      = var.ip_address == null ? 1 : 0
-  project    = var.project_id
+  project    = var.project_config.project_id
   name       = var.name
   ip_version = "IPV4"
 }
 
 module "lb_external_redirect" {
-  count               = var.expose_external == true ? 1 : 0
+  count               = var.expose_external ? 1 : 0
   source              = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-lb-app-ext"
-  project_id          = var.project_id
+  project_id          = var.project_config.project_id
   name                = "${var.name}-redirect"
   use_classic_version = false
   forwarding_rules_config = {
@@ -85,9 +85,9 @@ module "lb_external_redirect" {
 }
 
 module "lb_external" {
-  count               = var.expose_external == true ? 1 : 0
+  count               = var.expose_external ? 1 : 0
   source              = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-lb-app-ext"
-  project_id          = var.project_id
+  project_id          = var.project_config.project_id
   name                = var.name
   use_classic_version = false
   protocol            = "HTTPS"
@@ -138,20 +138,20 @@ module "lb_external" {
 ## Cert Management
 
 resource "google_privateca_ca_pool_iam_binding" "ccm-certificate-requester" {
-  count     = var.expose_internal == true ? 1 : 0
-  project   = var.project_id
+  count     = var.expose_internal ? 1 : 0
+  project   = var.project_config.project_id
   location  = var.region
   ca_pool   = module.cas[0].ca_pool_id
   role      = "roles/privateca.certificateRequester"
   members   = [
-    "serviceAccount:service-${ var.project_number }@gcp-sa-certificatemanager.iam.gserviceaccount.com", 
+    "serviceAccount:service-${ var.project_config.project_number }@gcp-sa-certificatemanager.iam.gserviceaccount.com", 
   ]
 }
 
 module "certificate-manager" {
-  count      = var.expose_internal == true ? 1 : 0
+  count      = var.expose_internal ? 1 : 0
   source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/certificate-manager"
-  project_id = var.project_id
+  project_id = var.project_config.project_id
   certificates = {
     "${var.name}" = {
       location        = var.region
@@ -177,10 +177,10 @@ module "certificate-manager" {
 
 ## ILB
 module "ilb-l7" {
-  count      = var.expose_internal == true ? 1 : 0
+  count      = var.expose_internal ? 1 : 0
   source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-lb-app-int"
   name       = var.name
-  project_id = var.project_id
+  project_id = var.project_config.project_id
   region     = var.region
   backend_service_configs = {
     default = {
@@ -209,15 +209,15 @@ module "ilb-l7" {
   }
   vpc_config = {
     network    = var.networking_config.vpc_id
-    subnetwork = var.networking_config.subnet_id
+    subnetwork = var.networking_config.subnets[0].name
   }
 }
 
 # DNS Zone for Internal resolution
 module "private-dns" {
-  count      = var.expose_internal == true ? 1 : 0
+  count      = var.expose_internal ? 1 : 0
   source     = "github.com/terraform-google-modules/cloud-foundation-fabric//modules/dns"
-  project_id = var.project_id
+  project_id = var.project_config.project_id
   name       = var.name
   zone_config = {
     domain   = "${var.private_domains[0]}."

@@ -14,14 +14,14 @@
 
 resource "google_project_service_identity" "cm_sa" {
   provider = google-beta
-  project = var.project_id
+  project = var.project_config.project_id
   service = "certificatemanager.googleapis.com"
 }
 
 module "cas" {
   count      = var.expose_internal == true ? 1 : 0
   source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/certificate-authority-service"
-  project_id = var.project_id
+  project_id = var.project_config.project_id
   location   = var.region
   ca_pool_config = {
     create_pool = {
