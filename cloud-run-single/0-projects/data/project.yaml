@@ -29,30 +29,29 @@ services:
   - run.googleapis.com
   - serviceusage.googleapis.com
 
-# Create application SAs
-service_accounts:
-  gf-srun-0:
-    iam:
-      roles/iam.serviceAccountUser:
-        - automation/rw
-  gf-srun-build-0:
-
-# Define buckets and SAs for automation
-automation:
-  service_accounts:
-    rw:
-  bucket:
-    name: gf-srun-0
+buckets:
+  iac-state:
     description: Terraform state bucket
     iam:
       roles/storage.objectAdmin:
-        - automation/rw
+        - iac-rw
       roles/storage.objectViewer:
-        - automation/rw
+        - iac-rw
+
+# Create application SAs
+service_accounts:
+  # Automation SAs
+  iac-rw:
+    iam_sa_roles:
+      gf-srun-0:
+        - roles/iam.serviceAccountUser
+  # Application SAs
+  gf-srun-0: {}
+  gf-srun-build-0: {}
 
 # Grant roles
 iam_by_principals:
-  automation/rw:
+  iac-rw:
     - roles/dns.admin
     - roles/compute.loadBalancerAdmin
     - roles/compute.networkAdmin

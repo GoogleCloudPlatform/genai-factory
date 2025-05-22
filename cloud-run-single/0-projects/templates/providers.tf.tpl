@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-# Project id:     ${project_id}
-# Project number: ${project_number}
+# Project id:     "${project_id}"
+# Project number: "${project_number}"
 
 terraform {
   backend "gcs" {

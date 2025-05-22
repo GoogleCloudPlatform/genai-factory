@@ -28,38 +28,35 @@ services:
   - run.googleapis.com
   - sqladmin.googleapis.com
 
-# Create application SAs
-service_accounts:
-  gf-rrag-fe-0:
-    iam:
-      roles/iam.serviceAccountUser:
-        - automation/rw
-  gf-rrag-fe-build-0:
-  gf-rrag-ing-0:
-    iam:
-      roles/iam.serviceAccountUser:
-        - automation/rw
-  gf-rrag-ing-build-0:
-  gf-rrag-ing-sched-0:
-    iam:
-      roles/iam.serviceAccountUser:
-        - automation/rw
-
-# Define buckets and SAs for automation
-automation:
-  service_accounts:
-    rw:
-  bucket:
+buckets:
+  iac-state:
     description: Terraform state bucket
     iam:
       roles/storage.objectAdmin:
-        - automation/rw
+        - iac-rw
       roles/storage.objectViewer:
-        - automation/rw
+        - iac-rw
+
+service_accounts:
+  # Automation SAs
+  iac-rw:
+    iam_sa_roles:
+      gf-rrag-fe-0:
+        - roles/iam.serviceAccountUser
+      gf-rrag-ing-0:
+        - roles/iam.serviceAccountUser
+      gf-rrag-ing-sched-0:
+        - roles/iam.serviceAccountUser
+  # Application SAs
+  gf-rrag-fe-0: {}
+  gf-rrag-fe-build-0: {}
+  gf-rrag-ing-0: {}
+  gf-rrag-ing-build-0: {}
+  gf-rrag-ing-sched-0: {}
 
 # Grant roles
 iam_by_principals:
-  automation/rw:
+  iac-rw:
     - roles/bigquery.admin
     - roles/cloudscheduler.admin
     - roles/cloudsql.admin

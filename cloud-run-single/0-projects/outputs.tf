@@ -18,17 +18,6 @@ locals {
   buckets = {
     for k, v in module.projects.buckets : k => v
   }
-  project_data = flatten([
-    for k, v in module.projects.projects : [
-      for sk, sv in try(v.automation.service_accounts) : {
-        key             = "${k}-${sk}"
-        bucket          = try(v.automation.bucket, null)
-        project_id      = v.project_id
-        project_number  = v.number
-        service_account = sv
-      }
-    ] if try(v.automation.bucket, null) != null
-  ])
   projects = {
     for k, v in module.projects.projects : k => {
       id         = v.project_id
@@ -36,12 +25,23 @@ locals {
       automation = v.automation
     }
   }
+  providers = {
+    project_id      = local.projects.project.id
+    project_number  = local.projects.project.number
+    bucket          = local.buckets["project/iac-state"]
+    service_account = local.service_accounts["project/iac-rw"].email
+  }
   service_accounts = {
     for k, v in module.projects.service_accounts : k => {
       email     = v.email
       iam_email = v.iam_email
       id        = v.id
     }
+  }
+  tfvars = {
+    projects         = local.projects
+    buckets          = local.buckets
+    service_accounts = local.service_accounts
   }
 }
 
@@ -61,10 +61,12 @@ output "service_accounts" {
 }
 
 resource "local_file" "providers" {
-  for_each        = { for v in local.project_data : v.key => v }
   file_permission = "0644"
   filename        = "../1-apps/providers.tf"
-  content         = templatefile("templates/providers.tf.tpl", each.value)
+  content = templatefile(
+    "templates/providers.tf.tpl",
+    local.providers
+  )
 }
 
 resource "local_file" "tfvars" {
@@ -72,10 +74,6 @@ resource "local_file" "tfvars" {
   filename        = "../1-apps/terraform.auto.tfvars"
   content = templatefile(
     "templates/terraform.auto.tfvars.tpl",
-    {
-      projects         = local.projects
-      buckets          = local.buckets
-      service_accounts = local.service_accounts
-    }
+    local.tfvars
   )
 }
