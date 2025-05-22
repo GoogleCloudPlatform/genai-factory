@@ -10,6 +10,8 @@ Once ran, the terraform module prints the commands required to deploy the applic
 
 ## Deployed Architecture
 
+![Deployed Architecture Diagram](diagram.png)
+
 This module deploys the following core components:
 
 - **Google Cloud Run Service:** Where to deploy containerized applications.
