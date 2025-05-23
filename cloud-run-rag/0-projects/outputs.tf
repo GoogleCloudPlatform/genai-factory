@@ -20,9 +20,9 @@ locals {
   }
   projects = {
     for k, v in module.projects.projects : k => {
+      automation = v.automation
       id         = v.project_id
       number     = v.number
-      automation = v.automation
     }
   }
   providers = {

@@ -18,16 +18,18 @@ name: gf-srun-0
 
 # Enable APIs
 services:
+  # Needed both for ILB and ELB
   - aiplatform.googleapis.com
   - artifactregistry.googleapis.com
-  - certificatemanager.googleapis.com
   - cloudbuild.googleapis.com
   - cloudresourcemanager.googleapis.com
   - compute.googleapis.com
   - dns.googleapis.com
-  - privateca.googleapis.com
   - run.googleapis.com
   - serviceusage.googleapis.com
+  # Needed for ILB only
+  - certificatemanager.googleapis.com
+  - privateca.googleapis.com
 
 buckets:
   iac-state:
@@ -38,7 +40,6 @@ buckets:
       roles/storage.objectViewer:
         - iac-rw
 
-# Create application SAs
 service_accounts:
   # Automation SAs
   iac-rw:
@@ -57,6 +58,9 @@ iam_by_principals:
     - roles/compute.networkAdmin
     - roles/compute.securityAdmin
     - roles/run.admin
+    # Needed for ILB only
+    - roles/certificatemanager.owner
+    - roles/privateca.admin
   gf-srun-0:
     - roles/logging.logWriter
   gf-srun-build-0:

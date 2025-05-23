@@ -1,1 +1,5 @@
-public_domains = ["your_domain.com"]
+lbs_config = {
+  external = {
+    domain = "your_domain.com"
+  }
+}

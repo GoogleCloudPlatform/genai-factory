@@ -17,16 +17,16 @@ locals {
     "DB_NAME=${var.name}",
     "DB_SA=${var.service_accounts["project/gf-rrag-fe-0"].id}",
     "DB_TABLE=${var.name}",
-    "PROJECT_ID=${var.project_id}",
+    "PROJECT_ID=${var.project_config.id}",
     "REGION=${var.region}"
   ]
   _env_vars_ingestion = [
     "BQ_DATASET=${local.bigquery_id}",
     "BQ_TABLE=${local.bigquery_id}",
     "DB_NAME=${var.name}",
-    "DB_SA=${var.service_accounts["project/gf-rrag-ing-0"].id}@${var.project_id}.iam",
+    "DB_SA=${var.service_accounts["project/gf-rrag-ing-0"].id}@${var.project_config.id}.iam",
     "DB_TABLE=${var.name}",
-    "PROJECT_ID=${var.project_id}",
+    "PROJECT_ID=${var.project_config.id}",
     "REGION=${var.region}"
   ]
   env_vars_frontend  = join(",", local._env_vars_frontend)
@@ -51,50 +51,58 @@ output "commands" {
     --source_format=CSV \
     --skip_leading_rows=1 \
     --autodetect \
-    ${var.project_id}:${local.bigquery_id}.${local.bigquery_id} \
+    ${var.project_config.id}:${local.bigquery_id}.${local.bigquery_id} \
     ./data/top-100-imdb-movies.csv
 
   gcloud artifacts repositories create ${var.name} \
-    --project=${var.project_id} \
+    --project=${var.project_config.id} \
     --location ${var.region} \
     --repository-format docker
 
   # Ingestion Cloud Run
   gcloud builds submit ./apps/rag/ingestion \
-    --project ${var.project_id} \
-    --tag ${var.region}-docker.pkg.dev/${var.project_id}/cloud-run-source-deploy/ingestion \
+    --project ${var.project_config.id} \
+    --tag ${var.region}-docker.pkg.dev/${var.project_config.id}/cloud-run-source-deploy/ingestion \
     --service-account ${var.service_accounts["project/gf-rrag-ing-build-0"].id} \
     --default-buckets-behavior=REGIONAL_USER_OWNED_BUCKET \
     --quiet
 
   gcloud run jobs deploy ${var.name}-ingestion \
-    --project ${var.project_id} \
+    --project ${var.project_config.id} \
     --region ${var.region} \
     --container=ingestion \
-    --image=${var.region}-docker.pkg.dev/${var.project_id}/cloud-run-source-deploy/ingestion \
+    --image=${var.region}-docker.pkg.dev/${var.project_config.id}/cloud-run-source-deploy/ingestion \
     --set-env-vars ${local.env_vars_ingestion}
 
   # Frontend Cloud Run
   gcloud builds submit ./apps/rag/frontend \
-    --project ${var.project_id} \
-    --tag ${var.region}-docker.pkg.dev/${var.project_id}/cloud-run-source-deploy/frontend \
+    --project ${var.project_config.id} \
+    --tag ${var.region}-docker.pkg.dev/${var.project_config.id}/cloud-run-source-deploy/frontend \
     --service-account ${var.service_accounts["project/gf-rrag-fe-build-0"].id} \
     --default-buckets-behavior=REGIONAL_USER_OWNED_BUCKET \
     --quiet
 
   gcloud run jobs deploy ${var.name}-frontend \
-    --project ${var.project_id} \
+    --project ${var.project_config.id} \
     --region ${var.region} \
     --container=frontend \
-    --image=${var.region}-docker.pkg.dev/${var.project_id}/cloud-run-source-deploy/frontend \
+    --image=${var.region}-docker.pkg.dev/${var.project_config.id}/cloud-run-source-deploy/frontend \
     --set-env-vars ${local.env_vars_frontend}
   EOT
 }
 
-output "ip_address" {
-  description = "The load balancer IP address of the frontend."
-  value = (var.ip_address == null
-    ? google_compute_global_address.address[0].address
-    : var.ip_address
-  )
+output "ip_addresses" {
+  description = "The load balancers IP addresses."
+  value = {
+    external = (
+      var.lbs_config.external.enable
+      ? module.lb_external[0].address
+      : null
+    )
+    internal = (
+      var.lbs_config.internal.enable
+      ? module.lb_internal[0].address
+      : null
+    )
+  }
 }

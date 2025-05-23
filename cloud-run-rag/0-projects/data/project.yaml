@@ -18,6 +18,7 @@ name: gf-rrag-0
 
 # Enable APIs
 services:
+  # Needed both for ILB and ELB
   - aiplatform.googleapis.com
   - artifactregistry.googleapis.com
   - bigquery.googleapis.com
@@ -27,6 +28,9 @@ services:
   - dns.googleapis.com
   - run.googleapis.com
   - sqladmin.googleapis.com
+  # Needed for ILB only
+  - certificatemanager.googleapis.com
+  - privateca.googleapis.com
 
 buckets:
   iac-state:
@@ -65,6 +69,9 @@ iam_by_principals:
     - roles/compute.securityAdmin
     - roles/dns.admin
     - roles/run.admin
+    # Needed for ILB only
+    - roles/certificatemanager.owner
+    - roles/privateca.admin
   gf-rrag-fe-0:
     - roles/cloudsql.client
     - roles/cloudsql.instanceUser

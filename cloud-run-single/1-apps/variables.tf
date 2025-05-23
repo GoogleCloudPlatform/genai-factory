@@ -12,11 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-variable "allowed_ip_ranges" {
-  description = "The ip ranges that can call the Cloud Run service."
-  type        = list(string)
+# Only used when ILBs are created.
+# CA pools can't be recreated in the same project with the same name.
+# This can be handy during experimentation
+variable "ca_pool_name_suffix" {
+  description = "The name suffix of the CA pool used for app ILB certificates."
+  type        = string
   nullable    = false
-  default     = ["0.0.0.0/0"]
+  default     = "ca-pool-0"
 }
 
 variable "cloud_run_configs" {
@@ -44,10 +47,31 @@ variable "enable_deletion_protection" {
   default     = true
 }
 
-variable "ip_address" {
-  description = "The optional load balancer IP address. If not specified, the module will create one."
-  type        = string
-  default     = null
+variable "lbs_config" {
+  description = "The load balancers configuration."
+  type = object({
+    external = object({
+      enable = optional(bool, true)
+      # The optional load balancer IP address.
+      # If not specified, the module will create one.
+      ip_address        = optional(string)
+      domain            = optional(string, "example.com")
+      allowed_ip_ranges = optional(list(string), ["0.0.0.0/0"])
+    })
+    internal = object({
+      enable = optional(bool, false)
+      # The optional load balancer IP address.
+      # If not specified, the module will create one.
+      ip_address        = optional(string)
+      domain            = optional(string, "example.com")
+      allowed_ip_ranges = optional(list(string), ["0.0.0.0/0"])
+    })
+  })
+  nullable = false
+  default = {
+    external = {}
+    internal = {}
+  }
 }
 
 variable "name" {
@@ -57,79 +81,31 @@ variable "name" {
   default     = "gf-srun-0"
 }
 
-/*
 variable "networking_config" {
   description = "The networking configuration."
   type = object({
-    create      = optional(bool, true)
-    subnet_cidr = optional(string, "10.0.0.0/24")
-    subnet_id   = optional(string, "sub-0")
-    vpc_id      = optional(string, "net-0")
+    create = optional(bool, true)
+    vpc_id = optional(string, "net-0")
+    subnet = optional(object({
+      ip_cidr_range = optional(string, "10.0.0.0/24")
+      name          = optional(string, "sub-0")
+    }), {})
+    subnet_proxy_only = optional(object({
+      ip_cidr_range = optional(string, "10.20.0.0/24")
+      name          = optional(string, "proxy-only-sub-0")
+    }), {})
   })
   nullable = false
   default  = {}
 }
-
-variable "proxy_only_networking_config" {
-  description = "The proxy-only networking configuration."
-  type = object({
-    subnet_cidr = optional(string, "10.20.0.0/24")
-    subnet_id   = optional(string, "sub-proxy-only-0")
-  })
-  nullable = false
-  default  = {}
-}
-
-variable "project_id" {
-  description = "The project id where to create the resources."
-  type        = string
-  nullable    = false
-}
-
-variable "project_number" {
-  description = "The project number where to create the resources."
-  type        = string
-  nullable    = false
-}
-*/
 
 variable "project_config" {
-  description = "The project id where to create the resources."
+  description = "The project where to create the resources."
   type = object({
-    project_id     = optional(string, "project_id")
-    project_number = optional(string, "project_number")
+    id     = string
+    number = string
   })
   nullable = false
-  default  = {}
-}
-
-variable "networking_config" {
-  description = "The networking configuration."
-  type = object({
-  create      = optional(bool, true)
-  vpc_id      = optional(string, "net-0")
-  subnets = optional(list(object({
-    ip_cidr_range = optional(string, "10.0.0.0/24")
-    name          = optional(string, "sub-0")
-    region        = optional(string, "europe-west1")
-  })))
-  subnets_proxy_only = optional(list(object({
-    ip_cidr_range = optional(string, "10.20.0.0/24")
-    name          = optional(string, "proxy-only-sub-0")
-    region        = optional(string, "europe-west1")
-  })))
-  })
-  nullable = false
-  default  = {}
-}
-
-
-
-variable "public_domains" {
-  type        = list(string)
-  description = "The list of domains connected to the public load balancer."
-  nullable    = false
-  default     = ["example.com"]
 }
 
 variable "region" {
@@ -147,39 +123,4 @@ variable "service_accounts" {
     id        = string
   }))
   default = {}
-}
-
-variable "expose_external" {
-  description = "Whether to expose function externally or not."
-  type        = bool
-  nullable    = false
-  default     = false
-}
-
-variable "expose_internal" {
-  description = "Whether to expose function internally or not."
-  type        = bool
-  nullable    = false
-  default     = false
-}
-
-variable "private_root_domain" {
-  type        = string
-  description = "The root domain for internal DNS."
-  nullable    = false
-  default     = "example.com"
-}
-
-variable "private_domains" {
-  type        = list(string)
-  description = "The list of domains connected to the private load balancer."
-  nullable    = false
-  default     = ["internal.example.com"]
-}
-
-variable "customer_name" {
-  type        = string
-  description = "The string used to identify the customer."
-  nullable    = false
-  default     = "pso"
 }
