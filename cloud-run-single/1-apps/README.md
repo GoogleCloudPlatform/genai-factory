@@ -1,10 +1,8 @@
 # Cloud Run - single / Application Deployment
 
-This module is part of the Single Cloud Run factory and is responsible for deploying the required infrastructure in an existing project, or one managed by the [projects](../0-projects) module.
+This module is part of the Single Cloud Run factory and is responsible for deploying the required infrastructure in an existing project, or one managed by the [0-projects](../0-projects) module.
 
-It leverages the Google Cloud Run service to eventually deploy a containerized application and an External Application Load Balancer to expose them publicly.
-
-The primary goal of this module is to automate the deployment of various applications to Cloud Run, including setting up networking, ingress, and necessary permissions.
+It leverages the Google Cloud Run service to allow for the deployment of a containerized application and an External Application Load Balancer to expose them publicly.
 
 Once ran, the terraform module prints the commands required to deploy the application to Cloud Run as `gcloud` commands.
 
@@ -12,11 +10,11 @@ Once ran, the terraform module prints the commands required to deploy the applic
 
 ![Deployed Architecture Diagram](diagram.png)
 
-This module deploys the following core components:
+This module deploys and configures the following core components:
 
 - **Google Cloud Run Service:** Where to deploy containerized applications.
 - **Google Cloud Load Balancer:** A global external HTTP(S) load balancer to route traffic to the Cloud Run services.
-- **Serverless NEG:** Configures a Serverless Network Endpoint Group to connect the load balancer to the Cloud Run services.
+- **Serverless NEG:** A Serverless Network Endpoint Group to connect the load balancer to the Cloud Run services.
 - **VPC:** Optionally sets up a VPC, used for Private Google Access.
 - **VPC Direct Egress:** Sets up VPC direct egress for Cloud Run services to access the Google APIs via PGA in a VPC network.
 
