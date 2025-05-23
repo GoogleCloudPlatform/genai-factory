@@ -61,7 +61,33 @@ resource "google_compute_address" "address_internal" {
   project      = var.project_config.id
   region       = var.region
   address_type = "INTERNAL"
+  purpose      = "SHARED_LOADBALANCER_VIP"
   subnetwork   = local.subnet_id
+}
+
+module "lb_internal_redirect" {
+  count                = var.lbs_config.internal.enable ? 1 : 0
+  source               = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-lb-app-int"
+  name                 = "${var.name}-internal-redirect"
+  project_id           = var.project_config.id
+  region               = var.region
+  health_check_configs = {}
+  address = coalesce(
+    var.lbs_config.internal.ip_address,
+    google_compute_address.address_internal[0].address
+  )
+  urlmap_config = {
+    description = "HTTP to HTTPS redirect."
+    default_url_redirect = {
+      https         = true
+      response_code = "MOVED_PERMANENTLY_DEFAULT"
+      strip_query   = false
+    }
+  }
+  vpc_config = {
+    network    = local.vpc_id
+    subnetwork = local.subnet_id
+  }
 }
 
 module "lb_internal" {
