@@ -51,7 +51,7 @@ try:
     DB_PASS = os.environ.get("DB_PASS", "")
     DB_NAME = os.environ.get("DB_NAME", "")
 
-    EMBEDDING_MODEL_NAME = os.environ.get("EMBEDDING_MODEL", "text-embedding-005")
+    EMBEDDING_MODEL_NAME = os.environ.get("EMBEDDING_MODEL", "text-multilingual-embedding-002")
     LLM_MODEL_NAME = os.environ.get("LLM_MODEL", "gemini-2.5-flash")
 
 except KeyError as e:
