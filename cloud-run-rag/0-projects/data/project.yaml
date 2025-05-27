@@ -25,6 +25,7 @@ services:
   - cloudbuild.googleapis.com
   - cloudresourcemanager.googleapis.com
   - cloudscheduler.googleapis.com
+  - compute.googleapis.com
   - dns.googleapis.com
   - run.googleapis.com
   - sqladmin.googleapis.com
