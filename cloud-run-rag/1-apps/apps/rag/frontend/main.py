@@ -44,7 +44,6 @@ logging.basicConfig(level=logging.INFO) # Configure basic logging
 try:
     PROJECT_ID = os.environ["PROJECT_ID"]
     LOCATION = os.environ.get("MA_REGION", "europe-west1")
-    MODEL_ARMOR_TEMPLATE_ID = os.environ.get("MA_TEMPLATE_ID", "")
 
     DB_INSTANCE_NAME = os.environ.get("DB_INSTANCE_NAME", "")
     DB_USER = os.environ.get("DB_USER", "")

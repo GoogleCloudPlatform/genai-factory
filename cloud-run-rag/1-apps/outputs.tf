@@ -24,7 +24,7 @@ locals {
     "BQ_DATASET=${local.bigquery_id}",
     "BQ_TABLE=${local.bigquery_id}",
     "DB_NAME=${var.name}",
-    "DB_SA=${var.service_accounts["project/gf-rrag-ing-0"].id}@${var.project_config.id}.iam",
+    "DB_SA=${var.service_accounts["project/gf-rrag-ing-0"].id}",
     "DB_TABLE=${var.name}",
     "PROJECT_ID=${var.project_config.id}",
     "REGION=${var.region}"
@@ -62,7 +62,7 @@ output "commands" {
   # Ingestion Cloud Run
   gcloud builds submit ./apps/rag/ingestion \
     --project ${var.project_config.id} \
-    --tag ${var.region}-docker.pkg.dev/${var.project_config.id}/cloud-run-source-deploy/ingestion \
+    --tag ${var.region}-docker.pkg.dev/${var.project_config.id}/${var.name}/ingestion \
     --service-account ${var.service_accounts["project/gf-rrag-ing-build-0"].id} \
     --default-buckets-behavior=REGIONAL_USER_OWNED_BUCKET \
     --quiet
@@ -71,13 +71,13 @@ output "commands" {
     --project ${var.project_config.id} \
     --region ${var.region} \
     --container=ingestion \
-    --image=${var.region}-docker.pkg.dev/${var.project_config.id}/cloud-run-source-deploy/ingestion \
+    --image=${var.region}-docker.pkg.dev/${var.project_config.id}/${var.name}/ingestion \
     --set-env-vars ${local.env_vars_ingestion}
 
   # Frontend Cloud Run
   gcloud builds submit ./apps/rag/frontend \
     --project ${var.project_config.id} \
-    --tag ${var.region}-docker.pkg.dev/${var.project_config.id}/cloud-run-source-deploy/frontend \
+    --tag ${var.region}-docker.pkg.dev/${var.project_config.id}/${var.name}/frontend \
     --service-account ${var.service_accounts["project/gf-rrag-fe-build-0"].id} \
     --default-buckets-behavior=REGIONAL_USER_OWNED_BUCKET \
     --quiet
@@ -86,7 +86,7 @@ output "commands" {
     --project ${var.project_config.id} \
     --region ${var.region} \
     --container=frontend \
-    --image=${var.region}-docker.pkg.dev/${var.project_config.id}/cloud-run-source-deploy/frontend \
+    --image=${var.region}-docker.pkg.dev/${var.project_config.id}/${var.name}/frontend \
     --set-env-vars ${local.env_vars_frontend}
   EOT
 }

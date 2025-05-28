@@ -86,7 +86,7 @@ db_url = sqlalchemy.engine.url.URL.create(
 logging.info(f"Connecting to database {DB_HOST}:{DB_PORT}/{DB_NAME} with SA {DB_SA}")
 try:
     db_pool = sqlalchemy.create_engine(
-        db_url, pool_size=5, max_overflow=2, pool_timeout=30, pool_recycle=1800,
+        db_url, pool_size=5, max_overflow=2, pool_timeout=30, pool_recycle=1800
     )
     with db_pool.connect() as connection:
         logging.info("Successfully connected to the database pool.")
