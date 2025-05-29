@@ -13,9 +13,19 @@
 # limitations under the License.
 
 locals {
+  _sa_db_frontend = replace(
+    var.service_accounts["project/gf-rrag-fe-0"].email,
+    ".gserviceaccount.com",
+    ""
+  )
+  _sa_db_ingestion = replace(
+    var.service_accounts["project/gf-rrag-ing-0"].email,
+    ".gserviceaccount.com",
+    ""
+  )
   _env_vars_frontend = [
     "DB_NAME=${var.name}",
-    "DB_SA=${var.service_accounts["project/gf-rrag-fe-0"].id}",
+    "DB_SA=${local._sa_db_frontend}",
     "DB_TABLE=${var.name}",
     "PROJECT_ID=${var.project_config.id}",
     "REGION=${var.region}"
@@ -24,7 +34,7 @@ locals {
     "BQ_DATASET=${local.bigquery_id}",
     "BQ_TABLE=${local.bigquery_id}",
     "DB_NAME=${var.name}",
-    "DB_SA=${var.service_accounts["project/gf-rrag-ing-0"].id}",
+    "DB_SA=${local._sa_db_ingestion}",
     "DB_TABLE=${var.name}",
     "PROJECT_ID=${var.project_config.id}",
     "REGION=${var.region}"
