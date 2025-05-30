@@ -69,7 +69,13 @@ except ValueError as e:
     sys.exit(1)
 
 # --- Logging Setup ---
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    level=logging.INFO, # Set the default logging level
+    format='%(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.StreamHandler(sys.stdout)
+    ]
+)
 
 # --- Initialize Clients ---
 bq_client = bigquery.Client(project=PROJECT_ID)
@@ -126,7 +132,7 @@ def create_table_if_not_exists(engine: sqlalchemy.engine.Engine, table_name: str
     try:
         with engine.connect() as connection:
             with connection.begin(): # Use transaction for DDL
-                 connection.execute(sqlalchemy.text(create_table_sql))
+                connection.execute(sqlalchemy.text(create_table_sql))
             logging.info(f"Ensured table '{table_name}' exists with specified columns (and pgvector). PK: '{GENERATED_ID_COLUMN_NAME}'")
     except Exception as e:
         logging.error(f"Error creating or verifying table '{table_name}': {e}")

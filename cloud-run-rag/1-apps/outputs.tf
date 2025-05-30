@@ -50,11 +50,13 @@ output "commands" {
   # Alternatively, deploy the application through your CI/CD pipeline.
 
   # Install the vector extension in CloudSQL
-  # There's no way to activate extensions in CloudSQL from Terraform.
-  # - Go to https://console.cloud.google.com/sql/instances/${var.name}/users.
-  # - Give a secure password to your postgres user
-  # - In https://console.cloud.google.com/sql/instances/${var.name}/studio select any database and enter with postgres user.
-  # - Run this query: CREATE EXTENSION IF NOT EXISTS vector;
+  gcloud sql users set-password postgres \
+    --password your_complex_pwd \
+    --instance ${module.cloudsql.name} \
+    --project ${var.project_config.id}
+  # In https://console.cloud.google.com/sql/instances/${var.name}/studio
+  # Select the ${var.name} database and enter with postgres user.
+  # In the Editor 1 tab, run this query: CREATE EXTENSION IF NOT EXISTS vector;
 
   # Load sample data into BigQuery
   bq load \
@@ -106,12 +108,12 @@ output "ip_addresses" {
   value = {
     external = (
       var.lbs_config.external.enable
-      ? module.lb_external[0].address
+      ? module.lb_external[0].address[""]
       : null
     )
     internal = (
       var.lbs_config.internal.enable
-      ? module.lb_internal[0].address
+      ? module.lb_internal[0].address[""]
       : null
     )
   }

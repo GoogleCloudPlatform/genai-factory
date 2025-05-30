@@ -14,122 +14,177 @@
 
 import logging
 import os
-from typing import Any, Dict
-import sys
+from fastapi import FastAPI, HTTPException, Depends
+import google.api_core.exceptions as exceptions
+from google import genai
+from google.genai import types # For GenerationConfig
+import google.cloud.logging
+from sqlalchemy.orm import Session
 
-import pg8000
-from fastapi import FastAPI
-from fastapi.responses import RedirectResponse
-from google.cloud import modelarmor_v1
-from google.cloud.sql.connector import Connector
-from langchain_community.vectorstores.pgvector import PGVector
-from langchain_core.output_parsers import StrOutputParser
-from langchain_core.prompts import PromptTemplate
-from langchain_core.runnables import (
-    RunnableBranch,
-    RunnableLambda,
-    RunnableParallel,
-    RunnablePassthrough,
-)
-from langchain_google_vertexai import VertexAI, VertexAIEmbeddings
-from langserve import add_routes
 import uvicorn
+from src import config
+from src.request_model import Prompt
+from src import db as database # Import the new db module
+
+app = FastAPI(title=__name__)
 
 
-# Initialize logger
-logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.INFO) # Configure basic logging
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO, # Set the default logging level
+    format='%(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.StreamHandler(sys.stdout)
+    ]
+)
 
-# --- Configuration (Fetch from Environment Variables) ---
+logging.info(
+    "Initializing Google GenAI client for project=%s, region=%s",
+    config.PROJECT_ID,
+    config.REGION,
+)
 try:
-    PROJECT_ID = os.environ["PROJECT_ID"]
-    LOCATION = os.environ.get("MA_REGION", "europe-west1")
+    # For Vertex AI, client_options can specify the API endpoint if needed, or it's often inferred.
+    genai_client = genai.Client(
+        project=config.PROJECT_ID, location=config.REGION
+    )
+    logging.info("Vertex AI client (via GenAI wrapper) initialized successfully.")
+except Exception as e:
+    logging.error(f"Failed to initialize GenAI client: {e}", exc_info=True)
+    genai_client = None
 
-    DB_INSTANCE_NAME = os.environ.get("DB_INSTANCE_NAME", "")
-    DB_USER = os.environ.get("DB_USER", "")
-    DB_PASS = os.environ.get("DB_PASS", "")
-    DB_NAME = os.environ.get("DB_NAME", "")
 
-    EMBEDDING_MODEL_NAME = os.environ.get("EMBEDDING_MODEL", "text-multilingual-embedding-002")
-    LLM_MODEL_NAME = os.environ.get("LLM_MODEL", "gemini-2.5-flash")
+MODEL_CONFIG = types.GenerationConfig(
+    temperature=config.TEMPERATURE,
+    top_p=config.TOP_P,
+    top_k=config.TOP_K,
+    candidate_count=config.CANDIDATE_COUNT,
+    max_output_tokens=config.MAX_OUTPUT_TOKENS,
+)
 
-except KeyError as e:
-    logging.error(f"Missing required environment variable: {e}")
-    sys.exit(1)
-except ValueError as e:
-    logging.error(f"Error parsing numeric environment variable (e.g., DB_PORT, BATCH_SIZE_*, EMBEDDING_DIMENSIONS): {e}")
-    sys.exit(1)
+@app.on_event("startup")
+async def startup_event():
+    logging.info("Application startup...")
+    database.init_db_connection_pool()
+    if not genai_client:
+        logging.error("GenAI client is not available. Predictions will fail.")
 
-# --- FastAPI App Initialization ---
-app = FastAPI()
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    logging.info("Application shutdown...")
+    database.close_db_connection_pool()
 
 
 @app.get("/")
-async def redirect_root_to_playground():
-    return RedirectResponse("/playground")
+async def root():
+    """Basic health check / info endpoint."""
+    db_status = "connected (IAM Auth)" if database.engine else "not connected/configured"
+    client_status = "initialized" if genai_client else "initialization failed"
+    return {
+        "message": "Vertex AI RAG Sample App (PostgreSQL with IAM Auth) is running.",
+        "project_id": config.PROJECT_ID,
+        "region": config.REGION,
+        "generative_model_id": config.MODEL_NAME,
+        "embedding_model_id": config.EMBEDDING_MODEL_NAME,
+        "genai_client_status": client_status,
+        "database_status": db_status,
+    }
 
-# (1) Initialize VectorStore
-connector = Connector()
 
-def getconn() -> pg8000.dbapi.Connection:
-    conn: pg8000.dbapi.Connection = connector.connect(
-        DB_INSTANCE_NAME,
-        "pg8000",
-        user=DB_USER,
-        password=DB_PASS,
-        db=DB_NAME,
+@app.post("/predict")
+async def predict_route(request: Prompt, db: Session = Depends(database.get_db_session)):
+    """Endpoint to make a prediction using Vertex AI, augmented with context from Cloud SQL."""
+
+    if not genai_client:
+        logging.error("GenAI client not initialized.")
+        raise HTTPException(status_code=503, detail="GenAI client not available.")
+    if config.MODEL_NAME is None or MODEL_CONFIG is None:
+        logging.error("Vertex AI model or config not initialized.")
+        raise HTTPException(
+            status_code=500, detail="Internal server error: Model or config not initialized."
+        )
+
+    logging.info(
+        "Received prediction request with prompt: '%s...'", request.prompt[:100]
     )
-    return conn
 
+    context_str = ""
+    augmented_prompt = request.prompt
 
-vectorstore = PGVector(
-    connection_string="postgresql+pg8000://",
-    use_jsonb=True,
-    engine_args=dict(
-        creator=getconn,
-    ),
-    embedding_function=VertexAIEmbeddings(model_name=EMBEDDING_MODEL_NAME),
-)
+    if database.engine and config.DB_INSTANCE_CONNECTION_NAME:
+        try:
+            logging.info(f"Generating embedding for prompt using model: models/{config.EMBEDDING_MODEL_NAME}")
+            embedding_response = genai_client.embed_content(
+                model=f"models/{config.EMBEDDING_MODEL_NAME}",
+                content=request.prompt,
+                task_type=config.EMBEDDING_TASK_TYPE.upper()
+            )
+            query_embedding = embedding_response['embedding']
+            logging.info(f"Generated query embedding (first 3 dims): {query_embedding[:3]}...")
 
-# (2) Build retriever
-def concatenate_docs(docs):
-  return "\n\n".join(doc.page_content for doc in docs)
+            similar_docs = database.search_similar_documents(db, query_embedding, config.TOP_K_SIMILAR)
 
-notes_retriever = vectorstore.as_retriever() | concatenate_docs
+            if similar_docs:
+                context_str = "\n\n".join(similar_docs)
+                augmented_prompt = (
+                    f"Based on the following context, answer the question.\n\n"
+                    f"Context:\n{context_str}\n\n"
+                    f"Question: {request.prompt}"
+                )
+                logging.info("Augmented prompt with context from database.")
+            else:
+                logging.info("No relevant documents found in database, using original prompt.")
 
-# (3) Create prompt template
-prompt_template = PromptTemplate.from_template(
-    """You are a movie expert answering questions. 
-Use the retrieved IMDB movies' titles, year and descriptions to answer questions
-Give a concise answer, and if you are unsure of the answer, just say so.
+        except exceptions.GoogleAPIError as e:
+            logging.error(f"Failed to generate embedding or search database: {e}", exc_info=True)
+        except ConnectionError as e: # This can be raised by get_db_session if engine is None
+            logging.error(f"Database connection error: {e}", exc_info=True)
+        except Exception as e:
+            logging.error(f"Unexpected error in RAG pipeline: {e}", exc_info=True)
 
-Movie names: {notes}
+    try:
+        # Ensure the model name is correctly formatted for Vertex AI via google-genai
+        # Typically "publishers/google/models/gemini-1.5-flash-latest" or just "gemini-1.5-flash-latest"
+        # The Client(project, location) should resolve this. If issues, try full path.
+        model_to_call = config.MODEL_NAME
+        if not model_to_call.startswith("publishers/google/models/"):
+             model_to_call = f"publishers/google/models/{model_to_call}"
 
-Here is your question: {query}
-Your answer: """
-)
+        response = genai_client.generate_content(
+            model=model_to_call,
+            contents=[augmented_prompt],
+            generation_config=MODEL_CONFIG,
+        )
 
-# (4) Initialize LLM
-llm = VertexAI(
-    model_name=LLM_MODEL_NAME,
-    temperature=0.2,
-    max_output_tokens=100,
-    top_k=40,
-    top_p=0.95,
-)
+        prediction_text = ""
+        if response.candidates:
+            if response.candidates[0].content and response.candidates[0].content.parts:
+                 prediction_text = "".join(part.text for part in response.candidates[0].content.parts if hasattr(part, 'text'))
 
-# (5) Chain everything together
-chain = (
-    RunnableParallel({
-        "notes": notes_retriever,
-        "query": RunnablePassthrough()
-    })
-    | prompt_template
-    | llm
-    | StrOutputParser()
-)
+        if not prediction_text and hasattr(response, 'text'):
+             prediction_text = response.text
 
-add_routes(app, chain)
+        if not prediction_text:
+            logging.warning("Received an empty prediction from Vertex AI.")
+            prediction_text = "I could not generate a response based on the input."
+
+        logging.info(
+            "Successfully received prediction from Vertex AI: %s...",
+            prediction_text[:100],
+        )
+
+    except exceptions.GoogleAPIError as e:
+        logging.error(f"Vertex AI API call failed: {e}", exc_info=True)
+        prediction_text = f"Failed to get an answer from the model: {e}"
+    except Exception as e:
+        logging.error(f"Unexpected error during model generation: {e}", exc_info=True)
+        prediction_text = "An unexpected error occurred while trying to get an answer."
+
+    return {"prompt": request.prompt, "augmented_prompt": augmented_prompt if context_str else request.prompt, "retrieved_context": context_str, "prediction": prediction_text}
+
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=int(os.getenv("PORT", "8000")))
+    server_port = int(os.environ.get("PORT", 8080))
+    # uvicorn.run("main:app", host="0.0.0.0", port=server_port, log_level="info", reload=True) # For local dev
+    uvicorn.run("main:app", host="0.0.0.0", port=server_port, log_level="info")
