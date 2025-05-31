@@ -94,7 +94,7 @@ output "commands" {
     --default-buckets-behavior=REGIONAL_USER_OWNED_BUCKET \
     --quiet
 
-  gcloud run jobs deploy ${var.name}-frontend \
+  gcloud run deploy ${var.name}-frontend \
     --project ${var.project_config.id} \
     --region ${var.region} \
     --container=frontend \

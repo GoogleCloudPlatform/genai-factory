@@ -13,6 +13,8 @@
 # limitations under the License.
 
 import logging
+import sys
+
 import sqlalchemy
 from sqlalchemy.orm import sessionmaker, Session
 from sqlalchemy import text
@@ -46,15 +48,13 @@ def init_db_connection_pool():
     try:
         connector = Connector()
 
-        def getconn() -> sqlalchemy.engine.base.Connection:
-            db_url = sqlalchemy.engine.url.URL.create(
-                drivername="postgresql+pg8000",
-                username=DB_SA,
-                host=DB_HOST,
-                port=DB_PORT,
-                database=DB_NAME,
-            )
-            return conn
+        db_url = sqlalchemy.engine.url.URL.create(
+            drivername="postgresql+pg8000",
+            host=config.DB_HOST,
+            port=config.DB_PORT,
+            username=config.DB_SA,
+            database=config.DB_NAME
+        )
 
         engine = sqlalchemy.create_engine(
             db_url,

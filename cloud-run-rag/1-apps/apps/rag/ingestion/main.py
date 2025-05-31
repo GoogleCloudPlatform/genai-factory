@@ -79,7 +79,10 @@ logging.basicConfig(
 
 # --- Initialize Clients ---
 bq_client = bigquery.Client(project=PROJECT_ID)
-vertex_ai_client = genai.Client(vertexai=True, project=PROJECT_ID, location=REGION)
+
+vertex_ai_client = genai.Client(
+    vertexai=True, project=PROJECT_ID, location=REGION
+)
 
 # NOTE: Assuming passwordless connection via Cloud SQL Auth Proxy or similar.
 db_url = sqlalchemy.engine.url.URL.create(
@@ -143,7 +146,10 @@ def get_embeddings_batch(texts: list[str]) -> list[list[float]]:
     if not texts:
         return []
     try:
-        embeddings = vertex_ai_client.models.embed_content(model=MODEL_ID, contents=texts).embeddings
+        embeddings = vertex_ai_client.models.embed_content(
+            model=MODEL_ID,
+            contents=texts
+        ).embeddings
 
         # Add basic validation
         if not embeddings:

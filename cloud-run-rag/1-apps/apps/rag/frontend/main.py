@@ -14,14 +14,19 @@
 
 import logging
 import os
+import sys
+
 from fastapi import FastAPI, HTTPException, Depends
+
 import google.api_core.exceptions as exceptions
 from google import genai
-from google.genai import types # For GenerationConfig
+from google.genai import types
 import google.cloud.logging
+
 from sqlalchemy.orm import Session
 
 import uvicorn
+
 from src import config
 from src.request_model import Prompt
 from src import db as database # Import the new db module
@@ -41,18 +46,16 @@ logging.basicConfig(
 logging.info(
     "Initializing Google GenAI client for project=%s, region=%s",
     config.PROJECT_ID,
-    config.REGION,
+    config.REGION
 )
 try:
-    # For Vertex AI, client_options can specify the API endpoint if needed, or it's often inferred.
     genai_client = genai.Client(
-        project=config.PROJECT_ID, location=config.REGION
+        vertexai=True, project=config.PROJECT_ID, location=config.REGION
     )
-    logging.info("Vertex AI client (via GenAI wrapper) initialized successfully.")
+    logging.info("Vertex AI client initialized successfully.")
 except Exception as e:
     logging.error(f"Failed to initialize GenAI client: {e}", exc_info=True)
     genai_client = None
-
 
 MODEL_CONFIG = types.GenerationConfig(
     temperature=config.TEMPERATURE,
@@ -112,18 +115,20 @@ async def predict_route(request: Prompt, db: Session = Depends(database.get_db_s
     context_str = ""
     augmented_prompt = request.prompt
 
-    if database.engine and config.DB_INSTANCE_CONNECTION_NAME:
+    if database.engine:
         try:
             logging.info(f"Generating embedding for prompt using model: models/{config.EMBEDDING_MODEL_NAME}")
-            embedding_response = genai_client.embed_content(
-                model=f"models/{config.EMBEDDING_MODEL_NAME}",
-                content=request.prompt,
-                task_type=config.EMBEDDING_TASK_TYPE.upper()
-            )
-            query_embedding = embedding_response['embedding']
-            logging.info(f"Generated query embedding (first 3 dims): {query_embedding[:3]}...")
+            embedding_response = genai_client.models.embed_content(
+                model=config.EMBEDDING_MODEL_NAME,
+                contents=[request.prompt]
+            ).embeddings[0].values
 
-            similar_docs = database.search_similar_documents(db, query_embedding, config.TOP_K_SIMILAR)
+            logging.info(f"Generated query embedding (first 3 dims): {embedding_response[:3]}...")
+            similar_docs = database.search_similar_documents(
+                db,
+                embedding_response,
+                config.TOP_K_SIMILAR
+            )
 
             if similar_docs:
                 context_str = "\n\n".join(similar_docs)
@@ -151,10 +156,10 @@ async def predict_route(request: Prompt, db: Session = Depends(database.get_db_s
         if not model_to_call.startswith("publishers/google/models/"):
              model_to_call = f"publishers/google/models/{model_to_call}"
 
-        response = genai_client.generate_content(
+        response = genai_client.models.generate_content(
             model=model_to_call,
             contents=[augmented_prompt],
-            generation_config=MODEL_CONFIG,
+            config=MODEL_CONFIG,
         )
 
         prediction_text = ""
