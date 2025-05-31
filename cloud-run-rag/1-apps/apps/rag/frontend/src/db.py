@@ -18,6 +18,7 @@ import sys
 import sqlalchemy
 from sqlalchemy.orm import sessionmaker, Session
 from sqlalchemy import text
+
 from google.cloud.sql.connector import Connector, IPTypes
 from src import config
 
@@ -47,7 +48,6 @@ def init_db_connection_pool():
 
     try:
         connector = Connector()
-
         db_url = sqlalchemy.engine.url.URL.create(
             drivername="postgresql+pg8000",
             host=config.DB_HOST,
@@ -55,7 +55,6 @@ def init_db_connection_pool():
             username=config.DB_SA,
             database=config.DB_NAME
         )
-
         engine = sqlalchemy.create_engine(
             db_url,
             pool_size=5,
@@ -85,7 +84,7 @@ def get_db_session() -> Session:
     finally:
         db.close()
 
-def search_similar_documents(db: Session, query_embedding: list[float], top_k: int) -> list[str]:
+def search_similar_documents(db: Session, embedding: list[float], top_k: int) -> list[str]:
     """
     Searches for documents with embeddings similar to
     the query_embedding in PostgreSQL using pgvector.
@@ -95,20 +94,20 @@ def search_similar_documents(db: Session, query_embedding: list[float], top_k: i
         return []
 
     try:
-        embedding_str = str(query_embedding)
+        embedding_str = str(embedding)
 
         # Using <=> for cosine distance (pgvector specific).
         # Lower distance = more similar.
-        stmt = text(
+        query = text(
             f"""
-            SELECT {config.DB_COLUMN_TEXT}
-            FROM {config.DB_TABLE}
-            ORDER BY {config.DB_COLUMN_EMBEDDING} <=> :query_embedding
+            SELECT "{config.DB_COLUMN_TEXT}"
+            FROM "{config.DB_TABLE}"
+            ORDER BY "{config.DB_COLUMN_EMBEDDING}" <=> :embedding
             LIMIT :top_k
             """
         )
-        
-        result = db.execute(stmt, {"query_embedding": embedding_str, "top_k": top_k})
+
+        result = db.execute(query, {"embedding": embedding_str, "top_k": top_k})
         documents = [row[0] for row in result.fetchall()]
         logging.info(f"Retrieved {len(documents)} similar documents from DB.")
         return documents

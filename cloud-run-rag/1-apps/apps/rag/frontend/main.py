@@ -33,7 +33,6 @@ from src import db as database # Import the new db module
 
 app = FastAPI(title=__name__)
 
-
 # Configure logging
 logging.basicConfig(
     level=logging.INFO, # Set the default logging level
@@ -57,7 +56,8 @@ except Exception as e:
     logging.error(f"Failed to initialize GenAI client: {e}", exc_info=True)
     genai_client = None
 
-MODEL_CONFIG = types.GenerationConfig(
+MODEL_NAME = config.MODEL_NAME
+MODEL_CONFIG = types.GenerateContentConfig(
     temperature=config.TEMPERATURE,
     top_p=config.TOP_P,
     top_k=config.TOP_K,
@@ -143,21 +143,14 @@ async def predict_route(request: Prompt, db: Session = Depends(database.get_db_s
 
         except exceptions.GoogleAPIError as e:
             logging.error(f"Failed to generate embedding or search database: {e}", exc_info=True)
-        except ConnectionError as e: # This can be raised by get_db_session if engine is None
+        except ConnectionError as e:
             logging.error(f"Database connection error: {e}", exc_info=True)
         except Exception as e:
             logging.error(f"Unexpected error in RAG pipeline: {e}", exc_info=True)
 
     try:
-        # Ensure the model name is correctly formatted for Vertex AI via google-genai
-        # Typically "publishers/google/models/gemini-1.5-flash-latest" or just "gemini-1.5-flash-latest"
-        # The Client(project, location) should resolve this. If issues, try full path.
-        model_to_call = config.MODEL_NAME
-        if not model_to_call.startswith("publishers/google/models/"):
-             model_to_call = f"publishers/google/models/{model_to_call}"
-
         response = genai_client.models.generate_content(
-            model=model_to_call,
+            model=MODEL_NAME,
             contents=[augmented_prompt],
             config=MODEL_CONFIG,
         )

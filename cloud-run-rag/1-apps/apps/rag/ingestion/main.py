@@ -131,6 +131,7 @@ def create_table_if_not_exists(engine: sqlalchemy.engine.Engine, table_name: str
         content_to_embed TEXT,
         embedding vector({EMBEDDING_DIMENSIONS})
     );
+    GRANT SELECT ON TABLE "{table_name}" TO PUBLIC;
     """
     try:
         with engine.connect() as connection:
