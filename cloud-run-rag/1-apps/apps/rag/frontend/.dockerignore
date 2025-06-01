@@ -1,0 +1,26 @@
+# Git
+.git
+.gitignore
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+*.egg-info/
+.DS_Store
+
+# Docker
+Dockerfile
+.dockerignore
+
+# IDE
+.idea/
+.vscode/
+
+# Other
+*.log
+*.swp

@@ -12,12 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
 import os
 
 
 PROJECT_ID = os.environ.get("PROJECT_ID")
 REGION = os.environ.get("REGION", "europe-west1")
+
+# BigQuery Configuration
+BQ_DATASET = os.environ.get("BQ_DATASET", "gf-rrag-0")
+BQ_TABLE = os.environ.get("BQ_TABLE", "gf-rrag-0")
+BQ_BATCH_SIZE = int(os.environ.get("BATCH_SIZE_BQ", 1000))
 
 # Generative Model Configuration
 MODEL_NAME = os.environ.get("MODEL_NAME", "gemini-2.0-flash")
@@ -29,7 +33,8 @@ MAX_OUTPUT_TOKENS = int(os.environ.get("MAX_OUTPUT_TOKENS", 2048))
 
 # Embedding Model Configuration
 EMBEDDING_MODEL_NAME = os.environ.get("EMBEDDING_MODEL_NAME", "text-multilingual-embedding-002")
-EMBEDDING_TASK_TYPE = "RETRIEVAL_QUERY"
+EMBEDDING_DIMENSIONS = int(os.environ.get("EMBEDDING_DIMENSIONS", 768))
+EMBEDDING_BATCH_SIZE = int(os.environ.get("BATCH_SIZE_EMBEDDING", 200))
 
 # DB configuration
 DB_HOST = os.environ.get("DB_HOST", "127.0.0.1")
@@ -37,5 +42,8 @@ DB_PORT = int(os.environ.get("DB_PORT", 5432))
 DB_NAME = os.environ.get("DB_NAME")
 DB_SA = os.environ.get("DB_SA")
 DB_TABLE = os.environ.get("DB_TABLE", "movie_embeddings")
-DB_COLUMN_TEXT = os.environ.get("DB_COLUMN_TEXT", "content_to_embed")
-DB_COLUMN_EMBEDDING = os.environ.get("DB_COLUMN_EMBEDDING", "embedding")
+
+# Columns Configuration
+GENERATED_ID_COLUMN_NAME = os.environ.get("GENERATED_ID_COLUMN_NAME", "id")
+BQ_TEXT_COLUMNS_STR = os.environ.get("BQ_TEXT_COLUMNS", "title,description")
+TARGET_BQ_COLUMNS_DEFAULT = ['rank', 'title', 'description', 'genre', 'rating', 'year']

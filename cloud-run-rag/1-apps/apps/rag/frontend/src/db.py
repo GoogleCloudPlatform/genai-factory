@@ -22,6 +22,7 @@ from sqlalchemy import text
 from google.cloud.sql.connector import Connector, IPTypes
 from src import config
 
+
 # Configure logging
 logging.basicConfig(
     level=logging.INFO, # Set the default logging level
@@ -45,7 +46,6 @@ def init_db_connection_pool():
             "is not complete. Database features will be disabled."
         )
         return
-
     try:
         connector = Connector()
         db_url = sqlalchemy.engine.url.URL.create(

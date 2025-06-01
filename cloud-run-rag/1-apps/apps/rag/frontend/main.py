@@ -29,7 +29,8 @@ import uvicorn
 
 from src import config
 from src.request_model import Prompt
-from src import db as database # Import the new db module
+from src import db as database
+
 
 app = FastAPI(title=__name__)
 
@@ -117,17 +118,18 @@ async def predict_route(request: Prompt, db: Session = Depends(database.get_db_s
 
     if database.engine:
         try:
-            logging.info(f"Generating embedding for prompt using model: models/{config.EMBEDDING_MODEL_NAME}")
+            logging.info(f"Generating embedding for prompt using model: {config.EMBEDDING_MODEL_NAME}")
             embedding_response = genai_client.models.embed_content(
                 model=config.EMBEDDING_MODEL_NAME,
                 contents=[request.prompt]
             ).embeddings[0].values
 
-            logging.info(f"Generated query embedding (first 3 dims): {embedding_response[:3]}...")
+            logging.info(f"Generated query embedding (first 3 dimensions): {embedding_response[:3]}...")
+
             similar_docs = database.search_similar_documents(
                 db,
                 embedding_response,
-                config.TOP_K_SIMILAR
+                config.TOP_K
             )
 
             if similar_docs:
@@ -158,7 +160,7 @@ async def predict_route(request: Prompt, db: Session = Depends(database.get_db_s
         prediction_text = ""
         if response.candidates:
             if response.candidates[0].content and response.candidates[0].content.parts:
-                 prediction_text = "".join(part.text for part in response.candidates[0].content.parts if hasattr(part, 'text'))
+                prediction_text = "".join(part.text for part in response.candidates[0].content.parts if hasattr(part, 'text'))
 
         if not prediction_text and hasattr(response, 'text'):
              prediction_text = response.text
