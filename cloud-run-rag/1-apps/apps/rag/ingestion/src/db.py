@@ -49,7 +49,6 @@ def init_db_connection_pool():
         _db_pool = sqlalchemy.create_engine(
             db_url, pool_size=5, max_overflow=2, pool_timeout=30, pool_recycle=1800
         )
-        # Test connection
         with _db_pool.connect() as connection:
             logger.info("Successfully connected to the database and obtained a connection from the pool.")
     except Exception as e:
@@ -110,7 +109,6 @@ def upsert_batch_to_db(batch_data: list[dict]) -> int:
     if not batch_data:
         return 0
 
-    # These are the columns in your PostgreSQL table
     db_columns = [
         config.GENERATED_ID_COLUMN_NAME, 'rank', 'title', 'description', 'genre', 'rating', 'year',
         'content_to_embed', 'embedding'
