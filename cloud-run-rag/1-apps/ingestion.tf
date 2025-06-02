@@ -16,8 +16,8 @@ module "cloud_run_ingestion" {
   source              = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/cloud-run-v2"
   project_id          = var.project_config.id
   name                = "${var.name}-ingestion"
-  region              = var.region
-  create_job          = true
+  region              =        var.region
+  create_job          =     true
   ingress             = var.cloud_run_configs.ingestion.ingress
   service_account     = var.service_accounts["project/gf-rrag-ing-0"].email
   managed_revision    = false

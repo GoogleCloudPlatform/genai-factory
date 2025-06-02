@@ -24,3 +24,5 @@ The deployment includes
 
 - By default, a **VPC**, a subnet, private Google APIs routes and DNS policies. Optionally, can use your existing VPCs.
 - By default, a **project** with all the necessary permissions. Optionally, can use your existing project.
+<!-- BEGIN TFDOC -->
+<!-- END TFDOC -->
