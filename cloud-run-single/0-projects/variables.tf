@@ -12,6 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+variable "enable_iac_sa_impersonation" {
+  description = "Whether the user running this module should be granted serviceAccountTokenCreator on the automation service account."
+  type        = bool
+  default     = true
+}
+
 variable "project_config" {
   description = "The project configuration."
   type = object({

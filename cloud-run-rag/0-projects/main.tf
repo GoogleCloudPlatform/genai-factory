@@ -13,7 +13,7 @@
 # limitations under the License.
 
 module "projects" {
-  source = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/project-factory?ref=fast-dev"
+  source = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/project-factory"
   data_defaults = {
     billing_account  = var.project_config.billing_account_id
     parent           = var.project_config.parent
@@ -24,4 +24,15 @@ module "projects" {
   factories_config = {
     projects_data_path = "./data"
   }
+}
+
+data "google_client_openid_userinfo" "me" {
+  count = var.enable_iac_sa_impersonation ? 1 : 0
+}
+
+resource "google_service_account_iam_member" "me_sa_token_creator" {
+  count              = var.enable_iac_sa_impersonation ? 1 : 0
+  service_account_id = module.projects.service_accounts["project/iac-rw"].id
+  role               = "roles/iam.serviceAccountTokenCreator"
+  member             = "user:${data.google_client_openid_userinfo.me[0].email}"
 }

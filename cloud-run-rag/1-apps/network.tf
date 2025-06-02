@@ -15,8 +15,8 @@
 locals {
   subnet_id = (
     var.networking_config.create
-    ? module.vpc[0].subnet_ids["${var.region}/${var.networking_config.subnet_id}"]
-    : var.networking_config.subnet_id
+    ? module.vpc[0].subnet_ids["${var.region}/${var.networking_config.subnet.name}"]
+    : var.networking_config.subnet.name
   )
   vpc_id = (
     var.networking_config.create
@@ -28,26 +28,24 @@ locals {
 module "vpc" {
   source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-vpc"
   count      = var.networking_config.create ? 1 : 0
-  project_id = var.project_id
+  project_id = var.project_config.id
   name       = var.networking_config.vpc_id
   subnets = [
-    {
-      ip_cidr_range = var.networking_config.subnet_cidr
-      name          = var.networking_config.subnet_id
-      region        = var.region
-    }
+    merge(var.networking_config.subnet, { region = var.region })
+  ]
+  subnets_proxy_only = [
+    merge(var.networking_config.subnet_proxy_only, { region = var.region })
   ]
 }
 
 # DNS policies for Google APIs
-
 module "dns_policy_googleapis" {
   source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/dns-response-policy"
   count      = var.networking_config.create ? 1 : 0
-  project_id = var.project_id
+  project_id = var.project_config.id
   name       = "googleapis"
-  networks   = { "${var.name}" = local.vpc_id }
   factories_config = {
     rules = "./data/dns-policy-rules.yaml"
   }
+  networks = { "${var.name}" = module.vpc[0].id }
 }

@@ -18,7 +18,7 @@ locals {
 
 module "bigquery-dataset" {
   source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/bigquery-dataset"
-  project_id = var.project_id
+  project_id = var.project_config.id
   id         = local.bigquery_id
   tables = {
     (local.bigquery_id) = {
@@ -30,7 +30,7 @@ module "bigquery-dataset" {
 
 module "dns_private_zone_cloudsql" {
   source        = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/dns"
-  project_id    = var.project_id
+  project_id    = var.project_config.id
   name          = "${var.name}-cloudsql"
   force_destroy = !var.enable_deletion_protection
   zone_config = {
@@ -43,7 +43,7 @@ module "dns_private_zone_cloudsql" {
 }
 
 resource "google_dns_record_set" "cloudsql_dns_record_set" {
-  project      = var.project_id
+  project      = var.project_config.id
   managed_zone = module.dns_private_zone_cloudsql.name
   name         = module.cloudsql.dns_name
   type         = "A"
@@ -53,7 +53,7 @@ resource "google_dns_record_set" "cloudsql_dns_record_set" {
 
 resource "google_compute_address" "cloudsql_address" {
   name         = var.name
-  project      = var.project_id
+  project      = var.project_config.id
   address_type = "INTERNAL"
   subnetwork   = local.subnet_id
   region       = var.region
@@ -61,7 +61,7 @@ resource "google_compute_address" "cloudsql_address" {
 
 resource "google_compute_forwarding_rule" "cloudsql_psc_endpoint" {
   name                  = var.name
-  project               = var.project_id
+  project               = var.project_config.id
   region                = var.region
   target                = module.cloudsql.psc_service_attachment_link
   load_balancing_scheme = ""
@@ -71,7 +71,7 @@ resource "google_compute_forwarding_rule" "cloudsql_psc_endpoint" {
 
 module "cloudsql" {
   source                        = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/cloudsql-instance"
-  project_id                    = var.project_id
+  project_id                    = var.project_config.id
   gcp_deletion_protection       = var.enable_deletion_protection
   terraform_deletion_protection = var.enable_deletion_protection
   name                          = var.name
@@ -82,7 +82,7 @@ module "cloudsql" {
   flags                         = var.db_configs.flags
   network_config = {
     connectivity = {
-      psc_allowed_consumer_projects = [var.project_id]
+      psc_allowed_consumer_projects = [var.project_config.id]
     }
   }
   databases = [

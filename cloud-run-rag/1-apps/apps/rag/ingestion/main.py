@@ -16,50 +16,38 @@ import os
 import logging
 import sys
 
-import sqlalchemy
 from google.cloud import bigquery
+from vertexai.language_models import TextEmbeddingModel
+from google.cloud import aiplatform # For aiplatform.init()
 
-from google import genai
+from src import config
+from src import db as database
 
-import numpy as np
-import pg8000
 
-# --- Configuration (Fetch from Environment Variables) ---
 try:
-    PROJECT_ID = os.environ["PROJECT_ID"]
-    REGION = os.environ.get("REGION", "europe-west1")
-    BQ_DATASET = os.environ.get("BQ_DATASET", "gf-rrag-0")
-    BQ_TABLE = os.environ.get("BQ_TABLE", "gf-rrag-0")
+    BQ_TEXT_COLUMNS = [
+        col.strip() for col in config.BQ_TEXT_COLUMNS_STR.split(',') if col.strip()
+    ]
+    TARGET_BQ_COLUMNS = [ # This list is used for metadata extraction
+        col.strip() for col in config.TARGET_BQ_COLUMNS_DEFAULT if col.strip()
+    ]
+    ALL_BQ_COLUMNS_TO_FETCH = []
+    _seen_in_all_bq_columns = set()
 
-    # --- Columns Configuration ---
-    GENERATED_ID_COLUMN_NAME = "id"
+    # Add columns from TARGET_BQ_COLUMNS first, maintaining their order
+    for col in TARGET_BQ_COLUMNS:
+        if col not in _seen_in_all_bq_columns:
+            ALL_BQ_COLUMNS_TO_FETCH.append(col)
+            _seen_in_all_bq_columns.add(col)
+    # Then, add any additional columns from BQ_TEXT_COLUMNS, maintaining their order
+    for col in BQ_TEXT_COLUMNS:
+        if col not in _seen_in_all_bq_columns:
+            ALL_BQ_COLUMNS_TO_FETCH.append(col)
+            _seen_in_all_bq_columns.add(col)
 
-    # Columns to concatenate for generating the embedding
-    BQ_TEXT_COLUMNS = os.environ.get("BQ_TEXT_COLUMNS", "title,description").split(',')
-    BQ_TEXT_COLUMNS = [col.strip() for col in BQ_TEXT_COLUMNS if col.strip()]
-
-    # Define the specific BQ columns we want to fetch and store directly in Cloud SQL
-    # Ensure these names match your BigQuery table columns exactly.
-    TARGET_BQ_COLUMNS = ['rank', 'title', 'description', 'genre', 'rating', 'year']
-    TARGET_BQ_COLUMNS = [col.strip() for col in TARGET_BQ_COLUMNS if col.strip()]
-
-    # Combine all columns needed from BigQuery (excluding the id)
-    ALL_BQ_COLUMNS_TO_FETCH = list(set(BQ_TEXT_COLUMNS + TARGET_BQ_COLUMNS))
     if not ALL_BQ_COLUMNS_TO_FETCH:
-         logging.error("No columns specified in BQ_TEXT_COLUMNS or TARGET_BQ_COLUMNS. Cannot fetch data.")
+         logging.error("No columns specified to fetch from BigQuery (derived from TARGET_BQ_COLUMNS and BQ_TEXT_COLUMNS). Cannot proceed.")
          sys.exit(1)
-    # --- End Columns Configuration ---
-
-    DB_HOST = os.environ.get("DB_HOST", "127.0.0.1")
-    DB_PORT = int(os.environ.get("DB_PORT", 5432))
-    DB_NAME = os.environ["DB_NAME"]
-    DB_SA = os.environ["DB_SA"]
-    DB_TABLE = os.environ.get("DB_TABLE", "movie_embeddings")
-
-    MODEL_ID = os.environ.get("MODEL_ID", "text-multilingual-embedding-002")
-    BATCH_SIZE_BQ = int(os.environ.get("BATCH_SIZE_BQ", 1000))
-    BATCH_SIZE_EMBEDDING = int(os.environ.get("BATCH_SIZE_EMBEDDING", 200))
-    EMBEDDING_DIMENSIONS = int(os.environ.get("EMBEDDING_DIMENSIONS", 768))
 
 except KeyError as e:
     logging.error(f"Missing required environment variable: {e}")
@@ -69,32 +57,42 @@ except ValueError as e:
     sys.exit(1)
 
 # --- Logging Setup ---
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.StreamHandler(sys.stdout)
+    ]
+)
+logger = logging.getLogger(__name__)
 
 # --- Initialize Clients ---
-bq_client = bigquery.Client(project=PROJECT_ID)
-vertex_ai_client = genai.Client(vertexai=True, project=PROJECT_ID, location=REGION)
-
-# NOTE: Assuming passwordless connection via Cloud SQL Auth Proxy or similar.
-db_url = sqlalchemy.engine.url.URL.create(
-    drivername="postgresql+pg8000",
-    username=DB_SA,
-    host=DB_HOST,
-    port=DB_PORT,
-    database=DB_NAME,
-)
-logging.info(f"Connecting to database {DB_HOST}:{DB_PORT}/{DB_NAME} with SA {DB_SA}")
 try:
-    db_pool = sqlalchemy.create_engine(
-        db_url, pool_size=5, max_overflow=2, pool_timeout=30, pool_recycle=1800,
-    )
-    with db_pool.connect() as connection:
-        logging.info("Successfully connected to the database pool.")
+    bq_client = bigquery.Client(project=config.PROJECT_ID)
+    logger.info("BigQuery client initialized.")
 except Exception as e:
-    logging.error(f"Error creating database connection pool: {e}")
+    logger.error(f"Error initializing BigQuery client: {e}")
     sys.exit(1)
 
-# --- Helper Functions ---
+try:
+    aiplatform.init(project=config.PROJECT_ID, location=config.REGION)
+    logger.info(f"Vertex AI SDK initialized for project {config.PROJECT_ID} in {config.REGION}.")
+except Exception as e:
+    logger.error(f"Error initializing Vertex AI SDK: {e}")
+    sys.exit(1)
+
+def format_bq_value_for_embedding(value) -> str:
+    """
+    Formats a BigQuery value for inclusion in
+    the 'content_to_embed' string.
+    """
+    if value is None:
+        return "None" # Represent SQL NULL as the string "None"
+    if isinstance(value, list): # For ARRAY types from BigQuery
+        return ",".join(str(v_item).strip() for v_item in value)
+    if isinstance(value, bool):
+        return str(value) # "True" or "False"
+    return str(value).strip()
 
 def safe_cast(value, cast_type, default=None):
     """Safely casts a value to a type, returning default on failure."""
@@ -103,279 +101,168 @@ def safe_cast(value, cast_type, default=None):
     try:
         return cast_type(value)
     except (ValueError, TypeError):
-        logging.warning(f"Could not cast '{value}' to {cast_type}. Using default: {default}")
+        logger.warning(f"Could not cast '{value}' to {cast_type}. Using default: {default}")
         return default
 
-def create_table_if_not_exists(engine: sqlalchemy.engine.Engine, table_name: str):
-    """Creates the target table with specific columns and pgvector, using generated_row_id."""
-    # Use the fixed GENERATED_ID_COLUMN_NAME for the primary key (BIGINT)
-    # Quote all identifiers to be safe
-    create_table_sql = f"""
-    CREATE TABLE IF NOT EXISTS "{table_name}" (
-        "{GENERATED_ID_COLUMN_NAME}" BIGINT PRIMARY KEY,
-        rank INTEGER,
-        title TEXT,
-        description TEXT,
-        genre TEXT,
-        rating REAL,
-        year INTEGER,
-        content_to_embed TEXT,
-        embedding vector({EMBEDDING_DIMENSIONS})
-    );
-    """
-    try:
-        with engine.connect() as connection:
-            with connection.begin(): # Use transaction for DDL
-                 connection.execute(sqlalchemy.text(create_table_sql))
-            logging.info(f"Ensured table '{table_name}' exists with specified columns (and pgvector). PK: '{GENERATED_ID_COLUMN_NAME}'")
-    except Exception as e:
-        logging.error(f"Error creating or verifying table '{table_name}': {e}")
-        raise
-
-def get_embeddings_batch(texts: list[str]) -> list[list[float]]:
-    """Gets embeddings for a batch of texts using Vertex AI."""
+def get_embeddings_batch_vertexai(texts: list[str], model_id_name: str) -> list[list[float]]:
+    """Gets embeddings for a batch of texts using Vertex AI TextEmbeddingModel."""
     if not texts:
         return []
     try:
-        embeddings = vertex_ai_client.models.embed_content(model=MODEL_ID, contents=texts).embeddings
+        model = TextEmbeddingModel.from_pretrained(model_id_name)
+        response = model.get_embeddings(texts) # Max batch size is 250 for many models
+        embeddings_values = [embedding.values for embedding in response]
 
-        # Add basic validation
-        if not embeddings:
-             logging.warning("Received empty embeddings list from Vertex AI.")
+        if not embeddings_values:
+             logger.warning(f"Received empty embeddings list from Vertex AI model '{model_id_name}'.")
              return []
-        # Check dimensions of the first embedding only for efficiency
-        if embeddings and embeddings[0].values and len(embeddings[0].values) != EMBEDDING_DIMENSIONS:
-            logging.error(f"Embedding dimension mismatch! Model '{MODEL_ID}' returned {len(embeddings[0].values)} dimensions, expected {EMBEDDING_DIMENSIONS}. Exiting.")
-            sys.exit(1) # Critical error, stop the job
-        return [embedding.values for embedding in embeddings]
+        if embeddings_values[0] and len(embeddings_values[0]) != config.EMBEDDING_DIMENSIONS:
+            logger.error(f"Embedding dimension mismatch! Model '{model_id_name}' returned {len(embeddings_values[0])} dims, expected {config.EMBEDDING_DIMENSIONS}. Exiting.")
+            sys.exit(1)
+        return embeddings_values
     except Exception as e:
-        logging.error(f"Error getting embeddings from Vertex AI: {e}")
-        return [] # Allow job to continue, but log error
+        logger.error(f"Error getting embeddings from Vertex AI (model: {model_id_name}): {e}")
+        return []
 
-def upsert_batch_to_db(engine: sqlalchemy.engine.Engine, batch_data: list[dict]):
-    """Upserts a batch of data (including embeddings and specific columns) into Cloud SQL."""
-    if not batch_data:
-        return 0
-
-    # Define the target columns in the database table, using the generated ID
-    # Order matters for the VALUES clause placeholders
-    db_columns = [
-        GENERATED_ID_COLUMN_NAME, 'rank', 'title', 'description', 'genre', 'rating', 'year',
-        'content_to_embed', 'embedding'
-    ]
-    cols_str = ", ".join([f'"{col}"' for col in db_columns]) # Quote column names
-    placeholders = ", ".join([f":{col}" for col in db_columns]) # Placeholders don't need quotes
-
-    # Columns to update on conflict (all except the primary key)
-    update_cols = [col for col in db_columns if col != GENERATED_ID_COLUMN_NAME]
-    update_statements = [f'"{col}" = EXCLUDED."{col}"' for col in update_cols]
-    update_str = ", ".join(update_statements)
-
-    # Use ON CONFLICT for UPSERT (PostgreSQL specific) - Quote identifiers
-    # Target the generated ID column for conflict resolution
-    upsert_sql = f"""
-    INSERT INTO "{DB_TABLE}" ({cols_str})
-    VALUES ({placeholders})
-    ON CONFLICT ("{GENERATED_ID_COLUMN_NAME}") DO UPDATE
-    SET {update_str};
-    """
-
-    prepared_batch = []
-    for item in batch_data:
-        try:
-            row_dict = {
-                # Use the generated ID (convert item['id'] back to int for BIGINT column)
-                GENERATED_ID_COLUMN_NAME: int(item['id']),
-                'rank': item['metadata'].get('rank'), # Already cast to int or None
-                'title': item['metadata'].get('title'), # String
-                'description': item['metadata'].get('description'), # String
-                'genre': item['metadata'].get('genre'), # String
-                'rating': item['metadata'].get('rating'), # Already cast to float or None
-                'year': item['metadata'].get('year'), # Already cast to int or None
-                'content_to_embed': item['text_to_embed'], # String
-                'embedding': str(item['embedding']) if item.get('embedding') else None, # pgvector string format '[1.2, ...]' or NULL
-            }
-            # Ensure all keys expected by the SQL placeholders are present, even if None
-            for col in db_columns:
-                if col not in row_dict:
-                    row_dict[col] = None # Should not happen with current logic, but safer
-
-            prepared_batch.append(row_dict)
-        except Exception as e:
-            logging.error(f"Error preparing row data for DB upsert (ID: {item.get('id', 'N/A')}). Skipping row. Error: {e}. Data: {item}")
-            continue # Skip this row, proceed with the rest of the batch
-
-    if not prepared_batch:
-        logging.warning("No valid rows prepared for DB upsert in this batch.")
-        return 0
-
-    inserted_count = 0
-    try:
-        with engine.connect() as connection:
-            with connection.begin(): # Start transaction
-                result = connection.execute(sqlalchemy.text(upsert_sql), prepared_batch)
-                # rowcount might be unreliable for multi-row inserts/upserts in some drivers/configs
-                inserted_count = len(prepared_batch) # Assume success for all rows in batch if no exception
-        logging.info(f"Attempted upsert for {len(prepared_batch)} records into {DB_TABLE}.")
-        return len(prepared_batch) # Return number attempted
-    except Exception as e:
-        logging.error(f"Error during batch upsert to Cloud SQL: {e}")
-        logging.error(f"Problematic batch (first generated ID): {prepared_batch[0].get(GENERATED_ID_COLUMN_NAME) if prepared_batch else 'N/A'}")
-        # Consider logging the full batch data if feasible and needed for debugging
-        return 0 # Indicate failure for this batch
-
-# --- Main Indexing Logic ---
 def run_indexer():
-    """Fetches data from BigQuery, generates embeddings, and stores in Cloud SQL using ROW_NUMBER() for ID."""
-    logging.info("Starting indexer job...")
-    logging.info(f"Fetching BQ Columns: {', '.join(ALL_BQ_COLUMNS_TO_FETCH)}")
-    logging.info(f"Generating unique ID using ROW_NUMBER() as '{GENERATED_ID_COLUMN_NAME}' (BIGINT PK in DB)")
-    logging.info(f"Embedding Text Columns: {', '.join(BQ_TEXT_COLUMNS)}")
-    logging.info(f"Target DB Table: {DB_TABLE}")
-    logging.info(f"Embedding Model: {MODEL_ID} ({EMBEDDING_DIMENSIONS} dims)")
+    """Fetches data from BigQuery, generates embeddings, and stores in Cloud SQL."""
+    logger.info("Starting indexer job...")
+    logger.info(f"Project ID: {config.PROJECT_ID}, Region: {config.REGION}")
+    logger.info(f"BigQuery source: {config.BQ_DATASET}.{config.BQ_TABLE}")
+    logger.info(f"Columns to fetch from BQ (and use for 'content_to_embed' in order): {', '.join(ALL_BQ_COLUMNS_TO_FETCH)}")
+    logger.info(f"Subset of columns for direct DB storage (metadata from TARGET_BQ_COLUMNS_DEFAULT): {', '.join(TARGET_BQ_COLUMNS)}")
+    logger.info(f"Cloud SQL target: {config.DB_HOST}:{config.DB_PORT}/{config.DB_NAME}, table: {config.DB_TABLE}")
+    logger.info(f"Embedding Model: {config.EMBEDDING_MODEL_NAME} ({config.EMBEDDING_DIMENSIONS} dims)")
+    logger.info(f"Batch sizes: BQ Page={config.BQ_BATCH_SIZE}, Embedding Request={config.EMBEDDING_BATCH_SIZE}")
 
     try:
-        create_table_if_not_exists(db_pool, DB_TABLE)
-    except Exception:
-        logging.error("Halting job due to inability to setup database table.")
+        database.init_db_connection_pool()
+        database.create_table_if_not_exists()
+    except Exception as e:
+        logger.error(f"Halting job due to inability to setup database: {e}")
         sys.exit(1)
 
-    # Construct BigQuery query: Select specified columns AND generate a row number
     select_cols_str = ", ".join([f"`{col}`" for col in ALL_BQ_COLUMNS_TO_FETCH])
-
-    # Using ROW_NUMBER() OVER(). No specific order guarantees absolute consistency
-    # across runs if underlying table data changes/shuffles without an ORDER BY,
-    # but ensures uniqueness within this query execution.
-    # Use `ORDER BY (SELECT NULL)` for potentially more stable (but still arbitrary) order in BQ.
-    # If a specific, stable order is crucial, add meaningful columns to ORDER BY.
     query = f"""
     SELECT
-        ROW_NUMBER() OVER() AS {GENERATED_ID_COLUMN_NAME},
+        ROW_NUMBER() OVER() AS {config.GENERATED_ID_COLUMN_NAME},
         {select_cols_str}
     FROM
-        `{PROJECT_ID}.{BQ_DATASET}.{BQ_TABLE}`
+        `{config.PROJECT_ID}.{config.BQ_DATASET}.{config.BQ_TABLE}`
     """
 
-    logging.info(f"Executing BigQuery query")
-
+    logger.info("Executing BigQuery query...")
     try:
         query_job = bq_client.query(query)
-        rows_iterator = query_job.result(page_size=BATCH_SIZE_BQ)
+        rows_iterator = query_job.result(page_size=config.BQ_BATCH_SIZE)
+        logger.info("BigQuery query submitted successfully, iterating results.")
     except Exception as e:
-        logging.error(f"Error executing BigQuery query: {e}")
+        logger.error(f"Error executing BigQuery query: {e}")
         sys.exit(1)
 
-    processed_count = 0
-    total_upserted_estimate = 0
-    batch_for_embedding = []
+    processed_bq_rows_count = 0
+    total_upserted_count = 0
+    batch_for_embedding_processing = []
 
-    for row in rows_iterator:
-        processed_count += 1
+    for row_idx, row_data in enumerate(rows_iterator):
+        processed_bq_rows_count += 1
 
-        # 1. Extract the Generated Unique ID
         try:
-            # The ID is generated by ROW_NUMBER() and aliased
-            item_id = str(row[GENERATED_ID_COLUMN_NAME])
-            if not item_id: # Should not happen with ROW_NUMBER unless row is None
-                 raise ValueError("Generated ID is missing or empty")
+            item_id_val = row_data[config.GENERATED_ID_COLUMN_NAME]
+            if item_id_val is None:
+                 raise ValueError("Generated ID is missing or null")
+            item_id_str = str(item_id_val)
         except (KeyError, TypeError, ValueError) as e:
-            logging.warning(f"Skipping row number {processed_count}: Cannot find or convert generated ID '{GENERATED_ID_COLUMN_NAME}'. Error: {e}. Row data: {dict(row)}")
+            logger.warning(f"Skipping BQ row number {processed_bq_rows_count} (iterator index {row_idx}): Cannot get generated ID '{config.GENERATED_ID_COLUMN_NAME}'. Error: {e}. Row keys: {list(row_data.keys()) if row_data else 'None'}")
             continue
 
-        # 2. Construct Text for Embedding
-        text_parts = []
-        for col_name_for_embed in BQ_TEXT_COLUMNS:
-            # Use row.get() which your debug logs confirmed works correctly.
-            value_from_row = row.get(col_name_for_embed)
+        # 1. Construct 'content_to_embed'
+        content_parts = []
+        for col_name in ALL_BQ_COLUMNS_TO_FETCH:
+            value = row_data.get(col_name)
+            formatted_value = format_bq_value_for_embedding(value)
+            content_parts.append(f"{col_name}: {formatted_value}")
+        current_text_to_embed = "; ".join(content_parts)
 
-            if value_from_row is not None:
-                # This will append the string value. If value_from_row is an empty string "",
-                # it will be appended as such, which matches the intent of your
-                # original commented logic: "Current logic appends even if
-                # row[col_name_for_embed] is an empty string """
-                text_parts.append(str(value_from_row))
-            # Optional: Add an else with logging here if you want to know when a BQ_TEXT_COLUMN
-            # specifically yields None (either key not found, or value is SQL NULL).
-            # else:
-            #     if row_num < 3: # To avoid excessive logging
-            #         logging.info(f"ID {item_id}: Column '{col_name_for_embed}' from BQ_TEXT_COLUMNS was None or not found using .get(). Skipping for text_parts.")
-
-        text_to_embed = " ".join(text_parts).strip()
-
-        if not text_to_embed:
-            logging.warning(f"Skipping row with generated ID {item_id} due to empty text for embedding (from columns: {BQ_TEXT_COLUMNS}).")
+        if not current_text_to_embed.strip():
+            logger.warning(f"Skipping row with ID {item_id_str} due to empty 'content_to_embed'. Original parts: {content_parts}")
             continue
 
-        # 3. Extract Metadata (Specific Columns) with Type Casting
-        metadata = {}
+        # 2. Extract Metadata for discrete SQL columns using TARGET_BQ_COLUMNS
+        current_metadata_for_sql = {}
         try:
-            # Use safe_cast for numeric types
-            metadata['rank'] = safe_cast(row.get('rank'), int) if 'rank' in TARGET_BQ_COLUMNS else None
-            metadata['rating'] = safe_cast(row.get('rating'), float) if 'rating' in TARGET_BQ_COLUMNS else None
-            metadata['year'] = safe_cast(row.get('year'), int) if 'year' in TARGET_BQ_COLUMNS else None
-            # Text fields (handle None but keep as string)
-            metadata['title'] = str(row.get('title')) if row.get('title') is not None and 'title' in TARGET_BQ_COLUMNS else None
-            metadata['description'] = str(row.get('description')) if row.get('description') is not None and 'description' in TARGET_BQ_COLUMNS else None
-            metadata['genre'] = str(row.get('genre')) if row.get('genre') is not None and 'genre' in TARGET_BQ_COLUMNS else None
-
-            # Only include keys that are actually in TARGET_BQ_COLUMNS to avoid None pollution
-            metadata = {k: v for k, v in metadata.items() if k in TARGET_BQ_COLUMNS}
-
+            for target_col in TARGET_BQ_COLUMNS:
+                raw_value = row_data.get(target_col)
+                if target_col == 'rank': current_metadata_for_sql['rank'] = safe_cast(raw_value, int)
+                elif target_col == 'rating': current_metadata_for_sql['rating'] = safe_cast(raw_value, float)
+                elif target_col == 'year': current_metadata_for_sql['year'] = safe_cast(raw_value, int)
+                # For text fields, ensure they are strings or None.
+                elif target_col in ['title', 'description', 'genre']:
+                    current_metadata_for_sql[target_col] = str(raw_value) if raw_value is not None else None
+                else:
+                    current_metadata_for_sql[target_col] = str(raw_value) if raw_value is not None else None
         except Exception as e:
-             logging.warning(f"Error processing metadata for generated ID {item_id}. Skipping row. Error: {e}. Row data: {dict(row)}")
+             logger.warning(f"Error processing metadata for ID {item_id_str}. Skipping row. Error: {e}. Row data sample: {dict(list(row_data.items())[:3])}")
              continue
 
-        batch_for_embedding.append({
-            "id": item_id, # Store the generated ID (as string for now)
-            "text_to_embed": text_to_embed,
-            "metadata": metadata,
-            "embedding": None # Placeholder for embedding
+        batch_for_embedding_processing.append({
+            "id": item_id_str,
+            "text_to_embed": current_text_to_embed,
+            "metadata": current_metadata_for_sql,
+            "embedding": None
         })
 
-        # 4. Process batch when full
-        if len(batch_for_embedding) >= BATCH_SIZE_EMBEDDING:
-            logging.info(f"Processing embedding batch of size {len(batch_for_embedding)}...")
-            texts = [item["text_to_embed"] for item in batch_for_embedding]
-            embeddings = get_embeddings_batch(texts)
+        # 3. Process batch for embeddings when full
+        if len(batch_for_embedding_processing) >= config.EMBEDDING_BATCH_SIZE:
+            texts_for_api = [item["text_to_embed"] for item in batch_for_embedding_processing]
+            logger.info(f"Requesting embeddings for batch of {len(texts_for_api)} texts (Total BQ rows: {processed_bq_rows_count})...")
+            embeddings_list_result = get_embeddings_batch_vertexai(texts_for_api, config.EMBEDDING_MODEL_NAME)
 
-            if embeddings and len(embeddings) == len(batch_for_embedding):
-                for i, item in enumerate(batch_for_embedding):
-                    item["embedding"] = embeddings[i]
-                total_upserted_estimate += upsert_batch_to_db(db_pool, batch_for_embedding)
+            if embeddings_list_result and len(embeddings_list_result) == len(batch_for_embedding_processing):
+                for i, item in enumerate(batch_for_embedding_processing):
+                    item["embedding"] = embeddings_list_result[i]
+                upserted_in_batch = database.upsert_batch_to_db(batch_for_embedding_processing)
+                total_upserted_count += upserted_in_batch
             else:
-                logging.error(f"Failed to get embeddings or mismatch for batch starting with generated ID {batch_for_embedding[0]['id']}. Skipping DB insert for this batch.")
+                logger.error(f"Failed to get embeddings or length mismatch for batch (ID {batch_for_embedding_processing[0]['id']}). Expected {len(batch_for_embedding_processing)}, got {len(embeddings_list_result) if embeddings_list_result else 'None'}. Skipping DB insert.")
+            batch_for_embedding_processing = []
 
-            batch_for_embedding = [] # Clear batch
+        if processed_bq_rows_count % (config.BQ_BATCH_SIZE * 2) == 0:
+             logger.info(f"Processed {processed_bq_rows_count} BQ rows. Approx {total_upserted_count} records upserted.")
 
-        if processed_count % (BATCH_SIZE_BQ * 5) == 0: # Log progress less frequently
-             logging.info(f"Processed {processed_count} rows from BigQuery...")
+    # 4. Process any remaining items in the last batch
+    if batch_for_embedding_processing:
+        texts_for_api = [item["text_to_embed"] for item in batch_for_embedding_processing]
+        logger.info(f"Requesting embeddings for final batch of {len(texts_for_api)} texts...")
+        embeddings_list_result = get_embeddings_batch_vertexai(texts_for_api, config.EMBEDDING_MODEL_NAME)
 
-    # 5. Process any remaining items in the last batch
-    if batch_for_embedding:
-        logging.info(f"Processing final embedding batch of size {len(batch_for_embedding)}...")
-        texts = [item["text_to_embed"] for item in batch_for_embedding]
-        embeddings = get_embeddings_batch(texts)
-
-        if embeddings and len(embeddings) == len(batch_for_embedding):
-            for i, item in enumerate(batch_for_embedding):
-                item["embedding"] = embeddings[i]
-            total_upserted_estimate += upsert_batch_to_db(db_pool, batch_for_embedding)
+        if embeddings_list_result and len(embeddings_list_result) == len(batch_for_embedding_processing):
+            for i, item in enumerate(batch_for_embedding_processing):
+                item["embedding"] = embeddings_list_result[i]
+            upserted_in_batch = database.upsert_batch_to_db(batch_for_embedding_processing)
+            total_upserted_count += upserted_in_batch
         else:
-             logging.error(f"Failed to get embeddings or mismatch for final batch starting with generated ID {batch_for_embedding[0]['id']}. Skipping DB insert for this batch.")
+            logger.error(f"Failed to get embeddings or mismatch for final batch (ID {batch_for_embedding_processing[0]['id']}). Skipping DB insert.")
 
-    logging.info(f"Indexer job finished. Processed {processed_count} rows from BigQuery.")
-    logging.info(f"Attempted to upsert approx {total_upserted_estimate} records into Cloud SQL table '{DB_TABLE}'. Check logs for any batch errors.")
+    logger.info(f"Indexer job finished. Processed {processed_bq_rows_count} rows from BigQuery.")
+    logger.info(f"Total records attempted for upsert into Cloud SQL table '{config.DB_TABLE}': {total_upserted_count}.")
 
-    if db_pool:
-        db_pool.dispose()
-        logging.info("Database connection pool disposed.")
+    database.dispose_db_pool() # Dispose pool at the end of successful run or before exit
 
 if __name__ == "__main__":
+    job_task_index = os.environ.get("CLOUD_RUN_TASK_INDEX", "N/A")
+    job_attempt = os.environ.get("CLOUD_RUN_TASK_ATTEMPT", "N/A")
+    logger.info(f"Cloud Run Job: Task Index {job_task_index}, Attempt {job_attempt}.")
+
     try:
         run_indexer()
+        logger.info("Indexer run completed successfully.")
         sys.exit(0)
     except SystemExit as e:
+        logger.info(f"Indexer run exited with code {e.code}.")
+        database.dispose_db_pool()
         sys.exit(e.code)
     except Exception as e:
-        logging.exception(f"Unhandled error during indexer execution: {e}")
+        logger.exception(f"Unhandled error during indexer execution on Task {job_task_index}, Attempt {job_attempt}: {e}")
+        database.dispose_db_pool()
         sys.exit(1)

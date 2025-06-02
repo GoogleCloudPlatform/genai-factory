@@ -14,7 +14,7 @@
 
 module "cloud_run_ingestion" {
   source              = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/cloud-run-v2"
-  project_id          = var.project_id
+  project_id          = var.project_config.id
   name                = "${var.name}-ingestion"
   region              = var.region
   create_job          = true
@@ -53,16 +53,9 @@ module "cloud_run_ingestion" {
     max_instance_count         = var.cloud_run_configs.ingestion.max_instance_count
     tags                       = var.cloud_run_configs.ingestion.vpc_access_tags
     vpc_access = {
-      egress = var.cloud_run_configs.ingestion.vpc_access_egress
-      network = (var.networking_config.create
-        ? module.vpc[0].id
-        : var.networking_config.vpc_id
-      )
-      subnet = (
-        var.networking_config.create
-        ? module.vpc[0].subnet_ids["${var.region}/${var.networking_config.subnet_id}"]
-        : var.networking_config.subnet_id
-      )
+      egress  = var.cloud_run_configs.ingestion.vpc_access_egress
+      network = local.vpc_id
+      subnet  = local.subnet_id
     }
   }
 }
@@ -73,7 +66,7 @@ resource "google_cloud_scheduler_job" "ingestion_scheduler" {
   schedule         = var.ingestion_schedule_configs.schedule
   attempt_deadline = var.ingestion_schedule_configs.attempt_deadline
   region           = var.region
-  project          = var.project_id
+  project          = var.project_config.id
 
   retry_config {
     retry_count = var.ingestion_schedule_configs.retry_count
@@ -81,7 +74,7 @@ resource "google_cloud_scheduler_job" "ingestion_scheduler" {
 
   http_target {
     http_method = "POST"
-    uri         = "https://${var.region}-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/${var.project_id}/jobs/${module.cloud_run_ingestion.job.name}:run"
+    uri         = "https://${var.region}-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/${var.project_config.id}/jobs/${module.cloud_run_ingestion.job.name}:run"
 
     oauth_token {
       service_account_email = var.service_accounts["project/gf-rrag-ing-sched-0"].email

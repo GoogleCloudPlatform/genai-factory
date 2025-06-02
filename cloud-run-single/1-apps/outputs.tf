@@ -20,19 +20,27 @@ output "commands" {
 
   gcloud run deploy ${var.name} \
     --source ./apps/chat \
-    --set-env-vars PROJECT_ID=${var.project_id} \
+    --set-env-vars PROJECT_ID=${var.project_config.id} \
     --set-env-vars REGION=${var.region} \
-    --project ${var.project_id} \
+    --project ${var.project_config.id} \
     --region ${var.region} \
     --build-service-account ${var.service_accounts["project/gf-srun-build-0"].id} \
     --quiet
   EOT
 }
 
-output "ip_address" {
-  description = "The load balancer IP address."
-  value = (var.ip_address == null
-    ? google_compute_global_address.address[0].address
-    : var.ip_address
-  )
+output "ip_addresses" {
+  description = "The load balancers IP addresses."
+  value = {
+    external = (
+      var.lbs_config.external.enable
+      ? module.lb_external[0].address[""]
+      : null
+    )
+    internal = (
+      var.lbs_config.internal.enable
+      ? module.lb_internal[0].address[""]
+      : null
+    )
+  }
 }

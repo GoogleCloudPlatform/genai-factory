@@ -18,48 +18,53 @@ name: gf-rrag-0
 
 # Enable APIs
 services:
+  # Needed both for ILB and ELB
   - aiplatform.googleapis.com
   - artifactregistry.googleapis.com
   - bigquery.googleapis.com
   - cloudbuild.googleapis.com
   - cloudresourcemanager.googleapis.com
   - cloudscheduler.googleapis.com
+  - compute.googleapis.com
   - dns.googleapis.com
   - run.googleapis.com
   - sqladmin.googleapis.com
+  # Needed for ILB only
+  - certificatemanager.googleapis.com
+  - privateca.googleapis.com
 
-# Create application SAs
-service_accounts:
-  gf-rrag-fe-0:
-    iam:
-      roles/iam.serviceAccountUser:
-        - automation/rw
-  gf-rrag-fe-build-0:
-  gf-rrag-ing-0:
-    iam:
-      roles/iam.serviceAccountUser:
-        - automation/rw
-  gf-rrag-ing-build-0:
-  gf-rrag-ing-sched-0:
-    iam:
-      roles/iam.serviceAccountUser:
-        - automation/rw
-
-# Define buckets and SAs for automation
-automation:
-  service_accounts:
-    rw:
-  bucket:
+buckets:
+  iac-state:
     description: Terraform state bucket
     iam:
       roles/storage.objectAdmin:
-        - automation/rw
+        - iac-rw
       roles/storage.objectViewer:
-        - automation/rw
+        - iac-rw
+
+service_accounts:
+  # Automation SAs
+  iac-rw:
+    iam_sa_roles:
+      gf-rrag-fe-0:
+        - roles/iam.serviceAccountUser
+      gf-rrag-ing-0:
+        - roles/iam.serviceAccountUser
+      gf-rrag-ing-sched-0:
+        - roles/iam.serviceAccountUser
+  # Application SAs
+  gf-rrag-fe-0: {}
+  gf-rrag-fe-build-0: {}
+  gf-rrag-ing-0: {}
+  gf-rrag-ing-build-0: {}
+  gf-rrag-ing-sched-0: {}
 
 # Grant roles
+iam:
+  roles/privateca.certificateRequester:
+    - certificatemanager
 iam_by_principals:
-  automation/rw:
+  iac-rw:
     - roles/bigquery.admin
     - roles/cloudscheduler.admin
     - roles/cloudsql.admin
@@ -68,12 +73,16 @@ iam_by_principals:
     - roles/compute.securityAdmin
     - roles/dns.admin
     - roles/run.admin
+    # Needed for ILB only
+    - roles/certificatemanager.owner
+    - roles/privateca.admin
   gf-rrag-fe-0:
     - roles/cloudsql.client
     - roles/cloudsql.instanceUser
   gf-rrag-fe-build-0:
     - roles/artifactregistry.writer
     - roles/cloudbuild.builds.editor
+    - roles/logging.logWriter
     - roles/run.admin
     - roles/storage.admin
     - roles/storage.objectCreator
@@ -86,6 +95,7 @@ iam_by_principals:
   gf-rrag-ing-build-0:
     - roles/artifactregistry.writer
     - roles/cloudbuild.builds.editor
+    - roles/logging.logWriter
     - roles/run.admin
     - roles/storage.admin
     - roles/storage.objectCreator
