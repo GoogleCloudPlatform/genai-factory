@@ -9,6 +9,12 @@ You can refer to the [YAML project configuration](data/project.yaml) for more de
 ## Configurations
 
 The behavior of this module is controlled by the `project_config` variable. This variable allows for different scenarios regarding project creation and management, as described in the [main README](../../README.md).
+
+## Usage
+
+* Create your own `terraform.tfvars` file based on the `terraform.tfvars.sample provided` file
+* Run `terraform apply` to create the resources of your RAG application
+
 <!-- BEGIN TFDOC -->
 ## Variables
 

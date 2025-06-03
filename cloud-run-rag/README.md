@@ -4,6 +4,8 @@ The module deploys a "Retrieval-Augmented Generation" (RAG) system, leveraging C
 
 A Cloud Run job periodically ingests sample [movies data](./data/top-100-imdb-movies.csv) from BigQuery, creates embeddings and stores them in a Cloud SQL database (with pgvector). Another Cloud Run frontend application leverages the text embeddings from the Cloud SQL database and answers questions on these movies in json format.
 
+## Architecture
+
 <p align="center">
   <img src="diagram.png" alt="Components diagram">
 </p>
@@ -24,3 +26,8 @@ The deployment includes
 
 - By default, a **VPC**, a subnet, private Google APIs routes and DNS policies. Optionally, can use your existing VPCs.
 - By default, a **project** with all the necessary permissions. Optionally, can use your existing project.
+
+## Usage
+
+* Go to the `0-projects` folder and follow the instructions to setup your GCP project, service accounts and permissions
+* Then go to the `1-apps` folder and follow the instructions to deploy this solution

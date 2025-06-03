@@ -11,6 +11,13 @@ Once ran, the terraform module prints the commands required to deploy the applic
 <p align="center">
   <img src="../diagram.png" alt="Components diagram">
 </p>
+
+## Usage
+
+* Create your own `terraform.tfvars` file based on the `terraform.tfvars.sample provided` file
+* Run `terraform apply` to create the resources of your RAG application
+* Run `terraform output` to get a set of commands. You will need to run them once the terraform successfully applied.
+
 <!-- BEGIN TFDOC -->
 ## Variables
 
