@@ -57,6 +57,7 @@ except ImportError:
   sys.path.append(str(BASEDIR / 'tests'))
   from utils import get_tftest_directive
 
+
 __version__ = '2.1.0'
 
 # TODO(ludomagno): decide if we want to support variables*.tf and outputs*.tf
