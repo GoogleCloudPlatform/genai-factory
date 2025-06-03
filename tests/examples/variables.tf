@@ -15,46 +15,57 @@
 # common variables used for examples
 
 variable "bucket" {
+  tyep    = string
   default = "bucket"
 }
 
 variable "billing_account_id" {
+  tyep    = string
   default = "123456-123456-123456"
 }
 
 variable "ca_pool_id" {
+  tyep    = string
   default = "ca-pool-id"
 }
 
 variable "group_email" {
+  tyep    = string
   default = "organization-admins@example.org"
 }
 
 variable "organization_id" {
+  tyep    = string
   default = "organizations/1122334455"
 }
 
 variable "folder_id" {
+  tyep    = string
   default = "folders/1122334455"
 }
 
 variable "prefix" {
+  tyep    = string
   default = "test"
 }
 
 variable "project_id" {
+  tyep    = string
   default = "project-id"
 }
 
 variable "project_number" {
+  tyep    = string
   default = "123"
 }
 
 variable "region" {
+  tyep    = string
   default = "europe-west1"
 }
 
 variable "regions" {
+  tyep = map(string)
   default = {
     primary   = "europe-west1"
     secondary = "europe-west8"
@@ -62,6 +73,7 @@ variable "regions" {
 }
 
 variable "service_account" {
+  tyep = map(string)
   default = {
     id        = "service_account_id"
     email     = "sa1@sa.example"
@@ -70,6 +82,7 @@ variable "service_account" {
 }
 
 variable "subnet" {
+  tyep = map(string)
   default = {
     name      = "subnet_name"
     region    = "subnet_region"
@@ -79,6 +92,7 @@ variable "subnet" {
 }
 
 variable "subnets" {
+  tyep = map(string)
   default = {
     primary = {
       name      = "primary"
@@ -98,6 +112,7 @@ variable "subnets" {
 }
 
 variable "subnet_psc_1" {
+  tyep = map(string)
   default = {
     name      = "subnet_name"
     region    = "subnet_region"
@@ -107,6 +122,7 @@ variable "subnet_psc_1" {
 }
 
 variable "subnet_psc_2" {
+  tyep = map(string)
   default = {
     name      = "subnet_name"
     region    = "subnet_region"
@@ -116,6 +132,7 @@ variable "subnet_psc_2" {
 }
 
 variable "subnet1" {
+  tyep = map(string)
   default = {
     name      = "subnet_name"
     region    = "subnet_region"
@@ -125,6 +142,7 @@ variable "subnet1" {
 }
 
 variable "subnet2" {
+  tyep = map(string)
   default = {
     name      = "subnet_name"
     region    = "subnet_region"
@@ -134,6 +152,7 @@ variable "subnet2" {
 }
 
 variable "vpc" {
+  tyep = map(string)
   default = {
     name      = "vpc-name"
     self_link = "projects/xxx/global/networks/aaa"
@@ -142,6 +161,7 @@ variable "vpc" {
 }
 
 variable "vpc1" {
+  tyep = string
   default = {
     name      = "vpc-name"
     self_link = "projects/xxx/global/networks/bbb"
@@ -149,6 +169,7 @@ variable "vpc1" {
 }
 
 variable "vpc2" {
+  tyep = string
   default = {
     name      = "vpc2-name"
     self_link = "projects/xxx/global/networks/ccc"
@@ -156,5 +177,6 @@ variable "vpc2" {
 }
 
 variable "zone" {
+  tyep    = string
   default = "zone"
 }
