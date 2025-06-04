@@ -50,22 +50,22 @@ variable "enable_deletion_protection" {
 variable "lbs_config" {
   description = "The load balancers configuration."
   type = object({
-    external = object({
+    external = optional(object({
       enable = optional(bool, true)
       # The optional load balancer IP address.
       # If not specified, the module will create one.
       ip_address        = optional(string)
       domain            = optional(string, "example.com")
       allowed_ip_ranges = optional(list(string), ["0.0.0.0/0"])
-    })
-    internal = object({
+    }), {})
+    internal = optional(object({
       enable = optional(bool, false)
       # The optional load balancer IP address.
       # If not specified, the module will create one.
       ip_address        = optional(string)
       domain            = optional(string, "example.com")
       allowed_ip_ranges = optional(list(string), ["0.0.0.0/0"])
-    })
+    }), {})
   })
   nullable = false
   default = {

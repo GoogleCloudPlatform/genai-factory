@@ -13,6 +13,62 @@
 # limitations under the License.
 
 values:
+  google_cloud_scheduler_job.ingestion_scheduler:
+    app_engine_http_target: []
+    attempt_deadline: 60s
+    description: Scheduler to periodically trigger the data ingestion.
+    http_target:
+    - body: null
+      headers: null
+      http_method: POST
+      oauth_token:
+      - scope: null
+        service_account_email: gf-rrag-ing-sched-0@prefix-gf-rrag-0.iam.gserviceaccount.com
+      oidc_token: []
+      uri: https://europe-west1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/prefix-gf-rrag-0/jobs/gf-rrag-0-ingestion:run
+    name: gf-rrag-0
+    project: prefix-gf-rrag-0
+    pubsub_target: []
+    region: europe-west1
+    retry_config:
+    - retry_count: 3
+    schedule: '*/30 * * * *'
+    time_zone: Etc/UTC
+    timeouts: null
+  google_compute_address.cloudsql_address:
+    address_type: INTERNAL
+    description: null
+    effective_labels:
+      goog-terraform-provisioned: 'true'
+    ip_version: null
+    ipv6_endpoint_type: null
+    labels: null
+    name: gf-rrag-0
+    network: null
+    project: prefix-gf-rrag-0
+    region: europe-west1
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
+    timeouts: null
+  google_compute_forwarding_rule.cloudsql_psc_endpoint:
+    all_ports: null
+    allow_global_access: null
+    allow_psc_global_access: null
+    backend_service: null
+    description: null
+    ip_collection: null
+    is_mirroring_collector: null
+    labels: null
+    load_balancing_scheme: ''
+    name: gf-rrag-0
+    no_automate_dns_zone: null
+    ports: null
+    project: prefix-gf-rrag-0
+    recreate_closed_psc: false
+    region: europe-west1
+    service_label: null
+    source_ip_ranges: null
+    timeouts: null
   google_compute_global_address.address_external[0]:
     address_type: null
     description: null
@@ -20,9 +76,9 @@ values:
       goog-terraform-provisioned: 'true'
     ip_version: null
     labels: null
-    name: gf-srun-0-external
+    name: gf-rrag-0-external
     network: null
-    project: your-project
+    project: prefix-gf-rrag-0
     purpose: null
     terraform_labels:
       goog-terraform-provisioned: 'true'
@@ -30,8 +86,8 @@ values:
   google_compute_security_policy.security_policy_external[0]:
     adaptive_protection_config: []
     description: null
-    name: gf-srun-0-external
-    project: your-project
+    name: gf-rrag-0-external
+    project: prefix-gf-rrag-0
     recaptcha_options_config: []
     rule:
     - action: allow
@@ -63,7 +119,60 @@ values:
       rate_limit_options: []
       redirect_options: []
     timeouts: null
-  module.cloud_run.google_cloud_run_v2_service.service_unmanaged[0]:
+  google_dns_record_set.cloudsql_dns_record_set:
+    managed_zone: gf-rrag-0-cloudsql
+    project: prefix-gf-rrag-0
+    routing_policy: []
+    ttl: 300
+    type: A
+  module.bigquery-dataset.google_bigquery_dataset.default:
+    dataset_id: gf_rrag_0
+    default_encryption_configuration: []
+    default_partition_expiration_ms: null
+    default_table_expiration_ms: null
+    delete_contents_on_destroy: false
+    description: Terraform managed.
+    effective_labels:
+      goog-terraform-provisioned: 'true'
+    external_catalog_dataset_options: []
+    external_dataset_reference: []
+    friendly_name: null
+    labels: null
+    location: EU
+    max_time_travel_hours: '168'
+    project: prefix-gf-rrag-0
+    resource_tags: null
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
+    timeouts: null
+  module.bigquery-dataset.google_bigquery_table.default["gf_rrag_0"]:
+    biglake_configuration: []
+    clustering: null
+    dataset_id: gf_rrag_0
+    deletion_protection: true
+    description: Terraform managed.
+    effective_labels:
+      goog-terraform-provisioned: 'true'
+    encryption_configuration: []
+    external_catalog_table_options: []
+    external_data_configuration: []
+    friendly_name: gf_rrag_0
+    labels: null
+    materialized_view: []
+    project: prefix-gf-rrag-0
+    range_partitioning: []
+    require_partition_filter: null
+    resource_tags: null
+    schema_foreign_type_info: []
+    table_constraints: []
+    table_id: gf_rrag_0
+    table_metadata_view: null
+    table_replication_info: []
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
+    time_partitioning: []
+    view: []
+  module.cloud_run_frontend.google_cloud_run_v2_service.service_unmanaged[0]:
     annotations: null
     binary_authorization: []
     build_config: []
@@ -80,12 +189,22 @@ values:
     invoker_iam_disabled: false
     labels: null
     location: europe-west1
-    name: gf-srun-0
-    project: your-project
+    name: gf-rrag-0-frontend
+    project: prefix-gf-rrag-0
     scaling: []
     template:
     - annotations: null
       containers:
+      - base_image_uri: null
+        command:
+        - /cloud-sql-proxy
+        depends_on: null
+        env: []
+        image: gcr.io/cloud-sql-connectors/cloud-sql-proxy
+        liveness_probe: []
+        name: cloud-sql-proxy
+        volume_mounts: []
+        working_dir: null
       - args: null
         base_image_uri: null
         command: null
@@ -93,7 +212,9 @@ values:
         env: []
         image: us-docker.pkg.dev/cloudrun/container/hello
         liveness_probe: []
-        name: ai
+        name: frontend
+        ports:
+        - container_port: 8080
         volume_mounts: []
         working_dir: null
       encryption_key: null
@@ -105,26 +226,177 @@ values:
       scaling:
       - max_instance_count: 3
         min_instance_count: null
-      service_account: gf-srun-0@prefix-gf-srun-0.iam.gserviceaccount.com
+      service_account: gf-rrag-fe-0@prefix-gf-rrag-0.iam.gserviceaccount.com
       service_mesh: []
       session_affinity: null
       volumes: []
     terraform_labels:
       goog-terraform-provisioned: 'true'
     timeouts: null
-  module.cloud_run.google_cloud_run_v2_service_iam_binding.binding["roles/run.invoker"]:
+  module.cloud_run_frontend.google_cloud_run_v2_service_iam_binding.binding["roles/run.invoker"]:
     condition: []
     location: europe-west1
     members: null
-    name: gf-srun-0
-    project: your-project
+    name: gf-rrag-0-frontend
+    project: prefix-gf-rrag-0
     role: roles/run.invoker
+  module.cloud_run_ingestion.google_cloud_run_v2_job.job_unmanaged[0]:
+    annotations: null
+    binary_authorization: []
+    client: null
+    client_version: null
+    deletion_protection: true
+    effective_labels:
+      goog-terraform-provisioned: 'true'
+    labels: null
+    location: europe-west1
+    name: gf-rrag-0-ingestion
+    project: prefix-gf-rrag-0
+    run_execution_token: null
+    start_execution_token: null
+    template:
+    - annotations: null
+      labels: null
+      template:
+      - containers:
+        - command:
+          - /cloud-sql-proxy
+          env: []
+          image: gcr.io/cloud-sql-connectors/cloud-sql-proxy
+          name: cloudsql-proxy
+          ports: []
+          volume_mounts: []
+          working_dir: null
+        - args: null
+          command: null
+          env: []
+          image: us-docker.pkg.dev/cloudrun/container/hello
+          name: ingestion
+          ports: []
+          volume_mounts: []
+          working_dir: null
+        encryption_key: null
+        max_retries: 3
+        service_account: gf-rrag-ing-0@prefix-gf-rrag-0.iam.gserviceaccount.com
+        volumes: []
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
+    timeouts: null
+  module.cloud_run_ingestion.google_cloud_run_v2_job_iam_binding.binding["roles/run.invoker"]:
+    condition: []
+    location: europe-west1
+    members:
+    - serviceAccount:gf-rrag-ing-sched-0@prefix-gf-rrag-0.iam.gserviceaccount.com
+    name: gf-rrag-0-ingestion
+    project: prefix-gf-rrag-0
+    role: roles/run.invoker
+  module.cloudsql.google_sql_database.databases["gf-rrag-0"]:
+    deletion_policy: DELETE
+    instance: gf-rrag-0
+    name: gf-rrag-0
+    project: prefix-gf-rrag-0
+    timeouts: null
+  module.cloudsql.google_sql_database_instance.primary:
+    clone: []
+    database_version: POSTGRES_14
+    deletion_protection: true
+    name: gf-rrag-0
+    project: prefix-gf-rrag-0
+    region: europe-west1
+    restore_backup_context: []
+    root_password: null
+    settings:
+    - activation_policy: ALWAYS
+      active_directory_config: []
+      advanced_machine_features: []
+      availability_type: REGIONAL
+      collation: null
+      database_flags:
+      - name: cloudsql.iam_authentication
+        value: 'on'
+      deletion_protection_enabled: true
+      deny_maintenance_period: []
+      disk_autoresize: true
+      disk_autoresize_limit: 0
+      disk_type: PD_SSD
+      edition: ENTERPRISE
+      enable_dataplex_integration: null
+      enable_google_ml_integration: null
+      ip_configuration:
+      - allocated_ip_range: null
+        authorized_networks: []
+        custom_subject_alternative_names: null
+        enable_private_path_for_google_cloud_services: false
+        ipv4_enabled: false
+        private_network: null
+        psc_config:
+        - allowed_consumer_projects:
+          - prefix-gf-rrag-0
+          psc_auto_connections: []
+          psc_enabled: true
+        server_ca_pool: null
+      maintenance_window: []
+      password_validation_policy: []
+      pricing_plan: PER_USE
+      retain_backups_on_delete: null
+      sql_server_audit_config: []
+      tier: db-f1-micro
+      time_zone: null
+    timeouts: null
+  module.cloudsql.google_sql_user.users["gf-rrag-fe-0@prefix-gf-rrag-0.iam.gserviceaccount.com"]:
+    deletion_policy: null
+    instance: gf-rrag-0
+    name: gf-rrag-fe-0@prefix-gf-rrag-0.iam
+    password: null
+    password_policy: []
+    password_wo: null
+    password_wo_version: null
+    project: prefix-gf-rrag-0
+    timeouts: null
+    type: CLOUD_IAM_SERVICE_ACCOUNT
+  module.cloudsql.google_sql_user.users["gf-rrag-ing-0@prefix-gf-rrag-0.iam.gserviceaccount.com"]:
+    deletion_policy: null
+    instance: gf-rrag-0
+    name: gf-rrag-ing-0@prefix-gf-rrag-0.iam
+    password: null
+    password_policy: []
+    password_wo: null
+    password_wo_version: null
+    project: prefix-gf-rrag-0
+    timeouts: null
+    type: CLOUD_IAM_SERVICE_ACCOUNT
+  module.cloudsql.random_password.passwords["gf-rrag-fe-0@prefix-gf-rrag-0.iam.gserviceaccount.com"]:
+    keepers: null
+    length: 16
+    lower: true
+    min_lower: 1
+    min_numeric: 1
+    min_special: 1
+    min_upper: 1
+    number: true
+    numeric: true
+    override_special: null
+    special: true
+    upper: true
+  module.cloudsql.random_password.passwords["gf-rrag-ing-0@prefix-gf-rrag-0.iam.gserviceaccount.com"]:
+    keepers: null
+    length: 16
+    lower: true
+    min_lower: 1
+    min_numeric: 1
+    min_special: 1
+    min_upper: 1
+    number: true
+    numeric: true
+    override_special: null
+    special: true
+    upper: true
   module.dns_policy_googleapis[0].google_dns_response_policy.default[0]:
     description: Terraform managed.
     gke_clusters: []
     networks:
     - {}
-    project: your-project
+    project: prefix-gf-rrag-0
     response_policy_name: googleapis
     timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["accounts"]:
@@ -137,7 +409,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-project
+    project: prefix-gf-rrag-0
     response_policy: googleapis
     rule_name: accounts
     timeouts: null
@@ -151,7 +423,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-project
+    project: prefix-gf-rrag-0
     response_policy: googleapis
     rule_name: aiplatform-notebook-cloud-all
     timeouts: null
@@ -165,7 +437,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-project
+    project: prefix-gf-rrag-0
     response_policy: googleapis
     rule_name: aiplatform-notebook-gu-all
     timeouts: null
@@ -179,7 +451,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-project
+    project: prefix-gf-rrag-0
     response_policy: googleapis
     rule_name: backupdr-cloud
     timeouts: null
@@ -193,7 +465,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-project
+    project: prefix-gf-rrag-0
     response_policy: googleapis
     rule_name: backupdr-cloud-all
     timeouts: null
@@ -207,7 +479,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-project
+    project: prefix-gf-rrag-0
     response_policy: googleapis
     rule_name: backupdr-gu
     timeouts: null
@@ -221,7 +493,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-project
+    project: prefix-gf-rrag-0
     response_policy: googleapis
     rule_name: backupdr-gu-all
     timeouts: null
@@ -235,7 +507,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-project
+    project: prefix-gf-rrag-0
     response_policy: googleapis
     rule_name: cloudfunctions
     timeouts: null
@@ -249,7 +521,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-project
+    project: prefix-gf-rrag-0
     response_policy: googleapis
     rule_name: cloudproxy
     timeouts: null
@@ -263,7 +535,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-project
+    project: prefix-gf-rrag-0
     response_policy: googleapis
     rule_name: composer-cloud-all
     timeouts: null
@@ -277,7 +549,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-project
+    project: prefix-gf-rrag-0
     response_policy: googleapis
     rule_name: composer-gu-all
     timeouts: null
@@ -291,7 +563,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-project
+    project: prefix-gf-rrag-0
     response_policy: googleapis
     rule_name: datafusion-all
     timeouts: null
@@ -305,7 +577,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-project
+    project: prefix-gf-rrag-0
     response_policy: googleapis
     rule_name: datafusion-gu-all
     timeouts: null
@@ -319,7 +591,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-project
+    project: prefix-gf-rrag-0
     response_policy: googleapis
     rule_name: dataproc
     timeouts: null
@@ -333,7 +605,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-project
+    project: prefix-gf-rrag-0
     response_policy: googleapis
     rule_name: dataproc-all
     timeouts: null
@@ -347,7 +619,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-project
+    project: prefix-gf-rrag-0
     response_policy: googleapis
     rule_name: dataproc-gu
     timeouts: null
@@ -361,7 +633,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-project
+    project: prefix-gf-rrag-0
     response_policy: googleapis
     rule_name: dataproc-gu-all
     timeouts: null
@@ -375,7 +647,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-project
+    project: prefix-gf-rrag-0
     response_policy: googleapis
     rule_name: dl
     timeouts: null
@@ -389,7 +661,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-project
+    project: prefix-gf-rrag-0
     response_policy: googleapis
     rule_name: gcr
     timeouts: null
@@ -403,7 +675,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-project
+    project: prefix-gf-rrag-0
     response_policy: googleapis
     rule_name: gcr-all
     timeouts: null
@@ -417,7 +689,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-project
+    project: prefix-gf-rrag-0
     response_policy: googleapis
     rule_name: gke-all
     timeouts: null
@@ -431,7 +703,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-project
+    project: prefix-gf-rrag-0
     response_policy: googleapis
     rule_name: googleapis-all
     timeouts: null
@@ -453,7 +725,7 @@ values:
         - '2600:2d00:2:2000::'
         ttl: null
         type: AAAA
-    project: your-project
+    project: prefix-gf-rrag-0
     response_policy: googleapis
     rule_name: googleapis-private
     timeouts: null
@@ -475,7 +747,7 @@ values:
         - '2600:2d00:2:1000::'
         ttl: null
         type: AAAA
-    project: your-project
+    project: prefix-gf-rrag-0
     response_policy: googleapis
     rule_name: googleapis-restricted
     timeouts: null
@@ -489,7 +761,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-project
+    project: prefix-gf-rrag-0
     response_policy: googleapis
     rule_name: gstatic-all
     timeouts: null
@@ -503,7 +775,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-project
+    project: prefix-gf-rrag-0
     response_policy: googleapis
     rule_name: kernels-gu
     timeouts: null
@@ -517,7 +789,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-project
+    project: prefix-gf-rrag-0
     response_policy: googleapis
     rule_name: kernels-gu-all
     timeouts: null
@@ -531,7 +803,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-project
+    project: prefix-gf-rrag-0
     response_policy: googleapis
     rule_name: ltsapis-all
     timeouts: null
@@ -545,7 +817,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-project
+    project: prefix-gf-rrag-0
     response_policy: googleapis
     rule_name: notebooks-all
     timeouts: null
@@ -559,7 +831,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-project
+    project: prefix-gf-rrag-0
     response_policy: googleapis
     rule_name: notebooks-gu-all
     timeouts: null
@@ -573,7 +845,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-project
+    project: prefix-gf-rrag-0
     response_policy: googleapis
     rule_name: packages-cloud
     timeouts: null
@@ -587,7 +859,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-project
+    project: prefix-gf-rrag-0
     response_policy: googleapis
     rule_name: packages-cloud-all
     timeouts: null
@@ -601,7 +873,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-project
+    project: prefix-gf-rrag-0
     response_policy: googleapis
     rule_name: pkgdev
     timeouts: null
@@ -615,7 +887,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-project
+    project: prefix-gf-rrag-0
     response_policy: googleapis
     rule_name: pkgdev-all
     timeouts: null
@@ -629,7 +901,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-project
+    project: prefix-gf-rrag-0
     response_policy: googleapis
     rule_name: pkigoog
     timeouts: null
@@ -643,7 +915,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-project
+    project: prefix-gf-rrag-0
     response_policy: googleapis
     rule_name: pkigoog-all
     timeouts: null
@@ -657,7 +929,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-project
+    project: prefix-gf-rrag-0
     response_policy: googleapis
     rule_name: run-all
     timeouts: null
@@ -671,7 +943,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-project
+    project: prefix-gf-rrag-0
     response_policy: googleapis
     rule_name: source
     timeouts: null
@@ -685,10 +957,28 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-project
+    project: prefix-gf-rrag-0
     response_policy: googleapis
     rule_name: storage
     timeouts: null
+  module.dns_private_zone_cloudsql.google_dns_managed_zone.dns_managed_zone[0]:
+    cloud_logging_config:
+    - enable_logging: false
+    description: Terraform managed.
+    effective_labels:
+      goog-terraform-provisioned: 'true'
+    force_destroy: false
+    forwarding_config: []
+    labels: null
+    name: gf-rrag-0-cloudsql
+    peering_config: []
+    project: prefix-gf-rrag-0
+    reverse_lookup: false
+    service_directory_config: []
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
+    timeouts: null
+    visibility: private
   module.lb_external[0].google_compute_backend_service.default["default"]:
     affinity_cookie_ttl_sec: null
     backend:
@@ -716,10 +1006,10 @@ values:
     locality_lb_policies: []
     locality_lb_policy: null
     max_stream_duration: []
-    name: gf-srun-0-external-default
+    name: gf-rrag-0-external-default
     network_pass_through_lb_traffic_policy: []
     outlier_detection: []
-    project: your-project
+    project: prefix-gf-rrag-0
     protocol: HTTPS
     security_settings: []
     service_lb_policy: null
@@ -736,10 +1026,10 @@ values:
     labels: null
     load_balancing_scheme: EXTERNAL_MANAGED
     metadata_filters: []
-    name: gf-srun-0-external
+    name: gf-rrag-0-external
     no_automate_dns_zone: null
     port_range: '443'
-    project: your-project
+    project: prefix-gf-rrag-0
     source_ip_ranges: null
     timeouts: null
   module.lb_external[0].google_compute_managed_ssl_certificate.default["default"]:
@@ -747,22 +1037,22 @@ values:
     managed:
     - domains:
       - your-domain.com
-    name: gf-srun-0-external-default
-    project: your-project
+    name: gf-rrag-0-external-default
+    project: prefix-gf-rrag-0
     timeouts: null
     type: MANAGED
-  module.lb_external[0].google_compute_region_network_endpoint_group.serverless["gf-srun-0-external"]:
+  module.lb_external[0].google_compute_region_network_endpoint_group.serverless["gf-rrag-0-external"]:
     app_engine: []
     cloud_function: []
     cloud_run:
-    - service: gf-srun-0
+    - service: gf-rrag-0-frontend
       tag: null
       url_mask: null
     description: Terraform managed.
-    name: gf-srun-0-external-gf-srun-0-external
+    name: gf-rrag-0-external-gf-rrag-0-external
     network: null
     network_endpoint_type: SERVERLESS
-    project: your-project
+    project: prefix-gf-rrag-0
     psc_target_service: null
     region: europe-west1
     subnetwork: null
@@ -772,8 +1062,8 @@ values:
     certificate_map: null
     description: Terraform managed.
     http_keep_alive_timeout_sec: null
-    name: gf-srun-0-external
-    project: your-project
+    name: gf-rrag-0-external
+    project: prefix-gf-rrag-0
     quic_override: NONE
     server_tls_policy: null
     ssl_policy: null
@@ -785,9 +1075,9 @@ values:
     description: Terraform managed.
     header_action: []
     host_rule: []
-    name: gf-srun-0-external
+    name: gf-rrag-0-external
     path_matcher: []
-    project: your-project
+    project: prefix-gf-rrag-0
     test: []
     timeouts: null
   module.lb_external_redirect[0].google_compute_global_forwarding_rule.default[""]:
@@ -800,17 +1090,17 @@ values:
     labels: null
     load_balancing_scheme: EXTERNAL_MANAGED
     metadata_filters: []
-    name: gf-srun-0-external-redirect
+    name: gf-rrag-0-redirect
     no_automate_dns_zone: null
     port_range: '80'
-    project: your-project
+    project: prefix-gf-rrag-0
     source_ip_ranges: null
     timeouts: null
   module.lb_external_redirect[0].google_compute_target_http_proxy.default[0]:
     description: Terraform managed.
     http_keep_alive_timeout_sec: null
-    name: gf-srun-0-external-redirect
-    project: your-project
+    name: gf-rrag-0-redirect
+    project: prefix-gf-rrag-0
     timeouts: null
   module.lb_external_redirect[0].google_compute_url_map.default:
     default_custom_error_response_policy: []
@@ -826,9 +1116,9 @@ values:
     description: Terraform managed.
     header_action: []
     host_rule: []
-    name: gf-srun-0-external-redirect
+    name: gf-rrag-0-redirect
     path_matcher: []
-    project: your-project
+    project: prefix-gf-rrag-0
     test: []
     timeouts: null
   module.vpc[0].google_compute_network.network[0]:
@@ -839,7 +1129,7 @@ values:
     name: net-0
     network_firewall_policy_enforcement_order: AFTER_CLASSIC_FIREWALL
     network_profile: null
-    project: your-project
+    project: prefix-gf-rrag-0
     routing_mode: GLOBAL
     timeouts: null
   module.vpc[0].google_compute_route.gateway["directpath-googleapis"]:
@@ -852,7 +1142,7 @@ values:
     next_hop_instance: null
     next_hop_vpn_tunnel: null
     priority: 1000
-    project: your-project
+    project: prefix-gf-rrag-0
     tags: null
     timeouts: null
   module.vpc[0].google_compute_route.gateway["private-googleapis"]:
@@ -865,7 +1155,7 @@ values:
     next_hop_instance: null
     next_hop_vpn_tunnel: null
     priority: 1000
-    project: your-project
+    project: prefix-gf-rrag-0
     tags: null
     timeouts: null
   module.vpc[0].google_compute_route.gateway["restricted-googleapis"]:
@@ -878,7 +1168,7 @@ values:
     next_hop_instance: null
     next_hop_vpn_tunnel: null
     priority: 1000
-    project: your-project
+    project: prefix-gf-rrag-0
     tags: null
     timeouts: null
   module.vpc[0].google_compute_subnetwork.proxy_only["europe-west1/proxy-only-sub-0"]:
@@ -890,7 +1180,7 @@ values:
     log_config: []
     name: proxy-only-sub-0
     network: net-0
-    project: your-project
+    project: prefix-gf-rrag-0
     purpose: REGIONAL_MANAGED_PROXY
     region: europe-west1
     reserved_internal_range: null
@@ -906,7 +1196,7 @@ values:
     name: sub-0
     network: net-0
     private_ip_google_access: true
-    project: your-project
+    project: prefix-gf-rrag-0
     region: europe-west1
     reserved_internal_range: null
     role: null
@@ -914,9 +1204,16 @@ values:
     timeouts: null
 
 counts:
+  google_bigquery_dataset: 1
+  google_bigquery_table: 1
+  google_cloud_run_v2_job: 1
+  google_cloud_run_v2_job_iam_binding: 1
   google_cloud_run_v2_service: 1
   google_cloud_run_v2_service_iam_binding: 1
+  google_cloud_scheduler_job: 1
+  google_compute_address: 1
   google_compute_backend_service: 1
+  google_compute_forwarding_rule: 1
   google_compute_global_address: 1
   google_compute_global_forwarding_rule: 2
   google_compute_managed_ssl_certificate: 1
@@ -928,7 +1225,13 @@ counts:
   google_compute_target_http_proxy: 1
   google_compute_target_https_proxy: 1
   google_compute_url_map: 2
+  google_dns_managed_zone: 1
+  google_dns_record_set: 1
   google_dns_response_policy: 1
   google_dns_response_policy_rule: 39
-  modules: 5
-  resources: 59
+  google_sql_database: 1
+  google_sql_database_instance: 1
+  google_sql_user: 2
+  modules: 9
+  random_password: 2
+  resources: 74

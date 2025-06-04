@@ -15,11 +15,14 @@ Thank you for your contributions!
 
 ## Useful Commands
 
-Create virtual environment for testing and generate docs
+Setup dev environment
 
 ```shell
 python3 -m venv ~/.venv-genai-factory
 source ~/.venv-genai-factory/bin/activate
+
+pip install -r tests/requirements.txt
+pip install -r tools/requirements.txt
 ```
 
 Generate tfdoc (example for `cloud-run-single`)
@@ -28,16 +31,18 @@ Generate tfdoc (example for `cloud-run-single`)
 ./tools/tfdoc.py modules/cloud-run-single
 ```
 
-## Hot Topics
+Run tests
 
-Current "hot tasks" include:
+```shell
+# Run all tests
+pytest tests
 
-- How to decouple code to setup the underlying infrastructure and the AI applications, given multiple applications should be able to reuse the same infrastructure, although each application has specific requirements (including services activation, networking, IAM and more).
+# Run a test for one module only
+pytest tests/cloud_run_single/0-projects
+```
 
-- Add model armor support to Fabric modules and here when available
+## Add a new factory
 
-- Add new AI apps
-
-- Create RAG infrastructure based on Cloud Run (WIP)
-
-- Investigate/add agents
+- Start copying an existing factory. [cloud-run-single](cloud-run-single/README.md) is a typical choice. Modify it as needed.
+- Create a corresponding test in the tests folder. Follow the example of other factories. For example, [this](tests/cloud_run_single/tftest.yaml) is the test definition for cloud-run-single. Start creating an empty inventory with `values:` only. Then run `pytest` in the test folder and update the inventory file with the output returned.
+- Update list of factories the [main README.md](README.md).
