@@ -44,5 +44,5 @@ pytest tests/cloud_run_single/0-projects
 ## Add a new factory
 
 - Start copying an existing factory. [cloud-run-single](cloud-run-single/README.md) is a typical choice. Modify it as needed.
-- Create a corresponding test in the tests folder. Follow the example of other factories. For example, [this](tests/cloud_run_single/tftest.yaml) is the test definition for cloud-run-single. Start creating an empty inventory with `values:` only. Then run `pytest` in the test folder and update the inventory file with the output returned.
+- Create a corresponding test in the tests folder. Follow the example of other factories. For example, [this](tests/cloud_run_single/0_projects/tftest.yaml) is the test definition for 0-projects of the cloud-run-single factory. Start creating an empty inventory with `values:` only. Then run `pytest` in the test folder and update the inventory file with the output returned.
 - Update list of factories the [main README.md](README.md).
