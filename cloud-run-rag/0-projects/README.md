@@ -12,7 +12,7 @@ The behavior of this module is controlled by the `project_config` variable. This
 
 ## Usage
 
-* Create your own `terraform.tfvars` file based on the `terraform.tfvars.sample provided` file
+* Create your own `terraform.tfvars` file based on the `terraform.tfvars.sample` provided file
 * Run `terraform apply` to create the resources of your RAG application
 
 <!-- BEGIN TFDOC -->

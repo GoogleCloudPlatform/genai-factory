@@ -29,5 +29,5 @@ The deployment includes
 
 ## Usage
 
-* Go to the `0-projects` folder and follow the instructions to setup your GCP project, service accounts and permissions
-* Then go to the `1-apps` folder and follow the instructions to deploy this solution
+* Go to the [0-projects](https://github.com/GoogleCloudPlatform/genai-factory/blob/master/cloud-run-rag/0-projects/README.md) folder and follow the instructions to setup your GCP project, service accounts and permissions
+* Then go to the [1-apps](https://github.com/GoogleCloudPlatform/genai-factory/blob/master/cloud-run-rag/1-apps/README.md) folder and follow the instructions to deploy this solution
