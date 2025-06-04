@@ -17,4 +17,3 @@ project_config = {
   parent             = "organizations/1122334455"
   prefix             = "your-prefix"
 }
-

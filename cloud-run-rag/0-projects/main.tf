@@ -12,6 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+locals {
+  effective_user_identity = coalesce(
+    try(data.google_client_openid_userinfo.me[0].email, null),
+    "tests@automation.com"
+  )
+}
+
 module "projects" {
   source = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/project-factory"
   data_defaults = {
@@ -34,5 +41,5 @@ resource "google_service_account_iam_member" "me_sa_token_creator" {
   count              = var.enable_iac_sa_impersonation ? 1 : 0
   service_account_id = module.projects.service_accounts["project/iac-rw"].id
   role               = "roles/iam.serviceAccountTokenCreator"
-  member             = "user:${data.google_client_openid_userinfo.me[0].email}"
+  member             = "user:${local.effective_user_identity}"
 }
