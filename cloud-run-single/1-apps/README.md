@@ -1,35 +1,26 @@
-# Cloud Run - single / Application Deployment
+# Cloud Run - Single / Platform Deployment
 
-This module is part of the Single Cloud Run factory and is responsible for deploying the required infrastructure in an existing project, or one managed by the [0-projects](../0-projects) module.
+This module is part of the `Single Cloud Run factory`.
+It is responsible for deploying the components enabling the AI use case, either in the project you created in [0-projects](../0-projects) or in an existing project.
 
-It leverages the Google Cloud Run service to allow for the deployment of a containerized application and an External Application Load Balancer to expose them publicly.
+![Architecture Diagram](../diagram.png)
 
-Once ran, the terraform module prints the commands required to deploy the application to Cloud Run as `gcloud` commands.
+## Deploy the module
 
-## Deployed Architecture
+This assumes you have created a project leveraging the [0-projects](../0-projects) module.
 
-![Deployed Architecture Diagram](diagram.png)
+```shell
+cp terraform.tfvars.sample terraform.tfvars # Customize
+terraform init
+terraform apply
 
-This module deploys and configures the following core components:
+# Follow the commands in the output.
+```
 
-- **Google Cloud Run Service:** Where to deploy containerized applications.
-- **Google Cloud Load Balancer:** A global external HTTP(S) load balancer to route traffic to the Cloud Run services.
-- **Serverless NEG:** A Serverless Network Endpoint Group to connect the load balancer to the Cloud Run services.
-- **VPC:** Optionally sets up a VPC, used for Private Google Access.
-- **VPC Direct Egress:** Sets up VPC direct egress for Cloud Run services to access the Google APIs via PGA in a VPC network.
+## I have not used 0-projects
 
-## Configurations
+The [0-projects](../0-projects) module also produces the Terraform input files needed for this stage to work. If you are not leveraging [0-projects](../0-projects) it's your responsibility to create the `terraform.tfvars` file needed by this module.
 
-Key configurations include:
-
-- `cloud_run_configs`: Defines the configurations for the Cloud Run services, including container images, ingress settings, instance counts, and VPC access.
-- `networking_config`: Configures the networking setup, including VPC and subnet creation or referencing existing ones.
-- `allowed_ip_ranges`: Specifies the IP ranges allowed to access the Cloud Run service.
-- `public_domains`: Lists the domains connected to the public load balancer.
-
-## Applications
-
-- [Chat App](./apps/chat/README.md): A simple chat application deployed on Cloud Run.
 <!-- BEGIN TFDOC -->
 ## Variables
 

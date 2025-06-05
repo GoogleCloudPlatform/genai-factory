@@ -1,14 +1,27 @@
-# Cloud Run - single / Project Setup
+# Cloud Run - Single / Project Setup
 
-This module is part of the Single Cloud Run factory and is responsible for setting up the necessary Google Cloud project and permissions required for deploying the application.
+This module is part of the `Single Cloud Run factory`.
+It is responsible for setting up the Google Cloud project, activating the APIs and granting the roles you need to deploy and manage the components enabling the AI use case.
 
-It leverages the Cloud Foundation Fabric [`project-factory`](https://github.com/GoogleCloudPlatform/cloud-foundation-fabric/tree/master/modules/project-factory) module for creating and configuring Google Cloud projects, service accounts and storage buckets for Terraform automation, enabling APIs, and managing IAM policies.
+It leverages the Cloud Foundation Fabric [`project-factory`](https://github.com/GoogleCloudPlatform/cloud-foundation-fabric/tree/master/modules/project-factory).
 
-You can refer to the [YAML project configuration](data/project.yaml) for more details about enabled APIs and roles assigned on the project.
+You can refer to the [YAML project configuration](data/project.yaml) for more details about enabled APIs and roles assigned in the project.
 
-## Configurations
+## Deploy the module
 
-The behavior of this module is controlled by the `project_config` variable. This variable allows for different scenarios regarding project creation and management, as described in the [main README](../../README.md).
+```shell
+cp terraform.tfvars.sample terraform.tfvars
+
+# Replace prefix, billing account and parent.
+
+terraform init
+terraform apply
+```
+
+## Use existing projects
+
+The `project_config` variable allows to configure for different scenarios regarding project creation and management, as described in the [main README](../../README.md).
+
 <!-- BEGIN TFDOC -->
 ## Variables
 

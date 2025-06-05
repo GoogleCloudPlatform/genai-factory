@@ -1,22 +1,25 @@
-# Cloud Run - RAG / Application Deployment
+# Cloud Run - RAG / Platform Deployment
 
-This module is part of the Cloud Run RAG factory and is responsible for deploying the required infrastructure in an existing project, or one managed by the [0-projects](../0-projects) module.
+This module is part of the `Cloud Run RAG factory`.
+It is responsible for deploying the components enabling the AI use case, either in the project you created in [0-projects](../0-projects) or in an existing project.
 
-It leverages the Google Cloud Run service to allow for the deployment of a containerized application and an External Application Load Balancer to expose them publicly.
+![Architecture Diagram](../diagram.png)
 
-Once ran, the terraform module prints the commands required to deploy the application to Cloud Run as `gcloud` commands.
+## Deploy the module
 
-## Deployed Architecture
+This assumes you have created a project leveraging the [0-projects](../0-projects) module.
 
-<p align="center">
-  <img src="../diagram.png" alt="Components diagram">
-</p>
+```shell
+cp terraform.tfvars.sample terraform.tfvars # Customize
+terraform init
+terraform apply
 
-## Usage
+# Follow the commands in the output.
+```
 
-* Create your own `terraform.tfvars` file based on the `terraform.tfvars.sample` provided file
-* Run `terraform apply` to create the resources of your RAG application
-* Run `terraform output` to get a set of commands. You will need to run them once the terraform successfully applied.
+## I have not used 0-projects
+
+The [0-projects](../0-projects) module also produces the Terraform input files needed for this stage to work. If you are not leveraging [0-projects](../0-projects) it's your responsibility to create the `terraform.tfvars` file needed by this module.
 
 <!-- BEGIN TFDOC -->
 ## Variables
