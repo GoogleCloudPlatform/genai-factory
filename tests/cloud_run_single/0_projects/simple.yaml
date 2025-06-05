@@ -1,0 +1,383 @@
+# Copyright 2025 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+values:
+  google_service_account_iam_member.me_sa_token_creator[0]:
+    condition: []
+    role: roles/iam.serviceAccountTokenCreator
+    service_account_id: projects/your-prefix-gf-srun-0/serviceAccounts/iac-rw@your-prefix-gf-srun-0.iam.gserviceaccount.com
+  local_file.providers:
+    content_base64: null
+    directory_permission: '0777'
+    file_permission: '0644'
+    filename: ../1-apps/providers.tf
+    sensitive_content: null
+    source: null
+  local_file.tfvars:
+    content_base64: null
+    directory_permission: '0777'
+    file_permission: '0644'
+    filename: ../1-apps/terraform.auto.tfvars
+    sensitive_content: null
+    source: null
+  module.projects.module.buckets["project/iac-state"].google_storage_bucket.bucket[0]:
+    autoclass: []
+    cors: []
+    custom_placement_config: []
+    default_event_based_hold: null
+    effective_labels:
+      goog-terraform-provisioned: 'true'
+    enable_object_retention: null
+    encryption: []
+    force_destroy: false
+    hierarchical_namespace: []
+    ip_filter: []
+    labels: null
+    lifecycle_rule: []
+    location: EUROPE-WEST1
+    logging: []
+    name: your-prefix-gf-srun-0-iac-state
+    project: your-prefix-gf-srun-0
+    requester_pays: null
+    retention_policy: []
+    storage_class: STANDARD
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
+    timeouts: null
+    uniform_bucket_level_access: true
+    versioning:
+    - enabled: false
+  ? module.projects.module.buckets["project/iac-state"].google_storage_bucket_iam_binding.authoritative["roles/storage.objectAdmin"]
+  : bucket: your-prefix-gf-srun-0-iac-state
+    condition: []
+    members:
+    - serviceAccount:iac-rw@your-prefix-gf-srun-0.iam.gserviceaccount.com
+    role: roles/storage.objectAdmin
+  ? module.projects.module.buckets["project/iac-state"].google_storage_bucket_iam_binding.authoritative["roles/storage.objectViewer"]
+  : bucket: your-prefix-gf-srun-0-iac-state
+    condition: []
+    members:
+    - serviceAccount:iac-rw@your-prefix-gf-srun-0.iam.gserviceaccount.com
+    role: roles/storage.objectViewer
+  module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/artifactregistry.writer"]:
+    condition: []
+    members:
+    - serviceAccount:gf-srun-build-0@your-prefix-gf-srun-0.iam.gserviceaccount.com
+    project: your-prefix-gf-srun-0
+    role: roles/artifactregistry.writer
+  module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/certificatemanager.owner"]:
+    condition: []
+    members:
+    - serviceAccount:iac-rw@your-prefix-gf-srun-0.iam.gserviceaccount.com
+    project: your-prefix-gf-srun-0
+    role: roles/certificatemanager.owner
+  module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/cloudbuild.builds.editor"]:
+    condition: []
+    members:
+    - serviceAccount:gf-srun-build-0@your-prefix-gf-srun-0.iam.gserviceaccount.com
+    project: your-prefix-gf-srun-0
+    role: roles/cloudbuild.builds.editor
+  module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/compute.loadBalancerAdmin"]:
+    condition: []
+    members:
+    - serviceAccount:iac-rw@your-prefix-gf-srun-0.iam.gserviceaccount.com
+    project: your-prefix-gf-srun-0
+    role: roles/compute.loadBalancerAdmin
+  module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/compute.networkAdmin"]:
+    condition: []
+    members:
+    - serviceAccount:iac-rw@your-prefix-gf-srun-0.iam.gserviceaccount.com
+    project: your-prefix-gf-srun-0
+    role: roles/compute.networkAdmin
+  module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/compute.securityAdmin"]:
+    condition: []
+    members:
+    - serviceAccount:iac-rw@your-prefix-gf-srun-0.iam.gserviceaccount.com
+    project: your-prefix-gf-srun-0
+    role: roles/compute.securityAdmin
+  module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/dns.admin"]:
+    condition: []
+    members:
+    - serviceAccount:iac-rw@your-prefix-gf-srun-0.iam.gserviceaccount.com
+    project: your-prefix-gf-srun-0
+    role: roles/dns.admin
+  module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/iam.serviceAccountUser"]:
+    condition: []
+    members:
+    - serviceAccount:gf-srun-build-0@your-prefix-gf-srun-0.iam.gserviceaccount.com
+    project: your-prefix-gf-srun-0
+    role: roles/iam.serviceAccountUser
+  module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/logging.logWriter"]:
+    condition: []
+    members:
+    - serviceAccount:gf-srun-0@your-prefix-gf-srun-0.iam.gserviceaccount.com
+    project: your-prefix-gf-srun-0
+    role: roles/logging.logWriter
+  module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/privateca.admin"]:
+    condition: []
+    members:
+    - serviceAccount:iac-rw@your-prefix-gf-srun-0.iam.gserviceaccount.com
+    project: your-prefix-gf-srun-0
+    role: roles/privateca.admin
+  ? module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/privateca.certificateRequester"]
+  : condition: []
+    project: your-prefix-gf-srun-0
+    role: roles/privateca.certificateRequester
+  module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/run.admin"]:
+    condition: []
+    members:
+    - serviceAccount:gf-srun-build-0@your-prefix-gf-srun-0.iam.gserviceaccount.com
+    - serviceAccount:iac-rw@your-prefix-gf-srun-0.iam.gserviceaccount.com
+    project: your-prefix-gf-srun-0
+    role: roles/run.admin
+  module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/storage.objectCreator"]:
+    condition: []
+    members:
+    - serviceAccount:gf-srun-build-0@your-prefix-gf-srun-0.iam.gserviceaccount.com
+    project: your-prefix-gf-srun-0
+    role: roles/storage.objectCreator
+  module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/storage.objectViewer"]:
+    condition: []
+    members:
+    - serviceAccount:gf-srun-build-0@your-prefix-gf-srun-0.iam.gserviceaccount.com
+    project: your-prefix-gf-srun-0
+    role: roles/storage.objectViewer
+  module.projects.module.projects-iam["project"].google_project_iam_member.bindings["0"]:
+    condition: []
+    member: serviceAccount:gf-srun-0@your-prefix-gf-srun-0.iam.gserviceaccount.com
+    project: your-prefix-gf-srun-0
+    role: roles/aiplatform.user
+  module.projects.module.projects["project"].google_project.project[0]:
+    auto_create_network: false
+    billing_account: billing-acct-id
+    deletion_policy: DELETE
+    effective_labels:
+      goog-terraform-provisioned: 'true'
+    folder_id: null
+    labels: null
+    name: your-prefix-gf-srun-0
+    org_id: '1122334455'
+    project_id: your-prefix-gf-srun-0
+    tags: null
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
+    timeouts: null
+  module.projects.module.projects["project"].google_project_iam_member.service_agents["aiplatform"]:
+    condition: []
+    project: your-prefix-gf-srun-0
+    role: roles/aiplatform.serviceAgent
+  module.projects.module.projects["project"].google_project_iam_member.service_agents["aiplatform-cc"]:
+    condition: []
+    project: your-prefix-gf-srun-0
+    role: roles/aiplatform.customCodeServiceAgent
+  module.projects.module.projects["project"].google_project_iam_member.service_agents["aiplatform-ft"]:
+    condition: []
+    project: your-prefix-gf-srun-0
+    role: roles/aiplatform.serviceAgent
+  module.projects.module.projects["project"].google_project_iam_member.service_agents["aiplatform-re"]:
+    condition: []
+    project: your-prefix-gf-srun-0
+    role: roles/aiplatform.reasoningEngineServiceAgent
+  module.projects.module.projects["project"].google_project_iam_member.service_agents["aiplatform-vm"]:
+    condition: []
+    project: your-prefix-gf-srun-0
+    role: roles/aiplatform.notebookServiceAgent
+  module.projects.module.projects["project"].google_project_iam_member.service_agents["artifactregistry"]:
+    condition: []
+    project: your-prefix-gf-srun-0
+    role: roles/artifactregistry.serviceAgent
+  module.projects.module.projects["project"].google_project_iam_member.service_agents["certificatemanager"]:
+    condition: []
+    project: your-prefix-gf-srun-0
+    role: roles/certificatemanager.serviceAgent
+  module.projects.module.projects["project"].google_project_iam_member.service_agents["cloudbuild"]:
+    condition: []
+    project: your-prefix-gf-srun-0
+    role: roles/cloudbuild.serviceAgent
+  module.projects.module.projects["project"].google_project_iam_member.service_agents["cloudbuild-sa"]:
+    condition: []
+    project: your-prefix-gf-srun-0
+    role: roles/cloudbuild.builds.builder
+  module.projects.module.projects["project"].google_project_iam_member.service_agents["compute-system"]:
+    condition: []
+    project: your-prefix-gf-srun-0
+    role: roles/compute.serviceAgent
+  module.projects.module.projects["project"].google_project_iam_member.service_agents["dns"]:
+    condition: []
+    project: your-prefix-gf-srun-0
+    role: roles/dns.serviceAgent
+  module.projects.module.projects["project"].google_project_iam_member.service_agents["serverless-robot-prod"]:
+    condition: []
+    project: your-prefix-gf-srun-0
+    role: roles/run.serviceAgent
+  module.projects.module.projects["project"].google_project_iam_member.service_agents["vertex-bp"]:
+    condition: []
+    project: your-prefix-gf-srun-0
+    role: roles/aiplatform.batchPredictionServiceAgent
+  module.projects.module.projects["project"].google_project_iam_member.service_agents["vertex-eval"]:
+    condition: []
+    project: your-prefix-gf-srun-0
+    role: roles/aiplatform.rapidevalServiceAgent
+  module.projects.module.projects["project"].google_project_iam_member.service_agents["vertex-ex"]:
+    condition: []
+    project: your-prefix-gf-srun-0
+    role: roles/aiplatform.extensionServiceAgent
+  module.projects.module.projects["project"].google_project_iam_member.service_agents["vertex-ex-cc"]:
+    condition: []
+    project: your-prefix-gf-srun-0
+    role: roles/aiplatform.extensionCustomCodeServiceAgent
+  module.projects.module.projects["project"].google_project_iam_member.service_agents["vertex-mm"]:
+    condition: []
+    project: your-prefix-gf-srun-0
+    role: roles/aiplatform.modelMonitoringServiceAgent
+  module.projects.module.projects["project"].google_project_iam_member.service_agents["vertex-nb"]:
+    condition: []
+    project: your-prefix-gf-srun-0
+    role: roles/aiplatform.colabServiceAgent
+  module.projects.module.projects["project"].google_project_iam_member.service_agents["vertex-op"]:
+    condition: []
+    project: your-prefix-gf-srun-0
+    role: roles/aiplatform.onlinePredictionServiceAgent
+  module.projects.module.projects["project"].google_project_iam_member.service_agents["vertex-rag"]:
+    condition: []
+    project: your-prefix-gf-srun-0
+    role: roles/aiplatform.ragServiceAgent
+  module.projects.module.projects["project"].google_project_iam_member.service_agents["vertex-shtune"]:
+    condition: []
+    project: your-prefix-gf-srun-0
+    role: roles/aiplatform.user
+  module.projects.module.projects["project"].google_project_iam_member.service_agents["vertex-tune"]:
+    condition: []
+    project: your-prefix-gf-srun-0
+    role: roles/aiplatform.tuningServiceAgent
+  module.projects.module.projects["project"].google_project_service.project_services["aiplatform.googleapis.com"]:
+    disable_dependent_services: false
+    disable_on_destroy: false
+    project: your-prefix-gf-srun-0
+    service: aiplatform.googleapis.com
+    timeouts: null
+  module.projects.module.projects["project"].google_project_service.project_services["artifactregistry.googleapis.com"]:
+    disable_dependent_services: false
+    disable_on_destroy: false
+    project: your-prefix-gf-srun-0
+    service: artifactregistry.googleapis.com
+    timeouts: null
+  module.projects.module.projects["project"].google_project_service.project_services["certificatemanager.googleapis.com"]:
+    disable_dependent_services: false
+    disable_on_destroy: false
+    project: your-prefix-gf-srun-0
+    service: certificatemanager.googleapis.com
+    timeouts: null
+  module.projects.module.projects["project"].google_project_service.project_services["cloudbuild.googleapis.com"]:
+    disable_dependent_services: false
+    disable_on_destroy: false
+    project: your-prefix-gf-srun-0
+    service: cloudbuild.googleapis.com
+    timeouts: null
+  module.projects.module.projects["project"].google_project_service.project_services["cloudresourcemanager.googleapis.com"]:
+    disable_dependent_services: false
+    disable_on_destroy: false
+    project: your-prefix-gf-srun-0
+    service: cloudresourcemanager.googleapis.com
+    timeouts: null
+  module.projects.module.projects["project"].google_project_service.project_services["compute.googleapis.com"]:
+    disable_dependent_services: false
+    disable_on_destroy: false
+    project: your-prefix-gf-srun-0
+    service: compute.googleapis.com
+    timeouts: null
+  module.projects.module.projects["project"].google_project_service.project_services["dns.googleapis.com"]:
+    disable_dependent_services: false
+    disable_on_destroy: false
+    project: your-prefix-gf-srun-0
+    service: dns.googleapis.com
+    timeouts: null
+  module.projects.module.projects["project"].google_project_service.project_services["privateca.googleapis.com"]:
+    disable_dependent_services: false
+    disable_on_destroy: false
+    project: your-prefix-gf-srun-0
+    service: privateca.googleapis.com
+    timeouts: null
+  module.projects.module.projects["project"].google_project_service.project_services["run.googleapis.com"]:
+    disable_dependent_services: false
+    disable_on_destroy: false
+    project: your-prefix-gf-srun-0
+    service: run.googleapis.com
+    timeouts: null
+  module.projects.module.projects["project"].google_project_service.project_services["serviceusage.googleapis.com"]:
+    disable_dependent_services: false
+    disable_on_destroy: false
+    project: your-prefix-gf-srun-0
+    service: serviceusage.googleapis.com
+    timeouts: null
+  module.projects.module.projects["project"].google_project_service_identity.default["aiplatform.googleapis.com"]:
+    project: your-prefix-gf-srun-0
+    service: aiplatform.googleapis.com
+    timeouts: null
+  module.projects.module.projects["project"].google_project_service_identity.default["artifactregistry.googleapis.com"]:
+    project: your-prefix-gf-srun-0
+    service: artifactregistry.googleapis.com
+    timeouts: null
+  module.projects.module.projects["project"].google_project_service_identity.default["certificatemanager.googleapis.com"]:
+    project: your-prefix-gf-srun-0
+    service: certificatemanager.googleapis.com
+    timeouts: null
+  module.projects.module.projects["project"].google_project_service_identity.default["dns.googleapis.com"]:
+    project: your-prefix-gf-srun-0
+    service: dns.googleapis.com
+    timeouts: null
+  module.projects.module.projects["project"].google_project_service_identity.default["privateca.googleapis.com"]:
+    project: your-prefix-gf-srun-0
+    service: privateca.googleapis.com
+    timeouts: null
+  module.projects.module.projects["project"].google_project_service_identity.default["run.googleapis.com"]:
+    project: your-prefix-gf-srun-0
+    service: run.googleapis.com
+    timeouts: null
+  module.projects.module.service-accounts["project/gf-srun-0"].google_service_account.service_account[0]:
+    account_id: gf-srun-0
+    create_ignore_already_exists: null
+    description: null
+    disabled: false
+    display_name: Terraform-managed.
+    email: gf-srun-0@your-prefix-gf-srun-0.iam.gserviceaccount.com
+    member: serviceAccount:gf-srun-0@your-prefix-gf-srun-0.iam.gserviceaccount.com
+    project: your-prefix-gf-srun-0
+    timeouts: null
+  module.projects.module.service-accounts["project/gf-srun-build-0"].google_service_account.service_account[0]:
+    account_id: gf-srun-build-0
+    create_ignore_already_exists: null
+    description: null
+    disabled: false
+    display_name: Terraform-managed.
+    email: gf-srun-build-0@your-prefix-gf-srun-0.iam.gserviceaccount.com
+    member: serviceAccount:gf-srun-build-0@your-prefix-gf-srun-0.iam.gserviceaccount.com
+    project: your-prefix-gf-srun-0
+    timeouts: null
+  module.projects.module.service-accounts["project/iac-rw"].google_service_account.service_account[0]:
+    account_id: iac-rw
+    create_ignore_already_exists: null
+    description: null
+    disabled: false
+    display_name: Terraform-managed.
+    email: iac-rw@your-prefix-gf-srun-0.iam.gserviceaccount.com
+    member: serviceAccount:iac-rw@your-prefix-gf-srun-0.iam.gserviceaccount.com
+    project: your-prefix-gf-srun-0
+    timeouts: null
+  module.projects.module.service_accounts-iam["project/iac-rw"].data.google_service_account.service_account[0]:
+    account_id: iac-rw
+  ? module.projects.module.service_accounts-iam["project/iac-rw"].google_service_account_iam_member.additive["projects/your-prefix-gf-srun-0/serviceAccounts/gf-srun-0@your-prefix-gf-srun-0.iam.gserviceaccount.com-roles/iam.serviceAccountUser"]
+  : condition: []
+    role: roles/iam.serviceAccountUser
+    service_account_id: projects/your-prefix-gf-srun-0/serviceAccounts/gf-srun-0@your-prefix-gf-srun-0.iam.gserviceaccount.com

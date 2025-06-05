@@ -116,3 +116,9 @@ class TestItem(pytest.Item):
 
   def reportinfo(self):
     return self.path, None, self.name
+
+
+def pytest_collect_file(parent, file_path):
+  'Collect tftest*.yaml files and run plan_validator from them.'
+  if file_path.suffix == '.yaml' and file_path.name.startswith('tftest'):
+    return TestFile.from_parent(parent, path=file_path)

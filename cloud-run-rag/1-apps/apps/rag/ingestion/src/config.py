@@ -14,7 +14,6 @@
 
 import os
 
-
 PROJECT_ID = os.environ.get("PROJECT_ID")
 REGION = os.environ.get("REGION", "europe-west1")
 
@@ -32,7 +31,8 @@ CANDIDATE_COUNT = int(os.environ.get("CANDIDATE_COUNT", 1))
 MAX_OUTPUT_TOKENS = int(os.environ.get("MAX_OUTPUT_TOKENS", 2048))
 
 # Embedding Model Configuration
-EMBEDDING_MODEL_NAME = os.environ.get("EMBEDDING_MODEL_NAME", "text-multilingual-embedding-002")
+EMBEDDING_MODEL_NAME = os.environ.get("EMBEDDING_MODEL_NAME",
+                                      "text-multilingual-embedding-002")
 EMBEDDING_DIMENSIONS = int(os.environ.get("EMBEDDING_DIMENSIONS", 768))
 EMBEDDING_BATCH_SIZE = int(os.environ.get("BATCH_SIZE_EMBEDDING", 200))
 
@@ -46,4 +46,6 @@ DB_TABLE = os.environ.get("DB_TABLE", "movie_embeddings")
 # Columns Configuration
 GENERATED_ID_COLUMN_NAME = os.environ.get("GENERATED_ID_COLUMN_NAME", "id")
 BQ_TEXT_COLUMNS_STR = os.environ.get("BQ_TEXT_COLUMNS", "title,description")
-TARGET_BQ_COLUMNS_DEFAULT = ['rank', 'title', 'description', 'genre', 'rating', 'year']
+TARGET_BQ_COLUMNS_DEFAULT = [
+    'rank', 'title', 'description', 'genre', 'rating', 'year'
+]

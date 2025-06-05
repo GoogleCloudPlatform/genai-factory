@@ -31,27 +31,20 @@ from src import config
 from src.request_model import Prompt
 from src import db as database
 
-
 app = FastAPI(title=__name__)
 
 # Configure logging
 logging.basicConfig(
-    level=logging.INFO, # Set the default logging level
+    level=logging.INFO,  # Set the default logging level
     format='%(name)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.StreamHandler(sys.stdout)
-    ]
-)
+    handlers=[logging.StreamHandler(sys.stdout)])
 
-logging.info(
-    "Initializing Google GenAI client for project=%s, region=%s",
-    config.PROJECT_ID,
-    config.REGION
-)
+logging.info("Initializing Google GenAI client for project=%s, region=%s",
+             config.PROJECT_ID, config.REGION)
 try:
-    genai_client = genai.Client(
-        vertexai=True, project=config.PROJECT_ID, location=config.REGION
-    )
+    genai_client = genai.Client(vertexai=True,
+                                project=config.PROJECT_ID,
+                                location=config.REGION)
     logging.info("Vertex AI client initialized successfully.")
 except Exception as e:
     logging.error(f"Failed to initialize GenAI client: {e}", exc_info=True)
@@ -65,6 +58,7 @@ MODEL_CONFIG = types.GenerateContentConfig(
     candidate_count=config.CANDIDATE_COUNT,
     max_output_tokens=config.MAX_OUTPUT_TOKENS,
 )
+
 
 @app.on_event("startup")
 async def startup_event():
@@ -86,7 +80,8 @@ async def root():
     db_status = "connected (IAM Auth)" if database.engine else "not connected/configured"
     client_status = "initialized" if genai_client else "initialization failed"
     return {
-        "message": "Vertex AI RAG Sample App (PostgreSQL with IAM Auth) is running.",
+        "message":
+        "Vertex AI RAG Sample App (PostgreSQL with IAM Auth) is running.",
         "project_id": config.PROJECT_ID,
         "region": config.REGION,
         "generative_model_id": config.MODEL_NAME,
@@ -97,58 +92,63 @@ async def root():
 
 
 @app.post("/predict")
-async def predict_route(request: Prompt, db: Session = Depends(database.get_db_session)):
+async def predict_route(request: Prompt,
+                        db: Session = Depends(database.get_db_session)):
     """Endpoint to make a prediction using Vertex AI, augmented with context from Cloud SQL."""
 
     if not genai_client:
         logging.error("GenAI client not initialized.")
-        raise HTTPException(status_code=503, detail="GenAI client not available.")
+        raise HTTPException(status_code=503,
+                            detail="GenAI client not available.")
     if config.MODEL_NAME is None or MODEL_CONFIG is None:
         logging.error("Vertex AI model or config not initialized.")
         raise HTTPException(
-            status_code=500, detail="Internal server error: Model or config not initialized."
-        )
+            status_code=500,
+            detail="Internal server error: Model or config not initialized.")
 
-    logging.info(
-        "Received prediction request with prompt: '%s...'", request.prompt[:100]
-    )
+    logging.info("Received prediction request with prompt: '%s...'",
+                 request.prompt[:100])
 
     context_str = ""
     augmented_prompt = request.prompt
 
     if database.engine:
         try:
-            logging.info(f"Generating embedding for prompt using model: {config.EMBEDDING_MODEL_NAME}")
+            logging.info(
+                f"Generating embedding for prompt using model: {config.EMBEDDING_MODEL_NAME}"
+            )
             embedding_response = genai_client.models.embed_content(
                 model=config.EMBEDDING_MODEL_NAME,
-                contents=[request.prompt]
-            ).embeddings[0].values
+                contents=[request.prompt]).embeddings[0].values
 
-            logging.info(f"Generated query embedding (first 3 dimensions): {embedding_response[:3]}...")
+            logging.info(
+                f"Generated query embedding (first 3 dimensions): {embedding_response[:3]}..."
+            )
 
             similar_docs = database.search_similar_documents(
-                db,
-                embedding_response,
-                config.TOP_K
-            )
+                db, embedding_response, config.TOP_K)
 
             if similar_docs:
                 context_str = "\n\n".join(similar_docs)
                 augmented_prompt = (
                     f"Based on the following context, answer the question.\n\n"
                     f"Context:\n{context_str}\n\n"
-                    f"Question: {request.prompt}"
-                )
+                    f"Question: {request.prompt}")
                 logging.info("Augmented prompt with context from database.")
             else:
-                logging.info("No relevant documents found in database, using original prompt.")
+                logging.info(
+                    "No relevant documents found in database, using original prompt."
+                )
 
         except exceptions.GoogleAPIError as e:
-            logging.error(f"Failed to generate embedding or search database: {e}", exc_info=True)
+            logging.error(
+                f"Failed to generate embedding or search database: {e}",
+                exc_info=True)
         except ConnectionError as e:
             logging.error(f"Database connection error: {e}", exc_info=True)
         except Exception as e:
-            logging.error(f"Unexpected error in RAG pipeline: {e}", exc_info=True)
+            logging.error(f"Unexpected error in RAG pipeline: {e}",
+                          exc_info=True)
 
     try:
         response = genai_client.models.generate_content(
@@ -159,11 +159,14 @@ async def predict_route(request: Prompt, db: Session = Depends(database.get_db_s
 
         prediction_text = ""
         if response.candidates:
-            if response.candidates[0].content and response.candidates[0].content.parts:
-                prediction_text = "".join(part.text for part in response.candidates[0].content.parts if hasattr(part, 'text'))
+            if response.candidates[0].content and response.candidates[
+                    0].content.parts:
+                prediction_text = "".join(
+                    part.text for part in response.candidates[0].content.parts
+                    if hasattr(part, 'text'))
 
         if not prediction_text and hasattr(response, 'text'):
-             prediction_text = response.text
+            prediction_text = response.text
 
         if not prediction_text:
             logging.warning("Received an empty prediction from Vertex AI.")
@@ -178,10 +181,17 @@ async def predict_route(request: Prompt, db: Session = Depends(database.get_db_s
         logging.error(f"Vertex AI API call failed: {e}", exc_info=True)
         prediction_text = f"Failed to get an answer from the model: {e}"
     except Exception as e:
-        logging.error(f"Unexpected error during model generation: {e}", exc_info=True)
+        logging.error(f"Unexpected error during model generation: {e}",
+                      exc_info=True)
         prediction_text = "An unexpected error occurred while trying to get an answer."
 
-    return {"prompt": request.prompt, "augmented_prompt": augmented_prompt if context_str else request.prompt, "retrieved_context": context_str, "prediction": prediction_text}
+    return {
+        "prompt": request.prompt,
+        "augmented_prompt":
+        augmented_prompt if context_str else request.prompt,
+        "retrieved_context": context_str,
+        "prediction": prediction_text
+    }
 
 
 if __name__ == "__main__":

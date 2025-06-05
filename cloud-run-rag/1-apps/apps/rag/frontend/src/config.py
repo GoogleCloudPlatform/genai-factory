@@ -12,9 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
 import os
-
 
 PROJECT_ID = os.environ.get("PROJECT_ID")
 REGION = os.environ.get("REGION", "europe-west1")
@@ -28,7 +26,8 @@ CANDIDATE_COUNT = int(os.environ.get("CANDIDATE_COUNT", 1))
 MAX_OUTPUT_TOKENS = int(os.environ.get("MAX_OUTPUT_TOKENS", 2048))
 
 # Embedding Model Configuration
-EMBEDDING_MODEL_NAME = os.environ.get("EMBEDDING_MODEL_NAME", "text-multilingual-embedding-002")
+EMBEDDING_MODEL_NAME = os.environ.get("EMBEDDING_MODEL_NAME",
+                                      "text-multilingual-embedding-002")
 EMBEDDING_TASK_TYPE = "RETRIEVAL_QUERY"
 
 # DB configuration

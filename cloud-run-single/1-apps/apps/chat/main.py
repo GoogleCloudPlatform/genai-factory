@@ -24,9 +24,7 @@ import uvicorn
 from src import config
 from src.request_model import Prompt
 
-
 app = FastAPI(title=__name__)
-
 
 # Configure logging
 client = google.cloud.logging.Client()
@@ -35,15 +33,14 @@ client.setup_logging(log_level=logging.INFO)
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
-
 logger.info(
     "Initializing Google GenAI client for project=%s, region=%s",
     config.PROJECT_ID,
     config.REGION,
 )
-genai_client = genai.Client(
-    vertexai=True, project=config.PROJECT_ID, location=config.REGION
-)
+genai_client = genai.Client(vertexai=True,
+                            project=config.PROJECT_ID,
+                            location=config.REGION)
 logger.info("Vertex AI client initialized successfully.")
 
 MODEL_NAME = config.MODEL_NAME
@@ -75,12 +72,11 @@ async def predict_route(request: Prompt):
     if MODEL_NAME is None or MODEL_CONFIG is None:
         logger.error("Vertex AI model not initialized.")
         raise HTTPException(
-            status_code=500, detail="Internal server error: Model not initialized."
-        )
+            status_code=500,
+            detail="Internal server error: Model not initialized.")
 
-    logger.info(
-        "Received prediction request with prompt: '%s...'", request.prompt[:100]
-    )
+    logger.info("Received prediction request with prompt: '%s...'",
+                request.prompt[:100])
 
     try:
         response = genai_client.models.generate_content(

@@ -12,19 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from pydantic import BaseModel, Field
-
-
-class Prompt(BaseModel):
-    """
-    Represents the request body for the prediction endpoint.
-    It expects a single field 'prompt' containing the text to be processed by the model.
-    """
-
-    prompt: str = Field(
-        default="",
-        title="User Prompt",
-        description=
-        "The text prompt to send to the generative model for a response.",
-        min_length=1,
-    )
+project_config = {
+  billing_account_id = "billing-acct-id"
+  parent             = "organizations/1122334455"
+  prefix             = "your-prefix"
+}
