@@ -365,32 +365,6 @@ values:
     project: prefix-gf-rrag-0
     timeouts: null
     type: CLOUD_IAM_SERVICE_ACCOUNT
-  module.cloudsql.random_password.passwords["gf-rrag-fe-0@prefix-gf-rrag-0.iam.gserviceaccount.com"]:
-    keepers: null
-    length: 16
-    lower: true
-    min_lower: 1
-    min_numeric: 1
-    min_special: 1
-    min_upper: 1
-    number: true
-    numeric: true
-    override_special: null
-    special: true
-    upper: true
-  module.cloudsql.random_password.passwords["gf-rrag-ing-0@prefix-gf-rrag-0.iam.gserviceaccount.com"]:
-    keepers: null
-    length: 16
-    lower: true
-    min_lower: 1
-    min_numeric: 1
-    min_special: 1
-    min_upper: 1
-    number: true
-    numeric: true
-    override_special: null
-    special: true
-    upper: true
   module.dns_policy_googleapis[0].google_dns_response_policy.default[0]:
     description: Terraform managed.
     gke_clusters: []
@@ -1233,5 +1207,4 @@ counts:
   google_sql_database_instance: 1
   google_sql_user: 2
   modules: 9
-  random_password: 2
-  resources: 74
+  resources: 72
