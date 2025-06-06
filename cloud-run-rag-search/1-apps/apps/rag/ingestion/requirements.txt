@@ -1,0 +1,6 @@
+google-cloud-bigquery>=3.0.0
+google-cloud-aiplatform>=1.25.0
+google-cloud-secret-manager>=2.16.0 # Optional: If using Secret Manager for DB pass
+cloud-sql-python-connector[pg8000]>=1.3.0 # Use pg8000 driver for PostgreSQL
+sqlalchemy>=1.4.0 # For easy DB interaction with the connector
+numpy>=1.20.0 # Often needed for embedding manipulation/formatting
