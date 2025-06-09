@@ -12,6 +12,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+locals {
+  bigquery_id = replace(var.name, "-", "_")
+}
+
+module "bigquery-dataset" {
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/bigquery-dataset"
+  project_id = var.project_config.id
+  id         = local.bigquery_id
+  tables = {
+    (local.bigquery_id) = {
+      friendly_name       = local.bigquery_id
+      deletion_protection = var.enable_deletion_protection
+    }
+  }
+}
+
 module "index-bucket" {
   source        = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/gcs"
   project_id    = var.project_config.id
@@ -22,18 +38,6 @@ module "index-bucket" {
   force_destroy = !var.enable_deletion_protection
 }
 
-resource "google_storage_bucket_object" "index_bucket_folder" {
-  name    = "contents/"
-  bucket  = module.index-bucket.id
-  content = " "
-
-  lifecycle {
-    ignore_changes = [
-      content
-    ]
-  }
-}
-
 resource "google_vertex_ai_index" "index" {
   display_name        = var.name
   project             = var.project_config.id
@@ -42,7 +46,7 @@ resource "google_vertex_ai_index" "index" {
   index_update_method = "BATCH_UPDATE"
 
   metadata {
-    contents_delta_uri = "${module.index-bucket.url}/${google_storage_bucket_object.index_bucket_folder.name}"
+    contents_delta_uri = module.index-bucket.url
 
     config {
       dimensions                  = var.vertex_ai_index_config.dimensions
@@ -74,3 +78,10 @@ resource "google_vertex_ai_index_endpoint" "index_endpoint" {
     ]
   }
 }
+
+# resource "google_vertex_ai_index_endpoint_deployed_index" "index_deployment" {
+#   deployed_index_id = var.name
+#   display_name      = var.name
+#   index             = google_vertex_ai_index.index.id
+#   index_endpoint    = google_vertex_ai_index_endpoint.index_endpoint.id
+# }

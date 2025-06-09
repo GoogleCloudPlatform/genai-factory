@@ -21,6 +21,7 @@ services:
   # Needed both for ILB and ELB
   - aiplatform.googleapis.com
   - artifactregistry.googleapis.com
+  - bigquery.googleapis.com
   - cloudbuild.googleapis.com
   - cloudresourcemanager.googleapis.com
   - cloudscheduler.googleapis.com
@@ -68,6 +69,7 @@ iam:
 iam_by_principals:
   iac-rw:
     - roles/artifactregistry.admin
+    - roles/bigquery.user
     - roles/cloudbuild.builds.editor
     - roles/cloudscheduler.admin
     - roles/compute.loadBalancerAdmin
@@ -76,8 +78,7 @@ iam_by_principals:
     - roles/dns.admin
     - roles/run.admin
     - roles/storage.admin
-    - roles/storage.objectCreator
-    - roles/storage.objectViewer
+    - roles/storage.objectUser
     # Needed for ILB only
     - roles/certificatemanager.owner
     - roles/privateca.admin
@@ -88,18 +89,18 @@ iam_by_principals:
     - roles/logging.logWriter
     - roles/run.admin
     - roles/storage.admin
-    - roles/storage.objectCreator
-    - roles/storage.objectViewer
+    - roles/storage.objectUser
   gf-rrag-ing-0:
-    - roles/storage.objectViewer
+    - roles/bigquery.dataViewer
+    - roles/bigquery.jobUser
+    - roles/storage.objectUser
   gf-rrag-ing-build-0:
     - roles/artifactregistry.writer
     - roles/cloudbuild.builds.editor
     - roles/logging.logWriter
     - roles/run.admin
     - roles/storage.admin
-    - roles/storage.objectCreator
-    - roles/storage.objectViewer
+    - roles/storage.objectUser
 
 # Grant roles/aiplatform.user as additive,
 # as it is authoritatively granted by aiplatform APIs to default SA

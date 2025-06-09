@@ -15,6 +15,8 @@
 # Use an official Python runtime as a parent image
 FROM python:3.12-slim
 
+# Set environment variables to improve Python's behavior in Docker
+
 # Prevents python from writing .pyc files to disc
 ENV PYTHONDONTWRITEBYTECODE 1
 # Prevents python from buffering stdout and stderr (good for logging)

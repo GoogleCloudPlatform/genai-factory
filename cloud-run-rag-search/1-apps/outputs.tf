@@ -13,24 +13,17 @@
 # limitations under the License.
 
 locals {
-  _sa_db_frontend = replace(
-    var.service_accounts["project/gf-rrag-fe-0"].email,
-    ".gserviceaccount.com",
-    ""
-  )
-  _sa_db_ingestion = replace(
-    var.service_accounts["project/gf-rrag-ing-0"].email,
-    ".gserviceaccount.com",
-    ""
-  )
   _env_vars_frontend = [
     "PROJECT_ID=${var.project_config.id}",
     "REGION=${var.region}"
   ]
   _env_vars_ingestion = [
-    "GCS_BUCKET_NAME=${module.index-bucket.url}",
+    "BQ_DATASET=${local.bigquery_id}",
+    "BQ_TABLE=${local.bigquery_id}",
+    "GCS_BUCKET=${module.index-bucket.name}",
     "PROJECT_ID=${var.project_config.id}",
-    "REGION=${var.region}"
+    "REGION=${var.region}",
+    "VECTOR_SEARCH_INDEX_NAME=${google_vertex_ai_index.index.id}"
   ]
   env_vars_frontend  = join(",", local._env_vars_frontend)
   env_vars_ingestion = join(",", local._env_vars_ingestion)
@@ -42,8 +35,16 @@ output "commands" {
   # Run the following commands to deploy the application.
   # Alternatively, deploy the application through your CI/CD pipeline.
 
-  gcloud storage cp data/data.csv ${module.index-bucket.url} \
-    --impersonate-service-account=${var.service_accounts["project/iac-rw"].email}
+  # Load sample data into BigQuery
+  gcloud config set auth/impersonate_service_account ${var.service_accounts["project/iac-rw"].email}
+  bq load \
+    --project_id ${var.project_config.id} \
+    --source_format=CSV \
+    --skip_leading_rows=1 \
+    --autodetect \
+    ${var.project_config.id}:${local.bigquery_id}.${local.bigquery_id} \
+    ./data/top-100-imdb-movies.csv
+  gcloud config unset auth/impersonate_service_account
 
   gcloud artifacts repositories create ${var.name} \
     --project=${var.project_config.id} \
@@ -97,7 +98,7 @@ output "ip_addresses" {
     )
     internal = (
       var.lbs_config.internal.enable
-      ? module.lb_internal[0].address[""]
+      ? module.lb_internal[0].address
       : null
     )
   }
