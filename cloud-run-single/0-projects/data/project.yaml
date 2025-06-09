@@ -46,6 +46,8 @@ service_accounts:
     iam_sa_roles:
       gf-srun-0:
         - roles/iam.serviceAccountUser
+      gf-srun-build-0:
+        - roles/iam.serviceAccountUser
   # Application SAs
   gf-srun-0: {}
   gf-srun-build-0: {}
@@ -56,10 +58,12 @@ iam:
     - certificatemanager
 iam_by_principals:
   iac-rw:
-    - roles/dns.admin
+    - roles/artifactregistry.admin
+    - roles/cloudbuild.builds.editor
     - roles/compute.loadBalancerAdmin
     - roles/compute.networkAdmin
     - roles/compute.securityAdmin
+    - roles/dns.admin
     - roles/run.admin
     # Needed for ILB only
     - roles/certificatemanager.owner

@@ -13,6 +13,22 @@
 # limitations under the License.
 
 values:
+  google_compute_address.address_internal[0]:
+    address_type: INTERNAL
+    description: null
+    effective_labels:
+      goog-terraform-provisioned: 'true'
+    ip_version: null
+    ipv6_endpoint_type: null
+    labels: null
+    name: gf-srun-0-internal
+    network: null
+    project: your-project
+    purpose: SHARED_LOADBALANCER_VIP
+    region: europe-west1
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
+    timeouts: null
   google_compute_global_address.address_external[0]:
     address_type: null
     description: null
@@ -27,6 +43,42 @@ values:
     terraform_labels:
       goog-terraform-provisioned: 'true'
     timeouts: null
+  google_compute_region_security_policy.security_policy_internal[0]:
+    ddos_protection_config: []
+    description: null
+    name: gf-srun-0-internal
+    project: your-project
+    region: europe-west1
+    rules:
+    - action: allow
+      description: Allowed source IP ranges.
+      match:
+      - config:
+        - src_ip_ranges:
+          - 0.0.0.0/0
+        expr: []
+        versioned_expr: SRC_IPS_V1
+      network_match: []
+      preconfigured_waf_config: []
+      preview: null
+      priority: 100
+      rate_limit_options: []
+    - action: deny(403)
+      description: Default deny rule.
+      match:
+      - config:
+        - src_ip_ranges:
+          - '*'
+        expr: []
+        versioned_expr: SRC_IPS_V1
+      network_match: []
+      preconfigured_waf_config: []
+      preview: null
+      priority: 2147483647
+      rate_limit_options: []
+    timeouts: null
+    type: CLOUD_ARMOR
+    user_defined_fields: []
   google_compute_security_policy.security_policy_external[0]:
     adaptive_protection_config: []
     description: null
@@ -62,6 +114,118 @@ values:
       priority: 2147483647
       rate_limit_options: []
       redirect_options: []
+    timeouts: null
+  module.cas[0].google_privateca_ca_pool.default[0]:
+    effective_labels:
+      goog-terraform-provisioned: 'true'
+    issuance_policy: []
+    labels: null
+    location: europe-west1
+    name: gf-srun-0-ca-pool-0
+    project: your-project
+    publishing_options: []
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
+    tier: DEVOPS
+    timeouts: null
+  module.cas[0].google_privateca_certificate_authority.default["gf-srun-0"]:
+    certificate_authority_id: gf-srun-0
+    config:
+    - subject_config:
+      - subject:
+        - common_name: example.com
+          country_code: null
+          locality: null
+          organization: gf-srun-0
+          organizational_unit: null
+          postal_code: null
+          province: null
+          street_address: null
+        subject_alt_name: []
+      subject_key_id: []
+      x509_config:
+      - additional_extensions: []
+        aia_ocsp_servers: null
+        ca_options:
+        - is_ca: true
+          max_issuer_path_length: null
+          non_ca: null
+          zero_max_issuer_path_length: null
+        key_usage:
+        - base_key_usage:
+          - cert_sign: true
+            content_commitment: false
+            crl_sign: true
+            data_encipherment: false
+            decipher_only: false
+            digital_signature: false
+            encipher_only: false
+            key_agreement: false
+            key_encipherment: false
+          extended_key_usage:
+          - client_auth: false
+            code_signing: false
+            email_protection: false
+            ocsp_signing: false
+            server_auth: false
+            time_stamping: false
+          unknown_extended_key_usages: []
+        name_constraints: []
+        policy_ids: []
+    deletion_protection: true
+    desired_state: null
+    effective_labels:
+      goog-terraform-provisioned: 'true'
+    gcs_bucket: null
+    ignore_active_certificates_on_deletion: false
+    key_spec:
+    - algorithm: RSA_PKCS1_2048_SHA256
+      cloud_kms_key_version: null
+    labels: null
+    lifetime: 315360000s
+    location: europe-west1
+    pem_ca_certificate: null
+    project: your-project
+    skip_grace_period: true
+    subordinate_config: []
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
+    timeouts: null
+    type: SELF_SIGNED
+    user_defined_access_urls: []
+  module.certificate_manager[0].google_certificate_manager_certificate.certificates["gf-srun-0"]:
+    description: null
+    effective_labels:
+      goog-terraform-provisioned: 'true'
+    labels: null
+    location: europe-west1
+    managed:
+    - dns_authorizations: null
+      domains:
+      - example.com
+    name: gf-srun-0
+    project: your-project
+    scope: null
+    self_managed: []
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
+    timeouts: null
+  module.certificate_manager[0].google_certificate_manager_certificate_issuance_config.default["gf-srun-0"]:
+    certificate_authority_config:
+    - certificate_authority_service_config:
+      - {}
+    description: null
+    effective_labels:
+      goog-terraform-provisioned: 'true'
+    key_algorithm: ECDSA_P256
+    labels: null
+    lifetime: 1814400s
+    location: europe-west1
+    name: gf-srun-0
+    project: your-project
+    rotation_window_percentage: 34
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
     timeouts: null
   module.cloud_run.google_cloud_run_v2_service.service_unmanaged[0]:
     annotations: null
@@ -831,6 +995,175 @@ values:
     project: your-project
     test: []
     timeouts: null
+  module.lb_internal[0].google_compute_forwarding_rule.default:
+    all_ports: null
+    allow_global_access: null
+    allow_psc_global_access: null
+    backend_service: null
+    description: Terraform managed.
+    ip_collection: null
+    ip_protocol: TCP
+    is_mirroring_collector: null
+    labels: null
+    load_balancing_scheme: INTERNAL_MANAGED
+    name: gf-srun-0-internal
+    network_tier: PREMIUM
+    no_automate_dns_zone: null
+    port_range: '443'
+    ports: null
+    project: your-project
+    recreate_closed_psc: false
+    region: europe-west1
+    service_label: null
+    source_ip_ranges: null
+    timeouts: null
+  module.lb_internal[0].google_compute_region_backend_service.default["default"]:
+    affinity_cookie_ttl_sec: null
+    backend:
+    - balancing_mode: UTILIZATION
+      capacity_scaler: 1
+      custom_metrics: []
+      description: Terraform managed.
+      failover: false
+      max_connections: null
+      max_connections_per_endpoint: null
+      max_connections_per_instance: null
+      max_rate: null
+      max_rate_per_endpoint: null
+      max_rate_per_instance: null
+      max_utilization: null
+    circuit_breakers: []
+    connection_draining_timeout_sec: 300
+    connection_tracking_policy: []
+    consistent_hash: []
+    custom_metrics: []
+    description: Terraform managed.
+    dynamic_forwarding: []
+    enable_cdn: null
+    failover_policy: []
+    health_checks: null
+    ip_address_selection_policy: null
+    load_balancing_scheme: INTERNAL_MANAGED
+    locality_lb_policy: null
+    name: gf-srun-0-internal-default
+    network: null
+    outlier_detection: []
+    project: your-project
+    protocol: HTTPS
+    region: europe-west1
+    strong_session_affinity_cookie: []
+    subsetting: []
+    timeouts: null
+  module.lb_internal[0].google_compute_region_network_endpoint_group.default["gf-srun-0-internal"]:
+    app_engine: []
+    cloud_function: []
+    cloud_run:
+    - service: gf-srun-0
+      tag: null
+      url_mask: null
+    description: Terraform managed.
+    name: gf-srun-0-internal-gf-srun-0-internal
+    network: null
+    network_endpoint_type: SERVERLESS
+    project: your-project
+    psc_target_service: null
+    region: europe-west1
+    subnetwork: null
+    timeouts: null
+  module.lb_internal[0].google_compute_region_target_https_proxy.default[0]:
+    description: Terraform managed.
+    http_keep_alive_timeout_sec: null
+    name: gf-srun-0-internal
+    project: your-project
+    region: europe-west1
+    server_tls_policy: null
+    ssl_certificates: null
+    ssl_policy: null
+    timeouts: null
+  module.lb_internal[0].google_compute_region_url_map.default:
+    default_route_action: []
+    default_url_redirect: []
+    description: Terraform managed.
+    host_rule: []
+    name: gf-srun-0-internal
+    path_matcher: []
+    project: your-project
+    region: europe-west1
+    test: []
+    timeouts: null
+  module.lb_internal_dns[0].google_dns_managed_zone.dns_managed_zone[0]:
+    cloud_logging_config:
+    - enable_logging: false
+    description: Terraform managed.
+    dns_name: example.com.
+    effective_labels:
+      goog-terraform-provisioned: 'true'
+    force_destroy: false
+    forwarding_config: []
+    labels: null
+    name: gf-srun-0
+    peering_config: []
+    project: your-project
+    reverse_lookup: false
+    service_directory_config: []
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
+    timeouts: null
+    visibility: private
+  module.lb_internal_dns[0].google_dns_record_set.dns_record_set["A example.com"]:
+    managed_zone: gf-srun-0
+    name: example.com.example.com.
+    project: your-project
+    routing_policy: []
+    ttl: 300
+    type: A
+  module.lb_internal_redirect[0].google_compute_forwarding_rule.default:
+    all_ports: null
+    allow_global_access: null
+    allow_psc_global_access: null
+    backend_service: null
+    description: Terraform managed.
+    ip_collection: null
+    ip_protocol: TCP
+    is_mirroring_collector: null
+    labels: null
+    load_balancing_scheme: INTERNAL_MANAGED
+    name: gf-srun-0-internal-redirect
+    network_tier: PREMIUM
+    no_automate_dns_zone: null
+    port_range: '80'
+    ports: null
+    project: your-project
+    recreate_closed_psc: false
+    region: europe-west1
+    service_label: null
+    source_ip_ranges: null
+    timeouts: null
+  module.lb_internal_redirect[0].google_compute_region_target_http_proxy.default[0]:
+    description: Terraform managed.
+    http_keep_alive_timeout_sec: null
+    name: gf-srun-0-internal-redirect
+    project: your-project
+    region: europe-west1
+    timeouts: null
+  module.lb_internal_redirect[0].google_compute_region_url_map.default:
+    default_route_action: []
+    default_service: null
+    default_url_redirect:
+    - host_redirect: null
+      https_redirect: true
+      path_redirect: null
+      prefix_redirect: null
+      redirect_response_code: MOVED_PERMANENTLY_DEFAULT
+      strip_query: false
+    description: Terraform managed.
+    host_rule: []
+    name: gf-srun-0-internal-redirect
+    path_matcher: []
+    project: your-project
+    region: europe-west1
+    test: []
+    timeouts: null
   module.vpc[0].google_compute_network.network[0]:
     auto_create_subnetworks: false
     delete_default_routes_on_create: false
@@ -914,21 +1247,34 @@ values:
     timeouts: null
 
 counts:
+  google_certificate_manager_certificate: 1
+  google_certificate_manager_certificate_issuance_config: 1
   google_cloud_run_v2_service: 1
   google_cloud_run_v2_service_iam_binding: 1
+  google_compute_address: 1
   google_compute_backend_service: 1
+  google_compute_forwarding_rule: 2
   google_compute_global_address: 1
   google_compute_global_forwarding_rule: 2
   google_compute_managed_ssl_certificate: 1
   google_compute_network: 1
-  google_compute_region_network_endpoint_group: 1
+  google_compute_region_backend_service: 1
+  google_compute_region_network_endpoint_group: 2
+  google_compute_region_security_policy: 1
+  google_compute_region_target_http_proxy: 1
+  google_compute_region_target_https_proxy: 1
+  google_compute_region_url_map: 2
   google_compute_route: 3
   google_compute_security_policy: 1
   google_compute_subnetwork: 2
   google_compute_target_http_proxy: 1
   google_compute_target_https_proxy: 1
   google_compute_url_map: 2
+  google_dns_managed_zone: 1
+  google_dns_record_set: 1
   google_dns_response_policy: 1
   google_dns_response_policy_rule: 39
-  modules: 5
-  resources: 59
+  google_privateca_ca_pool: 1
+  google_privateca_certificate_authority: 1
+  modules: 10
+  resources: 75

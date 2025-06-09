@@ -50,26 +50,33 @@ output "commands" {
   # Alternatively, deploy the application through your CI/CD pipeline.
 
   # Install the vector extension in CloudSQL
-  gcloud sql users set-password postgres \
-    --password your_complex_pwd \
-    --instance ${module.cloudsql.name} \
-    --project ${var.project_config.id}
-  # In https://console.cloud.google.com/sql/instances/${var.name}/studio
-  # Select the ${var.name} database and enter with postgres user.
-  # In the Editor 1 tab, run this query: CREATE EXTENSION IF NOT EXISTS vector;
+  -> gcloud sql users set-password postgres \
+      --password your_complex_pwd \
+      --instance ${module.cloudsql.name} \
+      --project ${var.project_config.id} \
+      --impersonate-service-account=${var.service_accounts["project/iac-rw"].email}
+
+  -> # In https://console.cloud.google.com/sql/instances/${var.name}/studio
+     # Select the ${var.name} database and enter with postgres user.
+     # In the Editor 1 tab, run this query: CREATE EXTENSION IF NOT EXISTS vector;
+     # This requires the user to be CloudSQL admin.
 
   # Load sample data into BigQuery
+  gcloud config set auth/impersonate_service_account ${var.service_accounts["project/iac-rw"].email}
   bq load \
+    --project_id ${var.project_config.id} \
     --source_format=CSV \
     --skip_leading_rows=1 \
     --autodetect \
     ${var.project_config.id}:${local.bigquery_id}.${local.bigquery_id} \
     ./data/top-100-imdb-movies.csv
+  gcloud config unset auth/impersonate_service_account
 
   gcloud artifacts repositories create ${var.name} \
     --project=${var.project_config.id} \
     --location ${var.region} \
-    --repository-format docker
+    --repository-format docker \
+    --impersonate-service-account=${var.service_accounts["project/iac-rw"].email}
 
   # Ingestion Cloud Run
   gcloud builds submit ./apps/rag/ingestion \
@@ -77,9 +84,11 @@ output "commands" {
     --tag ${var.region}-docker.pkg.dev/${var.project_config.id}/${var.name}/ingestion \
     --service-account ${var.service_accounts["project/gf-rrag-ing-build-0"].id} \
     --default-buckets-behavior=REGIONAL_USER_OWNED_BUCKET \
-    --quiet
+    --quiet \
+    --impersonate-service-account=${var.service_accounts["project/iac-rw"].email}
 
   gcloud run jobs deploy ${var.name}-ingestion \
+    --impersonate-service-account=${var.service_accounts["project/iac-rw"].email} \
     --project ${var.project_config.id} \
     --region ${var.region} \
     --container=ingestion \
@@ -92,9 +101,11 @@ output "commands" {
     --tag ${var.region}-docker.pkg.dev/${var.project_config.id}/${var.name}/frontend \
     --service-account ${var.service_accounts["project/gf-rrag-fe-build-0"].id} \
     --default-buckets-behavior=REGIONAL_USER_OWNED_BUCKET \
-    --quiet
+    --quiet \
+    --impersonate-service-account=${var.service_accounts["project/iac-rw"].email}
 
   gcloud run deploy ${var.name}-frontend \
+    --impersonate-service-account=${var.service_accounts["project/iac-rw"].email} \
     --project ${var.project_config.id} \
     --region ${var.region} \
     --container=frontend \
@@ -113,7 +124,7 @@ output "ip_addresses" {
     )
     internal = (
       var.lbs_config.internal.enable
-      ? module.lb_internal[0].address[""]
+      ? module.lb_internal[0].address
       : null
     )
   }

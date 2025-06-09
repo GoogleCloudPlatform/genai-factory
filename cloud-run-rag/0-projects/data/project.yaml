@@ -48,7 +48,11 @@ service_accounts:
     iam_sa_roles:
       gf-rrag-fe-0:
         - roles/iam.serviceAccountUser
+      gf-rrag-fe-build-0:
+        - roles/iam.serviceAccountUser
       gf-rrag-ing-0:
+        - roles/iam.serviceAccountUser
+      gf-rrag-ing-build-0:
         - roles/iam.serviceAccountUser
       gf-rrag-ing-sched-0:
         - roles/iam.serviceAccountUser
@@ -65,7 +69,9 @@ iam:
     - certificatemanager
 iam_by_principals:
   iac-rw:
-    - roles/bigquery.admin
+    - roles/artifactregistry.admin
+    - roles/cloudbuild.builds.editor
+    - roles/bigquery.user
     - roles/cloudscheduler.admin
     - roles/cloudsql.admin
     - roles/compute.loadBalancerAdmin
@@ -73,6 +79,9 @@ iam_by_principals:
     - roles/compute.securityAdmin
     - roles/dns.admin
     - roles/run.admin
+    - roles/storage.admin
+    - roles/storage.objectCreator
+    - roles/storage.objectViewer
     # Needed for ILB only
     - roles/certificatemanager.owner
     - roles/privateca.admin

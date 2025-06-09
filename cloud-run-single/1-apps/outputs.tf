@@ -39,7 +39,7 @@ output "ip_addresses" {
     )
     internal = (
       var.lbs_config.internal.enable
-      ? module.lb_internal[0].address[""]
+      ? module.lb_internal[0].address
       : null
     )
   }

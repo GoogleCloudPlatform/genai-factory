@@ -57,4 +57,7 @@ lbs_config = {
   external = {
     domain = "your-domain.com"
   }
+  internal = {
+    enable = true
+  }
 }
