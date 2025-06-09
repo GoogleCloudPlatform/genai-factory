@@ -1,4 +1,0 @@
-google-genai==1.15.0
-fastapi[standard]==0.115.12
-google-cloud-logging==3.12.1
-gunicorn==23.0.0

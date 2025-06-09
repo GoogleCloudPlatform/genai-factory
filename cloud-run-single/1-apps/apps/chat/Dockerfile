@@ -15,23 +15,27 @@
 # Use an official lightweight Python image.
 # https://hub.docker.com/_/python
 FROM python:3.12-slim
-
-# Allow statements and log messages to immediately appear in the Knative logs
-ENV PYTHONUNBUFFERED True
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
 # Set the working directory in the container
 WORKDIR /app
 
-# Copy dependency files and install dependencies
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# Enable bytecode compilation
+ENV UV_COMPILE_BYTECODE=1
 
-# Copy the rest of the application code
-COPY . .
+# Allow statements and log messages to immediately appear in the Knative logs
+ENV PYTHONUNBUFFERED True
+
+# Installing separately from its dependencies allows optimal layer caching
+COPY . /app
+RUN uv sync --locked
+
+# Place executables in the environment at the front of the path
+ENV PATH="/app/.venv/bin:$PATH"
 
 # Expose the port the app runs on (though Cloud Run uses the PORT env var)
 EXPOSE $PORT
 
 # Set the default command to run the application using Gunicorn
 # Cloud Run injects the PORT environment variable.
-CMD exec gunicorn main:app --workers 1 --threads 8 --timeout 0 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT
+CMD exec uvicorn main:app --host 0.0.0.0 --port $PORT
