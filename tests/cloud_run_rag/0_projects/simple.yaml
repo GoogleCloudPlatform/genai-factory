@@ -15,6 +15,7 @@
 values:
   google_service_account_iam_member.me_sa_token_creator[0]:
     condition: []
+    member: user:lucaprete@google.com
     role: roles/iam.serviceAccountTokenCreator
     service_account_id: projects/your-prefix-gf-rrag-0/serviceAccounts/iac-rw@your-prefix-gf-rrag-0.iam.gserviceaccount.com
   local_file.providers:
@@ -70,6 +71,12 @@ values:
     members:
     - serviceAccount:iac-rw@your-prefix-gf-rrag-0.iam.gserviceaccount.com
     role: roles/storage.objectViewer
+  module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/artifactregistry.admin"]:
+    condition: []
+    members:
+    - serviceAccount:iac-rw@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+    project: your-prefix-gf-rrag-0
+    role: roles/artifactregistry.admin
   module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/artifactregistry.writer"]:
     condition: []
     members:
@@ -77,12 +84,6 @@ values:
     - serviceAccount:gf-rrag-ing-build-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
     project: your-prefix-gf-rrag-0
     role: roles/artifactregistry.writer
-  module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/bigquery.admin"]:
-    condition: []
-    members:
-    - serviceAccount:iac-rw@your-prefix-gf-rrag-0.iam.gserviceaccount.com
-    project: your-prefix-gf-rrag-0
-    role: roles/bigquery.admin
   module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/bigquery.dataViewer"]:
     condition: []
     members:
@@ -95,6 +96,12 @@ values:
     - serviceAccount:gf-rrag-ing-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
     project: your-prefix-gf-rrag-0
     role: roles/bigquery.jobUser
+  module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/bigquery.user"]:
+    condition: []
+    members:
+    - serviceAccount:iac-rw@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+    project: your-prefix-gf-rrag-0
+    role: roles/bigquery.user
   module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/certificatemanager.owner"]:
     condition: []
     members:
@@ -106,6 +113,7 @@ values:
     members:
     - serviceAccount:gf-rrag-fe-build-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
     - serviceAccount:gf-rrag-ing-build-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+    - serviceAccount:iac-rw@your-prefix-gf-rrag-0.iam.gserviceaccount.com
     project: your-prefix-gf-rrag-0
     role: roles/cloudbuild.builds.editor
   module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/cloudscheduler.admin"]:
@@ -188,6 +196,7 @@ values:
     members:
     - serviceAccount:gf-rrag-fe-build-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
     - serviceAccount:gf-rrag-ing-build-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+    - serviceAccount:iac-rw@your-prefix-gf-rrag-0.iam.gserviceaccount.com
     project: your-prefix-gf-rrag-0
     role: roles/storage.admin
   module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/storage.objectCreator"]:
@@ -195,6 +204,7 @@ values:
     members:
     - serviceAccount:gf-rrag-fe-build-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
     - serviceAccount:gf-rrag-ing-build-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+    - serviceAccount:iac-rw@your-prefix-gf-rrag-0.iam.gserviceaccount.com
     project: your-prefix-gf-rrag-0
     role: roles/storage.objectCreator
   module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/storage.objectViewer"]:
@@ -202,6 +212,7 @@ values:
     members:
     - serviceAccount:gf-rrag-fe-build-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
     - serviceAccount:gf-rrag-ing-build-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+    - serviceAccount:iac-rw@your-prefix-gf-rrag-0.iam.gserviceaccount.com
     project: your-prefix-gf-rrag-0
     role: roles/storage.objectViewer
   module.projects.module.projects-iam["project"].google_project_iam_member.bindings["0"]:
@@ -497,10 +508,18 @@ values:
   : condition: []
     role: roles/iam.serviceAccountUser
     service_account_id: projects/your-prefix-gf-rrag-0/serviceAccounts/gf-rrag-fe-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+  ? module.projects.module.service_accounts-iam["project/iac-rw"].google_service_account_iam_member.additive["projects/your-prefix-gf-rrag-0/serviceAccounts/gf-rrag-fe-build-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com-roles/iam.serviceAccountUser"]
+  : condition: []
+    role: roles/iam.serviceAccountUser
+    service_account_id: projects/your-prefix-gf-rrag-0/serviceAccounts/gf-rrag-fe-build-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
   ? module.projects.module.service_accounts-iam["project/iac-rw"].google_service_account_iam_member.additive["projects/your-prefix-gf-rrag-0/serviceAccounts/gf-rrag-ing-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com-roles/iam.serviceAccountUser"]
   : condition: []
     role: roles/iam.serviceAccountUser
     service_account_id: projects/your-prefix-gf-rrag-0/serviceAccounts/gf-rrag-ing-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+  ? module.projects.module.service_accounts-iam["project/iac-rw"].google_service_account_iam_member.additive["projects/your-prefix-gf-rrag-0/serviceAccounts/gf-rrag-ing-build-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com-roles/iam.serviceAccountUser"]
+  : condition: []
+    role: roles/iam.serviceAccountUser
+    service_account_id: projects/your-prefix-gf-rrag-0/serviceAccounts/gf-rrag-ing-build-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
   ? module.projects.module.service_accounts-iam["project/iac-rw"].google_service_account_iam_member.additive["projects/your-prefix-gf-rrag-0/serviceAccounts/gf-rrag-ing-sched-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com-roles/iam.serviceAccountUser"]
   : condition: []
     role: roles/iam.serviceAccountUser
@@ -509,22 +528,21 @@ values:
 counts:
   google_bigquery_default_service_account: 1
   google_project: 1
-  google_project_iam_binding: 21
+  google_project_iam_binding: 22
   google_project_iam_member: 26
   google_project_service: 12
   google_project_service_identity: 8
   google_service_account: 7
-  google_service_account_iam_member: 4
+  google_service_account_iam_member: 6
   google_storage_bucket: 1
   google_storage_bucket_iam_binding: 2
   local_file: 2
   modules: 11
-  resources: 85
+  resources: 88
 
 outputs:
   buckets:
     project/iac-state: your-prefix-gf-rrag-0-iac-state
-  projects: __missing__
   service_accounts:
     project/gf-rrag-fe-0:
       email: gf-rrag-fe-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
