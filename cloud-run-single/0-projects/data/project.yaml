@@ -77,6 +77,7 @@ iam_by_principals:
     - roles/storage.objectViewer
     - roles/artifactregistry.writer
     - roles/iam.serviceAccountUser
+    - roles/logging.logWriter
 
 # Grant roles/aiplatform.user as additive,
 # as it is authoritatively granted by aiplatform APIs to default SA
