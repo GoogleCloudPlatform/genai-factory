@@ -41,7 +41,7 @@ logger.info(
 genai_client = genai.Client(vertexai=True,
                             project=config.PROJECT_ID,
                             location=config.REGION)
-logger.info("Vertex AI client initialized successfully.")
+logger.info("Google GenAI client initialized successfully.")
 
 MODEL_NAME = config.MODEL_NAME
 MODEL_CONFIG = types.GenerateContentConfig(
