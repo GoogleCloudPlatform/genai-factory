@@ -13,9 +13,7 @@
 # limitations under the License.
 
 # Use an official Python runtime as a parent image
-FROM python:3.10-slim
-
-# Set environment variables to improve Python's behavior in Docker
+FROM python:3.12-slim
 
 # Prevents python from writing .pyc files to disc
 ENV PYTHONDONTWRITEBYTECODE 1

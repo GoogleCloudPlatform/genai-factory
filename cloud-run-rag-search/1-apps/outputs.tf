@@ -28,6 +28,7 @@ locals {
     "REGION=${var.region}"
   ]
   _env_vars_ingestion = [
+    "GCS_BUCKET_NAME=${module.index-bucket.url}",
     "PROJECT_ID=${var.project_config.id}",
     "REGION=${var.region}"
   ]
@@ -41,10 +42,14 @@ output "commands" {
   # Run the following commands to deploy the application.
   # Alternatively, deploy the application through your CI/CD pipeline.
 
+  gcloud storage cp data/data.csv ${module.index-bucket.url} \
+    --impersonate-service-account=${var.service_accounts["project/iac-rw"].email}
+
   gcloud artifacts repositories create ${var.name} \
     --project=${var.project_config.id} \
     --location ${var.region} \
-    --repository-format docker
+    --repository-format docker \
+    --impersonate-service-account=${var.service_accounts["project/iac-rw"].email}
 
   # Ingestion Cloud Run
   gcloud builds submit ./apps/rag/ingestion \
@@ -52,9 +57,11 @@ output "commands" {
     --tag ${var.region}-docker.pkg.dev/${var.project_config.id}/${var.name}/ingestion \
     --service-account ${var.service_accounts["project/gf-rrag-ing-build-0"].id} \
     --default-buckets-behavior=REGIONAL_USER_OWNED_BUCKET \
-    --quiet
+    --quiet \
+    --impersonate-service-account=${var.service_accounts["project/iac-rw"].email}
 
   gcloud run jobs deploy ${var.name}-ingestion \
+    --impersonate-service-account=${var.service_accounts["project/iac-rw"].email} \
     --project ${var.project_config.id} \
     --region ${var.region} \
     --container=ingestion \
@@ -67,9 +74,11 @@ output "commands" {
     --tag ${var.region}-docker.pkg.dev/${var.project_config.id}/${var.name}/frontend \
     --service-account ${var.service_accounts["project/gf-rrag-fe-build-0"].id} \
     --default-buckets-behavior=REGIONAL_USER_OWNED_BUCKET \
-    --quiet
+    --quiet \
+    --impersonate-service-account=${var.service_accounts["project/iac-rw"].email}
 
   gcloud run deploy ${var.name}-frontend \
+    --impersonate-service-account=${var.service_accounts["project/iac-rw"].email} \
     --project ${var.project_config.id} \
     --region ${var.region} \
     --container=frontend \
