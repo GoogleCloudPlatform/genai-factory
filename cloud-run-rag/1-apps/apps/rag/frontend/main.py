@@ -21,7 +21,6 @@ from fastapi import FastAPI, HTTPException, Depends
 import google.api_core.exceptions as exceptions
 from google import genai
 from google.genai import types
-import google.cloud.logging
 
 from sqlalchemy.orm import Session
 
