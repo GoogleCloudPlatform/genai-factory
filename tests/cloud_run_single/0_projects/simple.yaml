@@ -129,6 +129,7 @@ values:
     condition: []
     members:
     - serviceAccount:gf-srun-0@your-prefix-gf-srun-0.iam.gserviceaccount.com
+    - serviceAccount:gf-srun-build-0@your-prefix-gf-srun-0.iam.gserviceaccount.com
     project: your-prefix-gf-srun-0
     role: roles/logging.logWriter
   module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/privateca.admin"]:
