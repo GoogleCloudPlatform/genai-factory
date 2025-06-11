@@ -115,8 +115,8 @@ jobs:
         include:
           - flavour: terraform
             version: "${{ needs.compute-matrix.outputs.DEFAULT_TERRAFORM_VERSION }}"
-          # - flavour: tofu
-          #   version: "${{ needs.compute-matrix.outputs.DEFAULT_TOFU_VERSION }}"
+          - flavour: tofu
+            version: "${{ needs.compute-matrix.outputs.DEFAULT_TOFU_VERSION }}"
 
     steps:
       - uses: actions/checkout@v4
