@@ -1,7 +1,7 @@
 [project]
 name = "chat"
 version = "0.1.0"
-description = "Add your description here"
+description = "Simple LLM chat application."
 authors = [{ name = "Google LLC" }]
 license = { text = "Apache-2.0" }
 readme = "README.md"

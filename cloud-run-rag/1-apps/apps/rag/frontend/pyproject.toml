@@ -1,7 +1,7 @@
 [project]
 name = "frontend"
 version = "0.1.0"
-description = "Add your description here"
+description = "FastAPI frontend for RAG application."
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [

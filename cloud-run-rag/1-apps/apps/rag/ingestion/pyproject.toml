@@ -1,7 +1,7 @@
 [project]
 name = "ingestion"
 version = "0.1.0"
-description = "Simple RAG application using Big Query and sqlalchemy."
+description = "RAG application using Big Query and sqlalchemy."
 authors = [{ name = "Google LLC" }]
 readme = "README.md"
 requires-python = ">=3.12"
