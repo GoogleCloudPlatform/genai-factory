@@ -21,8 +21,26 @@ When drawing new diagrams you can leverage the [official Google Cloud Icons deck
 
 ## Useful Commands
 
+Prerequisites:
+* [uv](https://github.com/astral-sh/uv) python package and project manager 
+
+
 Setup dev environment
 
+### Apps
+Initialize a new uv project within a given application folder and add required python test, dev, main and other custom dependencies.
+
+```shell
+uv init
+uv add <dependency>
+```
+
+Customize the *pyproject.toml* to your needs. Are more detailed documentation on how to use uv can be found [here](https://docs.astral.sh/uv/#highlights).
+
+Refer to the dockerfile in the existing application folder to get an example on how to use uv in docker.
+
+
+### Test and Tools
 ```shell
 python3 -m venv ~/.venv-genai-factory
 source ~/.venv-genai-factory/bin/activate
