@@ -18,8 +18,8 @@ locals {
     "REGION=${var.region}"
   ]
   _env_vars_ingestion = [
-    "BQ_DATASET=${local.bigquery_id}",
-    "BQ_TABLE=${local.bigquery_id}",
+    "BQ_DATASET=${module.bigquery-dataset.dataset_id}",
+    "BQ_TABLE=${module.bigquery-dataset.tables[local.name_to_underscores].friendly_name}",
     "GCS_BUCKET=${module.index-bucket.name}",
     "PROJECT_ID=${var.project_config.id}",
     "REGION=${var.region}",
@@ -27,6 +27,7 @@ locals {
   ]
   env_vars_frontend  = join(",", local._env_vars_frontend)
   env_vars_ingestion = join(",", local._env_vars_ingestion)
+  table_fqdn         = "${var.project_config.id}:${module.bigquery-dataset.dataset_id}.${module.bigquery-dataset.tables[local.name_to_underscores].friendly_name}"
 }
 
 output "commands" {
@@ -42,7 +43,7 @@ output "commands" {
     --source_format=CSV \
     --skip_leading_rows=1 \
     --autodetect \
-    ${var.project_config.id}:${local.bigquery_id}.${local.bigquery_id} \
+    ${local.table_fqdn} \
     ./data/top-100-imdb-movies.csv
   gcloud config unset auth/impersonate_service_account
 

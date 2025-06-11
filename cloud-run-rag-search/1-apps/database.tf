@@ -13,16 +13,16 @@
 # limitations under the License.
 
 locals {
-  bigquery_id = replace(var.name, "-", "_")
+  name_to_underscores = replace(var.name, "-", "_")
 }
 
 module "bigquery-dataset" {
   source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/bigquery-dataset"
   project_id = var.project_config.id
-  id         = local.bigquery_id
+  id         = local.name_to_underscores
   tables = {
-    (local.bigquery_id) = {
-      friendly_name       = local.bigquery_id
+    (local.name_to_underscores) = {
+      friendly_name       = local.name_to_underscores
       deletion_protection = var.enable_deletion_protection
     }
   }
@@ -80,7 +80,7 @@ resource "google_vertex_ai_index_endpoint" "index_endpoint" {
 }
 
 resource "google_vertex_ai_index_endpoint_deployed_index" "index_deployment" {
-  deployed_index_id = var.name
+  deployed_index_id = local.name_to_underscores
   display_name      = var.name
   index             = google_vertex_ai_index.index.id
   index_endpoint    = google_vertex_ai_index_endpoint.index_endpoint.id
