@@ -42,8 +42,8 @@ resource "google_vertex_ai_index" "index" {
   display_name        = var.name
   project             = var.project_config.id
   region              = var.region
+  index_update_method = var.vertex_ai_index_config.index_update_method
   description         = "VertexAI index."
-  index_update_method = "BATCH_UPDATE"
 
   metadata {
     contents_delta_uri = module.index-bucket.url
@@ -79,9 +79,9 @@ resource "google_vertex_ai_index_endpoint" "index_endpoint" {
   }
 }
 
-# resource "google_vertex_ai_index_endpoint_deployed_index" "index_deployment" {
-#   deployed_index_id = var.name
-#   display_name      = var.name
-#   index             = google_vertex_ai_index.index.id
-#   index_endpoint    = google_vertex_ai_index_endpoint.index_endpoint.id
-# }
+resource "google_vertex_ai_index_endpoint_deployed_index" "index_deployment" {
+  deployed_index_id = var.name
+  display_name      = var.name
+  index             = google_vertex_ai_index.index.id
+  index_endpoint    = google_vertex_ai_index_endpoint.index_endpoint.id
+}

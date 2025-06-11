@@ -87,7 +87,7 @@ variable "ingestion_schedule_configs" {
   description = "The configuration of the Cloud Scheduler that calls invokes the Cloud Run ingestion job."
   type = object({
     attempt_deadline = optional(string, "60s")
-    retry_count      = optional(number, 3)
+    retry_count      = optional(number, 1)
     schedule         = optional(string, "*/30 * * * *")
   })
   nullable = false
@@ -176,7 +176,8 @@ variable "service_accounts" {
 variable "vertex_ai_index_config" {
   description = "The VertexAI index configuration."
   type = object({
-    dimensions                  = optional(number, 2)
+    index_update_method         = optional(string, "STREAM_UPDATE")
+    dimensions                  = optional(number, 768)
     approximate_neighbors_count = optional(number, 150)
     shard_size                  = optional(string, "SHARD_SIZE_SMALL")
     distance_measure_type       = optional(string, "DOT_PRODUCT_DISTANCE")
