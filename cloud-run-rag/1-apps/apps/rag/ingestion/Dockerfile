@@ -13,21 +13,22 @@
 # limitations under the License.
 
 # Use an official Python runtime as a parent image
-FROM python:3.10-slim
+FROM python:3.12-slim
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
-# Set environment variables to improve Python's behavior in Docker
+# Set the working directory in the container
+WORKDIR /app
+
+# Enable bytecode compilation
+ENV UV_COMPILE_BYTECODE=1
 
 # Prevents python from writing .pyc files to disc
 ENV PYTHONDONTWRITEBYTECODE 1
 # Prevents python from buffering stdout and stderr (good for logging)
 ENV PYTHONUNBUFFERED 1
 
-WORKDIR /app
+# Installing separately from its dependencies allows optimal layer caching
+COPY . /app
+RUN uv sync --locked
 
-COPY requirements.txt .
-
-RUN pip install --no-cache-dir -r requirements.txt
-
-COPY . .
-
-CMD ["python", "main.py"]
+CMD ["uv", "run", "main.py"]
