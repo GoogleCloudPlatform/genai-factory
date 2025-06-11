@@ -49,13 +49,13 @@ except Exception as e:
     logging.error(f"Failed to initialize GenAI client: {e}", exc_info=True)
     genai_client = None
 
-MODEL_NAME = config.MODEL_NAME
+MODEL_NAME = config.LLM_MODEL_NAME
 MODEL_CONFIG = types.GenerateContentConfig(
-    temperature=config.TEMPERATURE,
-    top_p=config.TOP_P,
-    top_k=config.TOP_K,
-    candidate_count=config.CANDIDATE_COUNT,
-    max_output_tokens=config.MAX_OUTPUT_TOKENS,
+    temperature=config.LLM_TEMPERATURE,
+    top_p=config.LLM_TOP_P,
+    top_k=config.LLM_TOP_K,
+    candidate_count=config.LLM_CANDIDATE_COUNT,
+    max_output_tokens=config.LLM_MAX_OUTPUT_TOKENS,
 )
 
 
@@ -83,7 +83,7 @@ async def root():
         "Vertex AI RAG Sample App (PostgreSQL with IAM Auth) is running.",
         "project_id": config.PROJECT_ID,
         "region": config.REGION,
-        "generative_model_id": config.MODEL_NAME,
+        "generative_model_id": config.LLM_MODEL_NAME,
         "embedding_model_id": config.EMBEDDING_MODEL_NAME,
         "genai_client_status": client_status,
         "database_status": db_status,
@@ -99,7 +99,7 @@ async def predict_route(request: Prompt,
         logging.error("GenAI client not initialized.")
         raise HTTPException(status_code=503,
                             detail="GenAI client not available.")
-    if config.MODEL_NAME is None or MODEL_CONFIG is None:
+    if config.LLM_MODEL_NAME is None or MODEL_CONFIG is None:
         logging.error("Vertex AI model or config not initialized.")
         raise HTTPException(
             status_code=500,
@@ -125,7 +125,7 @@ async def predict_route(request: Prompt,
             )
 
             similar_docs = database.search_similar_documents(
-                db, embedding_response, config.TOP_K)
+                db, embedding_response, config.RETRIEVER_TOP_K)
 
             if similar_docs:
                 context_str = "\n\n".join(similar_docs)

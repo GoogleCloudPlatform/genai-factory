@@ -18,12 +18,12 @@ PROJECT_ID = os.environ.get("PROJECT_ID")
 REGION = os.environ.get("REGION", "europe-west1")
 
 # Generative Model Configuration
-MODEL_NAME = os.environ.get("MODEL_NAME", "gemini-2.0-flash")
-TEMPERATURE = float(os.environ.get("TEMPERATURE", 0.7))
-TOP_P = float(os.environ.get("TOP_P", 1.0))
-TOP_K = int(os.environ.get("TOP_K", 32))
-CANDIDATE_COUNT = int(os.environ.get("CANDIDATE_COUNT", 1))
-MAX_OUTPUT_TOKENS = int(os.environ.get("MAX_OUTPUT_TOKENS", 2048))
+LLM_MODEL_NAME = os.environ.get("MODEL_NAME", "gemini-2.0-flash")
+LLM_TEMPERATURE = float(os.environ.get("TEMPERATURE", 0.7))
+LLM_TOP_P = float(os.environ.get("TOP_P", 1.0))
+LLM_TOP_K = int(os.environ.get("TOP_K", 32))
+LLM_CANDIDATE_COUNT = int(os.environ.get("CANDIDATE_COUNT", 1))
+LLM_MAX_OUTPUT_TOKENS = int(os.environ.get("MAX_OUTPUT_TOKENS", 2048))
 
 # Embedding Model Configuration
 EMBEDDING_MODEL_NAME = os.environ.get("EMBEDDING_MODEL_NAME",
@@ -38,3 +38,6 @@ DB_SA = os.environ.get("DB_SA")
 DB_TABLE = os.environ.get("DB_TABLE", "movie_embeddings")
 DB_COLUMN_TEXT = os.environ.get("DB_COLUMN_TEXT", "content_to_embed")
 DB_COLUMN_EMBEDDING = os.environ.get("DB_COLUMN_EMBEDDING", "embedding")
+
+# Retriever Configuration
+RETRIEVER_TOP_K = int(os.environ.get("RETRIEVER_TOP_K", 10))
