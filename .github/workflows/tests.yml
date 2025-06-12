@@ -133,7 +133,7 @@ jobs:
       - name: Run tests modules
         env:
           TERRAFORM: ${{ matrix.flavour }}
-        run: pytest -vv ${{ matrix.flavour == 'terraform' && '-n4' || '-n4' }} --tb=line --junit-xml=test-results-raw.xml tests
+        run: uv run pytest -vv ${{ matrix.flavour == 'terraform' && '-n4' || '-n4' }} --tb=line --junit-xml=test-results-raw.xml tests
 
       - name: Create report
         uses: ./.github/actions/gen-test-report

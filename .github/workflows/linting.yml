@@ -29,12 +29,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - name: Set up uv and python
+        uses: astral-sh/setup-uv@v6
         with:
-          python-version: "3.12"
-          cache: 'pip'
-          cache-dependency-path: 'tools/requirements.txt'
+          python-version: ${{ inputs.PYTHON_VERSION }}
+          enable-cache: true
+          cache-dependency-glob: |
+            ./pyproject.toml
+            ./uv.lock
 
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v3
@@ -56,12 +58,12 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install -r tools/requirements.txt
+          uv sync --group tools
 
       - name: Boilerplate
         id: boilerplate
         run: |
-          python3 tools/check_boilerplate.py $GITHUB_WORKSPACE
+          uv run python tools/check_boilerplate.py $GITHUB_WORKSPACE
 
       - name: Terraform Linting Check
         id: fmt
@@ -74,22 +76,19 @@ jobs:
       - name: Check documentation
         id: documentation
         run: |
-          python3 tools/check_documentation.py . \
+          uv run python tools/check_documentation.py . \
             --show-diffs \
             --no-show-summary
 
       - name: Check documentation links
         id: documentation-links
         run: |
-          python3 tools/check_links.py --no-show-summary .
+          uv run python tools/check_links.py --no-show-summary .
 
       - name: Check python formatting
         id: yapf
         run: |
-          yapf . \
+          uv run yapf . \
             --parallel \
             --diff \
-            --recursive \
-            --exclude "**/.terraform/" \
-            --exclude "tools/" \
-            --exclude "tests/"
+            --recursive 

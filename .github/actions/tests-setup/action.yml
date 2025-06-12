@@ -29,12 +29,14 @@ runs:
       run: |
         echo '{"type": "service_account", "project_id": "test-only"}' \
           | tee -a $GOOGLE_APPLICATION_CREDENTIALS
-    - name: Set up Python
-      uses: actions/setup-python@v5
+    - name: Set up uv and python
+      uses: astral-sh/setup-uv@v6
       with:
         python-version: ${{ inputs.PYTHON_VERSION }}
-        cache: 'pip'
-        cache-dependency-path: 'tests/requirements.txt'
+        enable-cache: true
+        cache-dependency-glob: |
+          ./pyproject.toml
+          ./uv.lock
 
     - name: Set up Terraform
       uses: hashicorp/setup-terraform@v3
@@ -77,4 +79,4 @@ runs:
     - name: Install Python Dependencies
       shell: bash
       run: |
-        pip install -r tests/requirements.txt
+        uv sync --group test

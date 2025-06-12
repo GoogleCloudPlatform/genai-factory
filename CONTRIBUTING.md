@@ -32,11 +32,7 @@ These are some useful commands that you may need during different phases of the 
 ### Setup the development environment
 
 ```shell
-python3 -m venv ~/.venv-genai-factory
-source ~/.venv-genai-factory/bin/activate
-
-pip install -r tests/requirements.txt
-pip install -r tools/requirements.txt
+uv sync
 ```
 
 ### Manage Python app dependencies with uv
@@ -61,10 +57,10 @@ uv add <dependency>
 
 ```shell
 # Run all tests
-pytest tests
+uv run pytest tests
 
 # Run tests for one cloud-run-single/0-projects
-pytest tests/cloud_run_single/0-projects
+uv run pytest tests/cloud_run_single/0-projects
 ```
 
 ### Generate the inventory for a factory module
@@ -79,7 +75,7 @@ python tools/plan_summary.py cloud-run-single/0-projects \
 
 - Start copying an existing factory. [cloud-run-single](cloud-run-single/README.md) is a typical choice. Modify it as needed.
 - Update the `uv pyproject.toml` to your needs.
-  - `uv` is installed when you [setup](#setup-the-development-environment) the development environment [tools/requirements.txt](./tools/requirements.txt)
+  - Please check the [official documentation](https://docs.astral.sh/uv/getting-started/installation/#standalone-installer) on how to install `uv`. UV github actions are being used for the ci pipeline to run tests and tools.
   - Use the commands from the [section above](#manage-python-app-dependencies-with-uv)
   - You can learn how to use `uv` [here](https://docs.astral.sh/uv/#highlights).
   - Refer to [Dockerfiles](./cloud-run-single/1-apps/apps/chat/Dockerfile) from other applications in this repository to learn how to use `uv` with Docker.

@@ -32,7 +32,7 @@ import sys
 
 import click
 
-_EXCLUDE_DIRS = ('.git', '.terraform')
+_EXCLUDE_DIRS = ('.git', '.terraform', '.venv')
 _EXCLUDE_RE = re.compile(r'# skip boilerplate check')
 _MATCH_FILES = ('Dockerfile', '.py', '.sh', '.tf', '.yaml', '.yml')
 _MATCH_STRING = (r'^\s*[#\*]\sCopyright [0-9]{4} Google LLC$\s+[#\*]\s+'
