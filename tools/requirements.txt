@@ -1,10 +1,11 @@
+BeautifulSoup4
 click
 deepdiff
 ghapi
 iso8601
+jsonschema
 marko
 requests
+uv
 yamale
 yapf
-jsonschema
-BeautifulSoup4
