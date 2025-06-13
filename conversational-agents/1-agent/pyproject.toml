@@ -1,0 +1,22 @@
+[project]
+name = "conversational-agents-blueprint"
+version = "0.1.0"
+description = "Specs and tools to deploy and maintain Conversational Agents"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "dfcx-scrapi>=1.13.1",
+    "fire>=0.7.0",
+    "google-cloud-dialogflow-cx>=1.41.0",
+    "setuptools>=80.7.1",
+]
+
+[project.scripts]
+agentutil = "scripts.agentutil:main"
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["scripts"]

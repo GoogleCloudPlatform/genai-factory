@@ -242,3 +242,6 @@ terraform.rc
 .vscode
 
 test-results-raw.xml
+
+*.generated.env
+*.generated.sh
