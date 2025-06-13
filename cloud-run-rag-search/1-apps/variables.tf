@@ -64,18 +64,6 @@ variable "cloud_run_configs" {
   }
 }
 
-variable "db_configs" {
-  description = "The Cloud SQL configurations."
-  type = object({
-    availability_type = optional(string, "REGIONAL")
-    database_version  = optional(string, "POSTGRES_14")
-    flags             = optional(map(string), { "cloudsql.iam_authentication" = "on" })
-    tier              = optional(string, "db-f1-micro")
-  })
-  nullable = false
-  default  = {}
-}
-
 variable "enable_deletion_protection" {
   description = "Whether deletion protection should be enabled."
   type        = bool
@@ -176,17 +164,17 @@ variable "service_accounts" {
 variable "vertex_ai_index_config" {
   description = "The VertexAI index configuration."
   type = object({
-    index_update_method         = optional(string, "STREAM_UPDATE")
-    dimensions                  = optional(number, 768)
-    approximate_neighbors_count = optional(number, 150)
-    shard_size                  = optional(string, "SHARD_SIZE_SMALL")
-    distance_measure_type       = optional(string, "DOT_PRODUCT_DISTANCE")
     algorithm_config = optional(object({
       tree_ah_config = optional(object({
         leaf_node_embedding_count    = optional(number, 500)
         leaf_nodes_to_search_percent = optional(number, 7)
       }), {})
     }), {})
+    approximate_neighbors_count = optional(number, 150)
+    dimensions                  = optional(number, 768)
+    distance_measure_type       = optional(string, "DOT_PRODUCT_DISTANCE")
+    index_update_method         = optional(string, "STREAM_UPDATE")
+    shard_size                  = optional(string, "SHARD_SIZE_SMALL")
   })
   nullable = false
   default  = {}

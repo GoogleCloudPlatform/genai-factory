@@ -14,7 +14,6 @@
 
 import os
 
-
 PROJECT_ID = os.environ.get("PROJECT_ID")
 REGION = os.environ.get("REGION", "europe-west1")
 
@@ -36,13 +35,13 @@ VECTOR_SEARCH_INDEX_ENDPOINT_NAME = os.environ.get(
     "VECTOR_SEARCH_INDEX_ENDPOINT_NAME")
 VECTOR_SEARCH_DEPLOYED_INDEX_ID = os.environ.get(
     "VECTOR_SEARCH_DEPLOYED_INDEX_ID")
-# Optional: Required only if the endpoint is private (VPC or PSC)
 VECTOR_SEARCH_ENDPOINT_IP_ADDRESS = os.environ.get(
     "VECTOR_SEARCH_ENDPOINT_IP_ADDRESS")
 
 # GCS Source for Document Lookup
 GCS_SOURCE_BUCKET = os.environ.get("GCS_SOURCE_BUCKET")
 GCS_SOURCE_BLOB_NAME = os.environ.get("GCS_SOURCE_BLOB_NAME", "data.jsonl")
+DOCUMENT_CACHE_TTL_SECONDS = int(os.environ.get("DOCUMENT_CACHE_TTL_SECONDS", 600))
 
 # Retriever Configuration
 RETRIEVER_TOP_K = int(os.environ.get("RETRIEVER_TOP_K", 10))

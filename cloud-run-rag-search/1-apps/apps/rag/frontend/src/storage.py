@@ -15,6 +15,8 @@
 import json
 import logging
 import sys
+import threading
+import time
 from typing import Any, List, Dict
 
 from google.cloud import storage as gcs
@@ -27,64 +29,107 @@ logging.basicConfig(level=logging.INFO,
                     format='%(name)s - %(levelname)s - %(message)s',
                     handlers=[logging.StreamHandler(sys.stdout)])
 
-# In-memory cache for documents. Populated at application startup.
-# Format: { "document_id": { "id": "...", "title": "...", ... } }
-document_lookup_cache: Dict[str, Dict] = {}
+# --- In-memory cache with TTL logic ---
+_document_lookup_cache: Dict[str, Dict] = {}
+_cache_load_time: float = 0.0
+_cache_lock = threading.Lock()
 
 
-def load_documents_from_gcs_to_memory():
+def _load_documents_from_gcs():
     """
-    Downloads a JSONL file from GCS and loads it into an in-memory dictionary.
-    This function is called once at application startup.
-    Note: This is suitable for datasets that can comfortably fit in the
-    Cloud Run instance's memory. For very large datasets, a database
-    lookup (e.g., Firestore, Cloud SQL) would be more appropriate.
+    Internal function to download a JSONL file from GCS and load it into
+    the in-memory dictionary. This is the slow operation.
     """
-    global document_lookup_cache
+    global _document_lookup_cache, _cache_load_time
     bucket_name = config.GCS_SOURCE_BUCKET
     blob_name = config.GCS_SOURCE_BLOB_NAME
 
-    if not bucket_name or not blob_name:
+    if not bucket_name:
         logging.warning(
-            "GCS_SOURCE_BUCKET or GCS_SOURCE_BLOB_NAME not set. "
+            "GCS_SOURCE_BUCKET not set. "
             "Document lookup will be disabled.")
         return
 
     try:
         logging.info(
-            f"Loading documents from gs://{bucket_name}/{blob_name} into memory..."
+            f"Refreshing document cache from gs://{bucket_name}/{blob_name}..."
         )
         storage_client = gcs.Client(project=config.PROJECT_ID)
         bucket = storage_client.bucket(bucket_name)
         blob = bucket.blob(blob_name)
 
+        new_cache = {}
         with blob.open("r") as f:
             for line in f:
                 record = json.loads(line)
                 record_id = record.get("id")
                 if record_id:
                     # Ensure ID is a string for consistent key lookup
-                    document_lookup_cache[str(record_id)] = record
+                    new_cache[str(record_id)] = record
                 else:
                     logging.warning(f"Skipping record with missing 'id': {record}")
 
+        _document_lookup_cache = new_cache
+        _cache_load_time = time.time()
         logging.info(
-            f"Successfully loaded {len(document_lookup_cache)} documents into memory cache."
+            f"Successfully loaded {len(_document_lookup_cache)} documents into memory cache."
         )
 
     except exceptions.NotFound:
         logging.error(f"GCS object gs://{bucket_name}/{blob_name} not found.")
-        document_lookup_cache = {}  # Ensure cache is empty on failure
+        _document_lookup_cache = {}
     except Exception as e:
         logging.error(f"Failed to load documents from GCS: {e}", exc_info=True)
-        document_lookup_cache = {}
+        _document_lookup_cache = {}
+
+
+def _is_cache_stale() -> bool:
+    """Checks if the cache is empty or if its TTL has expired."""
+    if not _document_lookup_cache:
+        return True
+    return (time.time() - _cache_load_time) > config.DOCUMENT_CACHE_TTL_SECONDS
+
+
+def get_documents_by_ids(ids: List[str]) -> List[str]:
+    """
+    Retrieves the full content for a list of document IDs.
+    If the cache is stale, it safely triggers a refresh from GCS.
+    """
+    if _is_cache_stale():
+        # Use a lock to prevent multiple concurrent requests from all
+        # trying to refresh the cache at once (cache stampede problem).
+        with _cache_lock:
+            # Double-check if another thread already refreshed the cache
+            # while this thread was waiting for the lock.
+            if _is_cache_stale():
+                _load_documents_from_gcs()
+
+    if not _document_lookup_cache:
+        logging.warning("Document cache is not populated. Cannot retrieve documents.")
+        return []
+
+    found_docs = []
+    for doc_id in ids:
+        record = _document_lookup_cache.get(str(doc_id))
+        if record:
+            formatted_content = _format_record_for_prompt(record)
+            found_docs.append(formatted_content)
+        else:
+            logging.warning(f"Document ID '{doc_id}' not found in cache.")
+
+    return found_docs
+
+
+def get_cache_status() -> str:
+    """Returns a string describing the current state of the cache."""
+    if _document_lookup_cache:
+        age_seconds = int(time.time() - _cache_load_time)
+        return f"Loaded {len(_document_lookup_cache)} documents ({age_seconds}s ago)"
+    return "Not loaded or empty"
 
 
 def _format_json_value_for_embedding(value: Any) -> str:
-    """
-    Formats a JSON value for inclusion in the 'content_to_embed' string.
-    This should be identical to the formatting used during ingestion.
-    """
+    """Formats a JSON value for inclusion in the 'content_to_embed' string."""
     if value is None:
         return "None"
     if isinstance(value, list):
@@ -95,8 +140,7 @@ def _format_json_value_for_embedding(value: Any) -> str:
 def _format_record_for_prompt(record: Dict) -> str:
     """
     Converts a record dictionary into a single string for the prompt context.
-    This formatting MUST match the logic used in the ingestion pipeline
-    to ensure consistency between what was embedded and what is shown to the LLM.
+    This formatting MUST match the logic used in the ingestion pipeline.
     """
     content_parts = []
     for key, value in record.items():
@@ -104,25 +148,4 @@ def _format_record_for_prompt(record: Dict) -> str:
             continue
         formatted_value = _format_json_value_for_embedding(value)
         content_parts.append(f"{key}: {formatted_value}")
-
     return "; ".join(sorted(content_parts))
-
-
-def get_documents_by_ids(ids: List[str]) -> List[str]:
-    """
-    Retrieves the full content for a list of document IDs from the in-memory cache.
-    """
-    if not document_lookup_cache:
-        logging.warning("Document cache is not populated. Cannot retrieve documents.")
-        return []
-
-    found_docs = []
-    for doc_id in ids:
-        record = document_lookup_cache.get(str(doc_id))
-        if record:
-            formatted_content = _format_record_for_prompt(record)
-            found_docs.append(formatted_content)
-        else:
-            logging.warning(f"Document ID '{doc_id}' not found in cache.")
-
-    return found_docs

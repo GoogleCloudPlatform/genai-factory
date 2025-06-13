@@ -18,7 +18,7 @@ locals {
     "PROJECT_ID=${var.project_config.id}",
     "REGION=${var.region}",
     "VECTOR_SEARCH_INDEX_ENDPOINT_NAME=${google_vertex_ai_index_endpoint.index_endpoint.name}",
-    "VECTOR_SEARCH_DEPLOYED_INDEX_ID=${google_vertex_ai_index_endpoint_deployed_index.index_deployment.id}",
+    "VECTOR_SEARCH_DEPLOYED_INDEX_ID=${google_vertex_ai_index_endpoint_deployed_index.index_deployment.deployed_index_id}",
     "VECTOR_SEARCH_ENDPOINT_IP_ADDRESS=${google_compute_forwarding_rule.vector_search_psc_endpoint.ip_address}"
   ]
   _env_vars_ingestion = [

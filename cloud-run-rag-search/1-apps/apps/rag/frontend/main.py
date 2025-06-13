@@ -33,7 +33,7 @@ app = FastAPI(title=__name__)
 
 # Configure logging
 logging.basicConfig(
-    level=logging.INFO,  # Set the default logging level
+    level=logging.INFO,
     format='%(name)s - %(levelname)s - %(message)s',
     handlers=[logging.StreamHandler(sys.stdout)])
 
@@ -61,8 +61,6 @@ MODEL_CONFIG = types.GenerateContentConfig(
 @app.on_event("startup")
 async def startup_event():
     logging.info("Application startup...")
-    # Load documents from GCS into memory for fast lookups
-    storage.load_documents_from_gcs_to_memory()
     if not genai_client:
         logging.error("GenAI client is not available. Predictions will fail.")
 
@@ -81,11 +79,11 @@ async def root():
     ])
     vs_status = "configured" if vs_config_ok else "not configured"
     client_status = "initialized" if genai_client else "initialization failed"
-    cache_status = f"Loaded {len(storage.document_lookup_cache)} documents" if storage.document_lookup_cache else "Not loaded or empty"
+    cache_status = storage.get_cache_status()
 
     return {
         "message":
-        "Vertex AI RAG Sample App (Vector Search + GCS Lookup) is running.",
+        "Vertex AI RAG Sample App (Vector Search + GCS TTL Cache) is running.",
         "project_id": config.PROJECT_ID,
         "region": config.REGION,
         "generative_model_id": config.LLM_MODEL_NAME,
@@ -93,6 +91,7 @@ async def root():
         "genai_client_status": client_status,
         "vector_search_status": vs_status,
         "document_cache_status": cache_status,
+        "document_cache_ttl_seconds": config.DOCUMENT_CACHE_TTL_SECONDS
     }
 
 
@@ -111,12 +110,11 @@ async def predict_route(request: Prompt):
     context_str = ""
     augmented_prompt = request.prompt
 
-    # Check if Vector Search and GCS lookup is configured
     rag_is_configured = all([
         config.PROJECT_ID, config.REGION,
         config.VECTOR_SEARCH_INDEX_ENDPOINT_NAME,
         config.VECTOR_SEARCH_DEPLOYED_INDEX_ID,
-        storage.document_lookup_cache  # Check if cache is loaded
+        config.GCS_SOURCE_BUCKET, config.GCS_SOURCE_BLOB_NAME
     ])
 
     if rag_is_configured:
@@ -129,16 +127,13 @@ async def predict_route(request: Prompt):
                 model=config.EMBEDDING_MODEL_NAME,
                 contents=[request.prompt]).embeddings[0].values
 
-            logging.info(
-                f"Generated query embedding (first 3 dimensions): {embedding_response[:3]}..."
-            )
-
             # Step 2: Query Vector Search to get the IDs of similar documents
             similar_doc_ids = vector_search.find_similar_document_ids(
                 embedding_response, config.RETRIEVER_TOP_K)
 
             if similar_doc_ids:
-                # Step 3: Look up the full content of the documents using their IDs
+                # Step 3: Look up the full content of the documents using their IDs.
+                # The storage module handles the TTL caching logic internally.
                 logging.info(
                     f"Looking up content for {len(similar_doc_ids)} document IDs."
                 )
@@ -211,3 +206,4 @@ if __name__ == "__main__":
     server_port = int(os.environ.get("PORT", 8080))
     # uvicorn.run("main:app", host="0.0.0.0", port=server_port, log_level="info", reload=True) # For local dev
     uvicorn.run("main:app", host="0.0.0.0", port=server_port, log_level="info")
+

@@ -59,12 +59,10 @@ def find_similar_document_ids(query_embedding: List[float],
         index_endpoint = aiplatform.MatchingEngineIndexEndpoint(
             index_endpoint_name=config.VECTOR_SEARCH_INDEX_ENDPOINT_NAME)
 
-        # If using a private endpoint, set the IP address.
-        if config.VECTOR_SEARCH_ENDPOINT_IP_ADDRESS:
-            index_endpoint.private_service_connect_ip_address = config.VECTOR_SEARCH_ENDPOINT_IP_ADDRESS
-            logging.info(
-                f"Using private service connect with IP: {config.VECTOR_SEARCH_ENDPOINT_IP_ADDRESS}"
-            )
+        index_endpoint.private_service_connect_ip_address = config.VECTOR_SEARCH_ENDPOINT_IP_ADDRESS
+        logging.info(
+            f"Using private service connect with IP: {config.VECTOR_SEARCH_ENDPOINT_IP_ADDRESS}"
+        )
 
         logging.info(
             f"Querying Vector Search index for {num_neighbors} neighbors.")

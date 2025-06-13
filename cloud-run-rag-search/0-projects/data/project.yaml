@@ -21,7 +21,6 @@ services:
   # Needed both for ILB and ELB
   - aiplatform.googleapis.com
   - artifactregistry.googleapis.com
-  - bigquery.googleapis.com
   - cloudbuild.googleapis.com
   - cloudresourcemanager.googleapis.com
   - cloudscheduler.googleapis.com
@@ -69,7 +68,6 @@ iam:
 iam_by_principals:
   iac-rw:
     - roles/artifactregistry.admin
-    - roles/bigquery.user
     - roles/cloudbuild.builds.editor
     - roles/cloudscheduler.admin
     - roles/compute.loadBalancerAdmin
@@ -82,7 +80,8 @@ iam_by_principals:
     # Needed for ILB only
     - roles/certificatemanager.owner
     - roles/privateca.admin
-  # gf-rrag-fe-0:
+  gf-rrag-fe-0:
+    - roles/storage.objectViewer
   gf-rrag-fe-build-0:
     - roles/artifactregistry.writer
     - roles/cloudbuild.builds.editor
@@ -91,9 +90,7 @@ iam_by_principals:
     - roles/storage.admin
     - roles/storage.objectUser
   gf-rrag-ing-0:
-    - roles/bigquery.dataViewer
-    - roles/bigquery.jobUser
-    - roles/storage.objectUser
+    - roles/storage.objectViewer
   gf-rrag-ing-build-0:
     - roles/artifactregistry.writer
     - roles/cloudbuild.builds.editor

@@ -39,6 +39,6 @@ ENV PATH="/app/.venv/bin:$PATH"
 # Expose the port the app runs on (though Cloud Run uses the PORT env var)
 EXPOSE $PORT
 
-# Set the default command to run the application using Gunicorn
+# Set the default command to run the application using Uvicorn
 # Cloud Run injects the PORT environment variable.
 CMD exec uvicorn main:app --host 0.0.0.0 --port $PORT
