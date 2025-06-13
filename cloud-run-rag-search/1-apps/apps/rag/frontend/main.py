@@ -16,20 +16,18 @@ import logging
 import os
 import sys
 
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import FastAPI, HTTPException
 
 import google.api_core.exceptions as exceptions
 from google import genai
 from google.genai import types
-import google.cloud.logging
-
-from sqlalchemy.orm import Session
 
 import uvicorn
 
 from src import config
 from src.request_model import Prompt
-from src import db as database
+from src import vector_search
+from src import storage
 
 app = FastAPI(title=__name__)
 
@@ -50,20 +48,21 @@ except Exception as e:
     logging.error(f"Failed to initialize GenAI client: {e}", exc_info=True)
     genai_client = None
 
-MODEL_NAME = config.MODEL_NAME
+MODEL_NAME = config.LLM_MODEL_NAME
 MODEL_CONFIG = types.GenerateContentConfig(
-    temperature=config.TEMPERATURE,
-    top_p=config.TOP_P,
-    top_k=config.TOP_K,
-    candidate_count=config.CANDIDATE_COUNT,
-    max_output_tokens=config.MAX_OUTPUT_TOKENS,
+    temperature=config.LLM_TEMPERATURE,
+    top_p=config.LLM_TOP_P,
+    top_k=config.LLM_TOP_K,
+    candidate_count=config.LLM_CANDIDATE_COUNT,
+    max_output_tokens=config.LLM_MAX_OUTPUT_TOKENS,
 )
 
 
 @app.on_event("startup")
 async def startup_event():
     logging.info("Application startup...")
-    database.init_db_connection_pool()
+    # Load documents from GCS into memory for fast lookups
+    storage.load_documents_from_gcs_to_memory()
     if not genai_client:
         logging.error("GenAI client is not available. Predictions will fail.")
 
@@ -71,40 +70,40 @@ async def startup_event():
 @app.on_event("shutdown")
 async def shutdown_event():
     logging.info("Application shutdown...")
-    database.close_db_connection_pool()
 
 
 @app.get("/")
 async def root():
     """Basic health check / info endpoint."""
-    db_status = "connected (IAM Auth)" if database.engine else "not connected/configured"
+    vs_config_ok = all([
+        config.VECTOR_SEARCH_INDEX_ENDPOINT_NAME,
+        config.VECTOR_SEARCH_DEPLOYED_INDEX_ID
+    ])
+    vs_status = "configured" if vs_config_ok else "not configured"
     client_status = "initialized" if genai_client else "initialization failed"
+    cache_status = f"Loaded {len(storage.document_lookup_cache)} documents" if storage.document_lookup_cache else "Not loaded or empty"
+
     return {
         "message":
-        "Vertex AI RAG Sample App (PostgreSQL with IAM Auth) is running.",
+        "Vertex AI RAG Sample App (Vector Search + GCS Lookup) is running.",
         "project_id": config.PROJECT_ID,
         "region": config.REGION,
-        "generative_model_id": config.MODEL_NAME,
+        "generative_model_id": config.LLM_MODEL_NAME,
         "embedding_model_id": config.EMBEDDING_MODEL_NAME,
         "genai_client_status": client_status,
-        "database_status": db_status,
+        "vector_search_status": vs_status,
+        "document_cache_status": cache_status,
     }
 
 
 @app.post("/predict")
-async def predict_route(request: Prompt,
-                        db: Session = Depends(database.get_db_session)):
-    """Endpoint to make a prediction using Vertex AI, augmented with context from Cloud SQL."""
+async def predict_route(request: Prompt):
+    """Endpoint to make a prediction using Vertex AI, augmented with context from Vector Search."""
 
     if not genai_client:
         logging.error("GenAI client not initialized.")
         raise HTTPException(status_code=503,
                             detail="GenAI client not available.")
-    if config.MODEL_NAME is None or MODEL_CONFIG is None:
-        logging.error("Vertex AI model or config not initialized.")
-        raise HTTPException(
-            status_code=500,
-            detail="Internal server error: Model or config not initialized.")
 
     logging.info("Received prediction request with prompt: '%s...'",
                  request.prompt[:100])
@@ -112,8 +111,17 @@ async def predict_route(request: Prompt,
     context_str = ""
     augmented_prompt = request.prompt
 
-    if database.engine:
+    # Check if Vector Search and GCS lookup is configured
+    rag_is_configured = all([
+        config.PROJECT_ID, config.REGION,
+        config.VECTOR_SEARCH_INDEX_ENDPOINT_NAME,
+        config.VECTOR_SEARCH_DEPLOYED_INDEX_ID,
+        storage.document_lookup_cache  # Check if cache is loaded
+    ])
+
+    if rag_is_configured:
         try:
+            # Step 1: Generate embedding for the user's prompt
             logging.info(
                 f"Generating embedding for prompt using model: {config.EMBEDDING_MODEL_NAME}"
             )
@@ -125,32 +133,44 @@ async def predict_route(request: Prompt,
                 f"Generated query embedding (first 3 dimensions): {embedding_response[:3]}..."
             )
 
-            similar_docs = database.search_similar_documents(
-                db, embedding_response, config.TOP_K)
+            # Step 2: Query Vector Search to get the IDs of similar documents
+            similar_doc_ids = vector_search.find_similar_document_ids(
+                embedding_response, config.RETRIEVER_TOP_K)
 
-            if similar_docs:
-                context_str = "\n\n".join(similar_docs)
-                augmented_prompt = (
-                    f"Based on the following context, answer the question.\n\n"
-                    f"Context:\n{context_str}\n\n"
-                    f"Question: {request.prompt}")
-                logging.info("Augmented prompt with context from database.")
+            if similar_doc_ids:
+                # Step 3: Look up the full content of the documents using their IDs
+                logging.info(
+                    f"Looking up content for {len(similar_doc_ids)} document IDs."
+                )
+                similar_docs_content = storage.get_documents_by_ids(
+                    similar_doc_ids)
+
+                if similar_docs_content:
+                    context_str = "\n\n".join(similar_docs_content)
+                    augmented_prompt = (
+                        f"Based on the following context, answer the question.\n\n"
+                        f"Context:\n{context_str}\n\n"
+                        f"Question: {request.prompt}")
+                    logging.info(
+                        "Augmented prompt with context from Vector Search and GCS."
+                    )
             else:
                 logging.info(
-                    "No relevant documents found in database, using original prompt."
+                    "No relevant document IDs found in Vector Search, using original prompt."
                 )
 
         except exceptions.GoogleAPIError as e:
             logging.error(
-                f"Failed to generate embedding or search database: {e}",
+                f"Failed to generate embedding or search Vector Search: {e}",
                 exc_info=True)
-        except ConnectionError as e:
-            logging.error(f"Database connection error: {e}", exc_info=True)
         except Exception as e:
             logging.error(f"Unexpected error in RAG pipeline: {e}",
                           exc_info=True)
+    else:
+        logging.warning("RAG retrieval is not configured, using original prompt.")
 
     try:
+        # Step 4: Call the LLM with the (potentially augmented) prompt
         response = genai_client.models.generate_content(
             model=MODEL_NAME,
             contents=[augmented_prompt],
@@ -158,24 +178,17 @@ async def predict_route(request: Prompt,
         )
 
         prediction_text = ""
-        if response.candidates:
-            if response.candidates[0].content and response.candidates[
-                    0].content.parts:
-                prediction_text = "".join(
-                    part.text for part in response.candidates[0].content.parts
-                    if hasattr(part, 'text'))
-
-        if not prediction_text and hasattr(response, 'text'):
-            prediction_text = response.text
+        if response.candidates and response.candidates[0].content and response.candidates[0].content.parts:
+            prediction_text = "".join(
+                part.text for part in response.candidates[0].content.parts
+                if hasattr(part, 'text'))
 
         if not prediction_text:
             logging.warning("Received an empty prediction from Vertex AI.")
             prediction_text = "I could not generate a response based on the input."
 
-        logging.info(
-            "Successfully received prediction from Vertex AI: %s...",
-            prediction_text[:100],
-        )
+        logging.info("Successfully received prediction from Vertex AI: %s...",
+                     prediction_text[:100])
 
     except exceptions.GoogleAPIError as e:
         logging.error(f"Vertex AI API call failed: {e}", exc_info=True)

@@ -14,20 +14,21 @@
 
 locals {
   _env_vars_frontend = [
+    "GCS_SOURCE_BUCKET=${module.index-bucket.name}",
     "PROJECT_ID=${var.project_config.id}",
-    "REGION=${var.region}"
+    "REGION=${var.region}",
+    "VECTOR_SEARCH_INDEX_ENDPOINT_NAME=${google_vertex_ai_index_endpoint.index_endpoint.name}",
+    "VECTOR_SEARCH_DEPLOYED_INDEX_ID=${google_vertex_ai_index_endpoint_deployed_index.index_deployment.id}",
+    "VECTOR_SEARCH_ENDPOINT_IP_ADDRESS=${google_compute_forwarding_rule.vector_search_psc_endpoint.ip_address}"
   ]
   _env_vars_ingestion = [
-    "BQ_DATASET=${module.bigquery-dataset.dataset_id}",
-    "BQ_TABLE=${module.bigquery-dataset.tables[local.name_to_underscores].friendly_name}",
-    "GCS_BUCKET=${module.index-bucket.name}",
+    "GCS_SOURCE_BUCKET=${module.index-bucket.name}",
     "PROJECT_ID=${var.project_config.id}",
     "REGION=${var.region}",
     "VECTOR_SEARCH_INDEX_NAME=${google_vertex_ai_index.index.id}"
   ]
   env_vars_frontend  = join(",", local._env_vars_frontend)
   env_vars_ingestion = join(",", local._env_vars_ingestion)
-  table_fqdn         = "${var.project_config.id}:${module.bigquery-dataset.dataset_id}.${module.bigquery-dataset.tables[local.name_to_underscores].friendly_name}"
 }
 
 output "commands" {
@@ -35,17 +36,6 @@ output "commands" {
   value       = <<EOT
   # Run the following commands to deploy the application.
   # Alternatively, deploy the application through your CI/CD pipeline.
-
-  # Load sample data into BigQuery
-  gcloud config set auth/impersonate_service_account ${var.service_accounts["project/iac-rw"].email}
-  bq load \
-    --project_id ${var.project_config.id} \
-    --source_format=CSV \
-    --skip_leading_rows=1 \
-    --autodetect \
-    ${local.table_fqdn} \
-    ./data/top-100-imdb-movies.csv
-  gcloud config unset auth/impersonate_service_account
 
   gcloud artifacts repositories create ${var.name} \
     --project=${var.project_config.id} \

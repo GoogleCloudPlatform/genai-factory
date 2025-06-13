@@ -13,43 +13,49 @@
 # limitations under the License.
 
 import logging
-from typing import Optional
-
+from typing import List, Dict, Any
 from google.cloud.aiplatform import MatchingEngineIndex
 
 logger = logging.getLogger(__name__)
 
 
-def update_index_embeddings(
+def upsert_datapoints_to_index(
     project: str,
     location: str,
     index_name: str,
-    gcs_uri: str,
-    is_complete_overwrite: Optional[bool] = None,
+    datapoints: List[Dict[str, Any]],
 ) -> None:
     """
-    Update a Vertex AI Vector Search index with embeddings from a GCS file.
+    Upserts a list of datapoints into a Vertex AI Vector Search index.
+    This method is suitable for streaming-enabled indexes.
 
     Args:
         project (str): The GCP project ID.
         location (str): The region where the index is located.
         index_name (str): The ID or full resource name of the Vector Search index.
-        gcs_uri (str): The GCS URI of the JSONL file containing the embeddings.
-        is_complete_overwrite (bool, optional): If True, replaces the entire
-            index content. If False, upserts the data. Defaults to None.
+        datapoints (List[Dict[str, Any]]): A list of datapoint dictionaries.
+            Each dict must have 'datapoint_id' and 'feature_vector'.
     """
-    logger.info(f"Starting Vector Search index update for index '{index_name}'.")
-    logger.info(f"  - GCS source: {gcs_uri}")
-    logger.info(f"  - Project: {project}, Location: {location}")
-    logger.info(f"  - Complete Overwrite: {is_complete_overwrite}")
+    if not datapoints:
+        logger.warning("No datapoints provided to upsert.")
+        return
 
+    logger.info(
+        f"Sending {len(datapoints)} datapoints to be upserted into index '{index_name}'."
+    )
     try:
+        # Initialize the MatchingEngineIndex object
         index = MatchingEngineIndex(index_name=index_name, project=project, location=location)
 
-        index.update_embeddings(
-            contents_delta_uri=gcs_uri, is_complete_overwrite=is_complete_overwrite
+        # Call the method for streaming updates
+        index.upsert_datapoints(datapoints=datapoints)
+
+        logger.info(
+            f"Successfully sent {len(datapoints)} datapoints to index '{index_name}'."
         )
-        logger.info(f"Successfully triggered update for index '{index_name}'. The update process will run asynchronously in Vertex AI.")
+
     except Exception as e:
-        logger.error(f"Failed to update Vector Search index '{index_name}'. Error: {e}")
+        logger.error(f"Failed to upsert to Vector Search index '{index_name}'. Error: {e}")
+        # Depending on the desired behavior, you might want to retry or handle this error.
+        # For a batch job, raising the exception will cause the job to fail.
         raise

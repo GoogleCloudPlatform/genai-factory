@@ -14,42 +14,19 @@
 
 import os
 
-
 PROJECT_ID = os.environ.get("PROJECT_ID")
 REGION = os.environ.get("REGION", "europe-west1")
 
-# BigQuery Configuration
-BQ_DATASET = os.environ.get("BQ_DATASET", "gf_rrag_0")
-BQ_TABLE = os.environ.get("BQ_TABLE", "gf_rrag_0")
-BQ_BATCH_SIZE = int(os.environ.get("BATCH_SIZE_BQ", 1000))
-
-# Google Cloud Storage Configuration
-GCS_BUCKET = os.environ.get("GCS_BUCKET")
-GCS_OUTPUT_FILENAME = os.environ.get(
-    "GCS_OUTPUT_FILENAME", "data.json"
-)
-
-# Generative Model Configuration
-MODEL_NAME = os.environ.get("MODEL_NAME", "gemini-2.0-flash")
-TEMPERATURE = float(os.environ.get("TEMPERATURE", 0.7))
-TOP_P = float(os.environ.get("TOP_P", 1.0))
-TOP_K = int(os.environ.get("TOP_K", 32))
-CANDIDATE_COUNT = int(os.environ.get("CANDIDATE_COUNT", 1))
-MAX_OUTPUT_TOKENS = int(os.environ.get("MAX_OUTPUT_TOKENS", 2048))
+# Google Cloud Storage Configuration (for the SOURCE file)
+GCS_SOURCE_BUCKET = os.environ.get("GCS_SOURCE_BUCKET")
+GCS_SOURCE_BLOB_NAME = os.environ.get("GCS_SOURCE_BLOB_NAME", "data.jsonl")
 
 # Embedding Model Configuration
-EMBEDDING_MODEL_NAME = os.environ.get("EMBEDDING_MODEL_NAME",
-                                      "text-multilingual-embedding-002")
+EMBEDDING_MODEL_NAME = os.environ.get("EMBEDDING_MODEL_NAME", "text-multilingual-embedding-002")
 EMBEDDING_DIMENSIONS = int(os.environ.get("EMBEDDING_DIMENSIONS", 768))
-EMBEDDING_BATCH_SIZE = int(os.environ.get("BATCH_SIZE_EMBEDDING", 200))
-
-# Columns Configuration
-GENERATED_ID_COLUMN_NAME = os.environ.get("GENERATED_ID_COLUMN_NAME", "id")
-BQ_TEXT_COLUMNS_STR = os.environ.get("BQ_TEXT_COLUMNS", "title,description")
-TARGET_BQ_COLUMNS_DEFAULT = [
-    'rank', 'title', 'description', 'genre', 'rating', 'year'
-]
+EMBEDDING_BATCH_SIZE = int(os.environ.get("EMBEDDING_BATCH_SIZE", 200)) # Batch for calling the embedding model API
 
 # Vector Search Configuration
-VECTOR_SEARCH_INDEX_NAME = os.environ.get("VECTOR_SEARCH_INDEX_NAME", "gf-rrag-0")
-VECTOR_SEARCH_INDEX_OVERWRITE = os.environ.get("VECTOR_SEARCH_INDEX_OVERWRITE", False)
+VECTOR_SEARCH_INDEX_NAME = os.environ.get("VECTOR_SEARCH_INDEX_NAME")
+# Batch size for the upsert_datapoints API call (max 1000, recommended 100-200)
+VECTOR_SEARCH_UPSERT_BATCH_SIZE = int(os.environ.get("VECTOR_SEARCH_UPSERT_BATCH_SIZE", 100))

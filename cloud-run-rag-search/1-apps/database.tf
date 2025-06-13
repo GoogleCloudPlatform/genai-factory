@@ -16,18 +16,6 @@ locals {
   name_to_underscores = replace(var.name, "-", "_")
 }
 
-module "bigquery-dataset" {
-  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/bigquery-dataset"
-  project_id = var.project_config.id
-  id         = local.name_to_underscores
-  tables = {
-    (local.name_to_underscores) = {
-      friendly_name       = local.name_to_underscores
-      deletion_protection = var.enable_deletion_protection
-    }
-  }
-}
-
 module "index-bucket" {
   source        = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/gcs"
   project_id    = var.project_config.id
@@ -84,4 +72,22 @@ resource "google_vertex_ai_index_endpoint_deployed_index" "index_deployment" {
   display_name      = var.name
   index             = google_vertex_ai_index.index.id
   index_endpoint    = google_vertex_ai_index_endpoint.index_endpoint.id
+}
+
+resource "google_compute_address" "vector_search_address" {
+  name         = var.name
+  project      = var.project_config.id
+  address_type = "INTERNAL"
+  subnetwork   = local.subnet_id
+  region       = var.region
+}
+
+resource "google_compute_forwarding_rule" "vector_search_psc_endpoint" {
+  name                  = var.name
+  project               = var.project_config.id
+  region                = var.region
+  target                = google_vertex_ai_index_endpoint_deployed_index.index_deployment.private_endpoints[0].service_attachment
+  load_balancing_scheme = ""
+  network               = local.vpc_id
+  ip_address            = google_compute_address.vector_search_address.id
 }
