@@ -1,6 +1,6 @@
-# Cloud Run - RAG / Project Setup
+# Cloud Run - RAG Search / Project Setup
 
-This module is part of the `Cloud Run RAG factory`.
+This module is part of the `Cloud Run RAG Search factory`.
 It is responsible for setting up the Google Cloud project, activating the APIs and granting the roles you need to deploy and manage the components enabling the AI use case.
 
 It leverages the Cloud Foundation Fabric [`project-factory`](https://github.com/GoogleCloudPlatform/cloud-foundation-fabric/tree/master/modules/project-factory).
@@ -23,7 +23,6 @@ You should now see the `providers.tf` and `terraform.auto.tfvars` files in the [
 ## Use existing projects
 
 The `project_config` variable allows to configure for different scenarios regarding project creation and management, as described in the [main README](../../README.md).
-
 <!-- BEGIN TFDOC -->
 ## Variables
 
@@ -37,7 +36,7 @@ The `project_config` variable allows to configure for different scenarios regard
 
 | name | description | sensitive |
 |---|---|:---:|
-| [buckets](outputs.tf#L48) | Created buckets. |  |
-| [projects](outputs.tf#L53) | Created projects. |  |
-| [service_accounts](outputs.tf#L58) | Created service accounts. |  |
+| [buckets](outputs.tf#L50) | Created buckets. |  |
+| [projects](outputs.tf#L55) | Created projects. |  |
+| [service_accounts](outputs.tf#L60) | Created service accounts. |  |
 <!-- END TFDOC -->

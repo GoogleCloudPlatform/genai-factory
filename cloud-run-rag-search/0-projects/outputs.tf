@@ -27,9 +27,10 @@ locals {
     }
   }
   providers = {
+    bucket          = local.buckets["project/iac-state"]
     project_id      = local.projects.project.id
     project_number  = local.projects.project.number
-    bucket          = local.buckets["project/iac-state"]
+    region          = var.region
     service_account = local.service_accounts["project/iac-rw"].email
   }
   service_accounts = {

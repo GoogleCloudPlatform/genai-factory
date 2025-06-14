@@ -45,9 +45,8 @@ def _load_documents_from_gcs():
     blob_name = config.GCS_SOURCE_BLOB_NAME
 
     if not bucket_name:
-        logging.warning(
-            "GCS_SOURCE_BUCKET not set. "
-            "Document lookup will be disabled.")
+        logging.warning("GCS_SOURCE_BUCKET not set. "
+                        "Document lookup will be disabled.")
         return
 
     try:
@@ -67,7 +66,8 @@ def _load_documents_from_gcs():
                     # Ensure ID is a string for consistent key lookup
                     new_cache[str(record_id)] = record
                 else:
-                    logging.warning(f"Skipping record with missing 'id': {record}")
+                    logging.warning(
+                        f"Skipping record with missing 'id': {record}")
 
         _document_lookup_cache = new_cache
         _cache_load_time = time.time()
@@ -105,7 +105,8 @@ def get_documents_by_ids(ids: List[str]) -> List[str]:
                 _load_documents_from_gcs()
 
     if not _document_lookup_cache:
-        logging.warning("Document cache is not populated. Cannot retrieve documents.")
+        logging.warning(
+            "Document cache is not populated. Cannot retrieve documents.")
         return []
 
     found_docs = []

@@ -41,7 +41,8 @@ VECTOR_SEARCH_ENDPOINT_IP_ADDRESS = os.environ.get(
 # GCS Source for Document Lookup
 GCS_SOURCE_BUCKET = os.environ.get("GCS_SOURCE_BUCKET")
 GCS_SOURCE_BLOB_NAME = os.environ.get("GCS_SOURCE_BLOB_NAME", "data.jsonl")
-DOCUMENT_CACHE_TTL_SECONDS = int(os.environ.get("DOCUMENT_CACHE_TTL_SECONDS", 600))
+DOCUMENT_CACHE_TTL_SECONDS = int(
+    os.environ.get("DOCUMENT_CACHE_TTL_SECONDS", 600))
 
 # Retriever Configuration
 RETRIEVER_TOP_K = int(os.environ.get("RETRIEVER_TOP_K", 10))

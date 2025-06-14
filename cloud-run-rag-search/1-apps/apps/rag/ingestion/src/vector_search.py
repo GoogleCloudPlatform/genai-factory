@@ -45,7 +45,9 @@ def upsert_datapoints_to_index(
     )
     try:
         # Initialize the MatchingEngineIndex object
-        index = MatchingEngineIndex(index_name=index_name, project=project, location=location)
+        index = MatchingEngineIndex(index_name=index_name,
+                                    project=project,
+                                    location=location)
 
         # Call the method for streaming updates
         index.upsert_datapoints(datapoints=datapoints)
@@ -55,7 +57,9 @@ def upsert_datapoints_to_index(
         )
 
     except Exception as e:
-        logger.error(f"Failed to upsert to Vector Search index '{index_name}'. Error: {e}")
+        logger.error(
+            f"Failed to upsert to Vector Search index '{index_name}'. Error: {e}"
+        )
         # Depending on the desired behavior, you might want to retry or handle this error.
         # For a batch job, raising the exception will cause the job to fail.
         raise

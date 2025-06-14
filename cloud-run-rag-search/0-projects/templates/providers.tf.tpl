@@ -25,6 +25,9 @@ terraform {
 }
 provider "google" {
   impersonate_service_account = "${service_account}"
+  # temporary region for resource
+  # google_vertex_ai_index_endpoint_deployed_index
+  region = ${region}
 }
 provider "google-beta" {
   impersonate_service_account = "${service_account}"

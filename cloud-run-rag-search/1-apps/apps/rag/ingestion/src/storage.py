@@ -20,11 +20,10 @@ from google.cloud import storage
 logger = logging.getLogger(__name__)
 
 
-def stream_gcs_jsonl_file(
-    bucket_name: str,
-    blob_name: str,
-    project_id: Optional[str] = None
-) -> Generator[Dict[str, Any], None, None]:
+def stream_gcs_jsonl_file(bucket_name: str,
+                          blob_name: str,
+                          project_id: Optional[str] = None
+                          ) -> Generator[Dict[str, Any], None, None]:
     """
     Streams a JSONL file from GCS and yields each line as a parsed JSON object.
     This is memory-efficient for large files.
@@ -49,7 +48,8 @@ def stream_gcs_jsonl_file(
                     try:
                         yield json.loads(line)
                     except json.JSONDecodeError:
-                        logger.warning(f"Skipping malformed JSON line: {line.strip()}")
+                        logger.warning(
+                            f"Skipping malformed JSON line: {line.strip()}")
     except Exception as e:
         logger.error(
             f"Failed to stream file 'gs://{bucket_name}/{blob_name}'. Error: {e}"

@@ -32,7 +32,8 @@ try:
             "GCS_SOURCE_BUCKET and GCS_SOURCE_BLOB_NAME environment variables must be set."
         )
     if not config.VECTOR_SEARCH_INDEX_NAME:
-        raise KeyError("VECTOR_SEARCH_INDEX_NAME environment variable must be set.")
+        raise KeyError(
+            "VECTOR_SEARCH_INDEX_NAME environment variable must be set.")
 
 except KeyError as e:
     logging.error(f"Missing required environment variable: {e}")
@@ -124,8 +125,7 @@ def run_indexer():
     source_iterator = storage.stream_gcs_jsonl_file(
         project_id=config.PROJECT_ID,
         bucket_name=config.GCS_SOURCE_BUCKET,
-        blob_name=config.GCS_SOURCE_BLOB_NAME
-    )
+        blob_name=config.GCS_SOURCE_BLOB_NAME)
 
     for record in source_iterator:
         total_processed_count += 1
@@ -152,8 +152,7 @@ def run_indexer():
 
         if not text_to_embed.strip():
             logger.warning(
-                f"Skipping record with ID {record_id} due to empty content."
-            )
+                f"Skipping record with ID {record_id} due to empty content.")
             continue
 
         batch_for_embedding.append({
@@ -163,7 +162,9 @@ def run_indexer():
 
         # 2. Process batch for embeddings when full
         if len(batch_for_embedding) >= config.EMBEDDING_BATCH_SIZE:
-            logger.info(f"Requesting embeddings for a batch of {len(batch_for_embedding)} records...")
+            logger.info(
+                f"Requesting embeddings for a batch of {len(batch_for_embedding)} records..."
+            )
             texts = [item['text_to_embed'] for item in batch_for_embedding]
             embeddings = get_embeddings_batch_vertexai(texts)
 
@@ -178,19 +179,22 @@ def run_indexer():
 
         # 3. Process batch for Vector Search upsert when full
         if len(batch_for_upsert) >= config.VECTOR_SEARCH_UPSERT_BATCH_SIZE:
-            logger.info(f"Upserting a batch of {len(batch_for_upsert)} datapoints to Vector Search...")
+            logger.info(
+                f"Upserting a batch of {len(batch_for_upsert)} datapoints to Vector Search..."
+            )
             vector_search.upsert_datapoints_to_index(
                 project=config.PROJECT_ID,
                 location=config.REGION,
                 index_name=config.VECTOR_SEARCH_INDEX_NAME,
-                datapoints=batch_for_upsert
-            )
+                datapoints=batch_for_upsert)
             total_upserted_count += len(batch_for_upsert)
             batch_for_upsert = []  # Clear the batch
 
     # Process any remaining items in the embedding batch
     if batch_for_embedding:
-        logger.info(f"Requesting embeddings for the final batch of {len(batch_for_embedding)} records...")
+        logger.info(
+            f"Requesting embeddings for the final batch of {len(batch_for_embedding)} records..."
+        )
         texts = [item['text_to_embed'] for item in batch_for_embedding]
         embeddings = get_embeddings_batch_vertexai(texts)
         if embeddings and len(embeddings) == len(batch_for_embedding):
@@ -200,18 +204,22 @@ def run_indexer():
 
     # Upsert any remaining datapoints
     if batch_for_upsert:
-        logger.info(f"Upserting the final batch of {len(batch_for_upsert)} datapoints to Vector Search...")
+        logger.info(
+            f"Upserting the final batch of {len(batch_for_upsert)} datapoints to Vector Search..."
+        )
         vector_search.upsert_datapoints_to_index(
             project=config.PROJECT_ID,
             location=config.REGION,
             index_name=config.VECTOR_SEARCH_INDEX_NAME,
-            datapoints=batch_for_upsert
-        )
+            datapoints=batch_for_upsert)
         total_upserted_count += len(batch_for_upsert)
 
     logger.info("Indexer job finished.")
-    logger.info(f"Total records processed from GCS file: {total_processed_count}.")
-    logger.info(f"Total datapoints successfully upserted to Vector Search: {total_upserted_count}.")
+    logger.info(
+        f"Total records processed from GCS file: {total_processed_count}.")
+    logger.info(
+        f"Total datapoints successfully upserted to Vector Search: {total_upserted_count}."
+    )
 
 
 if __name__ == "__main__":

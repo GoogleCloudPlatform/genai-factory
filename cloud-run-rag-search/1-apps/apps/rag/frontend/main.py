@@ -32,10 +32,9 @@ from src import storage
 app = FastAPI(title=__name__)
 
 # Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(name)s - %(levelname)s - %(message)s',
-    handlers=[logging.StreamHandler(sys.stdout)])
+logging.basicConfig(level=logging.INFO,
+                    format='%(name)s - %(levelname)s - %(message)s',
+                    handlers=[logging.StreamHandler(sys.stdout)])
 
 logging.info("Initializing Google GenAI client for project=%s, region=%s",
              config.PROJECT_ID, config.REGION)
@@ -113,8 +112,8 @@ async def predict_route(request: Prompt):
     rag_is_configured = all([
         config.PROJECT_ID, config.REGION,
         config.VECTOR_SEARCH_INDEX_ENDPOINT_NAME,
-        config.VECTOR_SEARCH_DEPLOYED_INDEX_ID,
-        config.GCS_SOURCE_BUCKET, config.GCS_SOURCE_BLOB_NAME
+        config.VECTOR_SEARCH_DEPLOYED_INDEX_ID, config.GCS_SOURCE_BUCKET,
+        config.GCS_SOURCE_BLOB_NAME
     ])
 
     if rag_is_configured:
@@ -162,7 +161,8 @@ async def predict_route(request: Prompt):
             logging.error(f"Unexpected error in RAG pipeline: {e}",
                           exc_info=True)
     else:
-        logging.warning("RAG retrieval is not configured, using original prompt.")
+        logging.warning(
+            "RAG retrieval is not configured, using original prompt.")
 
     try:
         # Step 4: Call the LLM with the (potentially augmented) prompt
@@ -173,7 +173,8 @@ async def predict_route(request: Prompt):
         )
 
         prediction_text = ""
-        if response.candidates and response.candidates[0].content and response.candidates[0].content.parts:
+        if response.candidates and response.candidates[
+                0].content and response.candidates[0].content.parts:
             prediction_text = "".join(
                 part.text for part in response.candidates[0].content.parts
                 if hasattr(part, 'text'))
@@ -206,4 +207,3 @@ if __name__ == "__main__":
     server_port = int(os.environ.get("PORT", 8080))
     # uvicorn.run("main:app", host="0.0.0.0", port=server_port, log_level="info", reload=True) # For local dev
     uvicorn.run("main:app", host="0.0.0.0", port=server_port, log_level="info")
-
