@@ -12,20 +12,44 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+locals {
+  _env_vars = [
+    "GOOGLE_CLOUD_PROJECT=${var.project_config.id}",
+    "GOOGLE_CLOUD_LOCATION=${var.region}",
+    "GOOGLE_GENAI_USE_VERTEXAI=True",
+    "PROJECT_ID=${var.project_config.id}",
+    "REGION=${var.region}",
+  ]
+  env_vars = join(",", local._env_vars)
+}
+
 output "commands" {
   description = "Run the following commands when the deployment completes to deploy the app."
   value       = <<EOT
   # Run the following commands to deploy the application.
   # Alternatively, deploy the application through your CI/CD pipeline.
 
+  gcloud artifacts repositories create ${var.name} \
+    --project=${var.project_config.id} \
+    --location ${var.region} \
+    --repository-format docker \
+    --impersonate-service-account=${var.service_accounts["project/iac-rw"].email}
+
+  # Substitute APP_NAME with adk or chat
+  gcloud builds submit ./apps/APP_NAME \
+    --project ${var.project_config.id} \
+    --tag ${var.region}-docker.pkg.dev/${var.project_config.id}/${var.name}/srun \
+    --service-account ${var.service_accounts["project/gf-srun-build-0"].id} \
+    --default-buckets-behavior=REGIONAL_USER_OWNED_BUCKET \
+    --quiet \
+    --impersonate-service-account=${var.service_accounts["project/iac-rw"].email}
+
   gcloud run deploy ${var.name} \
-    --source ./apps/chat \
-    --set-env-vars PROJECT_ID=${var.project_config.id} \
-    --set-env-vars REGION=${var.region} \
+    --impersonate-service-account=${var.service_accounts["project/iac-rw"].email} \
     --project ${var.project_config.id} \
     --region ${var.region} \
-    --build-service-account ${var.service_accounts["project/gf-srun-build-0"].id} \
-    --quiet
+    --image=${var.region}-docker.pkg.dev/${var.project_config.id}/${var.name}/srun \
+    --set-env-vars ${local.env_vars}
   EOT
 }
 

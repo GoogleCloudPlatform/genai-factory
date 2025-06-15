@@ -10,7 +10,7 @@ A collection of scripts to deploy AI infrastructures and applications in GCP, fo
 
 ## Factories
 
-- [Single Cloud Run](./cloud-run-single/README.md) - A single Cloud Run deployment to interact securely with Gemini.
+- [Single Cloud Run](./cloud-run-single/README.md) - A single Cloud Run deployment to interact securely with Gemini or deploy [ADK](https://google.github.io/adk-docs/deploy/cloud-run/).
 - [RAG with Cloud Run and CloudSQL](./cloud-run-single/README.md) - A "Retrieval-Augmented Generation" (RAG) system leveraging Cloud Run, Cloud SQL and BigQuery.
 - [RAG with Cloud Run and Vector Search](./cloud-run-rag-search/README.md) - A "Retrieval-Augmented Generation" (RAG) system leveraging Cloud Run and Vector Search.
 

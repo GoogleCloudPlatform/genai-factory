@@ -65,19 +65,21 @@ iam_by_principals:
     - roles/compute.securityAdmin
     - roles/dns.admin
     - roles/run.admin
+    - roles/storage.admin
+    - roles/storage.objectUser
     # Needed for ILB only
     - roles/certificatemanager.owner
     - roles/privateca.admin
   gf-srun-0:
     - roles/logging.logWriter
   gf-srun-build-0:
-    - roles/run.admin
-    - roles/cloudbuild.builds.editor
-    - roles/storage.objectCreator
-    - roles/storage.objectViewer
     - roles/artifactregistry.writer
+    - roles/cloudbuild.builds.editor
     - roles/iam.serviceAccountUser
     - roles/logging.logWriter
+    - roles/run.admin
+    - roles/storage.admin
+    - roles/storage.objectUser
 
 # Grant roles/aiplatform.user as additive,
 # as it is authoritatively granted by aiplatform APIs to default SA
