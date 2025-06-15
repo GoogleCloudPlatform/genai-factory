@@ -17,7 +17,6 @@ from google.adk.cli.fast_api import get_fast_api_app
 
 from src import config
 
-
 app = get_fast_api_app(
     agents_dir=config.AGENT_DIR,
     session_service_uri=config.SESSION_DB_URL,

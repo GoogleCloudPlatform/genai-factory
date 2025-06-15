@@ -12,7 +12,7 @@ export APP_ADDRESS=https://your-app-address
 curl -X GET ${APP_ADDRESS}/list-apps \
     -H "Authorization: Bearer $(gcloud auth print-identity-token)"
 
-# Create a user session for capital_agent
+# Create or update a user session for capital_agent
 curl -X POST ${APP_ADDRESS}/apps/capital_agent/users/user_123/sessions/session_abc \
     -H "Authorization: Bearer $(gcloud auth print-identity-token)" \
     -H "Content-Type: application/json" \
@@ -36,6 +36,14 @@ curl -X POST ${APP_ADDRESS}/run_sse \
     }'
 ```
 
+## UI Access
+
+You can optionally enable the UI by setting the `SERVE_WEB_INTERFACE` [environment variable](./src/config.py) to `True`. Once it's done, simply point your browser to your application URL.
+
 ## Environment variables
 
 Refer to [./src/config.py](./src/config.py) for the list of environment variables and defaults.
+
+## Documentation
+
+More info on ADK can be found on the [official website](https://google.github.io/adk-docs).

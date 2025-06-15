@@ -20,7 +20,6 @@ terraform apply
 ## I have not used 0-projects
 
 The [0-projects](../0-projects) module also produces the Terraform input files needed for this stage to work. If you are not leveraging [0-projects](../0-projects) it's your responsibility to create the `terraform.tfvars` file, reflecting what's requested by [variables.tf](./variables.tf) in this module.
-
 <!-- BEGIN TFDOC -->
 ## Variables
 
@@ -40,6 +39,6 @@ The [0-projects](../0-projects) module also produces the Terraform input files n
 
 | name | description | sensitive |
 |---|---|:---:|
-| [commands](outputs.tf#L15) | Run the following commands when the deployment completes to deploy the app. |  |
-| [ip_addresses](outputs.tf#L32) | The load balancers IP addresses. |  |
+| [commands](outputs.tf#L26) | Run the following commands when the deployment completes to deploy the app. |  |
+| [ip_addresses](outputs.tf#L56) | The load balancers IP addresses. |  |
 <!-- END TFDOC -->

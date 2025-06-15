@@ -19,7 +19,7 @@ REGION = os.environ.get("REGION", "europe-west1")
 
 AGENT_DIR = os.environ.get("AGENT_DIR", "src/agents")
 
-ALLOWED_ORIGINS = ["http://localhost", "http://localhost:8080", "*"]
+ALLOWED_ORIGINS = os.environ.get("ALLOWED_ORIGINS", ["*"])
 
 SESSION_DB_URL = os.environ.get("SESSION_DB_URL", "sqlite:///./sessions.db")
 

@@ -23,14 +23,18 @@ from pydantic import BaseModel, Field
 class CountryInput(BaseModel):
     country: str = Field(description="The country to get information about.")
 
+
 class CapitalInfoOutput(BaseModel):
     capital: str = Field(description="The capital city of the country.")
-    population_estimate: str = Field(description="An estimated population of the capital city.")
+    population_estimate: str = Field(
+        description="An estimated population of the capital city.")
+
 
 root_agent = LlmAgent(
     name="capital_agent",
     model="gemini-2.0-flash",
-    description="Provides capital and estimated population in a specific JSON format.",
+    description=
+    "Provides capital and estimated population in a specific JSON format.",
     instruction=f"""You are an agent that provides country information.
 The user will provide the country name in a JSON format like {{"country": "country_name"}}.
 Respond ONLY with a JSON object matching this exact schema:
