@@ -14,6 +14,8 @@
 
 locals {
   _env_vars = [
+    # First three vars given because of this
+    # https://github.com/google/adk-python/issues/1417
     "GOOGLE_CLOUD_PROJECT=${var.project_config.id}",
     "GOOGLE_CLOUD_LOCATION=${var.region}",
     "GOOGLE_GENAI_USE_VERTEXAI=True",

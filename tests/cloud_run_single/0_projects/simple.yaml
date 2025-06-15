@@ -149,18 +149,20 @@ values:
     - serviceAccount:iac-rw@your-prefix-gf-srun-0.iam.gserviceaccount.com
     project: your-prefix-gf-srun-0
     role: roles/run.admin
-  module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/storage.objectCreator"]:
+  module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/storage.admin"]:
     condition: []
     members:
     - serviceAccount:gf-srun-build-0@your-prefix-gf-srun-0.iam.gserviceaccount.com
+    - serviceAccount:iac-rw@your-prefix-gf-srun-0.iam.gserviceaccount.com
     project: your-prefix-gf-srun-0
-    role: roles/storage.objectCreator
-  module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/storage.objectViewer"]:
+    role: roles/storage.admin
+  module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/storage.objectUser"]:
     condition: []
     members:
     - serviceAccount:gf-srun-build-0@your-prefix-gf-srun-0.iam.gserviceaccount.com
+    - serviceAccount:iac-rw@your-prefix-gf-srun-0.iam.gserviceaccount.com
     project: your-prefix-gf-srun-0
-    role: roles/storage.objectViewer
+    role: roles/storage.objectUser
   module.projects.module.projects-iam["project"].google_project_iam_member.bindings["0"]:
     condition: []
     member: serviceAccount:gf-srun-0@your-prefix-gf-srun-0.iam.gserviceaccount.com
@@ -411,6 +413,7 @@ counts:
 outputs:
   buckets:
     project/iac-state: your-prefix-gf-srun-0-iac-state
+  projects: __missing__
   service_accounts:
     project/gf-srun-0:
       email: gf-srun-0@your-prefix-gf-srun-0.iam.gserviceaccount.com

@@ -17,10 +17,11 @@ import os
 PROJECT_ID = os.environ.get("PROJECT_ID")
 REGION = os.environ.get("REGION", "europe-west1")
 
-AGENT_DIR = os.environ.get("AGENT_DIR", "src/agents")
+MODEL_NAME = os.environ.get("MODEL_NAME", "gemini-2.0-flash")
 
+AGENT_DIR = os.environ.get(
+    "AGENT_DIR",
+    os.path.join(os.path.dirname(os.path.abspath(__file__)), "agents"))
 ALLOWED_ORIGINS = os.environ.get("ALLOWED_ORIGINS", ["*"])
-
-SESSION_DB_URL = os.environ.get("SESSION_DB_URL", "sqlite:///./sessions.db")
-
 SERVE_WEB_INTERFACE = os.environ.get("SERVE_WEB_INTERFACE", False)
+SESSION_DB_URL = os.environ.get("SESSION_DB_URL", "sqlite:///./sessions.db")

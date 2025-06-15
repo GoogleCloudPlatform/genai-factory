@@ -12,12 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Sample code from https://google.github.io/adk-docs/agents/llm-agents
+# Code source and reworked from
+# https://google.github.io/adk-docs/agents/llm-agents
 
 import json
 
 from google.adk.agents import LlmAgent
 from pydantic import BaseModel, Field
+
+from src import config
 
 
 class CountryInput(BaseModel):
@@ -32,7 +35,7 @@ class CapitalInfoOutput(BaseModel):
 
 root_agent = LlmAgent(
     name="capital_agent",
-    model="gemini-2.0-flash",
+    model=config.MODEL_NAME,
     description=
     "Provides capital and estimated population in a specific JSON format.",
     instruction=f"""You are an agent that provides country information.
