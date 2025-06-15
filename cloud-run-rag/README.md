@@ -1,6 +1,6 @@
-# RAG with Cloud Run
+# RAG with Cloud Run and Cloud SQL
 
-The module deploys a "Retrieval-Augmented Generation" (RAG) system, leveraging Cloud Run, Vertex AI, Cloud SQL and BigQuery.
+The module deploys a "Retrieval-Augmented Generation" (RAG) system, leveraging Cloud Run, Cloud SQL and BigQuery.
 
 ![Architecture Diagram](./diagram.png)
 

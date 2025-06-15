@@ -38,7 +38,7 @@ variable "project_config" {
 }
 
 variable "region" {
-  description = "The region where to create service accounts and buckets."
+  description = "The region where to create the buckets."
   type        = string
   default     = "europe-west1"
 }
