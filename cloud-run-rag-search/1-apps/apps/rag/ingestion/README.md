@@ -1,6 +1,6 @@
 # Ingestion for RAG Search on Cloud Run
 
-The application reads [data.jsonl](./data/data.jsonl) from Cloud Storage and stores embeddings in Vertex AI Vector Search.
+The application reads [data.jsonl](../../../data/data.jsonl) from Cloud Storage and stores embeddings in Vertex AI Vector Search.
 
 ## Environment variables
 
