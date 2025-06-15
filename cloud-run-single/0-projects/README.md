@@ -23,7 +23,6 @@ You should now see the `providers.tf` and `terraform.auto.tfvars` files in the [
 ## Use existing projects
 
 The `project_config` variable allows to configure for different scenarios regarding project creation and management, as described in the [main README](../../README.md).
-
 <!-- BEGIN TFDOC -->
 ## Variables
 
@@ -31,7 +30,7 @@ The `project_config` variable allows to configure for different scenarios regard
 |---|---|:---:|:---:|:---:|
 | [project_config](variables.tf#L21) | The project configuration. | <code title="object&#40;&#123;&#10;  billing_account_id &#61; optional&#40;string&#41;     &#35; if create or control equals true&#10;  control            &#61; optional&#40;bool, true&#41; &#35; to control an existing project&#10;  create             &#61; optional&#40;bool, true&#41; &#35; to create the project&#10;  parent             &#61; optional&#40;string&#41;     &#35; if control equals true&#10;  prefix             &#61; optional&#40;string&#41;     &#35; the prefix of the project name&#10;&#125;&#41;">object&#40;&#123;&#8230;&#125;&#41;</code> | ✓ |  |
 | [enable_iac_sa_impersonation](variables.tf#L15) | Whether the user running this module should be granted serviceAccountTokenCreator on the automation service account. | <code>bool</code> |  | <code>true</code> |
-| [region](variables.tf#L40) | The region where to create service accounts and buckets. | <code>string</code> |  | <code>&#34;europe-west1&#34;</code> |
+| [region](variables.tf#L40) | The region where to create the buckets. | <code>string</code> |  | <code>&#34;europe-west1&#34;</code> |
 
 ## Outputs
 
