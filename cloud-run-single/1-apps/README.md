@@ -39,6 +39,6 @@ The [0-projects](../0-projects) module also produces the Terraform input files n
 
 | name | description | sensitive |
 |---|---|:---:|
-| [commands](outputs.tf#L26) | Run the following commands when the deployment completes to deploy the app. |  |
-| [ip_addresses](outputs.tf#L56) | The load balancers IP addresses. |  |
+| [commands](outputs.tf#L28) | Run the following commands when the deployment completes to deploy the app. |  |
+| [ip_addresses](outputs.tf#L58) | The load balancers IP addresses. |  |
 <!-- END TFDOC -->
