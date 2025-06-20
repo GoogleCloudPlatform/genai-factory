@@ -348,7 +348,7 @@ values:
     description: null
     effective_labels:
       goog-terraform-provisioned: 'true'
-    iap_enabled: 'False'
+    iap_enabled: false
     ingress: INGRESS_TRAFFIC_INTERNAL_LOAD_BALANCER
     invoker_iam_disabled: false
     labels: null
