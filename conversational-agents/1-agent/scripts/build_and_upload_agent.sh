@@ -1,11 +1,54 @@
 #!/bin/bash
 set -e
 
-export TARGET_AGENT_DIR='./build/agent/dist'
-
-echo "Building Agent Variant: $AGENT_VARIANT"
-
 mkdir -p ./build
+
+echo "📚 Importing FAQs"
+
+export TARGET_FAQ_BUCKET_PATH="gs://$BUILD_BUCKET/data_store/cymbal_telecom_faq/faq.csv"
+
+echo "Uploading FAQ CSV to: $TARGET_FAQ_BUCKET_PATH"
+gcloud storage cp ./data_store/cymbal_telecom_faq/faq.csv $TARGET_FAQ_BUCKET_PATH
+
+echo "Importing FAQs in Data Store: $FAQ_DATA_STORE_NAME"
+curl --request POST \
+--url https://${KNOWLEDGE_BASE_DATA_STORE_LOCATION}-discoveryengine.googleapis.com/v1/${FAQ_DATA_STORE_NAME}/branches/0/documents:import \
+--header "Authorization: Bearer $(gcloud auth print-access-token)" \
+--header 'Content-Type: application/json' \
+--header "X-Goog-User-Project: ${GCP_PROJECT_ID}" \
+--data "{
+    \"gcsSource\":{
+        \"inputUris\":[\"${TARGET_FAQ_BUCKET_PATH}\"],
+        \"dataSchema\":\"csv\"
+    },
+    \"reconciliationMode\":\"FULL\",
+    \"autoGenerateIds\": true
+}
+"
+
+echo "📚 Building Knowledge Base"
+
+export TARGET_KB_BUCKET_PATH="gs://$BUILD_BUCKET/data_store/cymbal_telecom_kb/"
+agentutil process_data_store_documents ./data_store/cymbal_telecom_kb/ ./build/data_store/cymbal_telecom_kb/ $TARGET_KB_BUCKET_PATH --upload
+
+echo "Importing documents in Data Store: $KNOWLEDGE_BASE_DATA_STORE_NAME"
+curl --request POST \
+--url https://${KNOWLEDGE_BASE_DATA_STORE_LOCATION}-discoveryengine.googleapis.com/v1/${KNOWLEDGE_BASE_DATA_STORE_NAME}/branches/0/documents:import \
+--header "Authorization: Bearer $(gcloud auth print-access-token)" \
+--header 'Content-Type: application/json' \
+--header "X-Goog-User-Project: ${GCP_PROJECT_ID}" \
+--data "{
+    \"gcsSource\":{
+        \"inputUris\":[\"${TARGET_KB_BUCKET_PATH}documents.jsonl\"],
+        \"dataSchema\":\"document\"
+    },
+    \"reconciliationMode\":\"FULL\"
+}
+"
+
+echo "🤖 Building Agent Variant: $AGENT_VARIANT"
+
+export TARGET_AGENT_DIR='./build/agent/dist'
 
 # Make a copy of the agent in the target build directory
 rm -rf $TARGET_AGENT_DIR
@@ -32,4 +75,3 @@ curl --request POST \
     --data "{
         \"agentUri\": \"$TARGET_BUCKET_PATH\"
     }"
-    

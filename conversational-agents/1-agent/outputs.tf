@@ -4,8 +4,7 @@ output "commands" {
   # Run the following commands to deploy the application.
   # Alternatively, deploy the agent through your CI/CD pipeline.
 
-  source variables.generated.env
-  uv run scripts/build_and_upload_agent.sh
+  source variables.generated.env; uv run scripts/build_and_upload_agent.sh
   EOT
 }
 

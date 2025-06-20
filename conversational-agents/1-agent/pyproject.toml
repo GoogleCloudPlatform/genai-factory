@@ -8,6 +8,7 @@ dependencies = [
     "dfcx-scrapi>=1.13.1",
     "fire>=0.7.0",
     "google-cloud-dialogflow-cx>=1.41.0",
+    "markdown>=3.8.2",
     "setuptools>=80.7.1",
 ]
 
