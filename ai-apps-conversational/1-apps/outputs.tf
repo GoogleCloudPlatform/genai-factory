@@ -75,10 +75,10 @@ output "commands" {
   # Build and deploy agent variant
   rm -rf ${local.agent_dir}
   mkdir -p ${local.agent_dir}
-  cp -r ./agents/${var.agent_configs.variant}/* ${local.agent_dir}
+  cp -r ./data/agents/${var.agent_configs.variant}/* ${local.agent_dir}
   uv run ./tools/agentutil replace_data_store \
     ${local.agent_dir} \
-    "kb-and-faq" \
+    "kb-faq" \
     UNSTRUCTURED \
     ${module.dialogflow.data_stores["kb"].name} &&
   cd ${local.agent_dir} &&
