@@ -59,3 +59,13 @@ variable "region_ai_applications" {
   nullable    = false
   default     = "global"
 }
+
+variable "service_accounts" {
+  description = "The pre-created service accounts used by the blueprint."
+  type = map(object({
+    email     = string
+    iam_email = string
+    id        = string
+  }))
+  default = {}
+}

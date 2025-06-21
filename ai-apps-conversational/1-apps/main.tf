@@ -38,7 +38,7 @@ module "dialogflow" {
   source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/ai-applications"
   name       = var.name
   project_id = var.project_config.id
-  location   = var.region
+  location   = var.region_ai_applications
   data_stores_configs = {
     faq = {
       content_config = "CONTENT_REQUIRED"

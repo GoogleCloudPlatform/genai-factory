@@ -1,7 +1,7 @@
 [project]
-name = "conversational-agents-blueprint"
+name = "conversational-agents"
 version = "0.1.0"
-description = "Specs and tools to deploy and maintain Conversational Agents"
+description = "Tools to deploy and maintain Conversational Agents"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
@@ -13,11 +13,11 @@ dependencies = [
 ]
 
 [project.scripts]
-agentutil = "scripts.agentutil:main"
+agentutil = "tools.agentutil:main"
 
 [build-system]
 requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
-packages = ["scripts"]
+packages = ["tools"]
