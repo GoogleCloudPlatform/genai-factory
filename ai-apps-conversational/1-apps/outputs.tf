@@ -34,8 +34,9 @@ output "commands" {
   # Run these commands to complete the deployment.
   # Alternatively, deploy the agent through your CI/CD pipeline.
 
-  # Get token impersonating iac-rw SA
-  export BEARER_TOKEN=$(gcloud auth print-access-token --impersonate-service-account iac-rw@lp-gf-ai-apps-df-0.iam.gserviceaccount.com)
+  # Get bearer token impersonating iac-rw SA
+  export BEARER_TOKEN=$(gcloud auth print-access-token \
+    --impersonate-service-account ${var.service_accounts["project/iac-rw"].email})
 
   # Load faq data into the data store
   gcloud storage cp ./data/ds-faq/* ${module.ds-bucket.url}/ds-faq/ \
