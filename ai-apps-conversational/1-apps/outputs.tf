@@ -56,7 +56,7 @@ output "commands" {
     }'
 
   # Load kb data into the data store
-  uv run ./tools/agentutil process_data_store_documents \
+  uv run ./tools/agentutil.py process-documents \
     ./data/ds-kb/ \
     ./build/data/ds-kb/ \
     ${module.ds-bucket.url}/ds-kb/ \
@@ -77,11 +77,11 @@ output "commands" {
   rm -rf ${local.agent_dir} &&
   mkdir -p ${local.agent_dir} &&
   cp -r ./data/agents/${var.agent_configs.variant}/* ${local.agent_dir} &&
-  uv run ./tools/agentutil.py replace_data_store \
-    ${local.agent_dir} \
+  uv run ./tools/agentutil.py replace-data-store \
+    "${local.agent_dir}" \
     "knowledge-base-and-faq" \
     UNSTRUCTURED \
-    ${module.dialogflow.data_stores["kb"].name} &&
+    "${module.dialogflow.data_stores["kb"].name}" &&
   zip -r ${local.agent_dir}/agent.dist.zip ${local.agent_dir}/* &&
   gcloud storage cp ${local.agent_dir}/agent.dist.zip ${module.build-bucket.url}/agents/agent-${var.agent_configs.variant}.dist.zip \
     --impersonate-service-account ${var.service_accounts["project/iac-rw"].email} \
