@@ -1,0 +1,149 @@
+# Copyright 2025 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+values:
+  module.build-bucket.google_storage_bucket.bucket[0]:
+    autoclass: []
+    cors: []
+    custom_placement_config: []
+    default_event_based_hold: null
+    effective_labels:
+      goog-terraform-provisioned: 'true'
+    enable_object_retention: null
+    encryption: []
+    force_destroy: false
+    hierarchical_namespace: []
+    ip_filter: []
+    labels: null
+    lifecycle_rule: []
+    location: EUROPE-WEST1
+    logging: []
+    name: prefix-gf-rrag-0-build
+    project: prefix-gf-ai-apps-df-0
+    requester_pays: null
+    retention_policy: []
+    storage_class: STANDARD
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
+    timeouts: null
+    uniform_bucket_level_access: true
+    versioning:
+    - enabled: true
+  module.dialogflow.google_discovery_engine_chat_engine.default["dialogflow"]:
+    chat_engine_config:
+    - agent_creation_config:
+      - business: null
+        default_language_code: en-us
+        location: global
+        time_zone: Europe/Rome
+      allow_cross_region: null
+      dialogflow_agent_to_link: null
+    collection_id: default_collection
+    common_config: []
+    data_store_ids:
+    - gf-rrag-0-faq
+    - gf-rrag-0-kb
+    display_name: gf-rrag-0-dialogflow
+    engine_id: gf-rrag-0-dialogflow
+    industry_vertical: GENERIC
+    location: global
+    project: prefix-gf-ai-apps-df-0
+    timeouts: null
+  module.dialogflow.google_discovery_engine_data_store.default["faq"]:
+    advanced_site_search_config: []
+    content_config: CONTENT_REQUIRED
+    create_advanced_site_search: false
+    data_store_id: gf-rrag-0-faq
+    display_name: gf-rrag-0-faq
+    document_processing_config:
+    - chunking_config: []
+      default_parsing_config:
+      - digital_parsing_config:
+        - {}
+        layout_parsing_config: []
+        ocr_parsing_config: []
+      parsing_config_overrides: []
+    industry_vertical: GENERIC
+    location: global
+    project: prefix-gf-ai-apps-df-0
+    skip_default_schema_creation: false
+    solution_types:
+    - SOLUTION_TYPE_CHAT
+    timeouts: null
+  module.dialogflow.google_discovery_engine_data_store.default["kb"]:
+    advanced_site_search_config: []
+    content_config: CONTENT_REQUIRED
+    create_advanced_site_search: false
+    data_store_id: gf-rrag-0-kb
+    display_name: gf-rrag-0-kb
+    document_processing_config:
+    - chunking_config:
+      - layout_based_chunking_config:
+        - chunk_size: 500
+          include_ancestor_headings: true
+      default_parsing_config:
+      - digital_parsing_config: []
+        layout_parsing_config:
+        - {}
+        ocr_parsing_config: []
+      parsing_config_overrides: []
+    industry_vertical: GENERIC
+    location: global
+    project: prefix-gf-ai-apps-df-0
+    skip_default_schema_creation: true
+    solution_types:
+    - SOLUTION_TYPE_CHAT
+    timeouts: null
+  module.dialogflow.google_discovery_engine_schema.default["kb"]:
+    data_store_id: gf-rrag-0-kb
+    json_schema: '{"$schema":"https://json-schema.org/draft/2020-12/schema","properties":{"description":{"keyPropertyMapping":"description","retrievable":true,"type":"string"},"title":{"keyPropertyMapping":"title","retrievable":true,"type":"string"},"url":{"dynamicFacetable":false,"indexable":false,"retrievable":true,"searchable":false,"type":"string"}},"type":"object"}'
+    location: global
+    project: prefix-gf-ai-apps-df-0
+    schema_id: gf-rrag-0-kb
+    timeouts: null
+  module.ds-bucket.google_storage_bucket.bucket[0]:
+    autoclass: []
+    cors: []
+    custom_placement_config: []
+    default_event_based_hold: null
+    effective_labels:
+      goog-terraform-provisioned: 'true'
+    enable_object_retention: null
+    encryption: []
+    force_destroy: false
+    hierarchical_namespace: []
+    ip_filter: []
+    labels: null
+    lifecycle_rule: []
+    location: EUROPE-WEST1
+    logging: []
+    name: prefix-gf-rrag-0-ds
+    project: prefix-gf-ai-apps-df-0
+    requester_pays: null
+    retention_policy: []
+    storage_class: STANDARD
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
+    timeouts: null
+    uniform_bucket_level_access: true
+    versioning:
+    - enabled: true
+
+counts:
+  google_discovery_engine_chat_engine: 1
+  google_discovery_engine_data_store: 2
+  google_discovery_engine_schema: 1
+  google_storage_bucket: 2
+  modules: 3
+  resources: 6
