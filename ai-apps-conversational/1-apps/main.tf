@@ -43,6 +43,11 @@ module "dialogflow" {
     faq = {
       content_config = "CONTENT_REQUIRED"
       solution_types = ["SOLUTION_TYPE_CHAT"]
+      document_processing_config = {
+        default_parsing_config = {
+          digital_parsing_config = true
+        }
+      }
     }
     kb = {
       content_config               = "CONTENT_REQUIRED"
@@ -70,6 +75,7 @@ module "dialogflow" {
         "kb"
       ]
       industry_vertical = "GENERIC"
+      company_name      = "test"
       chat_engine_config = {
         default_language_code = "en-us"
         time_zone             = "Europe/Rome"

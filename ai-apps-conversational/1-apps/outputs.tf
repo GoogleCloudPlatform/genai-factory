@@ -13,8 +13,8 @@
 # limitations under the License.
 
 locals {
-  _dialogflow_apis      = "dialogflow.googleapis.com"
-  _discoveryengine_apis = "discoveryengine.googleapis.com"
+  _dialogflow_apis      = "https://dialogflow.googleapis.com"
+  _discoveryengine_apis = "https://discoveryengine.googleapis.com"
   agent_dir             = "./build/agent/dist"
   uris_prefix = (
     var.region_ai_applications == null || var.region_ai_applications == "global"
@@ -39,8 +39,9 @@ output "commands" {
     --impersonate-service-account ${var.service_accounts["project/iac-rw"].email})
 
   # Load faq data into the data store
-  gcloud storage cp ./data/ds-faq/* ${module.ds-bucket.url}/ds-faq/ \
-    --impersonate-service-account ${var.service_accounts["project/iac-rw"].email} &&
+  gcloud storage cp ./data/ds-faq/faq.csv ${module.ds-bucket.url}/ds-faq/ \
+    --impersonate-service-account ${var.service_accounts["project/iac-rw"].email} \
+    --billing-project ${var.project_config.id} &&
   curl -X POST ${local.uris.ds_faq} \
     -H "Authorization: Bearer $BEARER_TOKEN" \
     -H "Content-Type: application/json" \
@@ -48,7 +49,7 @@ output "commands" {
     -d '{
       "autoGenerateIds": true,
       "gcsSource":{
-        "inputUris":["${module.ds-bucket.url}/ds-faq"],
+        "inputUris":["${module.ds-bucket.url}/ds-faq/faq.csv"],
         "dataSchema":"csv"
       },
       "reconciliationMode":"FULL"
@@ -73,18 +74,18 @@ output "commands" {
     }'
 
   # Build and deploy agent variant
-  rm -rf ${local.agent_dir}
-  mkdir -p ${local.agent_dir}
-  cp -r ./data/agents/${var.agent_configs.variant}/* ${local.agent_dir}
-  uv run ./tools/agentutil replace_data_store \
+  rm -rf ${local.agent_dir} &&
+  mkdir -p ${local.agent_dir} &&
+  cp -r ./data/agents/${var.agent_configs.variant}/* ${local.agent_dir} &&
+  uv run ./tools/agentutil.py replace_data_store \
     ${local.agent_dir} \
-    "kb-faq" \
+    "knowledge-base-and-faq" \
     UNSTRUCTURED \
     ${module.dialogflow.data_stores["kb"].name} &&
-  cd ${local.agent_dir} &&
-  zip -r agent.dist.zip * &&
+  zip -r ${local.agent_dir}/agent.dist.zip ${local.agent_dir}/* &&
   gcloud storage cp ${local.agent_dir}/agent.dist.zip ${module.build-bucket.url}/agents/agent-${var.agent_configs.variant}.dist.zip \
-    --impersonate-service-account ${var.service_accounts["project/iac-rw"].email} &&
+    --impersonate-service-account ${var.service_accounts["project/iac-rw"].email} \
+    --billing-project ${var.project_config.id} &&
   curl -X POST ${local.uris.agent} \
     -H "Authorization: Bearer $BEARER_TOKEN" \
     -H "Content-Type: application/json" \

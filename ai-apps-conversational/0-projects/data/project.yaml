@@ -39,4 +39,5 @@ iam_by_principals:
   iac-rw:
     - roles/dialogflow.admin
     - roles/discoveryengine.admin
+    - roles/serviceusage.serviceUsageConsumer
     - roles/storage.admin
