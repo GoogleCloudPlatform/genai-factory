@@ -5,11 +5,10 @@ description = "Tools to deploy and maintain Conversational Agents"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
-    "dfcx-scrapi>=1.13.1",
-    "fire>=0.7.0",
+    "click>=8.0",
     "google-cloud-dialogflow-cx>=1.41.0",
-    "markdown>=3.8.2",
-    "setuptools>=80.7.1",
+    "google-cloud-storage>=2.0.0",
+    "markdown>=3.6",
 ]
 
 [project.scripts]

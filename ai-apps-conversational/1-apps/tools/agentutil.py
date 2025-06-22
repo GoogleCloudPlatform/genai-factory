@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """
 A CLI tool to manage and patch Google Cloud Conversational Agents.
 
@@ -43,32 +42,39 @@ logger = logging.getLogger(__name__)
 AGENTUTIL_FOLDER = Path(".agentutil")
 AGENT_BACKUP_FOLDER = AGENTUTIL_FOLDER / "agent_backups"
 
+
 class DataStoreType(Enum):
     """Enumeration for Dialogflow Data Store types."""
     STRUCTURED = 'STRUCTURED'
     UNSTRUCTURED = 'UNSTRUCTURED'
     PUBLIC_WEB = 'PUBLIC_WEB'
 
+
 # --- Helper Functions ---
+
 
 def _ensure_agentutil_dirs() -> None:
     """Ensures that the utility and backup directories exist."""
     AGENTUTIL_FOLDER.mkdir(exist_ok=True)
     AGENT_BACKUP_FOLDER.mkdir(exist_ok=True)
 
+
 def _get_dialogflow_client(agent_name: str) -> dialogflow.AgentsClient:
     """Creates a region-specific Dialogflow CX client."""
     try:
         location_id = agent_name.split('/')[3]
-        client_options = {"api_endpoint": f"{location_id}-dialogflow.googleapis.com"}
+        client_options = {
+            "api_endpoint": f"{location_id}-dialogflow.googleapis.com"
+        }
         return dialogflow.AgentsClient(client_options=client_options)
     except IndexError:
         raise ValueError(
             "Invalid agent_name format. Expected: "
-            "projects/<PROJECT>/locations/<LOCATION>/agents/<AGENT-ID>"
-        )
+            "projects/<PROJECT>/locations/<LOCATION>/agents/<AGENT-ID>")
+
 
 # --- CLI Command Group ---
+
 
 @click.group()
 def main():
@@ -76,12 +82,19 @@ def main():
     _ensure_agentutil_dirs()
     pass
 
+
 # --- CLI Commands ---
+
 
 @main.command()
 @click.argument("agent_name")
 @click.argument("target_dir", type=click.Path())
-@click.option("--environment", "-e", default=None, help="Environment to export. If not specified, the draft flow is exported.")
+@click.option(
+    "--environment",
+    "-e",
+    default=None,
+    help="Environment to export. If not specified, the draft flow is exported."
+)
 def pull_agent(agent_name: str, target_dir: str, environment: Optional[str]):
     """
     Exports a Dialogflow CX agent to a local directory.
@@ -116,15 +129,18 @@ def pull_agent(agent_name: str, target_dir: str, environment: Optional[str]):
                 if backup_dir.exists():
                     shutil.rmtree(backup_dir)
                 shutil.copytree(target_path, backup_dir)
-                click.echo(f"Created backup of existing agent in: {backup_dir}")
+                click.echo(
+                    f"Created backup of existing agent in: {backup_dir}")
                 shutil.rmtree(target_path)
 
             target_path.mkdir(parents=True, exist_ok=True)
 
-            with zipfile.ZipFile(io.BytesIO(response.agent_content), 'r') as zip_ref:
+            with zipfile.ZipFile(io.BytesIO(response.agent_content),
+                                 'r') as zip_ref:
                 zip_ref.extractall(target_path)
 
-            click.secho(f"✅ Agent pulled successfully to: {target_path}", fg="green")
+            click.secho(f"✅ Agent pulled successfully to: {target_path}",
+                        fg="green")
 
         elif response.agent_uri:
             click.echo("Agent exported to Google Cloud Storage.")
@@ -132,20 +148,30 @@ def pull_agent(agent_name: str, target_dir: str, environment: Optional[str]):
             click.echo("Please download it from GCS manually.")
 
         else:
-            click.secho("Export failed: No agent content or URI was returned.", fg="red")
+            click.secho("Export failed: No agent content or URI was returned.",
+                        fg="red")
 
     except gcp_exceptions.NotFound as e:
-        click.secho(f"Error: Agent or environment not found. Details: {e}", fg="red")
+        click.secho(f"Error: Agent or environment not found. Details: {e}",
+                    fg="red")
     except Exception as e:
-        click.secho(f"An unexpected error occurred during export: {e}", fg="red")
+        click.secho(f"An unexpected error occurred during export: {e}",
+                    fg="red")
 
 
 @main.command()
-@click.argument("target_agent_dir", type=click.Path(exists=True, file_okay=False, dir_okay=True, readable=True))
+@click.argument("target_agent_dir",
+                type=click.Path(exists=True,
+                                file_okay=False,
+                                dir_okay=True,
+                                readable=True))
 @click.argument("tool_name")
-@click.argument("data_store_type", type=click.Choice([t.value for t in DataStoreType], case_sensitive=False))
+@click.argument("data_store_type",
+                type=click.Choice([t.value for t in DataStoreType],
+                                  case_sensitive=False))
 @click.argument("data_store_id")
-def replace_data_store(target_agent_dir: str, tool_name: str, data_store_type: str, data_store_id: str):
+def replace_data_store(target_agent_dir: str, tool_name: str,
+                       data_store_type: str, data_store_id: str):
     """
     Replaces a data store reference in a specified tool.
 
@@ -165,9 +191,11 @@ def replace_data_store(target_agent_dir: str, tool_name: str, data_store_type: s
         with tool_file.open('r') as f:
             spec = json.load(f)
 
-        connections = spec.get("dataStoreSpec", {}).get("dataStoreConnections", [])
+        connections = spec.get("dataStoreSpec",
+                               {}).get("dataStoreConnections", [])
         if not connections:
-            raise ValueError(f"Tool '{tool_name}' has no data store connections.")
+            raise ValueError(
+                f"Tool '{tool_name}' has no data store connections.")
 
         found_and_replaced = False
         for conn in connections:
@@ -177,23 +205,34 @@ def replace_data_store(target_agent_dir: str, tool_name: str, data_store_type: s
                 break
 
         if not found_and_replaced:
-            raise ValueError(f"Could not find a connection of type '{data_store_type}'.")
+            raise ValueError(
+                f"Could not find a connection of type '{data_store_type}'.")
 
         with tool_file.open('w') as f:
             json.dump(spec, f, indent=4)
 
-        click.secho(f"✅ Successfully replaced '{data_store_type}' data store in tool '{tool_name}' with '{data_store_id}'.", fg="green")
+        click.secho(
+            f"✅ Successfully replaced '{data_store_type}' data store in tool '{tool_name}' with '{data_store_id}'.",
+            fg="green")
 
     except (ValueError, KeyError, json.JSONDecodeError) as e:
         click.secho(f"Error processing tool file: {e}", fg="red")
 
 
 @main.command()
-@click.argument("source_dir", type=click.Path(exists=True, file_okay=False, dir_okay=True, readable=True))
-@click.argument("dest_dir", type=click.Path(file_okay=False, dir_okay=True, writable=True))
+@click.argument("source_dir",
+                type=click.Path(exists=True,
+                                file_okay=False,
+                                dir_okay=True,
+                                readable=True))
+@click.argument("dest_dir",
+                type=click.Path(file_okay=False, dir_okay=True, writable=True))
 @click.argument("gcs_path")
-@click.option("--upload", is_flag=True, help="If set, uploads generated files to GCS.")
-def process_documents(source_dir: str, dest_dir: str, gcs_path: str, upload: bool):
+@click.option("--upload",
+              is_flag=True,
+              help="If set, uploads generated files to GCS.")
+def process_documents(source_dir: str, dest_dir: str, gcs_path: str,
+                      upload: bool):
     """
     Preprocesses Markdown files for Data Store ingestion.
 
@@ -224,11 +263,15 @@ def process_documents(source_dir: str, dest_dir: str, gcs_path: str, upload: boo
         markdown_files = list(source_path.glob("*.md"))
 
         if not markdown_files:
-            click.secho("Warning: No Markdown (.md) files found in source directory.", fg="yellow")
+            click.secho(
+                "Warning: No Markdown (.md) files found in source directory.",
+                fg="yellow")
             return
 
-        click.echo(f"Found {len(markdown_files)} Markdown files. Processing...")
-        with click.progressbar(markdown_files, label="Converting files") as bar:
+        click.echo(
+            f"Found {len(markdown_files)} Markdown files. Processing...")
+        with click.progressbar(markdown_files,
+                               label="Converting files") as bar:
             for md_file in bar:
                 base_name = md_file.stem
                 html_file = dest_path / f"{base_name}.html"
@@ -249,8 +292,13 @@ def process_documents(source_dir: str, dest_dir: str, gcs_path: str, upload: boo
                 gcs_document_uri = f"gs://{gcs_bucket_name}/{gcs_blob_prefix}{html_file.name}"
                 jsonl_entries.append({
                     "id": base_name,
-                    "structData": {"title": title},
-                    "content": {"mimeType": "text/html", "uri": gcs_document_uri}
+                    "structData": {
+                        "title": title
+                    },
+                    "content": {
+                        "mimeType": "text/html",
+                        "uri": gcs_document_uri
+                    }
                 })
 
         jsonl_path = dest_path / "documents.jsonl"
@@ -261,11 +309,14 @@ def process_documents(source_dir: str, dest_dir: str, gcs_path: str, upload: boo
         click.echo(f"Generated JSONL manifest: {jsonl_path}")
 
         if upload:
-            click.echo(f"\nUploading {len(files_to_upload)} files to gs://{gcs_bucket_name}/{gcs_blob_prefix}...")
+            click.echo(
+                f"\nUploading {len(files_to_upload)} files to gs://{gcs_bucket_name}/{gcs_blob_prefix}..."
+            )
             storage_client = storage.Client()
             bucket = storage_client.bucket(gcs_bucket_name)
 
-            with click.progressbar(files_to_upload, label="Uploading files") as bar:
+            with click.progressbar(files_to_upload,
+                                   label="Uploading files") as bar:
                 for local_file in bar:
                     blob_name = gcs_blob_prefix + local_file.name
                     blob = bucket.blob(blob_name)
