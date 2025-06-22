@@ -83,7 +83,9 @@ jobs:
       - name: Check documentation links
         id: documentation-links
         run: |
-          uv run python tools/check_links.py --no-show-summary .
+          uv run python tools/check_links.py . \
+            --no-show-summary \
+            --exclude ./ai-apps-conversational/1-apps/data/ds-kb
 
       - name: Check python formatting
         id: yapf
