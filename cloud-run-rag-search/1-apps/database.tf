@@ -70,6 +70,7 @@ resource "google_vertex_ai_index_endpoint" "index_endpoint" {
 resource "google_vertex_ai_index_endpoint_deployed_index" "index_deployment" {
   deployed_index_id = local.name_to_underscores
   display_name      = var.name
+  region            = var.region
   index             = google_vertex_ai_index.index.id
   index_endpoint    = google_vertex_ai_index_endpoint.index_endpoint.id
 }

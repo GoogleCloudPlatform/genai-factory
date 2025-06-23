@@ -16,5 +16,3 @@ module: cloud-run-rag-search/1-apps
 
 tests:
   simple:
-    extra_files:
-      - ../../../tests/cloud_run_rag_search/test_providers.tf

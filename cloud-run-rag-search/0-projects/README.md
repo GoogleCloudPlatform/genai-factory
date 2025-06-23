@@ -36,7 +36,7 @@ The `project_config` variable allows to configure for different scenarios regard
 
 | name | description | sensitive |
 |---|---|:---:|
-| [buckets](outputs.tf#L50) | Created buckets. |  |
-| [projects](outputs.tf#L55) | Created projects. |  |
-| [service_accounts](outputs.tf#L60) | Created service accounts. |  |
+| [buckets](outputs.tf#L49) | Created buckets. |  |
+| [projects](outputs.tf#L54) | Created projects. |  |
+| [service_accounts](outputs.tf#L59) | Created service accounts. |  |
 <!-- END TFDOC -->
