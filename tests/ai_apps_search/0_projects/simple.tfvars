@@ -12,14 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import os
-
-PROJECT_ID = os.environ.get("PROJECT_ID")
-REGION = os.environ.get("REGION", "europe-west1")
-
-MODEL_NAME = os.environ.get("MODEL_NAME", "gemini-2.0-flash")
-TEMPERATURE = 0.9
-TOP_P = 1.0
-TOP_K = 32
-CANDIDATE_COUNT = 1
-MAX_OUTPUT_TOKENS = 8192
+project_config = {
+  billing_account_id = "billing-acct-id"
+  parent             = "organizations/1122334455"
+  prefix             = "your-prefix"
+}

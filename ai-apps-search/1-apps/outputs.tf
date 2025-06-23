@@ -13,43 +13,15 @@
 # limitations under the License.
 
 locals {
-  _env_vars = [
-    "PROJECT_ID=${var.project_config.id}",
-    "REGION=${var.region}",
-  ]
-  address  = "https://discoveryengine.googleapis.com/v1/${module.ai-apps.search_engines["app"].name}/servingConfigs/default_search:search"
-  env_vars = join(",", local._env_vars)
-  query    = "FAST networking stage documentation"
+  address = "https://discoveryengine.googleapis.com/v1/${module.ai-apps.search_engines["app"].name}/servingConfigs/default_search:search"
+  query   = "FAST networking stage documentation"
 }
 
 output "commands" {
-  description = "Run the following commands when the deployment completes to deploy the app."
+  description = "Command to run after the deployment."
   value       = <<EOT
-  # Run the following commands to deploy the application.
-  # Alternatively, deploy the application through your CI/CD pipeline.
+  # Use this command to search something.
 
-  gcloud artifacts repositories create ${var.name} \
-    --project=${var.project_config.id} \
-    --location ${var.region} \
-    --repository-format docker \
-    --impersonate-service-account=${var.service_accounts["project/iac-rw"].email}
-
-  gcloud builds submit ./apps/APP_NAME \
-    --project ${var.project_config.id} \
-    --tag ${var.region}-docker.pkg.dev/${var.project_config.id}/${var.name}/srun \
-    --service-account ${var.service_accounts["project/gf-ai-apps-srch-build-0"].id} \
-    --default-buckets-behavior=REGIONAL_USER_OWNED_BUCKET \
-    --quiet \
-    --impersonate-service-account=${var.service_accounts["project/iac-rw"].email}
-
-  gcloud run deploy ${var.name} \
-    --impersonate-service-account=${var.service_accounts["project/iac-rw"].email} \
-    --project ${var.project_config.id} \
-    --region ${var.region} \
-    --image=${var.region}-docker.pkg.dev/${var.project_config.id}/${var.name}/srun \
-    --set-env-vars ${local.env_vars}
-
-  # Alternatively, if VPC-SC is disabled, query your services directly
   curl -X POST ${local.address} \
     -H "Authorization: Bearer $(gcloud auth print-access-token)" \
     -H "Content-Type: application/json" \
@@ -67,21 +39,8 @@ output "commands" {
         "timeZone": "Europe/Rome"
       }
     }'
-  EOT
-}
 
-output "ip_addresses" {
-  description = "The load balancers IP addresses."
-  value = {
-    external = (
-      var.lbs_config.external.enable
-      ? module.lb_external[0].address[""]
-      : null
-    )
-    internal = (
-      var.lbs_config.internal.enable
-      ? module.lb_internal[0].address
-      : null
-    )
-  }
+  # Alternatively, use the GUI to integrate the widget to your website
+  # https://console.cloud.google.com/gen-app-builder/locations/global/engines/${var.name}-app/integration/widget?project=${var.project_config.id}
+  EOT
 }
