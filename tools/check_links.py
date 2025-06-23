@@ -53,12 +53,32 @@ def check_link(link, readme_path, external):
   return LINK(link.dest, link_valid)
 
 
-def check_docs(dir_name, external=False):
+def check_docs(dir_name, external=False, exclude_dirs=None):
   'Traverses dir_name and checks for all Markdown files.'
+  if exclude_dirs is None:
+    exclude_dirs = []
+
   dir_path = BASEDIR / dir_name
   parser = marko.parser.Parser()
   for readme_path in sorted(dir_path.glob('**/*.md')):
     if '.terraform' in str(readme_path) or '.pytest' in str(readme_path):
+      continue
+
+    # Check if the current readme_path or any of its parents are in the exclude_dirs list
+    excluded = False
+    for exclude_dir in exclude_dirs:
+      try:
+        # Check if readme_path is inside an excluded directory
+        readme_path.relative_to(BASEDIR / exclude_dir)
+        excluded = True
+        break
+      except ValueError:
+        # If relative_to raises ValueError, it means readme_path is not under exclude_dir
+        pass
+
+    if excluded:
+      if click.get_current_context().params.get('show_summary'):
+        print(f'[SKIPPED] {readme_path.relative_to(dir_path)} (Excluded)')
       continue
 
     root = parser.parse(readme_path.read_text())
@@ -80,7 +100,9 @@ def check_docs(dir_name, external=False):
               help='Whether to test external links.')
 @click.option('--show-summary/--no-show-summary', default=True)
 @click.option('--scan-files', default=False, is_flag=True)
-def main(dirs, external, show_summary=True, scan_files=False):
+@click.option('--exclude', '-x', multiple=True,
+              help='Exclude one or more directories from the check. Can be specified multiple times.')
+def main(dirs, external, show_summary, scan_files, exclude):
   'Checks links in Markdown files contained in dirs.'
   errors = []
   if scan_files:
@@ -88,7 +110,7 @@ def main(dirs, external, show_summary=True, scan_files=False):
   for dir_name in dirs:
     if show_summary:
       print(f'----- {dir_name} -----')
-    for doc in check_docs(dir_name, external):
+    for doc in check_docs(dir_name, external, exclude_dirs=exclude):
       state = '✓' if all(l.valid for l in doc.links) else '✗'
       if show_summary:
         print(f'[{state}] {doc.relpath} ({len(doc.links)})')
