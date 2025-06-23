@@ -1,3 +1,5 @@
+---
+
 # Copyright 2025 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,22 +14,27 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-terraform {
-  required_version = ">= 1.11.4"
-  required_providers {
-    google = {
-      source  = "hashicorp/google"
-      version = ">= 6.40.0, < 7.0.0" # tftest
-    }
-    google-beta = {
-      source  = "hashicorp/google-beta"
-      version = ">= 6.40.0, < 7.0.0" # tftest
-    }
-  }
-  provider_meta "google" {
-    module_name = "google-pso-tool/cloud-foundation-fabric/tools/lockfile:40.1.0-tf"
-  }
-  provider_meta "google-beta" {
-    module_name = "google-pso-tool/cloud-foundation-fabric/tools/lockfile:40.1.0-tf"
-  }
-}
+name: gf-ai-apps-srch-0
+
+# Enable APIs
+services:
+  # Needed both for ILB and ELB
+  - discoveryengine.googleapis.com
+
+buckets:
+  iac-state:
+    description: Terraform state bucket
+    iam:
+      roles/storage.objectAdmin:
+        - iac-rw
+      roles/storage.objectViewer:
+        - iac-rw
+
+service_accounts:
+  # Automation SAs
+  iac-rw:
+
+# Grant roles
+iam_by_principals:
+  iac-rw:
+    - roles/discoveryengine.admin

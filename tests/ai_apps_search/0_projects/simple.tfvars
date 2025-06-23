@@ -12,22 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-terraform {
-  required_version = ">= 1.11.4"
-  required_providers {
-    google = {
-      source  = "hashicorp/google"
-      version = ">= 6.40.0, < 7.0.0" # tftest
-    }
-    google-beta = {
-      source  = "hashicorp/google-beta"
-      version = ">= 6.40.0, < 7.0.0" # tftest
-    }
-  }
-  provider_meta "google" {
-    module_name = "google-pso-tool/cloud-foundation-fabric/tools/lockfile:40.1.0-tf"
-  }
-  provider_meta "google-beta" {
-    module_name = "google-pso-tool/cloud-foundation-fabric/tools/lockfile:40.1.0-tf"
-  }
+project_config = {
+  billing_account_id = "billing-acct-id"
+  parent             = "organizations/1122334455"
+  prefix             = "your-prefix"
 }
