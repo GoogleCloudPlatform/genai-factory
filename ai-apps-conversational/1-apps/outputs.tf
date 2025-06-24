@@ -13,6 +13,7 @@
 # limitations under the License.
 
 locals {
+  _dialogflow_agent_id  = module.dialogflow.chat_engines["dialogflow"].chat_engine_metadata[0].dialogflow_agent
   _dialogflow_apis      = "https://dialogflow.googleapis.com"
   _discoveryengine_apis = "https://discoveryengine.googleapis.com"
   agent_dir             = "./build/agent/dist"
@@ -22,9 +23,10 @@ locals {
     : "${var.region_ai_applications}-"
   )
   uris = {
-    agent  = "${local.uris_prefix}${local._dialogflow_apis}/v3/${module.dialogflow.chat_engines["dialogflow"].chat_engine_metadata[0].dialogflow_agent}:restore"
-    ds_faq = "${local.uris_prefix}${local._discoveryengine_apis}/v1/${module.dialogflow.data_stores["faq"].name}/branches/0/documents:import"
-    ds_kb  = "${local.uris_prefix}${local._discoveryengine_apis}/v1/${module.dialogflow.data_stores["kb"].name}/branches/0/documents:import"
+    agent       = "${local.uris_prefix}${local._dialogflow_apis}/v3/${local._dialogflow_agent_id}:restore"
+    agent_query = "${local.uris_prefix}${local._dialogflow_apis}/v3/${local._dialogflow_agent_id}/environments/draft/sessions/any-session-id:detectIntent"
+    ds_faq      = "${local.uris_prefix}${local._discoveryengine_apis}/v1/${module.dialogflow.data_stores["faq"].name}/branches/0/documents:import"
+    ds_kb       = "${local.uris_prefix}${local._discoveryengine_apis}/v1/${module.dialogflow.data_stores["kb"].name}/branches/0/documents:import"
   }
 }
 
@@ -47,13 +49,13 @@ output "commands" {
     -H "Content-Type: application/json" \
     -H "X-Goog-User-Project: ${var.project_config.id}" \
     -d '{
-      "autoGenerateIds": true,
-      "gcsSource":{
-        "inputUris":["${module.ds-bucket.url}/ds-faq/faq.csv"],
-        "dataSchema":"csv"
-      },
-      "reconciliationMode":"FULL"
-    }'
+        "autoGenerateIds": true,
+        "gcsSource":{
+          "inputUris":["${module.ds-bucket.url}/ds-faq/faq.csv"],
+          "dataSchema":"csv"
+        },
+        "reconciliationMode":"FULL"
+      }'
 
   # Load kb data into the data store
   uv run ./tools/agentutil.py process-documents \
@@ -66,14 +68,14 @@ output "commands" {
     -H "Content-Type: application/json" \
     -H "X-Goog-User-Project: ${var.project_config.id}" \
     -d '{
-      "gcsSource":{
-        "inputUris":["${module.ds-bucket.url}/ds-kb/documents.jsonl"],
-        "dataSchema":"document"
-      },
-      "reconciliationMode":"FULL"
-    }'
+        "gcsSource":{
+          "inputUris":["${module.ds-bucket.url}/ds-kb/documents.jsonl"],
+          "dataSchema":"document"
+        },
+        "reconciliationMode":"FULL"
+      }'
 
-  # Build and deploy agent variant
+  # Build and deploy an agent variant
   rm -rf ${local.agent_dir} &&
   mkdir -p ${local.agent_dir} &&
   cp -r ./data/agents/${var.agent_configs.variant}/* ${local.agent_dir} &&
@@ -91,7 +93,24 @@ output "commands" {
     -H "Content-Type: application/json" \
     -H "X-Goog-User-Project: ${var.project_config.id}" \
     -d '{
-      "agentUri": "${module.ds-bucket.url}"
-    }'
+        "agentUri": "${module.ds-bucket.url}"
+      }'
+
+  # Query the agent
+  curl -X POST ${local.uris.agent_query} \
+  -H "Authorization: Bearer $BEARER_TOKEN" \
+  -H "Content-Type: application/json" \
+  -H "X-Goog-User-Project: ${var.project_config.id}" \
+  -d '{
+        "query_input": {
+          "language_code": "${var.agent_configs.language}",
+          "text": {
+            "text": "Hello, bot"
+          }
+        }
+      }'
+
+  # To finalize the agent configuration go to
+  # https://conversational-agents.cloud.google.com/cx/projects/${var.project_config.id}
   EOT
 }

@@ -41,13 +41,8 @@ module "dialogflow" {
   location   = var.region_ai_applications
   data_stores_configs = {
     faq = {
-      content_config = "CONTENT_REQUIRED"
+      content_config = "NO_CONTENT"
       solution_types = ["SOLUTION_TYPE_CHAT"]
-      document_processing_config = {
-        default_parsing_config = {
-          digital_parsing_config = true
-        }
-      }
     }
     kb = {
       content_config               = "CONTENT_REQUIRED"
@@ -75,7 +70,7 @@ module "dialogflow" {
         "kb"
       ]
       industry_vertical = "GENERIC"
-      company_name      = "test"
+      company_name      = "Cymbal"
       chat_engine_config = {
         default_language_code = "en-us"
         time_zone             = "Europe/Rome"

@@ -29,7 +29,7 @@ values:
     lifecycle_rule: []
     location: EUROPE-WEST1
     logging: []
-    name: prefix-gf-rrag-0-build
+    name: prefix-gf-ai-apps-df-0-build
     project: prefix-gf-ai-apps-df-0
     requester_pays: null
     retention_policy: []
@@ -52,28 +52,20 @@ values:
     collection_id: default_collection
     common_config: []
     data_store_ids:
-    - gf-rrag-0-faq
-    - gf-rrag-0-kb
-    display_name: gf-rrag-0-dialogflow
-    engine_id: gf-rrag-0-dialogflow
+    - gf-ai-apps-df-0-faq
+    - gf-ai-apps-df-0-kb
+    display_name: gf-ai-apps-df-0-dialogflow
+    engine_id: gf-ai-apps-df-0-dialogflow
     industry_vertical: GENERIC
     location: global
     project: prefix-gf-ai-apps-df-0
     timeouts: null
   module.dialogflow.google_discovery_engine_data_store.default["faq"]:
     advanced_site_search_config: []
-    content_config: CONTENT_REQUIRED
+    content_config: NO_CONTENT
     create_advanced_site_search: false
-    data_store_id: gf-rrag-0-faq
-    display_name: gf-rrag-0-faq
-    document_processing_config:
-    - chunking_config: []
-      default_parsing_config:
-      - digital_parsing_config:
-        - {}
-        layout_parsing_config: []
-        ocr_parsing_config: []
-      parsing_config_overrides: []
+    data_store_id: gf-ai-apps-df-0-faq
+    display_name: gf-ai-apps-df-0-faq
     industry_vertical: GENERIC
     location: global
     project: prefix-gf-ai-apps-df-0
@@ -85,8 +77,8 @@ values:
     advanced_site_search_config: []
     content_config: CONTENT_REQUIRED
     create_advanced_site_search: false
-    data_store_id: gf-rrag-0-kb
-    display_name: gf-rrag-0-kb
+    data_store_id: gf-ai-apps-df-0-kb
+    display_name: gf-ai-apps-df-0-kb
     document_processing_config:
     - chunking_config:
       - layout_based_chunking_config:
@@ -106,11 +98,11 @@ values:
     - SOLUTION_TYPE_CHAT
     timeouts: null
   module.dialogflow.google_discovery_engine_schema.default["kb"]:
-    data_store_id: gf-rrag-0-kb
+    data_store_id: gf-ai-apps-df-0-kb
     json_schema: '{"$schema":"https://json-schema.org/draft/2020-12/schema","properties":{"description":{"keyPropertyMapping":"description","retrievable":true,"type":"string"},"title":{"keyPropertyMapping":"title","retrievable":true,"type":"string"},"url":{"dynamicFacetable":false,"indexable":false,"retrievable":true,"searchable":false,"type":"string"}},"type":"object"}'
     location: global
     project: prefix-gf-ai-apps-df-0
-    schema_id: gf-rrag-0-kb
+    schema_id: gf-ai-apps-df-0-kb
     timeouts: null
   module.ds-bucket.google_storage_bucket.bucket[0]:
     autoclass: []
@@ -128,7 +120,7 @@ values:
     lifecycle_rule: []
     location: EUROPE-WEST1
     logging: []
-    name: prefix-gf-rrag-0-ds
+    name: prefix-gf-ai-apps-df-0-ds
     project: prefix-gf-ai-apps-df-0
     requester_pays: null
     retention_policy: []

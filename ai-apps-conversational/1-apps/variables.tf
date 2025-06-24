@@ -15,7 +15,7 @@
 variable "agent_configs" {
   description = "The AI Applications Dialogflow agent configurations."
   type = object({
-    language = optional(string, "en-US")
+    language = optional(string, "en")
     variant  = optional(string, "default")
   })
   nullable = false
