@@ -13,6 +13,8 @@ A collection of scripts to deploy AI infrastructures and applications in GCP, fo
 - [Single Cloud Run](./cloud-run-single/README.md) - A secure Cloud Run deployment to interact with Gemini and optionally deploy [ADK agents](https://google.github.io/adk-docs/deploy/cloud-run/).
 - [RAG with Cloud Run and CloudSQL](./cloud-run-single/README.md) - A "Retrieval-Augmented Generation" (RAG) system leveraging Cloud Run, Cloud SQL and BigQuery.
 - [RAG with Cloud Run and Vector Search](./cloud-run-rag-search/README.md) - A "Retrieval-Augmented Generation" (RAG) system leveraging Cloud Run and Vector Search.
+- [AI Application search (Vector AI Search)](./ai-apps-search/README.md) - An AI-based search engine, configured to search content from a connected data store, indexing web pages from public websites.
+- [AI Application conversational agent (Dialogflow CX)](./ai-apps-conversational/README.md) - A chat engine ([Dialogflow CX](https://cloud.google.com/dialogflow/docs)) backed by two data stores, reading csv and json data from a GCS bucket.
 
 These sample infrastructure deployments and applications can be used to be further extended and to ship your own application code.
 
