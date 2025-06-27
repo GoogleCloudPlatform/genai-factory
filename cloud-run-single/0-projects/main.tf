@@ -22,20 +22,9 @@ locals {
 module "projects" {
   source = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/project-factory"
   data_defaults = {
-    billing_account = var.project_config.billing_account_id
-    parent          = var.project_config.parent
-    prefix          = var.project_config.prefix
-    project_reuse = (
-      var.project_config.create
-      ? null
-      : {
-        use_data_source = false
-        project_attributes = {
-          name   = "${var.project_config.prefix}-${var.project_config.name}"
-          number = var.project_config.number
-        }
-      }
-    )
+    billing_account  = var.project_config.billing_account_id
+    parent           = var.project_config.parent
+    prefix           = var.project_config.prefix
     storage_location = var.region
   }
   factories_config = {
