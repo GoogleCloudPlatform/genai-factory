@@ -21,11 +21,13 @@ variable "enable_iac_sa_impersonation" {
 variable "project_config" {
   description = "The project configuration."
   type = object({
-    billing_account_id = optional(string)     # if create or control equals true
-    control            = optional(bool, true) # to control an existing project
-    create             = optional(bool, true) # to create the project
-    parent             = optional(string)     # if control equals true
-    prefix             = optional(string)     # the prefix of the project name
+    billing_account_id = optional(string)              # if create or control equals true
+    control            = optional(bool, true)          # to control an existing project
+    create             = optional(bool, true)          # to create the project
+    name               = optional(string, "gf-srun-0") # the suffix of the project name
+    number             = optional(number)              # if create equals false
+    parent             = optional(string)              # if control equals true
+    prefix             = optional(string)              # the prefix of the project name
   })
   nullable = false
   validation {
