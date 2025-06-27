@@ -25,7 +25,6 @@ module "projects" {
     billing_account  = var.project_config.billing_account_id
     parent           = var.project_config.parent
     prefix           = var.project_config.prefix
-    project_reuse    = var.project_config.create ? null : {}
     storage_location = var.region
   }
   factories_config = {
