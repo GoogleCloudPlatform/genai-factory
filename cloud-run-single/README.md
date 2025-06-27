@@ -11,7 +11,7 @@ After the [1-apps](1-apps/README.md) deployment finishes, the commands to deploy
 Cloud run single allows deploying these applications:
 
 - **Chat:** a secure backend exposing a JSON interface to communicate with Gemini through Vertex APIs.
-- **ADK:** a sample, secure [Agent Development Kit (ADK) deployment]((https://google.github.io/adk-docs/deploy/cloud-run/)).
+- **ADK:** a sample, secure [Agent Development Kit (ADK) deployment](https://google.github.io/adk-docs/deploy/cloud-run/).
 
 ## Core Components
 
