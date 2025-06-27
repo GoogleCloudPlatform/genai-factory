@@ -1,8 +1,17 @@
 # Single Cloud Run
 
-The module deploys a Cloud Run instance that communicates with Gemini APIs.
+The factory deploys a secure Cloud Run instance to run AI applications.
 
 ![Architecture Diagram](./diagram.png)
+
+## Applications
+
+After the [1-apps](1-apps/README.md) deployment finishes, the commands to deploy the applications will be displayed on your screen.
+
+Cloud run single allows deploying these applications:
+
+- **Chat:** a secure backend exposing a JSON interface to communicate with Gemini through Vertex APIs.
+- **ADK:** a sample, secure [Agent Development Kit (ADK) deployment]((https://google.github.io/adk-docs/deploy/cloud-run/)).
 
 ## Core Components
 

@@ -1,6 +1,6 @@
 # AI Applications - Conversational Agents (Dialogflow)
 
-This module deploys an [AI Applications](https://cloud.google.com/generative-ai-app-builder/docs/introduction) chat engine ([Dialogflow CX](https://cloud.google.com/dialogflow/docs)) backed by two [data stores](https://cloud.google.com/dialogflow/cx/docs/concept/data-store), both reading data (csv and json) from a [Google Cloud Storage (GCS) bucket](https://cloud.google.com/storage/docs/introduction).
+This factory deploys an [AI Applications](https://cloud.google.com/generative-ai-app-builder/docs/introduction) chat engine ([Dialogflow CX](https://cloud.google.com/dialogflow/docs)) backed by two [data stores](https://cloud.google.com/dialogflow/cx/docs/concept/data-store), both reading data (csv and json) from a [Google Cloud Storage (GCS) bucket](https://cloud.google.com/storage/docs/introduction).
 
 ![Architecture Diagram](./diagram.png)
 

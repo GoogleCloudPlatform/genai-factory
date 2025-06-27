@@ -1,13 +1,13 @@
 # Cloud Run - RAG Search / Project Setup
 
-This module is part of the `Cloud Run RAG Search factory`.
+This stage is part of the `Cloud Run RAG Search factory`.
 It is responsible for setting up the Google Cloud project, activating the APIs and granting the roles you need to deploy and manage the components enabling the AI use case.
 
 It leverages the Cloud Foundation Fabric [`project-factory`](https://github.com/GoogleCloudPlatform/cloud-foundation-fabric/tree/master/modules/project-factory).
 
 You can refer to the [YAML project configuration](data/project.yaml) for more details about enabled APIs and roles assigned in the project.
 
-## Deploy the module
+## Deploy the stage
 
 ```shell
 cp terraform.tfvars.sample terraform.tfvars

@@ -1,10 +1,10 @@
 # AI Applications - Search
 
-This module deploys an AI-powered search engine built with Google Cloud's [AI Applications](https://cloud.google.com/generative-ai-app-builder/docs/introduction) ([Vertex AI Search](https://cloud.google.com/generative-ai-app-builder/docs/create-datastore-ingest)). It's configured to search the content from a connected data store indexing the content from public websites.
+This factory deploys an AI-powered search engine built with Google Cloud's [AI Applications](https://cloud.google.com/generative-ai-app-builder/docs/introduction) ([Vertex AI Search](https://cloud.google.com/generative-ai-app-builder/docs/create-datastore-ingest)). It's configured to search the content from a connected data store indexing the content from public websites.
 
-By default, the module indexes the [Cloud Foundation Fabric Github repository](https://github.com/GoogleCloudPlatform/cloud-foundation-fabric) content. You can change the public website it targets by updating the [ai_apps_configs variable](./1-apps/variables.tf).
+By default, the factory indexes the [Cloud Foundation Fabric Github repository](https://github.com/GoogleCloudPlatform/cloud-foundation-fabric) content. You can change the public website it targets by updating the [ai_apps_configs variable](./1-apps/variables.tf).
 
-The interface allows you to search
+it allows you to search
 
 - programmatically, through a JSON interface (sample command returned in output)
 - via the GUI (link returned in output)

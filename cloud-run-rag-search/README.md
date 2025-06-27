@@ -1,6 +1,6 @@
 # RAG with Cloud Run and Vector Search
 
-The module deploys a "Retrieval-Augmented Generation" (RAG) system, leveraging Cloud Run and Vector Search.
+The factory deploys a "Retrieval-Augmented Generation" (RAG) system, leveraging Cloud Run and Vector Search.
 
 ![Architecture Diagram](./diagram.png)
 

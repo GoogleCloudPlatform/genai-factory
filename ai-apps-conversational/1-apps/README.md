@@ -1,13 +1,13 @@
 # AI Applications - Conversational Agents (Dialogflow) / Platform Deployment
 
-This module is part of the `AI Applications - Conversational Agents (Dialogflow)`.
+This stage is part of the `AI Applications - Conversational Agents (Dialogflow)`.
 It is responsible for deploying the components enabling the AI use case, either in the project you created in [0-projects](../0-projects) or in an existing project.
 
 ![Architecture Diagram](../diagram.png)
 
-## Deploy the module
+## Deploy the stage
 
-This assumes you have created a project leveraging the [0-projects](../0-projects) module.
+This assumes you have created a project leveraging the [0-projects](../0-projects) stage.
 
 ```shell
 terraform init
@@ -21,7 +21,7 @@ terraform apply
 
 ## I have not used 0-projects
 
-The [0-projects](../0-projects) module also produces the Terraform input files needed for this stage to work. If you are not leveraging [0-projects](../0-projects) it's your responsibility to create the `terraform.tfvars` file, reflecting what's requested by [variables.tf](./variables.tf) in this module.
+The [0-projects](../0-projects) stage generates the necessary Terraform input files for this stage. If you're not using the [0-projects stage](../0-projects), you'll need to manually add the required variables to your `terraform.tfvars` file, as defined in [variables.tf](./variables.tf).
 
 ## Manage agent variants
 

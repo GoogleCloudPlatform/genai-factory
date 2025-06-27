@@ -37,8 +37,9 @@ output "commands" {
     --repository-format docker \
     --impersonate-service-account=${var.service_accounts["project/iac-rw"].email}
 
-  # Substitute APP_NAME with adk or chat
-  gcloud builds submit ./apps/APP_NAME \
+  # Update chat to adk if you want to deploy the adk app instead
+
+  gcloud builds submit ./apps/chat \
     --project ${var.project_config.id} \
     --tag ${var.region}-docker.pkg.dev/${var.project_config.id}/${var.name}/srun \
     --service-account ${var.service_accounts["project/gf-srun-build-0"].id} \
