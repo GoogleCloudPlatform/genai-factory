@@ -93,7 +93,7 @@ output "commands" {
     -H "Content-Type: application/json" \
     -H "X-Goog-User-Project: ${var.project_config.id}" \
     -d '{
-        "agentUri": "${module.ds-bucket.url}"
+        "agentUri": "${module.build-bucket.url}/agents/agent-${var.agent_configs.variant}.dist.zip"
       }'
 
   # Query the agent

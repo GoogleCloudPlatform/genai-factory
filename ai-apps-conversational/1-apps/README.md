@@ -10,7 +10,6 @@ It is responsible for deploying the components enabling the AI use case, either 
 This assumes you have created a project leveraging the [0-projects](../0-projects) module.
 
 ```shell
-cp terraform.tfvars.sample terraform.tfvars # Customize
 terraform init
 terraform apply
 

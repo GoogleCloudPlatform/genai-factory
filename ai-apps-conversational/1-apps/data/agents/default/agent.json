@@ -6,7 +6,6 @@
   "speechToTextSettings": {
   
   },
-  "startFlow": "Default Start Flow",
   "advancedSettings": {
     "audioExportGcsDestination": {
     
@@ -40,6 +39,7 @@
   "answerFeedbackSettings": {
   
   },
+  "startPlaybook": "Default Generative Playbook",
   "webClientSettings": {
     "boxBorderRadius": "0"
   }

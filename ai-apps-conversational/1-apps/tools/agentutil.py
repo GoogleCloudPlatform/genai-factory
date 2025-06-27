@@ -246,7 +246,7 @@ def process_documents(source_dir: str, dest_dir: str, gcs_path: str,
     """
     source_path = Path(source_dir)
     dest_path = Path(dest_dir)
-    dest_path.mkdir(exist_ok=True)
+    dest_path.mkdir(parents=True, exist_ok=True)
     click.echo(f"Source: {source_path}, Destination: {dest_path}")
 
     try:
