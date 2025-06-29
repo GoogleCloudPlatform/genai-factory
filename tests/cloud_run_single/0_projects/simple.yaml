@@ -251,6 +251,10 @@ values:
     condition: []
     project: your-prefix-gf-srun-0
     role: roles/aiplatform.modelMonitoringServiceAgent
+  module.projects.module.projects["project"].google_project_iam_member.service_agents["vertex-moss-ft"]:
+    condition: []
+    project: your-prefix-gf-srun-0
+    role: roles/aiplatform.tuningServiceAgent
   module.projects.module.projects["project"].google_project_iam_member.service_agents["vertex-nb"]:
     condition: []
     project: your-prefix-gf-srun-0
@@ -399,7 +403,7 @@ values:
 counts:
   google_project: 1
   google_project_iam_binding: 15
-  google_project_iam_member: 23
+  google_project_iam_member: 24
   google_project_service: 10
   google_project_service_identity: 6
   google_service_account: 4
@@ -408,7 +412,7 @@ counts:
   google_storage_bucket_iam_binding: 2
   local_file: 2
   modules: 8
-  resources: 67
+  resources: 68
 
 outputs:
   buckets:
