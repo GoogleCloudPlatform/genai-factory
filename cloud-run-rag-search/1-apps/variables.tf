@@ -113,7 +113,7 @@ variable "name" {
   description = "The name of the resources. This is also the project suffix if a new project is created."
   type        = string
   nullable    = false
-  default     = "gf-rrag-0"
+  default     = "gf-rrag-search-0"
 }
 
 variable "networking_config" {
