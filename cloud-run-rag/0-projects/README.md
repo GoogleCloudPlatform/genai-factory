@@ -7,7 +7,16 @@ It leverages the Cloud Foundation Fabric [`project-factory`](https://github.com/
 
 You can refer to the [YAML project configuration](data/project.yaml) for more details about enabled APIs and roles assigned in the project.
 
-## Deploy the factory
+## Required roles
+
+To execute this stage, you need these roles:
+
+- `roles/resourcemanager.projectCreator` on the organization or folder where you will create the project.
+- `roles/billing.user` on the billing account you wish to use.
+
+Alternatively, you can use the more permissive `roles/owner` on the organization or folder.
+
+## Deploy the stage
 
 ```shell
 cp terraform.tfvars.sample terraform.tfvars
