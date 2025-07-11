@@ -22,7 +22,10 @@ locals {
 module "projects" {
   source = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/project-factory"
   data_defaults = {
-    billing_account  = var.project_config.billing_account_id
+    billing_account = var.project_config.billing_account_id
+    bucket = {
+      force_destroy = !var.enable_deletion_protection
+    }
     parent           = var.project_config.parent
     prefix           = var.project_config.prefix
     storage_location = var.region

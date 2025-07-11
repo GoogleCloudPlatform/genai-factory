@@ -12,6 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+variable "enable_deletion_protection" {
+  description = "Whether deletion protection should be enabled."
+  type        = bool
+  nullable    = false
+  default     = true
+}
+
 variable "enable_iac_sa_impersonation" {
   description = "Whether the user running this module should be granted serviceAccountTokenCreator on the automation service account."
   type        = bool
