@@ -1251,7 +1251,7 @@ values:
       prefix_redirect: null
       redirect_response_code: MOVED_PERMANENTLY_DEFAULT
       strip_query: false
-    description: Terraform managed.
+    description: HTTP to HTTPS redirect.
     header_action: []
     host_rule: []
     name: gf-rrag-0-redirect
@@ -1420,7 +1420,7 @@ values:
       prefix_redirect: null
       redirect_response_code: MOVED_PERMANENTLY_DEFAULT
       strip_query: false
-    description: Terraform managed.
+    description: HTTP to HTTPS redirect.
     host_rule: []
     name: gf-rrag-0-internal-redirect
     path_matcher: []
