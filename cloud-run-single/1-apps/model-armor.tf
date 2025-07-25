@@ -13,7 +13,7 @@
 # limitations under the License.
 
 resource "google_model_armor_template" "model-armor-template" {
-  project = var.project_config.id
+  project     = var.project_config.id
   location    = var.region
   template_id = "model-armor-template"
   filter_config {
