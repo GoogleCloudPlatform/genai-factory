@@ -16,6 +16,7 @@ resource "google_model_armor_template" "model-armor-template" {
   project     = var.project_config.id
   location    = var.region
   template_id = "model-armor-template"
+
   filter_config {
     rai_settings {
       rai_filters {
@@ -36,17 +37,19 @@ resource "google_model_armor_template" "model-armor-template" {
       filter_enforcement = "ENABLED"
     }
   }
+
   template_metadata {
     custom_llm_response_safety_error_message = "This is a custom error message for LLM response"
     log_template_operations                  = true
     log_sanitize_operations                  = true
+    ignore_partial_invocation_failures       = true
+    custom_prompt_safety_error_code          = 400
+    custom_prompt_safety_error_message       = "This is a custom error message for prompt"
+    custom_llm_response_safety_error_code    = 401
+    enforcement_type                         = "INSPECT_ONLY"
+
     multi_language_detection {
       enable_multi_language_detection = true
     }
-    ignore_partial_invocation_failures    = true
-    custom_prompt_safety_error_code       = 400
-    custom_prompt_safety_error_message    = "This is a custom error message for prompt"
-    custom_llm_response_safety_error_code = 401
-    enforcement_type                      = "INSPECT_ONLY"
   }
 }
