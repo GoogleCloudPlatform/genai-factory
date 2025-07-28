@@ -31,11 +31,12 @@ The [0-projects](../0-projects) stage generates the necessary Terraform input fi
 ## Model Armor usage
 
 Note that Model Armor currently only supports the following regions:
-* europe-west4
-* us-central1
-* us-east1
-* us-east4
-* us-west1
+
+- europe-west4
+- us-central1
+- us-east1
+- us-east4
+- us-west1
 
 If you would like to use Model Armor, you need to configure your var.region to be one of these regions in your terraform.tfvars file as such: `region = "europe-west4"`.
 
