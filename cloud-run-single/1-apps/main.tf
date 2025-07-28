@@ -39,3 +39,4 @@ module "cloud_run" {
     max_instance_count         = var.cloud_run_configs.max_instance_count
   }
 }
+
