@@ -16,8 +16,9 @@
 resource "google_compute_region_security_policy" "security_policy_external_regional" {
   count   = var.lbs_config.external_regional.enable ? 1 : 0
   name    = "${var.name}-external-regional"
-  region = var.region
+  region  = var.region
   project = var.project_config.id
+  type    = "CLOUD_ARMOR"
 
   dynamic "rules" {
     for_each = (
@@ -60,10 +61,10 @@ resource "google_compute_address" "address_external_regional" {
     var.lbs_config.external_regional.ip_address == null
     ? 1 : 0
   )
-  project    = var.project_config.id
-  name       = "${var.name}-external"
-  ip_version = "IPV4"
-  region     = var.region
+  project      = var.project_config.id
+  name         = "${var.name}-external"
+  ip_version   = "IPV4"
+  region       = var.region
   network_tier = "STANDARD"
 }
 
@@ -84,6 +85,38 @@ module "lb_external_regional_redirect" {
     default_url_redirect = {
       https         = true
       response_code = "MOVED_PERMANENTLY_DEFAULT"
+    }
+  }
+}
+
+# Regional external application LB only supports managed certificates created with Certificate Manager 
+module "certificate-manager" {
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/certificate-manager"
+  project_id = var.project_config.id
+  map = {
+    name = "certificate-map"
+    entries = {
+      external-regional = {
+        certificates = [
+          "external-regional-01"
+        ]
+        matcher = "PRIMARY"
+      }
+    }
+  }
+  certificates = {
+    external-regional-01 = {
+      location = var.region
+      managed = {
+        domains            = [var.lbs_config.external_regional.domain]
+        dns_authorizations = ["external-regional"]
+      }
+    }
+  }
+  dns_authorizations = {
+    external-regional = {
+      type   = "PER_PROJECT_RECORD"
+      domain = var.lbs_config.external_regional.domain
     }
   }
 }
@@ -122,11 +155,7 @@ module "lb_external_regional" {
     }
   }
   ssl_certificates = {
-    managed_configs = {
-      default = {
-        domains = [var.lbs_config.external_regional.domain]
-      }
-    }
+    certificate_ids = [module.certificate-manager.certificate_ids["external-regional-01"]]
   }
 }
 

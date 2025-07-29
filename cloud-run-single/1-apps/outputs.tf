@@ -64,6 +64,11 @@ output "ip_addresses" {
       ? module.lb_external[0].address[""]
       : null
     )
+    external-regional = (
+      var.lbs_config.external_regional.enable
+      ? module.lb_external_regional[0].address
+      : null
+    )
     internal = (
       var.lbs_config.internal.enable
       ? module.lb_internal[0].address
