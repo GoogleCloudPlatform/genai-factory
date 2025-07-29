@@ -16,11 +16,16 @@
 # https://google.github.io/adk-docs/agents/llm-agents
 
 import json
+import os
 
 from google.adk.agents import LlmAgent
 from pydantic import BaseModel, Field
 
 from src import config
+
+os.environ["GOOGLE_CLOUD_PROJECT"] = os.environ["PROJECT_ID"]
+os.environ["GOOGLE_CLOUD_LOCATION"] = os.environ["REGION"]
+os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = True
 
 
 class CountryInput(BaseModel):
