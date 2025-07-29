@@ -36,7 +36,7 @@ class CapitalInfoOutput(BaseModel):
 
 os.environ["GOOGLE_CLOUD_PROJECT"] = os.environ["PROJECT_ID"]
 os.environ["GOOGLE_CLOUD_LOCATION"] = os.environ["REGION"]
-os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = True
+os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = "1"
 
 root_agent = LlmAgent(
     name="capital_agent",
