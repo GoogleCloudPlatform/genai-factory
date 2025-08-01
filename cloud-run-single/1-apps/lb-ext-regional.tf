@@ -110,14 +110,14 @@ module "certificate-manager" {
       managed = {
         domains            = [var.lbs_config.external_regional.domain]
         dns_authorizations = ["external-regional"]
-        location = var.region
+        location           = var.region
       }
     }
   }
   dns_authorizations = {
     external-regional = {
-      type   = "PER_PROJECT_RECORD"
-      domain = var.lbs_config.external_regional.domain
+      type     = "PER_PROJECT_RECORD"
+      domain   = var.lbs_config.external_regional.domain
       location = var.region
     }
   }
