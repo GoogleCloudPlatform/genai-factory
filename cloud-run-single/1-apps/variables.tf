@@ -66,6 +66,14 @@ variable "lbs_config" {
       domain            = optional(string, "example.com")
       allowed_ip_ranges = optional(list(string), ["0.0.0.0/0"])
     }), {})
+    external_regional = optional(object({
+      enable = optional(bool, false)
+      # The optional load balancer IP address.
+      # If not specified, the module will create one.
+      ip_address        = optional(string)
+      domain            = optional(string, "example.com")
+      allowed_ip_ranges = optional(list(string), ["0.0.0.0/0"])
+    }), {})
   })
   nullable = false
   default = {
