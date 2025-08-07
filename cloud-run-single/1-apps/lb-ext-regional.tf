@@ -90,36 +90,25 @@ module "lb_external_regional_redirect" {
 }
 
 # Regional external application LB only supports managed certificates created with Certificate Manager 
-module "certificate-manager" {
-  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/certificate-manager"
-  project_id = var.project_config.id
-  map = {
-    name = "certificate-map"
-    entries = {
-      external-regional = {
-        certificates = [
-          "external-regional-01"
-        ]
-        matcher = "PRIMARY"
-      }
-    }
-  }
-  certificates = {
-    external-regional-01 = {
-      location = var.region
-      managed = {
-        domains            = [var.lbs_config.external_regional.domain]
-        dns_authorizations = ["external-regional"]
-        location           = var.region
-      }
-    }
-  }
-  dns_authorizations = {
-    external-regional = {
-      type     = "PER_PROJECT_RECORD"
-      domain   = var.lbs_config.external_regional.domain
-      location = var.region
-    }
+
+# DNS authorization
+resource "google_certificate_manager_dns_authorization" "dns_authorizations" {
+  project     = var.project_config.id
+  name        = "external-regional"
+  location    = var.region
+  type     = "PER_PROJECT_RECORD"
+  domain   = var.lbs_config.external_regional.domain
+}
+
+# Certificate Manager certificate creation
+resource "google_certificate_manager_certificate" "certificates" {
+  project     = var.project_config.id
+  name        = "external-regional-cert"
+  location    = var.region
+
+  managed {
+    domains = [var.lbs_config.external_regional.domain]
+     dns_authorizations = [google_certificate_manager_dns_authorization.dns_authorizations.id]
   }
 }
 
@@ -142,7 +131,7 @@ module "lb_external_regional" {
         { backend = "${var.name}-external-regional" }
       ]
       health_checks   = []
-      security_policy = google_compute_region_security_policy.security_policy_external_regional[0].id
+      # Not supported with service extensions? security_policy = google_compute_region_security_policy.security_policy_external_regional[0].id
     }
   }
   health_check_configs = {}
@@ -156,8 +145,8 @@ module "lb_external_regional" {
       }
     }
   }
-  ssl_certificates = {
-    certificate_ids = [module.certificate-manager.certificate_ids["external-regional-01"]]
+  https_proxy_config = {
+    certificate_manager_certificates = [google_certificate_manager_certificate.certificates.id]
   }
 }
 
