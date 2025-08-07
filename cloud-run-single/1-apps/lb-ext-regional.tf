@@ -93,22 +93,22 @@ module "lb_external_regional_redirect" {
 
 # DNS authorization
 resource "google_certificate_manager_dns_authorization" "dns_authorizations" {
-  project     = var.project_config.id
-  name        = "external-regional"
-  location    = var.region
+  project  = var.project_config.id
+  name     = "external-regional"
+  location = var.region
   type     = "PER_PROJECT_RECORD"
   domain   = var.lbs_config.external_regional.domain
 }
 
 # Certificate Manager certificate creation
 resource "google_certificate_manager_certificate" "certificates" {
-  project     = var.project_config.id
-  name        = "external-regional-cert"
-  location    = var.region
+  project  = var.project_config.id
+  name     = "external-regional-cert"
+  location = var.region
 
   managed {
-    domains = [var.lbs_config.external_regional.domain]
-     dns_authorizations = [google_certificate_manager_dns_authorization.dns_authorizations.id]
+    domains            = [var.lbs_config.external_regional.domain]
+    dns_authorizations = [google_certificate_manager_dns_authorization.dns_authorizations.id]
   }
 }
 
@@ -130,7 +130,7 @@ module "lb_external_regional" {
       backends = [
         { backend = "${var.name}-external-regional" }
       ]
-      health_checks   = []
+      health_checks = []
       # Not supported with service extensions? security_policy = google_compute_region_security_policy.security_policy_external_regional[0].id
     }
   }
