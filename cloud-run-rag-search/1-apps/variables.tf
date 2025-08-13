@@ -161,7 +161,7 @@ variable "service_accounts" {
   default = {}
 }
 
-variable "vertex_ai_index_config" {
+variable "vector_search_config" {
   description = "The VertexAI index configuration."
   type = object({
     algorithm_config = optional(object({
@@ -173,8 +173,16 @@ variable "vertex_ai_index_config" {
     approximate_neighbors_count = optional(number, 150)
     dimensions                  = optional(number, 768)
     distance_measure_type       = optional(string, "DOT_PRODUCT_DISTANCE")
+    index_shard_size            = optional(string, "SHARD_SIZE_SMALL")
     index_update_method         = optional(string, "STREAM_UPDATE")
-    shard_size                  = optional(string, "SHARD_SIZE_SMALL")
+    # see https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/vertex_ai_index_endpoint_deployed_index#dedicated_resources-1
+    # for machine_type values and combo with index shard size.
+    machine_type = optional(string, "e2-standard-2")
+    # if not set, max_replica_count is set to min_replica_count
+    max_replica_count = optional(number, 2)
+    # min replica count 2 is set to provide SLA
+    # see https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/vertex_ai_index_endpoint_deployed_index#min_replica_count-1
+    min_replica_count = optional(number, 2)
   })
   nullable = false
   default  = {}

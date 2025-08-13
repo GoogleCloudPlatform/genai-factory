@@ -16,6 +16,7 @@
 # https://google.github.io/adk-docs/agents/llm-agents
 
 import json
+import os
 
 from google.adk.agents import LlmAgent
 from pydantic import BaseModel, Field
@@ -32,6 +33,10 @@ class CapitalInfoOutput(BaseModel):
     population_estimate: str = Field(
         description="An estimated population of the capital city.")
 
+
+os.environ["GOOGLE_CLOUD_PROJECT"] = os.environ["PROJECT_ID"]
+os.environ["GOOGLE_CLOUD_LOCATION"] = os.environ["REGION"]
+os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = "1"
 
 root_agent = LlmAgent(
     name="capital_agent",

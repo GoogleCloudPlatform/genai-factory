@@ -214,12 +214,17 @@ values:
       goog-terraform-provisioned: 'true'
     timeouts: null
   google_vertex_ai_index_endpoint_deployed_index.index_deployment:
-    dedicated_resources: []
+    dedicated_resources:
+    - machine_spec:
+      - machine_type: e2-standard-2
+      max_replica_count: 2
+      min_replica_count: 2
     deployed_index_auth_config: []
     deployed_index_id: gf_rrag_search_0
     deployment_group: default
     display_name: gf-rrag-search-0
     enable_access_logging: false
+    region: europe-west1
     reserved_ip_ranges: null
     timeouts: null
   module.cas[0].google_privateca_ca_pool.default[0]:
@@ -422,6 +427,7 @@ values:
           working_dir: null
         encryption_key: null
         max_retries: 3
+        node_selector: []
         service_account: gf-rrag-ing-0@prefix-gf-rrag-search-0.iam.gserviceaccount.com
         volumes: []
     terraform_labels:
@@ -1351,6 +1357,7 @@ values:
     name: net-0
     network_firewall_policy_enforcement_order: AFTER_CLASSIC_FIREWALL
     network_profile: null
+    params: []
     project: prefix-gf-rrag-search-0
     routing_mode: GLOBAL
     timeouts: null
@@ -1363,6 +1370,7 @@ values:
     next_hop_ilb: null
     next_hop_instance: null
     next_hop_vpn_tunnel: null
+    params: []
     priority: 1000
     project: prefix-gf-rrag-search-0
     tags: null
@@ -1376,6 +1384,7 @@ values:
     next_hop_ilb: null
     next_hop_instance: null
     next_hop_vpn_tunnel: null
+    params: []
     priority: 1000
     project: prefix-gf-rrag-search-0
     tags: null
@@ -1389,6 +1398,7 @@ values:
     next_hop_ilb: null
     next_hop_instance: null
     next_hop_vpn_tunnel: null
+    params: []
     priority: 1000
     project: prefix-gf-rrag-search-0
     tags: null
@@ -1402,6 +1412,7 @@ values:
     log_config: []
     name: proxy-only-sub-0
     network: net-0
+    params: []
     project: prefix-gf-rrag-search-0
     purpose: REGIONAL_MANAGED_PROXY
     region: europe-west1
@@ -1417,6 +1428,7 @@ values:
     log_config: []
     name: sub-0
     network: net-0
+    params: []
     private_ip_google_access: true
     project: prefix-gf-rrag-search-0
     region: europe-west1

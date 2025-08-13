@@ -30,23 +30,23 @@ resource "google_vertex_ai_index" "index" {
   display_name        = var.name
   project             = var.project_config.id
   region              = var.region
-  index_update_method = var.vertex_ai_index_config.index_update_method
+  index_update_method = var.vector_search_config.index_update_method
   description         = "VertexAI index."
 
   metadata {
     contents_delta_uri = module.index-bucket.url
 
     config {
-      dimensions                  = var.vertex_ai_index_config.dimensions
-      approximate_neighbors_count = var.vertex_ai_index_config.approximate_neighbors_count
-      shard_size                  = var.vertex_ai_index_config.shard_size
-      distance_measure_type       = var.vertex_ai_index_config.distance_measure_type
+      dimensions                  = var.vector_search_config.dimensions
+      approximate_neighbors_count = var.vector_search_config.approximate_neighbors_count
+      shard_size                  = var.vector_search_config.index_shard_size
+      distance_measure_type       = var.vector_search_config.distance_measure_type
 
       algorithm_config {
 
         tree_ah_config {
-          leaf_node_embedding_count    = var.vertex_ai_index_config.algorithm_config.tree_ah_config.leaf_node_embedding_count
-          leaf_nodes_to_search_percent = var.vertex_ai_index_config.algorithm_config.tree_ah_config.leaf_nodes_to_search_percent
+          leaf_node_embedding_count    = var.vector_search_config.algorithm_config.tree_ah_config.leaf_node_embedding_count
+          leaf_nodes_to_search_percent = var.vector_search_config.algorithm_config.tree_ah_config.leaf_nodes_to_search_percent
         }
       }
     }
@@ -73,6 +73,15 @@ resource "google_vertex_ai_index_endpoint_deployed_index" "index_deployment" {
   region            = var.region
   index             = google_vertex_ai_index.index.id
   index_endpoint    = google_vertex_ai_index_endpoint.index_endpoint.id
+
+  dedicated_resources {
+    max_replica_count = var.vector_search_config.max_replica_count
+    min_replica_count = var.vector_search_config.min_replica_count
+
+    machine_spec {
+      machine_type = var.vector_search_config.machine_type
+    }
+  }
 }
 
 resource "google_compute_address" "vector_search_address" {
