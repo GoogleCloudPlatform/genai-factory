@@ -44,6 +44,7 @@ values:
       goog-terraform-provisioned: 'true'
     timeouts: null
   google_compute_region_security_policy.security_policy_internal[0]:
+    advanced_options_config: []
     ddos_protection_config: []
     description: null
     name: gf-srun-0-internal
@@ -266,9 +267,6 @@ values:
       labels: null
       node_selector: []
       revision: null
-      scaling:
-      - max_instance_count: 3
-        min_instance_count: null
       service_account: gf-srun-0@prefix-gf-srun-0.iam.gserviceaccount.com
       service_mesh: []
       session_affinity: null
@@ -278,10 +276,7 @@ values:
     timeouts: null
   module.cloud_run.google_cloud_run_v2_service_iam_binding.binding["roles/run.invoker"]:
     condition: []
-    location: europe-west1
     members: null
-    name: gf-srun-0
-    project: your-project
     role: roles/run.invoker
   module.dns_policy_googleapis[0].google_dns_response_policy.default[0]:
     description: Terraform managed.
@@ -919,8 +914,7 @@ values:
     app_engine: []
     cloud_function: []
     cloud_run:
-    - service: gf-srun-0
-      tag: null
+    - tag: null
       url_mask: null
     description: Terraform managed.
     name: gf-srun-0-external-gf-srun-0-external
@@ -1041,6 +1035,7 @@ values:
     dynamic_forwarding: []
     enable_cdn: null
     failover_policy: []
+    ha_policy: []
     health_checks: null
     ip_address_selection_policy: null
     load_balancing_scheme: INTERNAL_MANAGED
@@ -1058,8 +1053,7 @@ values:
     app_engine: []
     cloud_function: []
     cloud_run:
-    - service: gf-srun-0
-      tag: null
+    - tag: null
       url_mask: null
     description: Terraform managed.
     name: gf-srun-0-internal-gf-srun-0-internal
@@ -1172,6 +1166,7 @@ values:
     name: net-0
     network_firewall_policy_enforcement_order: AFTER_CLASSIC_FIREWALL
     network_profile: null
+    params: []
     project: your-project
     routing_mode: GLOBAL
     timeouts: null
@@ -1184,6 +1179,7 @@ values:
     next_hop_ilb: null
     next_hop_instance: null
     next_hop_vpn_tunnel: null
+    params: []
     priority: 1000
     project: your-project
     tags: null
@@ -1197,6 +1193,7 @@ values:
     next_hop_ilb: null
     next_hop_instance: null
     next_hop_vpn_tunnel: null
+    params: []
     priority: 1000
     project: your-project
     tags: null
@@ -1210,6 +1207,7 @@ values:
     next_hop_ilb: null
     next_hop_instance: null
     next_hop_vpn_tunnel: null
+    params: []
     priority: 1000
     project: your-project
     tags: null
@@ -1223,6 +1221,7 @@ values:
     log_config: []
     name: proxy-only-sub-0
     network: net-0
+    params: []
     project: your-project
     purpose: REGIONAL_MANAGED_PROXY
     region: europe-west1
@@ -1238,6 +1237,7 @@ values:
     log_config: []
     name: sub-0
     network: net-0
+    params: []
     private_ip_google_access: true
     project: your-project
     region: europe-west1

@@ -25,7 +25,6 @@ values:
       - scope: null
         service_account_email: gf-rrag-ing-sched-0@prefix-gf-rrag-search-0.iam.gserviceaccount.com
       oidc_token: []
-      uri: https://europe-west1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/prefix-gf-rrag-search-0/jobs/gf-rrag-search-0-ingestion:run
     name: gf-rrag-search-0
     project: prefix-gf-rrag-search-0
     pubsub_target: []
@@ -100,6 +99,7 @@ values:
       goog-terraform-provisioned: 'true'
     timeouts: null
   google_compute_region_security_policy.security_policy_internal[0]:
+    advanced_options_config: []
     ddos_protection_config: []
     description: null
     name: gf-rrag-search-0-internal
@@ -380,9 +380,6 @@ values:
       labels: null
       node_selector: []
       revision: null
-      scaling:
-      - max_instance_count: 3
-        min_instance_count: null
       service_account: gf-rrag-fe-0@prefix-gf-rrag-search-0.iam.gserviceaccount.com
       service_mesh: []
       session_affinity: null
@@ -392,10 +389,7 @@ values:
     timeouts: null
   module.cloud_run_frontend.google_cloud_run_v2_service_iam_binding.binding["roles/run.invoker"]:
     condition: []
-    location: europe-west1
     members: null
-    name: gf-rrag-search-0-frontend
-    project: prefix-gf-rrag-search-0
     role: roles/run.invoker
   module.cloud_run_ingestion.google_cloud_run_v2_job.job_unmanaged[0]:
     annotations: null
@@ -426,6 +420,7 @@ values:
           volume_mounts: []
           working_dir: null
         encryption_key: null
+        gpu_zonal_redundancy_disabled: null
         max_retries: 3
         node_selector: []
         service_account: gf-rrag-ing-0@prefix-gf-rrag-search-0.iam.gserviceaccount.com
@@ -435,11 +430,8 @@ values:
     timeouts: null
   module.cloud_run_ingestion.google_cloud_run_v2_job_iam_binding.binding["roles/run.invoker"]:
     condition: []
-    location: europe-west1
     members:
     - serviceAccount:gf-rrag-ing-sched-0@prefix-gf-rrag-search-0.iam.gserviceaccount.com
-    name: gf-rrag-search-0-ingestion
-    project: prefix-gf-rrag-search-0
     role: roles/run.invoker
   module.dns_policy_googleapis[0].google_dns_response_policy.default[0]:
     description: Terraform managed.
@@ -1104,8 +1096,7 @@ values:
     app_engine: []
     cloud_function: []
     cloud_run:
-    - service: gf-rrag-search-0-frontend
-      tag: null
+    - tag: null
       url_mask: null
     description: Terraform managed.
     name: gf-rrag-search-0-external-gf-rrag-search-0-external
@@ -1226,6 +1217,7 @@ values:
     dynamic_forwarding: []
     enable_cdn: null
     failover_policy: []
+    ha_policy: []
     health_checks: null
     ip_address_selection_policy: null
     load_balancing_scheme: INTERNAL_MANAGED
@@ -1243,8 +1235,7 @@ values:
     app_engine: []
     cloud_function: []
     cloud_run:
-    - service: gf-rrag-search-0-frontend
-      tag: null
+    - tag: null
       url_mask: null
     description: Terraform managed.
     name: gf-rrag-search-0-internal-gf-rrag-search-0-internal
