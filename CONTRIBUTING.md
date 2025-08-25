@@ -50,7 +50,7 @@ uv add <dependency>
 
 ```shell
 # Generate tfdoc for cloud-run-single/0-projects
-./tools/tfdoc.py modules/cloud-run-single/0-projects
+./tools/tfdoc.py cloud-run-single/0-projects
 ```
 
 ### Run tests
@@ -67,7 +67,7 @@ uv run pytest tests/cloud_run_single/0-projects
 
 ```shell
 # Generate the inventory for cloud-run-single/0-projects
-python tools/plan_summary.py cloud-run-single/0-projects \
+uv run tools/plan_summary.py cloud-run-single/0-projects \
   tests/cloud_run_single/0_projects/simple.tfvars
 ```
 
