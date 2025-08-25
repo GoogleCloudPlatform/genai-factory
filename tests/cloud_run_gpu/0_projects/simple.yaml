@@ -1,0 +1,275 @@
+values:
+  google_service_account_iam_member.me_sa_token_creator[0]:
+    condition: []
+    role: roles/iam.serviceAccountTokenCreator
+    service_account_id: projects/your-prefix-gf-rgpu-0/serviceAccounts/iac-rw@your-prefix-gf-rgpu-0.iam.gserviceaccount.com
+  local_file.providers:
+    content_base64: null
+    directory_permission: '0777'
+    file_permission: '0644'
+    filename: ../1-apps/providers.tf
+    sensitive_content: null
+    source: null
+  local_file.tfvars:
+    content_base64: null
+    directory_permission: '0777'
+    file_permission: '0644'
+    filename: ../1-apps/terraform.auto.tfvars
+    sensitive_content: null
+    source: null
+  module.projects.module.buckets["project/iac-state"].google_storage_bucket.bucket[0]:
+    autoclass: []
+    cors: []
+    custom_placement_config: []
+    default_event_based_hold: null
+    effective_labels:
+      goog-terraform-provisioned: 'true'
+    enable_object_retention: null
+    encryption: []
+    force_destroy: false
+    hierarchical_namespace: []
+    ip_filter: []
+    labels: null
+    lifecycle_rule: []
+    location: EUROPE-WEST1
+    logging: []
+    name: your-prefix-gf-rgpu-0-iac-state
+    project: your-prefix-gf-rgpu-0
+    requester_pays: null
+    retention_policy: []
+    storage_class: STANDARD
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
+    timeouts: null
+    uniform_bucket_level_access: true
+    versioning:
+    - enabled: false
+  ? module.projects.module.buckets["project/iac-state"].google_storage_bucket_iam_binding.authoritative["roles/storage.objectAdmin"]
+  : bucket: your-prefix-gf-rgpu-0-iac-state
+    condition: []
+    members:
+    - serviceAccount:iac-rw@your-prefix-gf-rgpu-0.iam.gserviceaccount.com
+    role: roles/storage.objectAdmin
+  ? module.projects.module.buckets["project/iac-state"].google_storage_bucket_iam_binding.authoritative["roles/storage.objectViewer"]
+  : bucket: your-prefix-gf-rgpu-0-iac-state
+    condition: []
+    members:
+    - serviceAccount:iac-rw@your-prefix-gf-rgpu-0.iam.gserviceaccount.com
+    role: roles/storage.objectViewer
+  module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/artifactregistry.admin"]:
+    condition: []
+    members:
+    - serviceAccount:iac-rw@your-prefix-gf-rgpu-0.iam.gserviceaccount.com
+    project: your-prefix-gf-rgpu-0
+    role: roles/artifactregistry.admin
+  module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/artifactregistry.writer"]:
+    condition: []
+    members:
+    - serviceAccount:gf-rgpu-build-0@your-prefix-gf-rgpu-0.iam.gserviceaccount.com
+    project: your-prefix-gf-rgpu-0
+    role: roles/artifactregistry.writer
+  module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/cloudbuild.builds.editor"]:
+    condition: []
+    members:
+    - serviceAccount:gf-rgpu-build-0@your-prefix-gf-rgpu-0.iam.gserviceaccount.com
+    - serviceAccount:iac-rw@your-prefix-gf-rgpu-0.iam.gserviceaccount.com
+    project: your-prefix-gf-rgpu-0
+    role: roles/cloudbuild.builds.editor
+  module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/compute.loadBalancerAdmin"]:
+    condition: []
+    members:
+    - serviceAccount:iac-rw@your-prefix-gf-rgpu-0.iam.gserviceaccount.com
+    project: your-prefix-gf-rgpu-0
+    role: roles/compute.loadBalancerAdmin
+  module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/compute.networkAdmin"]:
+    condition: []
+    members:
+    - serviceAccount:iac-rw@your-prefix-gf-rgpu-0.iam.gserviceaccount.com
+    project: your-prefix-gf-rgpu-0
+    role: roles/compute.networkAdmin
+  module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/compute.securityAdmin"]:
+    condition: []
+    members:
+    - serviceAccount:iac-rw@your-prefix-gf-rgpu-0.iam.gserviceaccount.com
+    project: your-prefix-gf-rgpu-0
+    role: roles/compute.securityAdmin
+  module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/iam.serviceAccountUser"]:
+    condition: []
+    members:
+    - serviceAccount:gf-rgpu-build-0@your-prefix-gf-rgpu-0.iam.gserviceaccount.com
+    project: your-prefix-gf-rgpu-0
+    role: roles/iam.serviceAccountUser
+  module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/logging.logWriter"]:
+    condition: []
+    members:
+    - serviceAccount:gf-rgpu-0@your-prefix-gf-rgpu-0.iam.gserviceaccount.com
+    - serviceAccount:gf-rgpu-build-0@your-prefix-gf-rgpu-0.iam.gserviceaccount.com
+    project: your-prefix-gf-rgpu-0
+    role: roles/logging.logWriter
+  module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/run.admin"]:
+    condition: []
+    members:
+    - serviceAccount:gf-rgpu-build-0@your-prefix-gf-rgpu-0.iam.gserviceaccount.com
+    - serviceAccount:iac-rw@your-prefix-gf-rgpu-0.iam.gserviceaccount.com
+    project: your-prefix-gf-rgpu-0
+    role: roles/run.admin
+  module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/storage.admin"]:
+    condition: []
+    members:
+    - serviceAccount:gf-rgpu-build-0@your-prefix-gf-rgpu-0.iam.gserviceaccount.com
+    - serviceAccount:iac-rw@your-prefix-gf-rgpu-0.iam.gserviceaccount.com
+    project: your-prefix-gf-rgpu-0
+    role: roles/storage.admin
+  module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/storage.objectUser"]:
+    condition: []
+    members:
+    - serviceAccount:gf-rgpu-build-0@your-prefix-gf-rgpu-0.iam.gserviceaccount.com
+    - serviceAccount:iac-rw@your-prefix-gf-rgpu-0.iam.gserviceaccount.com
+    project: your-prefix-gf-rgpu-0
+    role: roles/storage.objectUser
+  module.projects.module.projects["project"].google_project.project[0]:
+    auto_create_network: false
+    billing_account: billing-acct-id
+    deletion_policy: DELETE
+    effective_labels:
+      goog-terraform-provisioned: 'true'
+    folder_id: null
+    labels: null
+    name: your-prefix-gf-rgpu-0
+    org_id: '1122334455'
+    project_id: your-prefix-gf-rgpu-0
+    tags: null
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
+    timeouts: null
+  module.projects.module.projects["project"].google_project_iam_member.service_agents["artifactregistry"]:
+    condition: []
+    project: your-prefix-gf-rgpu-0
+    role: roles/artifactregistry.serviceAgent
+  module.projects.module.projects["project"].google_project_iam_member.service_agents["cloudbuild"]:
+    condition: []
+    project: your-prefix-gf-rgpu-0
+    role: roles/cloudbuild.serviceAgent
+  module.projects.module.projects["project"].google_project_iam_member.service_agents["cloudbuild-sa"]:
+    condition: []
+    project: your-prefix-gf-rgpu-0
+    role: roles/cloudbuild.builds.builder
+  module.projects.module.projects["project"].google_project_iam_member.service_agents["compute-system"]:
+    condition: []
+    project: your-prefix-gf-rgpu-0
+    role: roles/compute.serviceAgent
+  module.projects.module.projects["project"].google_project_iam_member.service_agents["serverless-robot-prod"]:
+    condition: []
+    project: your-prefix-gf-rgpu-0
+    role: roles/run.serviceAgent
+  module.projects.module.projects["project"].google_project_service.project_services["artifactregistry.googleapis.com"]:
+    disable_dependent_services: false
+    disable_on_destroy: false
+    project: your-prefix-gf-rgpu-0
+    service: artifactregistry.googleapis.com
+    timeouts: null
+  module.projects.module.projects["project"].google_project_service.project_services["cloudbuild.googleapis.com"]:
+    disable_dependent_services: false
+    disable_on_destroy: false
+    project: your-prefix-gf-rgpu-0
+    service: cloudbuild.googleapis.com
+    timeouts: null
+  module.projects.module.projects["project"].google_project_service.project_services["cloudresourcemanager.googleapis.com"]:
+    disable_dependent_services: false
+    disable_on_destroy: false
+    project: your-prefix-gf-rgpu-0
+    service: cloudresourcemanager.googleapis.com
+    timeouts: null
+  module.projects.module.projects["project"].google_project_service.project_services["compute.googleapis.com"]:
+    disable_dependent_services: false
+    disable_on_destroy: false
+    project: your-prefix-gf-rgpu-0
+    service: compute.googleapis.com
+    timeouts: null
+  module.projects.module.projects["project"].google_project_service.project_services["run.googleapis.com"]:
+    disable_dependent_services: false
+    disable_on_destroy: false
+    project: your-prefix-gf-rgpu-0
+    service: run.googleapis.com
+    timeouts: null
+  module.projects.module.projects["project"].google_project_service_identity.default["artifactregistry.googleapis.com"]:
+    project: your-prefix-gf-rgpu-0
+    service: artifactregistry.googleapis.com
+    timeouts: null
+  module.projects.module.projects["project"].google_project_service_identity.default["run.googleapis.com"]:
+    project: your-prefix-gf-rgpu-0
+    service: run.googleapis.com
+    timeouts: null
+  module.projects.module.service-accounts["project/gf-rgpu-0"].google_service_account.service_account[0]:
+    account_id: gf-rgpu-0
+    create_ignore_already_exists: null
+    description: null
+    disabled: false
+    display_name: Terraform-managed.
+    email: gf-rgpu-0@your-prefix-gf-rgpu-0.iam.gserviceaccount.com
+    member: serviceAccount:gf-rgpu-0@your-prefix-gf-rgpu-0.iam.gserviceaccount.com
+    project: your-prefix-gf-rgpu-0
+    timeouts: null
+  module.projects.module.service-accounts["project/gf-rgpu-build-0"].google_service_account.service_account[0]:
+    account_id: gf-rgpu-build-0
+    create_ignore_already_exists: null
+    description: null
+    disabled: false
+    display_name: Terraform-managed.
+    email: gf-rgpu-build-0@your-prefix-gf-rgpu-0.iam.gserviceaccount.com
+    member: serviceAccount:gf-rgpu-build-0@your-prefix-gf-rgpu-0.iam.gserviceaccount.com
+    project: your-prefix-gf-rgpu-0
+    timeouts: null
+  module.projects.module.service-accounts["project/iac-rw"].google_service_account.service_account[0]:
+    account_id: iac-rw
+    create_ignore_already_exists: null
+    description: null
+    disabled: false
+    display_name: Terraform-managed.
+    email: iac-rw@your-prefix-gf-rgpu-0.iam.gserviceaccount.com
+    member: serviceAccount:iac-rw@your-prefix-gf-rgpu-0.iam.gserviceaccount.com
+    project: your-prefix-gf-rgpu-0
+    timeouts: null
+  module.projects.module.service_accounts-iam["project/iac-rw"].data.google_service_account.service_account[0]:
+    account_id: iac-rw
+  ? module.projects.module.service_accounts-iam["project/iac-rw"].google_service_account_iam_member.additive["projects/your-prefix-gf-rgpu-0/serviceAccounts/gf-rgpu-0@your-prefix-gf-rgpu-0.iam.gserviceaccount.com-roles/iam.serviceAccountUser"]
+  : condition: []
+    role: roles/iam.serviceAccountUser
+    service_account_id: projects/your-prefix-gf-rgpu-0/serviceAccounts/gf-rgpu-0@your-prefix-gf-rgpu-0.iam.gserviceaccount.com
+  ? module.projects.module.service_accounts-iam["project/iac-rw"].google_service_account_iam_member.additive["projects/your-prefix-gf-rgpu-0/serviceAccounts/gf-rgpu-build-0@your-prefix-gf-rgpu-0.iam.gserviceaccount.com-roles/iam.serviceAccountUser"]
+  : condition: []
+    role: roles/iam.serviceAccountUser
+    service_account_id: projects/your-prefix-gf-rgpu-0/serviceAccounts/gf-rgpu-build-0@your-prefix-gf-rgpu-0.iam.gserviceaccount.com
+
+counts:
+  google_project: 1
+  google_project_iam_binding: 11
+  google_project_iam_member: 5
+  google_project_service: 5
+  google_project_service_identity: 2
+  google_service_account: 4
+  google_service_account_iam_member: 3
+  google_storage_bucket: 1
+  google_storage_bucket_iam_binding: 2
+  local_file: 2
+  modules: 8
+  resources: 36
+
+outputs:
+  buckets:
+    project/iac-state: your-prefix-gf-rgpu-0-iac-state
+  projects: __missing__
+  service_accounts:
+    project/gf-rgpu-0:
+      email: gf-rgpu-0@your-prefix-gf-rgpu-0.iam.gserviceaccount.com
+      iam_email: serviceAccount:gf-rgpu-0@your-prefix-gf-rgpu-0.iam.gserviceaccount.com
+      id: projects/your-prefix-gf-rgpu-0/serviceAccounts/gf-rgpu-0@your-prefix-gf-rgpu-0.iam.gserviceaccount.com
+    project/gf-rgpu-build-0:
+      email: gf-rgpu-build-0@your-prefix-gf-rgpu-0.iam.gserviceaccount.com
+      iam_email: serviceAccount:gf-rgpu-build-0@your-prefix-gf-rgpu-0.iam.gserviceaccount.com
+      id: projects/your-prefix-gf-rgpu-0/serviceAccounts/gf-rgpu-build-0@your-prefix-gf-rgpu-0.iam.gserviceaccount.com
+    project/iac-rw:
+      email: iac-rw@your-prefix-gf-rgpu-0.iam.gserviceaccount.com
+      iam_email: serviceAccount:iac-rw@your-prefix-gf-rgpu-0.iam.gserviceaccount.com
+      id: projects/your-prefix-gf-rgpu-0/serviceAccounts/iac-rw@your-prefix-gf-rgpu-0.iam.gserviceaccount.com
+

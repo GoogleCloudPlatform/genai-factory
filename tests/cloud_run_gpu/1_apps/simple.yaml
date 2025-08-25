@@ -1,0 +1,106 @@
+values:
+  module.cloud_run.google_cloud_run_v2_service.service_unmanaged[0]:
+    annotations: null
+    binary_authorization: []
+    build_config: []
+    client: null
+    client_version: null
+    custom_audiences: null
+    default_uri_disabled: null
+    deletion_protection: true
+    description: null
+    effective_labels:
+      goog-terraform-provisioned: 'true'
+    iap_enabled: false
+    ingress: INGRESS_TRAFFIC_ALL
+    invoker_iam_disabled: false
+    labels: null
+    location: europe-west1
+    name: gf-rgpu-0
+    project: your-project
+    scaling: []
+    template:
+    - annotations: null
+      containers:
+      - args: null
+        base_image_uri: null
+        command: null
+        depends_on: null
+        env:
+        - name: CONTEXT_PATH
+          value: /v1/chat/completions
+          value_source: []
+        - name: HOST
+          value: http://localhost:8081
+          value_source: []
+        - name: LLM_ENGINE
+          value: openai-chat
+          value_source: []
+        - name: MODEL_ID
+          value: gemma3:1b
+          value_source: []
+        image: us-docker.pkg.dev/google-samples/containers/gke/gradio-app:v1.0.4
+        liveness_probe: []
+        name: chat-ui
+        ports:
+        - container_port: 7860
+        resources:
+        - cpu_idle: null
+          limits:
+            cpu: 500m
+            memory: 256Mi
+          startup_cpu_boost: null
+        volume_mounts: []
+        working_dir: null
+      - args: null
+        base_image_uri: null
+        command: null
+        depends_on: null
+        env:
+        - name: OLLAMA_NUM_PARALLEL
+          value: '4'
+          value_source: []
+        - name: PORT
+          value: '8081'
+          value_source: []
+        image: us-docker.pkg.dev/cloudrun/container/gemma/gemma3-1b:latest
+        liveness_probe: []
+        name: gemma
+        resources:
+        - cpu_idle: null
+          limits:
+            cpu: '4'
+            memory: 16Gi
+            nvidia.com/gpu: '1'
+          startup_cpu_boost: null
+        volume_mounts: []
+        working_dir: null
+      encryption_key: null
+      execution_environment: EXECUTION_ENVIRONMENT_GEN2
+      gpu_zonal_redundancy_disabled: true
+      labels: null
+      node_selector:
+      - accelerator: nvidia-l4
+      revision: null
+      service_account: gf-rgpu-0@prefix-gf-rgpu-0.iam.gserviceaccount.com
+      service_mesh: []
+      session_affinity: null
+      volumes: []
+      vpc_access: []
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
+    timeouts: null
+  module.cloud_run.google_cloud_run_v2_service_iam_binding.binding["roles/run.invoker"]:
+    condition: []
+    members: null
+    role: roles/run.invoker
+
+counts:
+  google_cloud_run_v2_service: 1
+  google_cloud_run_v2_service_iam_binding: 1
+  modules: 1
+  resources: 2
+
+outputs:
+  commands: "  # Run the following commands to deploy the application.\n  \n"
+
