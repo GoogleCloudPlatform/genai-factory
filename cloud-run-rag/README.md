@@ -25,7 +25,42 @@ The deployment includes:
 - By default, a **VPC**, a subnet, private Google APIs routes and DNS policies. Optionally, can use your existing VPCs.
 - By default, a **project** with all the necessary permissions. Optionally, can use your existing project.
 
-## Apply the factory
+## Deployment
 
-- Enter the [0-projects](0-projects/README.md) folder and follow the instructions to setup your GCP project, service accounts and permissions
-- Go to the [1-apps](1-apps/README.md) folder and follow the instructions to deploy the components inside the project
+To deploy this solution, follow these steps:
+
+1.  **Set up your environment:** Ensure you have the Google Cloud SDK installed and configured.
+2.  **Project Setup:** Navigate to the `0-projects` directory and follow the instructions in the `README.md` to set up your GCP project, service accounts, and permissions.
+3.  **Application Deployment:** Navigate to the `1-apps` directory and follow the instructions in the `README.md` to deploy the application components.
+
+## API
+
+The frontend Cloud Run service exposes the following endpoint:
+
+*   `POST /`
+
+    This endpoint accepts a JSON payload with a "question" field and returns a JSON response with the answer.
+
+    **Example Request:**
+
+    ```json
+    {
+        "question": "What are the best movies by Quentin Tarantino?"
+    }
+    ```
+
+    **Example Response:**
+
+    ```json
+    {
+        "answer": "Quentin Tarantino has directed several acclaimed movies, including Pulp Fiction and Once Upon a Time in Hollywood."
+    }
+    ```
+
+## Customization
+
+You can customize the application by modifying the following:
+
+*   **Data:** Replace the sample movie data in BigQuery with your own dataset.
+*   **Model:** The application uses the Vertex Text Embeddings API by default. You can switch to a different embedding model by modifying the code in the `1-apps` directory.
+*   **Frontend:** The frontend is a simple Cloud Run application. You can customize it to meet your specific needs.
