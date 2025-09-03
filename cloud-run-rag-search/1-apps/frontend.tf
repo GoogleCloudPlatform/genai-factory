@@ -26,8 +26,6 @@ module "cloud_run_frontend" {
     "roles/run.invoker" = var.cloud_run_configs.frontend.service_invokers
   }
   revision = {
-    gen2_execution_environment = true
-    max_instance_count         = var.cloud_run_configs.frontend.max_instance_count
     vpc_access = {
       egress  = var.cloud_run_configs.frontend.vpc_access_egress
       network = local.vpc_id
@@ -38,5 +36,6 @@ module "cloud_run_frontend" {
   service_config = {
     gen2_execution_environment = true
     ingress                    = var.cloud_run_configs.frontend.ingress
+    max_instance_count         = var.cloud_run_configs.frontend.max_instance_count
   }
 }

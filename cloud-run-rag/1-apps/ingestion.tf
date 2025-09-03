@@ -48,18 +48,17 @@ module "cloud_run_ingestion" {
     )
   }
   revision = {
-    gen2_execution_environment = true
-    max_instance_count         = var.cloud_run_configs.ingestion.max_instance_count
-    tags                       = var.cloud_run_configs.ingestion.vpc_access_tags
     vpc_access = {
       egress  = var.cloud_run_configs.ingestion.vpc_access_egress
       network = local.vpc_id
       subnet  = local.subnet_id
+      tags    = var.cloud_run_configs.ingestion.vpc_access_tags
     }
   }
   service_config = {
     gen2_execution_environment = true
     ingress                    = var.cloud_run_configs.ingestion.ingress
+    max_instance_count         = var.cloud_run_configs.ingestion.max_instance_count
   }
 }
 
