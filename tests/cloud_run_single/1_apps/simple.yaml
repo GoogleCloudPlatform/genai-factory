@@ -245,6 +245,7 @@ values:
     invoker_iam_disabled: false
     labels: null
     location: europe-west1
+    multi_region_settings: []
     name: gf-srun-0
     project: your-project
     scaling: []
@@ -878,6 +879,7 @@ values:
     name: gf-srun-0-external-default
     network_pass_through_lb_traffic_policy: []
     outlier_detection: []
+    params: []
     project: your-project
     protocol: HTTPS
     security_settings: []
@@ -918,7 +920,6 @@ values:
       url_mask: null
     description: Terraform managed.
     name: gf-srun-0-external-gf-srun-0-external
-    network: null
     network_endpoint_type: SERVERLESS
     project: your-project
     psc_target_service: null
@@ -1043,6 +1044,7 @@ values:
     name: gf-srun-0-internal-default
     network: null
     outlier_detection: []
+    params: []
     project: your-project
     protocol: HTTPS
     region: europe-west1
@@ -1057,7 +1059,6 @@ values:
       url_mask: null
     description: Terraform managed.
     name: gf-srun-0-internal-gf-srun-0-internal
-    network: null
     network_endpoint_type: SERVERLESS
     project: your-project
     psc_target_service: null

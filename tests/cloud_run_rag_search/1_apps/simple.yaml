@@ -356,6 +356,7 @@ values:
     invoker_iam_disabled: false
     labels: null
     location: europe-west1
+    multi_region_settings: []
     name: gf-rrag-search-0-frontend
     project: prefix-gf-rrag-search-0
     scaling: []
@@ -1060,6 +1061,7 @@ values:
     name: gf-rrag-search-0-external-default
     network_pass_through_lb_traffic_policy: []
     outlier_detection: []
+    params: []
     project: prefix-gf-rrag-search-0
     protocol: HTTPS
     security_settings: []
@@ -1100,7 +1102,6 @@ values:
       url_mask: null
     description: Terraform managed.
     name: gf-rrag-search-0-external-gf-rrag-search-0-external
-    network: null
     network_endpoint_type: SERVERLESS
     project: prefix-gf-rrag-search-0
     psc_target_service: null
@@ -1225,6 +1226,7 @@ values:
     name: gf-rrag-search-0-internal-default
     network: null
     outlier_detection: []
+    params: []
     project: prefix-gf-rrag-search-0
     protocol: HTTPS
     region: europe-west1
@@ -1239,7 +1241,6 @@ values:
       url_mask: null
     description: Terraform managed.
     name: gf-rrag-search-0-internal-gf-rrag-search-0-internal
-    network: null
     network_endpoint_type: SERVERLESS
     project: prefix-gf-rrag-search-0
     psc_target_service: null

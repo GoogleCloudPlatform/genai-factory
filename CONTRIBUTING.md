@@ -50,7 +50,7 @@ uv add <dependency>
 
 ```shell
 # Generate tfdoc for cloud-run-single/0-projects
-./tools/tfdoc.py modules/cloud-run-single/0-projects
+./tools/tfdoc.py cloud-run-single/0-projects
 ```
 
 ### Run tests
@@ -65,10 +65,13 @@ uv run pytest tests/cloud_run_single/0-projects
 
 ### Generate the inventory for a factory module
 
+Run the command below and remove your user name from the output file in path `.values.google_service_account_iam_member.me_sa_token_creator[0].member`:
+
 ```shell
 # Generate the inventory for cloud-run-single/0-projects
-python tools/plan_summary.py cloud-run-single/0-projects \
-  tests/cloud_run_single/0_projects/simple.tfvars
+uv run tools/plan_summary.py cloud-run-single/0-projects \
+  tests/cloud_run_single/0_projects/simple.tfvars \
+  > tests/cloud_run_single/0_projects/simple.yaml
 ```
 
 ## Add a new factory
