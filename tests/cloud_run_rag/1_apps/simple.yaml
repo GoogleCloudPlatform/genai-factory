@@ -355,6 +355,7 @@ values:
     invoker_iam_disabled: false
     labels: null
     location: europe-west1
+    multi_region_settings: []
     name: gf-rrag-0-frontend
     project: prefix-gf-rrag-0
     scaling: []
@@ -458,6 +459,7 @@ values:
     project: prefix-gf-rrag-0
     timeouts: null
   module.cloudsql.google_sql_database_instance.primary:
+    backupdr_backup: null
     clone: []
     database_version: POSTGRES_14
     deletion_protection: true
@@ -1145,6 +1147,7 @@ values:
     name: gf-rrag-0-external-default
     network_pass_through_lb_traffic_policy: []
     outlier_detection: []
+    params: []
     project: prefix-gf-rrag-0
     protocol: HTTPS
     security_settings: []
@@ -1185,7 +1188,6 @@ values:
       url_mask: null
     description: Terraform managed.
     name: gf-rrag-0-external-gf-rrag-0-external
-    network: null
     network_endpoint_type: SERVERLESS
     project: prefix-gf-rrag-0
     psc_target_service: null
@@ -1310,6 +1312,7 @@ values:
     name: gf-rrag-0-internal-default
     network: null
     outlier_detection: []
+    params: []
     project: prefix-gf-rrag-0
     protocol: HTTPS
     region: europe-west1
@@ -1324,7 +1327,6 @@ values:
       url_mask: null
     description: Terraform managed.
     name: gf-rrag-0-internal-gf-rrag-0-internal
-    network: null
     network_endpoint_type: SERVERLESS
     project: prefix-gf-rrag-0
     psc_target_service: null
