@@ -32,7 +32,7 @@ These are some useful commands that you may need during different phases of the 
 ### Setup the development environment
 
 ```shell
-uv sync
+uv sync --all-groups
 ```
 
 ### Manage Python app dependencies with uv
