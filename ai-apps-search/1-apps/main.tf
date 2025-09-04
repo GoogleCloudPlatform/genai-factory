@@ -15,7 +15,7 @@
 # See https://github.com/GoogleCloudPlatform/cloud-foundation-fabric/blob/master/modules/ai-applications/variables.tf
 # to learn how to customize this.
 module "ai-apps" {
-  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/ai-applications?ref=v42.1.0"
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/ai-applications?ref=v43.0.0"
   name       = var.name
   project_id = var.project_config.id
   location   = var.region_ai_applications

@@ -67,7 +67,7 @@ resource "google_compute_address" "address_internal" {
 
 module "lb_internal_redirect" {
   count                = var.lbs_config.internal.enable ? 1 : 0
-  source               = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-lb-app-int?ref=v42.1.0"
+  source               = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-lb-app-int?ref=v43.0.0"
   name                 = "${var.name}-internal-redirect"
   project_id           = var.project_config.id
   region               = var.region
@@ -92,7 +92,7 @@ module "lb_internal_redirect" {
 
 module "lb_internal" {
   count                = var.lbs_config.internal.enable ? 1 : 0
-  source               = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-lb-app-int?ref=v42.1.0"
+  source               = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-lb-app-int?ref=v43.0.0"
   name                 = "${var.name}-internal"
   project_id           = var.project_config.id
   region               = var.region
@@ -156,7 +156,7 @@ module "lb_internal_dns" {
 # LB certificate
 module "certificate_manager" {
   count      = var.lbs_config.internal.enable ? 1 : 0
-  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/certificate-manager?ref=v42.1.0"
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/certificate-manager?ref=v43.0.0"
   project_id = var.project_config.id
   certificates = {
     (var.name) = {
