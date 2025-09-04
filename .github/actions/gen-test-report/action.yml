@@ -14,9 +14,6 @@
 
 name: gen-test-report
 description: Create test reports
-inputs:
-  MODULE:
-    required: true
 runs:
   using: composite
   steps:
@@ -29,5 +26,4 @@ runs:
       uses: pmeier/pytest-results-action@035bda205f160abee0b277db11ac6ca01175ca7d # v0.6.0
       with:
         path: test-results.xml
-        title: ${{ inputs.MODULE }} Test report
-
+        title: Test report
