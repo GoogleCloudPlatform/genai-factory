@@ -16,14 +16,13 @@
 
 locals {
   buckets = {
-    for k, v in module.projects.buckets : k => v
+    for k, v in module.projects.storage_buckets : k => v
   }
   projects = {
     for k, v in module.projects.projects : k => {
-      automation = v.automation
-      id         = v.project_id
-      number     = v.number
-      prefix     = var.project_config.prefix
+      id     = v.project_id
+      number = v.number
+      prefix = var.project_config.prefix
     }
   }
   providers = {

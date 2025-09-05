@@ -20,7 +20,7 @@ locals {
 }
 
 module "projects" {
-  source = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/project-factory?ref=v43.0.0"
+  source = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/project-factory?ref=v44.1.0"
   data_defaults = {
     billing_account = var.project_config.billing_account_id
     bucket = {
@@ -31,7 +31,7 @@ module "projects" {
     storage_location = var.region
   }
   factories_config = {
-    projects_data_path = "./data"
+    projects = "./data"
   }
 }
 

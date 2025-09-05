@@ -36,17 +36,17 @@ buckets:
     description: Terraform state bucket
     iam:
       roles/storage.objectAdmin:
-        - iac-rw
+        - $iam_principals:service_accounts/project/iac-rw
       roles/storage.objectViewer:
-        - iac-rw
+        - $iam_principals:service_accounts/project/iac-rw
 
 service_accounts:
   # Automation SAs
   iac-rw:
     iam_sa_roles:
-      gf-srun-0:
+      $service_account_ids:project/gf-srun-0:
         - roles/iam.serviceAccountUser
-      gf-srun-build-0:
+      $service_account_ids:project/gf-srun-build-0:
         - roles/iam.serviceAccountUser
   # Application SAs
   gf-srun-0: {}
@@ -55,9 +55,9 @@ service_accounts:
 # Grant roles
 iam:
   roles/privateca.certificateRequester:
-    - certificatemanager
+    - $service_agents:certificatemanager
 iam_by_principals:
-  iac-rw:
+  $iam_principals:service_accounts/project/iac-rw:
     - roles/artifactregistry.admin
     - roles/cloudbuild.builds.editor
     - roles/compute.loadBalancerAdmin
@@ -70,9 +70,9 @@ iam_by_principals:
     # Needed for ILB only
     - roles/certificatemanager.owner
     - roles/privateca.admin
-  gf-srun-0:
+  $iam_principals:service_accounts/project/gf-srun-0:
     - roles/logging.logWriter
-  gf-srun-build-0:
+  $iam_principals:service_accounts/project/gf-srun-build-0:
     - roles/artifactregistry.writer
     - roles/cloudbuild.builds.editor
     - roles/iam.serviceAccountUser
@@ -84,5 +84,6 @@ iam_by_principals:
 # Grant roles/aiplatform.user as additive,
 # as it is authoritatively granted by aiplatform APIs to default SA
 iam_bindings_additive:
-  - member: gf-srun-0
+  run_ai_user:
+    member: $iam_principals:service_accounts/project/gf-srun-0
     role: roles/aiplatform.user

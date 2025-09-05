@@ -13,7 +13,7 @@
 # limitations under the License.
 
 module "ds-bucket" {
-  source        = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/gcs?ref=v43.0.0"
+  source        = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/gcs?ref=v44.1.0"
   project_id    = var.project_config.id
   prefix        = var.project_config.prefix
   name          = "${var.name}-ds"
@@ -23,7 +23,7 @@ module "ds-bucket" {
 }
 
 module "build-bucket" {
-  source        = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/gcs?ref=v43.0.0"
+  source        = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/gcs?ref=v44.1.0"
   project_id    = var.project_config.id
   prefix        = var.project_config.prefix
   name          = "${var.name}-build"
@@ -35,7 +35,7 @@ module "build-bucket" {
 # See https://github.com/GoogleCloudPlatform/cloud-foundation-fabric/blob/master/modules/ai-applications/variables.tf
 # to learn how to customize this.
 module "dialogflow" {
-  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/ai-applications?ref=v43.0.0"
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/ai-applications?ref=v44.1.0"
   name       = var.name
   project_id = var.project_config.id
   location   = var.region_ai_applications

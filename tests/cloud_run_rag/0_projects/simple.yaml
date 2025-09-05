@@ -214,12 +214,12 @@ values:
     - serviceAccount:iac-rw@your-prefix-gf-rrag-0.iam.gserviceaccount.com
     project: your-prefix-gf-rrag-0
     role: roles/storage.objectViewer
-  module.projects.module.projects-iam["project"].google_project_iam_member.bindings["0"]:
+  module.projects.module.projects-iam["project"].google_project_iam_member.bindings["run_fe_ai_user"]:
     condition: []
     member: serviceAccount:gf-rrag-fe-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
     project: your-prefix-gf-rrag-0
     role: roles/aiplatform.user
-  module.projects.module.projects-iam["project"].google_project_iam_member.bindings["1"]:
+  module.projects.module.projects-iam["project"].google_project_iam_member.bindings["run_ing_ai_user"]:
     condition: []
     member: serviceAccount:gf-rrag-ing-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
     project: your-prefix-gf-rrag-0
@@ -507,26 +507,30 @@ values:
     timeouts: null
   module.projects.module.service_accounts-iam["project/iac-rw"].data.google_service_account.service_account[0]:
     account_id: iac-rw
-  ? module.projects.module.service_accounts-iam["project/iac-rw"].google_service_account_iam_member.additive["projects/your-prefix-gf-rrag-0/serviceAccounts/gf-rrag-fe-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com-roles/iam.serviceAccountUser"]
+  ? module.projects.module.service_accounts-iam["project/iac-rw"].google_service_account_iam_member.additive["$service_account_ids:project/gf-rrag-fe-0-roles/iam.serviceAccountUser"]
   : condition: []
     role: roles/iam.serviceAccountUser
     service_account_id: projects/your-prefix-gf-rrag-0/serviceAccounts/gf-rrag-fe-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
-  ? module.projects.module.service_accounts-iam["project/iac-rw"].google_service_account_iam_member.additive["projects/your-prefix-gf-rrag-0/serviceAccounts/gf-rrag-fe-build-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com-roles/iam.serviceAccountUser"]
+  ? module.projects.module.service_accounts-iam["project/iac-rw"].google_service_account_iam_member.additive["$service_account_ids:project/gf-rrag-fe-build-0-roles/iam.serviceAccountUser"]
   : condition: []
     role: roles/iam.serviceAccountUser
     service_account_id: projects/your-prefix-gf-rrag-0/serviceAccounts/gf-rrag-fe-build-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
-  ? module.projects.module.service_accounts-iam["project/iac-rw"].google_service_account_iam_member.additive["projects/your-prefix-gf-rrag-0/serviceAccounts/gf-rrag-ing-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com-roles/iam.serviceAccountUser"]
+  ? module.projects.module.service_accounts-iam["project/iac-rw"].google_service_account_iam_member.additive["$service_account_ids:project/gf-rrag-ing-0-roles/iam.serviceAccountUser"]
   : condition: []
     role: roles/iam.serviceAccountUser
     service_account_id: projects/your-prefix-gf-rrag-0/serviceAccounts/gf-rrag-ing-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
-  ? module.projects.module.service_accounts-iam["project/iac-rw"].google_service_account_iam_member.additive["projects/your-prefix-gf-rrag-0/serviceAccounts/gf-rrag-ing-build-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com-roles/iam.serviceAccountUser"]
+  ? module.projects.module.service_accounts-iam["project/iac-rw"].google_service_account_iam_member.additive["$service_account_ids:project/gf-rrag-ing-build-0-roles/iam.serviceAccountUser"]
   : condition: []
     role: roles/iam.serviceAccountUser
     service_account_id: projects/your-prefix-gf-rrag-0/serviceAccounts/gf-rrag-ing-build-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
-  ? module.projects.module.service_accounts-iam["project/iac-rw"].google_service_account_iam_member.additive["projects/your-prefix-gf-rrag-0/serviceAccounts/gf-rrag-ing-sched-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com-roles/iam.serviceAccountUser"]
+  ? module.projects.module.service_accounts-iam["project/iac-rw"].google_service_account_iam_member.additive["$service_account_ids:project/gf-rrag-ing-sched-0-roles/iam.serviceAccountUser"]
   : condition: []
     role: roles/iam.serviceAccountUser
     service_account_id: projects/your-prefix-gf-rrag-0/serviceAccounts/gf-rrag-ing-sched-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+  module.projects.terraform_data.defaults_preconditions:
+    input: null
+    output: null
+    triggers_replace: null
 
 counts:
   google_bigquery_default_service_account: 1
@@ -541,11 +545,13 @@ counts:
   google_storage_bucket_iam_binding: 2
   local_file: 2
   modules: 11
-  resources: 89
+  resources: 90
+  terraform_data: 1
 
 outputs:
   buckets:
     project/iac-state: your-prefix-gf-rrag-0-iac-state
+  projects: __missing__
   service_accounts:
     project/gf-rrag-fe-0:
       email: gf-rrag-fe-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com

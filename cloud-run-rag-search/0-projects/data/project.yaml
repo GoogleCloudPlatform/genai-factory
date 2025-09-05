@@ -36,23 +36,23 @@ buckets:
     description: Terraform state bucket
     iam:
       roles/storage.objectAdmin:
-        - iac-rw
+        - $iam_principals:service_accounts/project/iac-rw
       roles/storage.objectViewer:
-        - iac-rw
+        - $iam_principals:service_accounts/project/iac-rw
 
 service_accounts:
   # Automation SAs
   iac-rw:
     iam_sa_roles:
-      gf-rrag-fe-0:
+      $service_account_ids:project/gf-rrag-fe-0:
         - roles/iam.serviceAccountUser
-      gf-rrag-fe-build-0:
+      $service_account_ids:project/gf-rrag-fe-build-0:
         - roles/iam.serviceAccountUser
-      gf-rrag-ing-0:
+      $service_account_ids:project/gf-rrag-ing-0:
         - roles/iam.serviceAccountUser
-      gf-rrag-ing-build-0:
+      $service_account_ids:project/gf-rrag-ing-build-0:
         - roles/iam.serviceAccountUser
-      gf-rrag-ing-sched-0:
+      $service_account_ids:project/gf-rrag-ing-sched-0:
         - roles/iam.serviceAccountUser
   # Application SAs
   gf-rrag-fe-0: {}
@@ -64,9 +64,9 @@ service_accounts:
 # Grant roles
 iam:
   roles/privateca.certificateRequester:
-    - certificatemanager
+    - $service_agents:certificatemanager
 iam_by_principals:
-  iac-rw:
+  $iam_principals:service_accounts/project/iac-rw:
     - roles/artifactregistry.admin
     - roles/cloudbuild.builds.editor
     - roles/cloudscheduler.admin
@@ -80,18 +80,18 @@ iam_by_principals:
     # Needed for ILB only
     - roles/certificatemanager.owner
     - roles/privateca.admin
-  gf-rrag-fe-0:
+  $iam_principals:service_accounts/project/gf-rrag-fe-0:
     - roles/storage.objectViewer
-  gf-rrag-fe-build-0:
+  $iam_principals:service_accounts/project/gf-rrag-fe-build-0:
     - roles/artifactregistry.writer
     - roles/cloudbuild.builds.editor
     - roles/logging.logWriter
     - roles/run.admin
     - roles/storage.admin
     - roles/storage.objectUser
-  gf-rrag-ing-0:
+  $iam_principals:service_accounts/project/gf-rrag-ing-0:
     - roles/storage.objectViewer
-  gf-rrag-ing-build-0:
+  $iam_principals:service_accounts/project/gf-rrag-ing-build-0:
     - roles/artifactregistry.writer
     - roles/cloudbuild.builds.editor
     - roles/logging.logWriter
@@ -102,9 +102,12 @@ iam_by_principals:
 # Grant roles/aiplatform.user as additive,
 # as it is authoritatively granted by aiplatform APIs to default SA
 iam_bindings_additive:
-  - member: gf-rrag-fe-0
+  run_fe_ai_user:
+    member: $iam_principals:service_accounts/project/gf-rrag-fe-0
     role: roles/aiplatform.user
-  - member: gf-rrag-ing-0
+  run_ing_ai_user:
+    member: $iam_principals:service_accounts/project/gf-rrag-ing-0
     role: roles/aiplatform.user
-  - member: iac-rw
+  run_iac_rw_ai_user:
+    member: $iam_principals:service_accounts/project/iac-rw
     role: roles/aiplatform.user

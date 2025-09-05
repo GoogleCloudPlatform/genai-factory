@@ -26,9 +26,9 @@ buckets:
     description: Terraform state bucket
     iam:
       roles/storage.objectAdmin:
-        - iac-rw
+        - $iam_principals:service_accounts/project/iac-rw
       roles/storage.objectViewer:
-        - iac-rw
+        - $iam_principals:service_accounts/project/iac-rw
 
 service_accounts:
   # Automation SAs
@@ -36,7 +36,7 @@ service_accounts:
 
 # Grant roles
 iam_by_principals:
-  iac-rw:
+  $iam_principals:service_accounts/project/iac-rw:
     - roles/dialogflow.admin
     - roles/discoveryengine.admin
     - roles/serviceusage.serviceUsageConsumer

@@ -163,7 +163,7 @@ values:
     - serviceAccount:iac-rw@your-prefix-gf-srun-0.iam.gserviceaccount.com
     project: your-prefix-gf-srun-0
     role: roles/storage.objectUser
-  module.projects.module.projects-iam["project"].google_project_iam_member.bindings["0"]:
+  module.projects.module.projects-iam["project"].google_project_iam_member.bindings["run_ai_user"]:
     condition: []
     member: serviceAccount:gf-srun-0@your-prefix-gf-srun-0.iam.gserviceaccount.com
     project: your-prefix-gf-srun-0
@@ -391,14 +391,18 @@ values:
     timeouts: null
   module.projects.module.service_accounts-iam["project/iac-rw"].data.google_service_account.service_account[0]:
     account_id: iac-rw
-  ? module.projects.module.service_accounts-iam["project/iac-rw"].google_service_account_iam_member.additive["projects/your-prefix-gf-srun-0/serviceAccounts/gf-srun-0@your-prefix-gf-srun-0.iam.gserviceaccount.com-roles/iam.serviceAccountUser"]
+  ? module.projects.module.service_accounts-iam["project/iac-rw"].google_service_account_iam_member.additive["$service_account_ids:project/gf-srun-0-roles/iam.serviceAccountUser"]
   : condition: []
     role: roles/iam.serviceAccountUser
     service_account_id: projects/your-prefix-gf-srun-0/serviceAccounts/gf-srun-0@your-prefix-gf-srun-0.iam.gserviceaccount.com
-  ? module.projects.module.service_accounts-iam["project/iac-rw"].google_service_account_iam_member.additive["projects/your-prefix-gf-srun-0/serviceAccounts/gf-srun-build-0@your-prefix-gf-srun-0.iam.gserviceaccount.com-roles/iam.serviceAccountUser"]
+  ? module.projects.module.service_accounts-iam["project/iac-rw"].google_service_account_iam_member.additive["$service_account_ids:project/gf-srun-build-0-roles/iam.serviceAccountUser"]
   : condition: []
     role: roles/iam.serviceAccountUser
     service_account_id: projects/your-prefix-gf-srun-0/serviceAccounts/gf-srun-build-0@your-prefix-gf-srun-0.iam.gserviceaccount.com
+  module.projects.terraform_data.defaults_preconditions:
+    input: null
+    output: null
+    triggers_replace: null
 
 counts:
   google_project: 1
@@ -412,7 +416,8 @@ counts:
   google_storage_bucket_iam_binding: 2
   local_file: 2
   modules: 8
-  resources: 68
+  resources: 69
+  terraform_data: 1
 
 outputs:
   buckets:
