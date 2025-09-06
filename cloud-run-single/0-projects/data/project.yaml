@@ -30,6 +30,9 @@ services:
   # Needed for ILB only
   - certificatemanager.googleapis.com
   - privateca.googleapis.com
+  # Needed for Model Armor
+  - modelarmor.googleapis.com
+  - networkservices.googleapis.com
 
 buckets:
   iac-state:
@@ -71,6 +74,8 @@ iam_by_principals:
     - roles/certificatemanager.owner
     - roles/privateca.admin
   $iam_principals:service_accounts/project/gf-srun-0:
+    # Needed for Model Armor
+    - roles/modelarmor.admin
     - roles/logging.logWriter
   $iam_principals:service_accounts/project/gf-srun-build-0:
     - roles/artifactregistry.writer
