@@ -14,6 +14,8 @@
 
 name: "Tests"
 on:
+  # TBD remove on push and PR triggers
+  # when the PR is ready.
   push:
     branches:
       - master
@@ -50,15 +52,6 @@ jobs:
     steps:
       - name: Setup TF provider versions
         run: echo "Set Terraform provider versions"
-
-      - name: Set up uv and python
-        uses: astral-sh/setup-uv@v6
-        with:
-          python-version: ${{ inputs.PYTHON_VERSION }}
-          enable-cache: true
-          cache-dependency-glob: |
-            ./pyproject.toml
-            ./uv.lock
 
   get-latest-tag:
     runs-on: ubuntu-latest
