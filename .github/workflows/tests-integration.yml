@@ -12,15 +12,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: "Tests"
+name: "Integration Tests"
 on:
-  # TBD add back once PR is complete
-  # push:
-  #   branches:
-  #     - master
-  # pull_request:
-  #   branches:
-  #     - master
+  # TBD remove on push and PR triggers
+  # when the PR is ready.
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+  schedule:
+    - cron: '0 3 * * *'
   workflow_dispatch:
     inputs:
       terraform_version:
@@ -47,13 +50,37 @@ jobs:
       DEFAULT_TERRAFORM_VERSION: ${{ env.DEFAULT_TERRAFORM_VERSION }}
       DEFAULT_TOFU_VERSION: ${{ env.DEFAULT_TOFU_VERSION }}
     steps:
-      - name: dummy
-        run: echo
+      - name: Setup TF provider versions
+        run: echo "Set Terraform provider versions"
+
+  get-latest-tag:
+    runs-on: ubuntu-latest
+    outputs:
+      latest_tag: ${{ steps.find_tag.outputs.latest_tag }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          repository: GoogleCloudPlatform/cloud-foundation-fabric
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Run script to find latest tag
+        id: find_tag
+        run: |
+          LATEST_TAG=$(git tag -l 'v*' --sort=-committerdate | head -n 1)
+          echo ${LATEST_TAG}
+          echo "latest_tag=${LATEST_TAG}" >> $GITHUB_OUTPUT
+
+      - name: Display latest tag
+        run: |
+          echo "The latest tag is: ${{ steps.find_tag.outputs.latest_tag }}"
 
   setup-tf-providers:
     runs-on: ubuntu-latest
     needs:
       - compute-matrix
+      - get-latest-tag
     strategy:
       matrix:
         include:
@@ -63,6 +90,20 @@ jobs:
             version: "${{ needs.compute-matrix.outputs.DEFAULT_TOFU_VERSION }}"
     steps:
       - uses: actions/checkout@v4
+
+      - name: Set up uv and python
+        uses: astral-sh/setup-uv@v6
+        with:
+          python-version: ${{ inputs.PYTHON_VERSION }}
+          enable-cache: true
+          cache-dependency-glob: |
+            ./pyproject.toml
+            ./uv.lock
+
+      - name: Update reference to Fabric modules (${{ needs.get-latest-tag.outputs.latest_tag }})
+        shell: bash
+        run: |
+          python tools/update_fabric_ref.py . ${{ needs.get-latest-tag.outputs.latest_tag }}
 
       - uses: hashicorp/setup-terraform@v3
         if: ${{ matrix.flavour == 'terraform' }}
@@ -107,8 +148,10 @@ jobs:
   tests:
     runs-on: ubuntu-latest
     needs:
-      - setup-tf-providers
       - compute-matrix
+      - get-latest-tag
+      - setup-tf-providers
+
     strategy:
       matrix:
         include:
@@ -119,6 +162,20 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Set up uv and python
+        uses: astral-sh/setup-uv@v6
+        with:
+          python-version: ${{ inputs.PYTHON_VERSION }}
+          enable-cache: true
+          cache-dependency-glob: |
+            ./pyproject.toml
+            ./uv.lock
+
+      - name: Update reference to Fabric modules (${{ needs.get-latest-tag.outputs.latest_tag }})
+        shell: bash
+        run: |
+          python tools/update_fabric_ref.py . ${{ needs.get-latest-tag.outputs.latest_tag }}
 
       - name: Call composite action tests-setup
         uses: ./.github/actions/tests-setup
@@ -137,3 +194,34 @@ jobs:
       - name: Create report
         uses: ./.github/actions/gen-test-report
         if: always()
+
+  push-changes:
+    runs-on: ubuntu-latest
+    needs:
+      - get-latest-tag
+      - tests
+    if: ${{ needs.tests.result == 'success' }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Update reference to Fabric modules (${{ needs.get-latest-tag.outputs.latest_tag }})
+        shell: bash
+        run: |
+          python tools/update_fabric_ref.py . ${{ needs.get-latest-tag.outputs.latest_tag }}
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Check for file changes
+        id: git-status
+        run: echo "changes=$(git status --porcelain)" >> $GITHUB_OUTPUT
+
+      - name: Commit and Push Changes
+        if: steps.git-status.outputs.changes != ''
+        run: |
+          git add .
+          git commit -m "[Automated commit by GitHub Actions] Reference Fabric ${{ needs.get-latest-tag.outputs.latest_tag }}."
+          git push
