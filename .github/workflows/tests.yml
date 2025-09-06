@@ -14,14 +14,13 @@
 
 name: "Tests"
 on:
+  # TBD add back once PR is complete
   # push:
   #   branches:
   #     - master
   # pull_request:
   #   branches:
   #     - master
-  schedule:
-    - cron: '0 3 * * *'
   workflow_dispatch:
     inputs:
       terraform_version:
