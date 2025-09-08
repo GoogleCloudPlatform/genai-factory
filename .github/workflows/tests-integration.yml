@@ -50,8 +50,7 @@ jobs:
       DEFAULT_TERRAFORM_VERSION: ${{ env.DEFAULT_TERRAFORM_VERSION }}
       DEFAULT_TOFU_VERSION: ${{ env.DEFAULT_TOFU_VERSION }}
     steps:
-      - name: Setup TF provider versions
-        run: echo "Set Terraform provider versions"
+      - uses: actions/checkout@v4
 
       - name: Set up uv and python
         uses: astral-sh/setup-uv@v6
@@ -62,7 +61,7 @@ jobs:
             ./pyproject.toml
             ./uv.lock
 
-      - name: Run script to find latest tag
+      - name: Fetch the latest Fabric tag
         id: find_tag
         run: |
           LATEST_TAG=$(python tools/fetch_latest_tag.py https://github.com/GoogleCloudPlatform/cloud-foundation-fabric)
