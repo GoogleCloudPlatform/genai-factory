@@ -1,0 +1,69 @@
+# Copyright 2025 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+name: "Integration Tests"
+on:
+  # TBD remove on push and PR triggers
+  # when the PR is ready.
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+  schedule:
+    - cron: '0 3 * * *'
+  workflow_dispatch:
+    inputs:
+      terraform_version:
+        description: "Use Terraform 11.4"
+        required: true
+        default: 1.11.4
+        type: string
+
+env:
+  GOOGLE_APPLICATION_CREDENTIALS: "/home/runner/credentials.json"
+  PYTEST_ADDOPTS: "--color=yes"
+  PYTHON_VERSION: "3.12"
+  TF_PLUGIN_CACHE_DIR: "/home/runner/.terraform.d/plugin-cache"
+  TFTEST_COPY: 1
+  DEFAULT_TERRAFORM_VERSION: ${{ inputs.terraform_version || '1.11.4' }}
+  DEFAULT_TOFU_VERSION: "1.9.0"
+
+jobs:
+  push-changes:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Write a file
+        shell: bash
+        run: |
+          echo "test" > test.txt
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Check for file changes
+        id: git-status
+        run: echo "changes=$(git status --porcelain)" >> $GITHUB_OUTPUT
+
+      - name: Commit and Push Changes
+        if: steps.git-status.outputs.changes != ''
+        run: |
+          git add .
+          git commit -m "[Automated commit by GitHub Actions] Test commit push."
+          git push
