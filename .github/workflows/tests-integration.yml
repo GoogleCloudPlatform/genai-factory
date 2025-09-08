@@ -43,7 +43,7 @@ env:
   DEFAULT_TOFU_VERSION: "1.9.0"
 
 jobs:
-  compute-matrix:
+  prerequisites:
     runs-on: ubuntu-latest
     outputs:
       DEFAULT_TERRAFORM_FLAVOUR: ${{ env.DEFAULT_TERRAFORM_FLAVOUR }}
@@ -53,22 +53,19 @@ jobs:
       - name: Setup TF provider versions
         run: echo "Set Terraform provider versions"
 
-  get-latest-tag:
-    runs-on: ubuntu-latest
-    outputs:
-      latest_tag: ${{ steps.find_tag.outputs.latest_tag }}
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - name: Set up uv and python
+        uses: astral-sh/setup-uv@v6
         with:
-          repository: GoogleCloudPlatform/cloud-foundation-fabric
-          fetch-depth: 0
-          fetch-tags: true
+          python-version: ${{ inputs.PYTHON_VERSION }}
+          enable-cache: true
+          cache-dependency-glob: |
+            ./pyproject.toml
+            ./uv.lock
 
       - name: Run script to find latest tag
         id: find_tag
         run: |
-          LATEST_TAG=$(git tag -l 'v*' --sort=-committerdate | head -n 1)
+          LATEST_TAG=$(python tools/fetch_latest_tag.py https://github.com/GoogleCloudPlatform/cloud-foundation-fabric)
           echo ${LATEST_TAG}
           echo "latest_tag=${LATEST_TAG}" >> $GITHUB_OUTPUT
 
@@ -79,15 +76,14 @@ jobs:
   setup-tf-providers:
     runs-on: ubuntu-latest
     needs:
-      - compute-matrix
-      - get-latest-tag
+      - prerequisites
     strategy:
       matrix:
         include:
           - flavour: terraform
-            version: "${{ needs.compute-matrix.outputs.DEFAULT_TERRAFORM_VERSION }}"
+            version: "${{ needs.prerequisites.outputs.DEFAULT_TERRAFORM_VERSION }}"
           - flavour: tofu
-            version: "${{ needs.compute-matrix.outputs.DEFAULT_TOFU_VERSION }}"
+            version: "${{ needs.prerequisites.outputs.DEFAULT_TOFU_VERSION }}"
     steps:
       - uses: actions/checkout@v4
 
@@ -100,10 +96,10 @@ jobs:
             ./pyproject.toml
             ./uv.lock
 
-      - name: Update reference to Fabric modules (${{ needs.get-latest-tag.outputs.latest_tag }})
+      - name: Update reference to Fabric modules (${{ needs.prerequisites.outputs.latest_tag }})
         shell: bash
         run: |
-          python tools/update_fabric_ref.py . ${{ needs.get-latest-tag.outputs.latest_tag }}
+          python tools/update_fabric_ref.py . ${{ needs.prerequisites.outputs.latest_tag }}
 
       - uses: hashicorp/setup-terraform@v3
         if: ${{ matrix.flavour == 'terraform' }}
@@ -148,17 +144,16 @@ jobs:
   tests:
     runs-on: ubuntu-latest
     needs:
-      - compute-matrix
-      - get-latest-tag
+      - prerequisites
       - setup-tf-providers
 
     strategy:
       matrix:
         include:
           - flavour: terraform
-            version: "${{ needs.compute-matrix.outputs.DEFAULT_TERRAFORM_VERSION }}"
+            version: "${{ needs.prerequisites.outputs.DEFAULT_TERRAFORM_VERSION }}"
           - flavour: tofu
-            version: "${{ needs.compute-matrix.outputs.DEFAULT_TOFU_VERSION }}"
+            version: "${{ needs.prerequisites.outputs.DEFAULT_TOFU_VERSION }}"
 
     steps:
       - uses: actions/checkout@v4
@@ -172,10 +167,10 @@ jobs:
             ./pyproject.toml
             ./uv.lock
 
-      - name: Update reference to Fabric modules (${{ needs.get-latest-tag.outputs.latest_tag }})
+      - name: Update reference to Fabric modules (${{ needs.prerequisites.outputs.latest_tag }})
         shell: bash
         run: |
-          python tools/update_fabric_ref.py . ${{ needs.get-latest-tag.outputs.latest_tag }}
+          python tools/update_fabric_ref.py . ${{ needs.prerequisites.outputs.latest_tag }}
 
       - name: Call composite action tests-setup
         uses: ./.github/actions/tests-setup
@@ -198,17 +193,17 @@ jobs:
   push-changes:
     runs-on: ubuntu-latest
     needs:
-      - get-latest-tag
+      - prerequisites
       - tests
     if: ${{ needs.tests.result == 'success' }}
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Update reference to Fabric modules (${{ needs.get-latest-tag.outputs.latest_tag }})
+      - name: Update reference to Fabric modules (${{ needs.prerequisites.outputs.latest_tag }})
         shell: bash
         run: |
-          python tools/update_fabric_ref.py . ${{ needs.get-latest-tag.outputs.latest_tag }}
+          python tools/update_fabric_ref.py . ${{ needs.prerequisites.outputs.latest_tag }}
 
       - name: Configure Git
         run: |
@@ -223,5 +218,5 @@ jobs:
         if: steps.git-status.outputs.changes != ''
         run: |
           git add .
-          git commit -m "[Automated commit by GitHub Actions] Reference Fabric ${{ needs.get-latest-tag.outputs.latest_tag }}."
+          git commit -m "[Automated commit by GitHub Actions] Reference Fabric ${{ needs.prerequisites.outputs.latest_tag }}."
           git push

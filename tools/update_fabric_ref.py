@@ -15,7 +15,7 @@
 # limitations under the License.
 
 """
-Updates Terraform module source references to a new version.
+Updates Terraform module source references to a new version using argparse.
 
 This script recursively finds all '.tf' files in a given directory,
 excluding '.terraform' folders, and updates the 'ref' version tag for
@@ -25,52 +25,57 @@ modules sourced from a specific GitHub path.
 import sys
 import os
 import re
+import argparse
 
 def main():
     """Handles command-line arguments and initiates the update process."""
-    # Check if the correct number of arguments are provided
-    if len(sys.argv) != 3:
-        script_name = os.path.basename(sys.argv[0])
-        print("Error: Please provide the target directory and the new version.", file=sys.stderr)
-        print(f"Usage: {script_name} <directory_path> <new_version>", file=sys.stderr)
-        print(f"Example: {script_name} . v43.0.0", file=sys.stderr)
-        sys.exit(1)
+    # --- Argument Parsing ---
+    parser = argparse.ArgumentParser(
+        description="Updates Terraform module source references to a new version.",
+        formatter_class=argparse.RawTextHelpFormatter, # Allows for better formatting of the help message
+        epilog="Example:\n  %(prog)s . v43.0.0"
+    )
+    parser.add_argument(
+        "directory_path",
+        metavar="<directory_path>",
+        type=str,
+        help="The target directory to search recursively for .tf files."
+    )
+    parser.add_argument(
+        "new_version",
+        metavar="<new_version>",
+        type=str,
+        help="The new version tag to set for the modules (e.g., 'v43.0.0')."
+    )
+    args = parser.parse_args()
 
-    target_dir = sys.argv[1]
-    new_version = sys.argv[2]
+    target_dir = args.directory_path
+    new_version = args.new_version
 
-    # Verify that the target directory exists
     if not os.path.isdir(target_dir):
         print(f"Error: Directory not found at '{target_dir}'", file=sys.stderr)
         sys.exit(1)
 
-    # --- Configuration ---
+    # --- Regex configuration ---
     prefix = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/"
     new_suffix = f"?ref={new_version}"
 
-    # Regex to find module sources with the specified prefix and an old version tag.
-    # It captures the part of the string before the version query parameter.
-    # Example match for: "github.com/.../modules/iam?ref=v26.0.0"
-    # Capturing Group 1 will contain: "github.com/.../modules/iam
     pattern = re.compile(
-        f'('                          # Start of capturing group 1
-        f'"'                          # Literal opening quote
-        f'{re.escape(prefix)}'        # The module path prefix
-        f'[^"?\\s]*'                  # The specific module name (e.g., 'iam')
-        f')'                          # End of capturing group 1
-        f'\\?ref=v[0-9\\.]*'          # The old version query string to be replaced
-        f'"'                          # Literal closing quote
+        f'('                    # Start of capturing group 1
+        f'"'                    # Literal opening quote
+        f'{re.escape(prefix)}'  # The module path prefix
+        f'[^"?\\s]*'            # The specific module name (e.g., 'iam')
+        f')'                    # End of capturing group 1
+        f'\\?ref=v[0-9\\.]*'    # The old version query string to be replaced
+        f'"'                    # Literal closing quote
     )
 
-    # The replacement string uses a backreference (\1) to the captured group,
-    # followed by the new version suffix and a closing quote.
+    # --- Find .tf files, exclude .terraform, replace group 1 ---
     replacement = f'\\1{new_suffix}"'
 
     updated_files_count = 0
 
-    # Recursively walk through the directory tree
     for dirpath, dirnames, filenames in os.walk(target_dir):
-        # Prune the .terraform directory from the search to avoid descending into it
         if '.terraform' in dirnames:
             dirnames.remove('.terraform')
 
@@ -78,14 +83,11 @@ def main():
             if filename.endswith(".tf"):
                 file_path = os.path.join(dirpath, filename)
                 try:
-                    # Read the original file content
                     with open(file_path, 'r', encoding='utf-8') as file:
                         original_content = file.read()
 
-                    # Perform the substitution using the compiled regex
                     updated_content = pattern.sub(replacement, original_content)
 
-                    # Write back to the file only if changes were made
                     if original_content != updated_content:
                         with open(file_path, 'w', encoding='utf-8') as file:
                             file.write(updated_content)

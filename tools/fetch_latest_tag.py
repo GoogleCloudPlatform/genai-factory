@@ -17,6 +17,9 @@
 """
 Clones a Git repository into a temporary directory to find and display
 the most recent version tag (prefixed with 'v').
+
+By default, this script outputs ONLY the latest tag string.
+Use the --debug flag to see all intermediate steps and lists.
 """
 
 import sys
@@ -24,41 +27,47 @@ import subprocess
 import tempfile
 import shutil
 import os
+import argparse
 
 def main():
-    """Main function to execute the script's logic."""
-    # --- Check if a repository URL is provided ---
-    if len(sys.argv) != 2:
-        script_name = os.path.basename(sys.argv[0])
-        print(f"Usage: {script_name} <repository_url>", file=sys.stderr)
-        print(f"Example: {script_name} https://github.com/git/git.git", file=sys.stderr)
-        sys.exit(1)
+    parser = argparse.ArgumentParser(
+        description="Clones a Git repository to find and display the most recent version tag.",
+        formatter_class=argparse.RawTextHelpFormatter,
+        epilog="Example:\n  %(prog)s https://github.com/git/git.git\n  %(prog)s --debug https://github.com/git/git.git"
+    )
+    parser.add_argument(
+        'repository_url',
+        metavar='REPO_URL',
+        type=str,
+        help='The URL of the Git repository to analyze.'
+    )
+    parser.add_argument(
+        '--debug',
+        action='store_true',
+        help='Enable debug mode to print detailed execution steps.'
+    )
+    args = parser.parse_args()
+    repo_url = args.repository_url
 
-    repo_url = sys.argv[1]
-
-    # --- Create a temporary directory ---
-    # The 'temp_dir' will be automatically cleaned up in the 'finally' block.
     temp_dir = tempfile.mkdtemp()
 
     try:
-        print(f"🔍 Cloning repository and fetching tags from: {repo_url}")
+        if args.debug:
+            print(f"🔍 Cloning repository and fetching tags from: {repo_url}")
 
-        # --- Clone the repository without checking out files ---
-        # The subprocess runs git commands safely and portably.
+        # Clone the repository without checking out files
         subprocess.run(
             ['git', 'clone', '--quiet', '--no-checkout', '--depth', '1', repo_url, temp_dir],
             check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
         )
 
-        # --- Fetch all tags from the remote repository ---
+        # Fetch all tags from the remote repository
         subprocess.run(
             ['git', 'fetch', '--quiet', '--tags'],
             cwd=temp_dir, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
         )
 
-        # --- Get all tags starting with 'v', sorted by version number (for display) ---
-        # For older Git versions, we can't use '--sort=V'. Instead, we pipe the
-        # output from 'git tag' to the system's 'sort -V' command.
+        # Get all tags starting with 'v', sorted by version number (for display)
         git_list_proc = subprocess.Popen(
             ['git', 'tag', '--list', 'v*'],
             cwd=temp_dir, stdout=subprocess.PIPE
@@ -67,33 +76,26 @@ def main():
             ['sort', '-V'],
             stdin=git_list_proc.stdout, capture_output=True, text=True, check=True
         )
-        # Allow git_list_proc to receive a SIGPIPE if sort_proc exits.
         git_list_proc.stdout.close()
-
-        # Split the string output from the 'sort' command into a list of tags
         all_v_tags = sort_proc.stdout.strip().splitlines()
 
-        # --- Get the latest tag based on the commit date ---
+        # Get the latest tag based on the commit date
         latest_tag_proc = subprocess.run(
             ['git', 'tag', '--list', 'v*', '--sort=-committerdate'],
             cwd=temp_dir, capture_output=True, text=True, check=True
         )
         date_sorted_tags = latest_tag_proc.stdout.strip().splitlines()
-        # The latest tag is the first one in the date-sorted list
         latest_tag_by_date = date_sorted_tags[0] if date_sorted_tags else ""
 
-        print("---")
+        if args.debug:
+            print("---")
+            print("📝 All tags in the repository starting with 'v':")
+            if all_v_tags:
+                print('\n'.join(all_v_tags))
+            else:
+                print("(No tags starting with 'v' found)")
+            print("---")
 
-        # --- Display all 'v' tags for context ---
-        print("📝 All tags in the repository starting with 'v':")
-        if all_v_tags:
-            print('\n'.join(all_v_tags))
-        else:
-            print("(No tags starting with 'v' found)")
-
-        print("---")
-
-        # --- Print the final result ---
         print(latest_tag_by_date)
 
     except subprocess.CalledProcessError as e:
@@ -106,11 +108,12 @@ def main():
         print(f"\nAn unexpected error occurred: {e}", file=sys.stderr)
         sys.exit(1)
     finally:
-        # --- Clean up the temporary directory ---
+        # Clean up the temporary directory
         if os.path.exists(temp_dir):
             shutil.rmtree(temp_dir)
-            print("---")
-            print(f"🗑️ Cleaned up temporary directory: {temp_dir}")
+            if args.debug:
+                print("---")
+                print(f"🗑️ Cleaned up temporary directory: {temp_dir}")
 
 
 if __name__ == "__main__":
