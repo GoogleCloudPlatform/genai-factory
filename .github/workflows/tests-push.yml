@@ -69,8 +69,6 @@ jobs:
           git commit -m "[GH Actions] Update Fabric to vx.y.z."
           gh pr create \
             --title "[Fabric upgrade] - reference vx.y.z" \
-            --base master \
-            --head fabric-upgrade-vx.y.z \
             --body "Reference in factories Cloud Foundation Fabric modules vx.y.z"
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
