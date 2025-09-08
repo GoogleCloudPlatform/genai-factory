@@ -38,7 +38,6 @@ env:
   PYTHON_VERSION: "3.12"
   TF_PLUGIN_CACHE_DIR: "/home/runner/.terraform.d/plugin-cache"
   TFTEST_COPY: 1
-  DEFAULT_TERRAFORM_FLAVOUR: terraform
   DEFAULT_TERRAFORM_VERSION: ${{ inputs.terraform_version || '1.11.4' }}
   DEFAULT_TOFU_VERSION: "1.9.0"
 
@@ -46,9 +45,9 @@ jobs:
   prerequisites:
     runs-on: ubuntu-latest
     outputs:
-      DEFAULT_TERRAFORM_FLAVOUR: ${{ env.DEFAULT_TERRAFORM_FLAVOUR }}
-      DEFAULT_TERRAFORM_VERSION: ${{ env.DEFAULT_TERRAFORM_VERSION }}
-      DEFAULT_TOFU_VERSION: ${{ env.DEFAULT_TOFU_VERSION }}
+      default_terraform_version: ${{ env.DEFAULT_TERRAFORM_VERSION }}
+      default_tofu_version: ${{ env.DEFAULT_TOFU_VERSION }}
+      latest_tag: ${{ steps.find_tag.outputs.latest_tag }}
     steps:
       - uses: actions/checkout@v4
 
@@ -80,9 +79,9 @@ jobs:
       matrix:
         include:
           - flavour: terraform
-            version: "${{ needs.prerequisites.outputs.DEFAULT_TERRAFORM_VERSION }}"
+            version: "${{ needs.prerequisites.outputs.default_terraform_version }}"
           - flavour: tofu
-            version: "${{ needs.prerequisites.outputs.DEFAULT_TOFU_VERSION }}"
+            version: "${{ needs.prerequisites.outputs.default_tofu_version }}"
     steps:
       - uses: actions/checkout@v4
 
