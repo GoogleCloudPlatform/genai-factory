@@ -64,8 +64,9 @@ jobs:
       - name: Commit and Push Changes
         if: steps.git-status.outputs.changes != ''
         run: |
+          git checkout -b fabric-upgrade-vx.y.z
           git add .
-          git commit -m "[Automated commit by GitHub Actions] Update Fabric to vx.y.z."
+          git commit -m "[GH Actions] Update Fabric to vx.y.z."
           gh pr create \
             --title "[Fabric upgrade] - reference vx.y.z" \
             --base master \
