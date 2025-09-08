@@ -65,5 +65,10 @@ jobs:
         if: steps.git-status.outputs.changes != ''
         run: |
           git add .
-          git commit -m "[Automated commit by GitHub Actions] Test commit push."
-          git push https://github-actions:${{ secrets.GITHUB_TOKEN }}@github.com/googleCloudPlatform/genai-factory.git HEAD:master
+          git commit -m "[Automated commit by GitHub Actions] Update Fabric to vx.y.z."
+          gh pr create \
+            --title "[Fabric upgrade] - reference vx.y.z" \
+            --base master \
+            --body "Reference in factories Cloud Foundation Fabric modules vx.y.z"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
