@@ -66,4 +66,4 @@ jobs:
         run: |
           git add .
           git commit -m "[Automated commit by GitHub Actions] Test commit push."
-          git push origin HEAD:master
+          git push https://github-actions:${{ secrets.GITHUB_TOKEN }}@github.com/googleCloudPlatform/genai-factory.git HEAD:master
