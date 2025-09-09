@@ -46,7 +46,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        ref: master
+        with:
+          ref: master
 
       - name: Write a file
         shell: bash
