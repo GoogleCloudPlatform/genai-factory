@@ -14,13 +14,6 @@
 
 name: "Tests"
 on:
-  # TBD add back once PR is complete
-  # push:
-  #   branches:
-  #     - master
-  # pull_request:
-  #   branches:
-  #     - master
   workflow_dispatch:
     inputs:
       terraform_version:
