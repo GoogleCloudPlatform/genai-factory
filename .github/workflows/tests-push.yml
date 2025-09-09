@@ -66,7 +66,7 @@ jobs:
       - name: Commit and Push Changes
         if: steps.git-status.outputs.changes != ''
         run: |
-          # git checkout -b fabric-upgrade-vx.y.z
+          git checkout -b fabric-upgrade-vx.y.z
           git add .
           git commit -m "[GH Actions] Update Fabric to vx.y.z."
           gh pr create \
