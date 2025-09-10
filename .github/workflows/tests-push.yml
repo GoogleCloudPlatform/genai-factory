@@ -58,6 +58,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config credential.helper '!f() {sleep 1; '
 
       - name: Check for file changes
         id: git-status
@@ -66,10 +67,10 @@ jobs:
       - name: Commit and Push Changes
         if: steps.git-status.outputs.changes != ''
         run: |
-          git checkout -b fabric-upgrade-vx.y.z
+          git remote set-url origin https://git:${{ secrets.GH_TOKEN }}@github.com/googleCloudPlatform/genai-factory
           git add .
           git commit -m "[GH Actions] Update Fabric to vx.y.z."
-          git push --set-upstream origin fabric-upgrade-vx.y.z
+          git push
           # gh pr create \
           #   --title "[Fabric upgrade] - reference vx.y.z" \
           #   --head fabric-upgrade-vx.y.z \
