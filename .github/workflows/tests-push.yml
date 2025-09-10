@@ -72,7 +72,7 @@ jobs:
         if: steps.git-status.outputs.changes != ''
         run: |
           git remote set-url origin git@github.com:GoogleCloudPlatform/genai-factory.git
-          git checkout -b fabric-upgrade-vx.y.z
+          # git checkout -b fabric-upgrade-vx.y.z
           git add .
           git commit -m "[GH Actions] Update Fabric to vx.y.z."
           git push
