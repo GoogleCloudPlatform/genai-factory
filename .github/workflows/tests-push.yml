@@ -61,15 +61,14 @@ jobs:
 
       - name: Configure Git
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git config credential.helper '!f() {sleep 1; '
+          git config user.name "genai-factory-robot"
+          git config user.email "genai-factory-robot@google.com"
 
       - name: Check for file changes
         id: git-status
         run: echo "changes=$(git status --porcelain)" >> $GITHUB_OUTPUT
 
-      - name: Commit and Push Changes
+      - name: Commit and push feature branch
         if: steps.git-status.outputs.changes != ''
         run: |
           git remote set-url origin git@github.com:GoogleCloudPlatform/genai-factory.git
@@ -78,7 +77,8 @@ jobs:
           git commit -m "[GH Actions] Update Fabric to vx.y.z."
           git push --set-upstream origin fabric-upgrade-vx.y.z
 
-      - run: |
+      - name: Create PR
+        run: |
           gh pr create \
             --title "[Fabric upgrade] - reference vx.y.z" \
             --head fabric-upgrade-vx.y.z \
