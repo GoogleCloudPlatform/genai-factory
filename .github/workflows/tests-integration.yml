@@ -188,37 +188,6 @@ jobs:
         uses: ./.github/actions/gen-test-report
         if: always()
 
-  push-changes:
-    runs-on: ubuntu-latest
-    needs:
-      - prerequisites
-      - tests
-    if: ${{ needs.tests.result == 'success' }}
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Update reference to Fabric modules (${{ needs.prerequisites.outputs.latest_tag }})
-        shell: bash
-        run: |
-          python tools/update_fabric_ref.py . ${{ needs.prerequisites.outputs.latest_tag }}
-
-      - name: Configure Git
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-
-      - name: Check for file changes
-        id: git-status
-        run: echo "changes=$(git status --porcelain)" >> $GITHUB_OUTPUT
-
-      - name: Commit and Push Changes
-        if: steps.git-status.outputs.changes != ''
-        run: |
-          git add .
-          git commit -m "[Automated commit by GitHub Actions] Reference Fabric ${{ needs.prerequisites.outputs.latest_tag }}."
-          git push
-
   create-pr:
     runs-on: ubuntu-latest
     permissions: write-all
