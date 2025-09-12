@@ -16,12 +16,12 @@ name: "Integration Tests"
 on:
   # TBD remove on push and PR triggers
   # when the PR is ready.
-  # push:
-  #   branches:
-  #     - master
-  # pull_request:
-  #   branches:
-  #     - master
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
   schedule:
     - cron: '0 3 * * *'
   workflow_dispatch:
