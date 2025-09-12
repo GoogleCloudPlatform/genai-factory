@@ -22,6 +22,16 @@ on:
       - master
   schedule:
     - cron: '0 3 * * *'
+  workflow_dispatch:
+    inputs:
+      terraform_version:
+        description: "Use Terraform 11.4"
+        required: true
+        default: 1.11.4
+        type: string
+
+env:
+  DEFAULT_TERRAFORM_VERSION: ${{ inputs.terraform_version || '1.11.4' }}
 
 jobs:
   linting:
@@ -41,7 +51,7 @@ jobs:
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: 1.11.4
+          terraform_version: ${{ env.DEFAULT_TERRAFORM_VERSION }}
 
       - name: Setup TFLint
         uses: terraform-linters/setup-tflint@v4
