@@ -15,7 +15,7 @@
 name: "Integration Tests"
 on:
   # TBD remove on push and PR triggers
-  # when the PR is ready
+  # when the PR is ready.
   push:
     branches:
       - master
@@ -85,4 +85,4 @@ jobs:
             --base master \
             --body "Reference in factories Cloud Foundation Fabric modules vx.y.z"
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
