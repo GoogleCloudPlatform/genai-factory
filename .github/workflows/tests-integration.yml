@@ -218,3 +218,48 @@ jobs:
           git add .
           git commit -m "[Automated commit by GitHub Actions] Reference Fabric ${{ needs.prerequisites.outputs.latest_tag }}."
           git push
+
+  create-pr:
+    runs-on: ubuntu-latest
+    permissions: write-all
+    needs:
+      - prerequisites
+      - tests
+    if: ${{ needs.tests.result == 'success' }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: master
+
+      - uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.DEPLOY_KEY }}
+
+      - name: Configure Git
+        run: |
+          git config user.name "genai-factory-robot"
+          git config user.email "genai-factory-robot@google.com"
+
+      - name: Check for file changes
+        id: git-status
+        run: echo "changes=$(git status --porcelain)" >> $GITHUB_OUTPUT
+
+      - name: Commit and push feature branch
+        if: steps.git-status.outputs.changes != ''
+        run: |
+          git remote set-url origin git@github.com:GoogleCloudPlatform/genai-factory.git
+          git checkout -b fabric-upgrade-${{ needs.prerequisites.outputs.latest_tag }}
+          git add .
+          git commit -m "[GH Actions] Update Fabric to ${{ needs.prerequisites.outputs.latest_tag }}"
+          git push --set-upstream origin fabric-upgrade-${{ needs.prerequisites.outputs.latest_tag }}
+
+      - name: Create PR
+        run: |
+          gh pr create \
+            --title "[Fabric upgrade] - reference ${{ needs.prerequisites.outputs.latest_tag }}" \
+            --head fabric-upgrade-${{ needs.prerequisites.outputs.latest_tag }} \
+            --base master \
+            --body "Reference in factories Cloud Foundation Fabric modules ${{ needs.prerequisites.outputs.latest_tag }}"
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
