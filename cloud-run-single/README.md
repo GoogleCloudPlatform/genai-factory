@@ -12,6 +12,7 @@ Cloud run single allows deploying these applications:
 
 - **Chat:** a secure backend exposing a JSON interface to communicate with Gemini through Vertex APIs.
 - **ADK:** a sample, secure [Agent Development Kit (ADK) deployment](https://google.github.io/adk-docs/deploy/cloud-run/).
+- **Gemma:** a sample deployment of Gemma 3 using Cloud Run GPUs.
 
 ## Core Components
 

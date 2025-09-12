@@ -30,11 +30,13 @@ variable "cloud_run_configs" {
         image = "us-docker.pkg.dev/cloudrun/container/hello"
       }
     })
-    ingress            = optional(string, "INGRESS_TRAFFIC_INTERNAL_LOAD_BALANCER")
-    max_instance_count = optional(number, 3)
-    service_invokers   = optional(list(string), [])
-    vpc_access_egress  = optional(string, "ALL_TRAFFIC")
-    vpc_access_tags    = optional(list(string), [])
+    gpu_zonal_redundancy_disabled = optional(bool, null)
+    ingress                       = optional(string, "INGRESS_TRAFFIC_INTERNAL_LOAD_BALANCER")
+    max_instance_count            = optional(number, 3)
+    node_selector                 = optional(map(string), null)
+    service_invokers              = optional(list(string), [])
+    vpc_access_egress             = optional(string, "ALL_TRAFFIC")
+    vpc_access_tags               = optional(list(string), [])
   })
   nullable = false
   default  = {}

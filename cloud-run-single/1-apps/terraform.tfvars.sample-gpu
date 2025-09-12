@@ -1,0 +1,18 @@
+cloud_run_configs = {
+  containers = {
+    gpu = {
+      image = "us-docker.pkg.dev/cloudrun/container/hello"
+      resources = {
+        limits = {
+          cpu              = "4"
+          memory           = "16Gi"
+          "nvidia.com/gpu" = "1"
+        }
+      }
+    }
+  }
+  gpu_zonal_redundancy_disabled = true
+  node_selector = {
+    accelerator = "nvidia-l4"
+  }
+}

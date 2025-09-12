@@ -48,6 +48,16 @@ output "commands" {
     --region ${var.region} \
     --image=${var.region}-docker.pkg.dev/${var.project_config.id}/${var.name}/srun \
     --set-env-vars ${local.env_vars}
+
+  
+  # Run the following command to deploy a sample Gemma 3 on Ollama Service
+
+   gcloud run deploy ${var.name} \
+    --impersonate-service-account=${var.service_accounts["project/iac-rw"].email} \
+    --project ${var.project_config.id} \
+    --region ${var.region} \
+    --image "us-docker.pkg.dev/cloudrun/container/gemma/gemma3-4b:latest" \
+    --set-env-vars ${local.env_vars},OLLAMA_NUM_PARALLEL=4
   EOT
 }
 

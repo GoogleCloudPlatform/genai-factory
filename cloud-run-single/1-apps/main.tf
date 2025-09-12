@@ -26,6 +26,8 @@ module "cloud_run" {
     "roles/run.invoker" = var.cloud_run_configs.service_invokers
   }
   revision = {
+    gpu_zonal_redundancy_disabled = var.cloud_run_configs.gpu_zonal_redundancy_disabled
+    node_selector                 = var.cloud_run_configs.node_selector
     vpc_access = {
       egress  = var.cloud_run_configs.vpc_access_egress
       network = local.vpc_id
