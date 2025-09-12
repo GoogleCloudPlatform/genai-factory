@@ -224,6 +224,7 @@ jobs:
           git push --set-upstream origin fabric-upgrade-${{ needs.prerequisites.outputs.latest_tag }}
 
       - name: Create PR
+        if: steps.git-status.outputs.changes != ''
         run: |
           gh pr create \
             --title "[Fabric upgrade] - reference ${{ needs.prerequisites.outputs.latest_tag }}" \
