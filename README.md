@@ -10,7 +10,7 @@ Genai-factory is a collection of **end-to-end blueprints to deploy generative AI
 
 ## Cloud Foundation Fabric Compatibility
 
-Works with Cloud Foundation Fabric from [v44.1.0](https://github.com/GoogleCloudPlatform/cloud-foundation-fabric/tree/v44.1.0).
+Works with Cloud Foundation Fabric from [v45.0.0](https://github.com/GoogleCloudPlatform/cloud-foundation-fabric/tree/v45.0.0).
 Compatibility with master is not guaranteed.
 
 ## Factories
