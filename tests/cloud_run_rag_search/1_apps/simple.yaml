@@ -1108,7 +1108,7 @@ values:
     region: europe-west1
     subnetwork: null
     timeouts: null
-  module.lb_external[0].google_compute_target_https_proxy.default[0]:
+  module.lb_external[0].google_compute_target_https_proxy.new[0]:
     certificate_manager_certificates: null
     certificate_map: null
     description: Terraform managed.
@@ -1147,7 +1147,7 @@ values:
     project: prefix-gf-rrag-search-0
     source_ip_ranges: null
     timeouts: null
-  module.lb_external_redirect[0].google_compute_target_http_proxy.default[0]:
+  module.lb_external_redirect[0].google_compute_target_http_proxy.new[0]:
     description: Terraform managed.
     http_keep_alive_timeout_sec: null
     name: gf-rrag-search-0-redirect
