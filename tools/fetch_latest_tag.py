@@ -46,6 +46,11 @@ def main():
         action='store_true',
         help='Enable debug mode to print detailed execution steps.'
     )
+    parser.add_argument(
+        '--sort_by_date',
+        action='store_true',
+        help='Get latest tag by date instead of version number.'
+    )
     args = parser.parse_args()
     repo_url = args.repository_url
 
@@ -79,13 +84,23 @@ def main():
         git_list_proc.stdout.close()
         all_v_tags = sort_proc.stdout.strip().splitlines()
 
-        # Get the latest tag based on the commit date
-        latest_tag_proc = subprocess.run(
-            ['git', 'tag', '--list', 'v*', '--sort=-committerdate'],
-            cwd=temp_dir, capture_output=True, text=True, check=True
-        )
-        date_sorted_tags = latest_tag_proc.stdout.strip().splitlines()
-        latest_tag_by_date = date_sorted_tags[0] if date_sorted_tags else ""
+        if args.sort_by_date:
+            # Get the latest tag based on the commit date
+            latest_tag_proc = subprocess.run(
+                ['git', 'tag', '--list', 'v*', '--sort=-committerdate'],
+                cwd=temp_dir, capture_output=True, text=True, check=True
+            )
+            date_sorted_tags = latest_tag_proc.stdout.strip().splitlines()
+            latest_tag = date_sorted_tags[0] if date_sorted_tags else ""
+
+        else:
+            # Get the latest tag based on the version tag
+            latest_tag_proc = subprocess.run(
+                ['git', 'tag', '--list', '--sort=-v:refname'],
+                cwd=temp_dir, capture_output=True, text=True, check=True
+            )
+            version_sorted_tags = latest_tag_proc.stdout.strip().splitlines()
+            latest_tag = version_sorted_tags[0] if version_sorted_tags else ""
 
         if args.debug:
             print("---")
@@ -96,7 +111,7 @@ def main():
                 print("(No tags starting with 'v' found)")
             print("---")
 
-        print(latest_tag_by_date)
+        print(latest_tag)
 
     except subprocess.CalledProcessError as e:
         print(f"\nError: A git command failed with exit code {e.returncode}.", file=sys.stderr)
