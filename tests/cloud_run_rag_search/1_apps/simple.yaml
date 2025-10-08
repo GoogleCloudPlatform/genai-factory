@@ -25,7 +25,6 @@ values:
       - scope: null
         service_account_email: gf-rrag-ing-sched-0@prefix-gf-rrag-search-0.iam.gserviceaccount.com
       oidc_token: []
-      uri: https://europe-west1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/prefix-gf-rrag-search-0/jobs/gf-rrag-search-0-ingestion:run
     name: gf-rrag-search-0
     project: prefix-gf-rrag-search-0
     pubsub_target: []
@@ -100,6 +99,7 @@ values:
       goog-terraform-provisioned: 'true'
     timeouts: null
   google_compute_region_security_policy.security_policy_internal[0]:
+    advanced_options_config: []
     ddos_protection_config: []
     description: null
     name: gf-rrag-search-0-internal
@@ -214,12 +214,17 @@ values:
       goog-terraform-provisioned: 'true'
     timeouts: null
   google_vertex_ai_index_endpoint_deployed_index.index_deployment:
-    dedicated_resources: []
+    dedicated_resources:
+    - machine_spec:
+      - machine_type: e2-standard-2
+      max_replica_count: 2
+      min_replica_count: 2
     deployed_index_auth_config: []
     deployed_index_id: gf_rrag_search_0
     deployment_group: default
     display_name: gf-rrag-search-0
     enable_access_logging: false
+    region: europe-west1
     reserved_ip_ranges: null
     timeouts: null
   module.cas[0].google_privateca_ca_pool.default[0]:
@@ -351,6 +356,7 @@ values:
     invoker_iam_disabled: false
     labels: null
     location: europe-west1
+    multi_region_settings: []
     name: gf-rrag-search-0-frontend
     project: prefix-gf-rrag-search-0
     scaling: []
@@ -375,9 +381,6 @@ values:
       labels: null
       node_selector: []
       revision: null
-      scaling:
-      - max_instance_count: 3
-        min_instance_count: null
       service_account: gf-rrag-fe-0@prefix-gf-rrag-search-0.iam.gserviceaccount.com
       service_mesh: []
       session_affinity: null
@@ -387,10 +390,7 @@ values:
     timeouts: null
   module.cloud_run_frontend.google_cloud_run_v2_service_iam_binding.binding["roles/run.invoker"]:
     condition: []
-    location: europe-west1
     members: null
-    name: gf-rrag-search-0-frontend
-    project: prefix-gf-rrag-search-0
     role: roles/run.invoker
   module.cloud_run_ingestion.google_cloud_run_v2_job.job_unmanaged[0]:
     annotations: null
@@ -421,7 +421,9 @@ values:
           volume_mounts: []
           working_dir: null
         encryption_key: null
+        gpu_zonal_redundancy_disabled: null
         max_retries: 3
+        node_selector: []
         service_account: gf-rrag-ing-0@prefix-gf-rrag-search-0.iam.gserviceaccount.com
         volumes: []
     terraform_labels:
@@ -429,11 +431,8 @@ values:
     timeouts: null
   module.cloud_run_ingestion.google_cloud_run_v2_job_iam_binding.binding["roles/run.invoker"]:
     condition: []
-    location: europe-west1
     members:
     - serviceAccount:gf-rrag-ing-sched-0@prefix-gf-rrag-search-0.iam.gserviceaccount.com
-    name: gf-rrag-search-0-ingestion
-    project: prefix-gf-rrag-search-0
     role: roles/run.invoker
   module.dns_policy_googleapis[0].google_dns_response_policy.default[0]:
     description: Terraform managed.
@@ -1062,6 +1061,7 @@ values:
     name: gf-rrag-search-0-external-default
     network_pass_through_lb_traffic_policy: []
     outlier_detection: []
+    params: []
     project: prefix-gf-rrag-search-0
     protocol: HTTPS
     security_settings: []
@@ -1098,12 +1098,10 @@ values:
     app_engine: []
     cloud_function: []
     cloud_run:
-    - service: gf-rrag-search-0-frontend
-      tag: null
+    - tag: null
       url_mask: null
     description: Terraform managed.
     name: gf-rrag-search-0-external-gf-rrag-search-0-external
-    network: null
     network_endpoint_type: SERVERLESS
     project: prefix-gf-rrag-search-0
     psc_target_service: null
@@ -1220,6 +1218,7 @@ values:
     dynamic_forwarding: []
     enable_cdn: null
     failover_policy: []
+    ha_policy: []
     health_checks: null
     ip_address_selection_policy: null
     load_balancing_scheme: INTERNAL_MANAGED
@@ -1227,6 +1226,7 @@ values:
     name: gf-rrag-search-0-internal-default
     network: null
     outlier_detection: []
+    params: []
     project: prefix-gf-rrag-search-0
     protocol: HTTPS
     region: europe-west1
@@ -1237,12 +1237,10 @@ values:
     app_engine: []
     cloud_function: []
     cloud_run:
-    - service: gf-rrag-search-0-frontend
-      tag: null
+    - tag: null
       url_mask: null
     description: Terraform managed.
     name: gf-rrag-search-0-internal-gf-rrag-search-0-internal
-    network: null
     network_endpoint_type: SERVERLESS
     project: prefix-gf-rrag-search-0
     psc_target_service: null
@@ -1351,6 +1349,7 @@ values:
     name: net-0
     network_firewall_policy_enforcement_order: AFTER_CLASSIC_FIREWALL
     network_profile: null
+    params: []
     project: prefix-gf-rrag-search-0
     routing_mode: GLOBAL
     timeouts: null
@@ -1363,6 +1362,7 @@ values:
     next_hop_ilb: null
     next_hop_instance: null
     next_hop_vpn_tunnel: null
+    params: []
     priority: 1000
     project: prefix-gf-rrag-search-0
     tags: null
@@ -1376,6 +1376,7 @@ values:
     next_hop_ilb: null
     next_hop_instance: null
     next_hop_vpn_tunnel: null
+    params: []
     priority: 1000
     project: prefix-gf-rrag-search-0
     tags: null
@@ -1389,6 +1390,7 @@ values:
     next_hop_ilb: null
     next_hop_instance: null
     next_hop_vpn_tunnel: null
+    params: []
     priority: 1000
     project: prefix-gf-rrag-search-0
     tags: null
@@ -1402,6 +1404,7 @@ values:
     log_config: []
     name: proxy-only-sub-0
     network: net-0
+    params: []
     project: prefix-gf-rrag-search-0
     purpose: REGIONAL_MANAGED_PROXY
     region: europe-west1
@@ -1417,6 +1420,7 @@ values:
     log_config: []
     name: sub-0
     network: net-0
+    params: []
     private_ip_google_access: true
     project: prefix-gf-rrag-search-0
     region: europe-west1

@@ -8,6 +8,11 @@ Genai-factory is a collection of **end-to-end blueprints to deploy generative AI
 - Follows the least-privilege principle: no default service accounts, primitive roles, minimal permissions.
 - Compatible with [Cloud Foundation Fabric FAST](https://github.com/GoogleCloudPlatform/cloud-foundation-fabric) [project-factory](https://github.com/GoogleCloudPlatform/cloud-foundation-fabric/tree/master/modules/project-factory) and application templates.
 
+## Cloud Foundation Fabric Compatibility
+
+Works with Cloud Foundation Fabric from [v44.1.0](https://github.com/GoogleCloudPlatform/cloud-foundation-fabric/tree/v44.1.0).
+Compatibility with master is not guaranteed.
+
 ## Factories
 
 - [Single Cloud Run](./cloud-run-single/README.md) - A secure Cloud Run deployment to interact with Gemini and optionally deploy [ADK agents](https://google.github.io/adk-docs/deploy/cloud-run/).

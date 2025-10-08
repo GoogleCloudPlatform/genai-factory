@@ -25,7 +25,6 @@ values:
       - scope: null
         service_account_email: gf-rrag-ing-sched-0@prefix-gf-rrag-0.iam.gserviceaccount.com
       oidc_token: []
-      uri: https://europe-west1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/prefix-gf-rrag-0/jobs/gf-rrag-0-ingestion:run
     name: gf-rrag-0
     project: prefix-gf-rrag-0
     pubsub_target: []
@@ -100,6 +99,7 @@ values:
       goog-terraform-provisioned: 'true'
     timeouts: null
   google_compute_region_security_policy.security_policy_internal[0]:
+    advanced_options_config: []
     ddos_protection_config: []
     description: null
     name: gf-rrag-0-internal
@@ -209,6 +209,8 @@ values:
     external_catalog_table_options: []
     external_data_configuration: []
     friendly_name: gf_rrag_0
+    ignore_auto_generated_schema: false
+    ignore_schema_changes: null
     labels: null
     materialized_view: []
     project: prefix-gf-rrag-0
@@ -353,6 +355,7 @@ values:
     invoker_iam_disabled: false
     labels: null
     location: europe-west1
+    multi_region_settings: []
     name: gf-rrag-0-frontend
     project: prefix-gf-rrag-0
     scaling: []
@@ -387,9 +390,6 @@ values:
       labels: null
       node_selector: []
       revision: null
-      scaling:
-      - max_instance_count: 3
-        min_instance_count: null
       service_account: gf-rrag-fe-0@prefix-gf-rrag-0.iam.gserviceaccount.com
       service_mesh: []
       session_affinity: null
@@ -399,10 +399,7 @@ values:
     timeouts: null
   module.cloud_run_frontend.google_cloud_run_v2_service_iam_binding.binding["roles/run.invoker"]:
     condition: []
-    location: europe-west1
     members: null
-    name: gf-rrag-0-frontend
-    project: prefix-gf-rrag-0
     role: roles/run.invoker
   module.cloud_run_ingestion.google_cloud_run_v2_job.job_unmanaged[0]:
     annotations: null
@@ -425,6 +422,7 @@ values:
       - containers:
         - command:
           - /cloud-sql-proxy
+          depends_on: null
           env: []
           image: gcr.io/cloud-sql-connectors/cloud-sql-proxy
           name: cloudsql-proxy
@@ -433,6 +431,7 @@ values:
           working_dir: null
         - args: null
           command: null
+          depends_on: null
           env: []
           image: us-docker.pkg.dev/cloudrun/container/hello
           name: ingestion
@@ -440,7 +439,9 @@ values:
           volume_mounts: []
           working_dir: null
         encryption_key: null
+        gpu_zonal_redundancy_disabled: null
         max_retries: 3
+        node_selector: []
         service_account: gf-rrag-ing-0@prefix-gf-rrag-0.iam.gserviceaccount.com
         volumes: []
     terraform_labels:
@@ -448,11 +449,8 @@ values:
     timeouts: null
   module.cloud_run_ingestion.google_cloud_run_v2_job_iam_binding.binding["roles/run.invoker"]:
     condition: []
-    location: europe-west1
     members:
     - serviceAccount:gf-rrag-ing-sched-0@prefix-gf-rrag-0.iam.gserviceaccount.com
-    name: gf-rrag-0-ingestion
-    project: prefix-gf-rrag-0
     role: roles/run.invoker
   module.cloudsql.google_sql_database.databases["gf-rrag-0"]:
     deletion_policy: DELETE
@@ -461,6 +459,7 @@ values:
     project: prefix-gf-rrag-0
     timeouts: null
   module.cloudsql.google_sql_database_instance.primary:
+    backupdr_backup: null
     clone: []
     database_version: POSTGRES_14
     deletion_protection: true
@@ -496,6 +495,7 @@ values:
         psc_config:
         - allowed_consumer_projects:
           - prefix-gf-rrag-0
+          network_attachment_uri: ''
           psc_auto_connections: []
           psc_enabled: true
         server_ca_pool: null
@@ -1147,6 +1147,7 @@ values:
     name: gf-rrag-0-external-default
     network_pass_through_lb_traffic_policy: []
     outlier_detection: []
+    params: []
     project: prefix-gf-rrag-0
     protocol: HTTPS
     security_settings: []
@@ -1183,12 +1184,10 @@ values:
     app_engine: []
     cloud_function: []
     cloud_run:
-    - service: gf-rrag-0-frontend
-      tag: null
+    - tag: null
       url_mask: null
     description: Terraform managed.
     name: gf-rrag-0-external-gf-rrag-0-external
-    network: null
     network_endpoint_type: SERVERLESS
     project: prefix-gf-rrag-0
     psc_target_service: null
@@ -1305,6 +1304,7 @@ values:
     dynamic_forwarding: []
     enable_cdn: null
     failover_policy: []
+    ha_policy: []
     health_checks: null
     ip_address_selection_policy: null
     load_balancing_scheme: INTERNAL_MANAGED
@@ -1312,6 +1312,7 @@ values:
     name: gf-rrag-0-internal-default
     network: null
     outlier_detection: []
+    params: []
     project: prefix-gf-rrag-0
     protocol: HTTPS
     region: europe-west1
@@ -1322,12 +1323,10 @@ values:
     app_engine: []
     cloud_function: []
     cloud_run:
-    - service: gf-rrag-0-frontend
-      tag: null
+    - tag: null
       url_mask: null
     description: Terraform managed.
     name: gf-rrag-0-internal-gf-rrag-0-internal
-    network: null
     network_endpoint_type: SERVERLESS
     project: prefix-gf-rrag-0
     psc_target_service: null
@@ -1436,6 +1435,7 @@ values:
     name: net-0
     network_firewall_policy_enforcement_order: AFTER_CLASSIC_FIREWALL
     network_profile: null
+    params: []
     project: prefix-gf-rrag-0
     routing_mode: GLOBAL
     timeouts: null
@@ -1448,6 +1448,7 @@ values:
     next_hop_ilb: null
     next_hop_instance: null
     next_hop_vpn_tunnel: null
+    params: []
     priority: 1000
     project: prefix-gf-rrag-0
     tags: null
@@ -1461,6 +1462,7 @@ values:
     next_hop_ilb: null
     next_hop_instance: null
     next_hop_vpn_tunnel: null
+    params: []
     priority: 1000
     project: prefix-gf-rrag-0
     tags: null
@@ -1474,6 +1476,7 @@ values:
     next_hop_ilb: null
     next_hop_instance: null
     next_hop_vpn_tunnel: null
+    params: []
     priority: 1000
     project: prefix-gf-rrag-0
     tags: null
@@ -1487,6 +1490,7 @@ values:
     log_config: []
     name: proxy-only-sub-0
     network: net-0
+    params: []
     project: prefix-gf-rrag-0
     purpose: REGIONAL_MANAGED_PROXY
     region: europe-west1
@@ -1502,6 +1506,7 @@ values:
     log_config: []
     name: sub-0
     network: net-0
+    params: []
     private_ip_google_access: true
     project: prefix-gf-rrag-0
     region: europe-west1

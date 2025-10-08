@@ -13,11 +13,11 @@
 # limitations under the License.
 
 module "cloud_run_frontend" {
-  source              = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/cloud-run-v2"
+  source              = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/cloud-run-v2?ref=v44.1.0"
   project_id          = var.project_config.id
+  type                = "SERVICE"
   name                = "${var.name}-frontend"
   region              = var.region
-  ingress             = var.cloud_run_configs.frontend.ingress
   service_account     = var.service_accounts["project/gf-rrag-fe-0"].email
   deletion_protection = var.enable_deletion_protection
   managed_revision    = false
@@ -26,13 +26,16 @@ module "cloud_run_frontend" {
     "roles/run.invoker" = var.cloud_run_configs.frontend.service_invokers
   }
   revision = {
-    gen2_execution_environment = true
-    max_instance_count         = var.cloud_run_configs.frontend.max_instance_count
     vpc_access = {
       egress  = var.cloud_run_configs.frontend.vpc_access_egress
       network = local.vpc_id
       subnet  = local.subnet_id
       tags    = var.cloud_run_configs.frontend.vpc_access_tags
     }
+  }
+  service_config = {
+    gen2_execution_environment = true
+    ingress                    = var.cloud_run_configs.frontend.ingress
+    max_instance_count         = var.cloud_run_configs.frontend.max_instance_count
   }
 }

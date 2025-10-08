@@ -59,6 +59,6 @@ If you would like to use Model Armor, you need to configure your var.region to b
 
 | name | description | sensitive |
 |---|---|:---:|
-| [commands](outputs.tf#L28) | Run the following commands when the deployment completes to deploy the app. |  |
-| [ip_addresses](outputs.tf#L59) | The load balancers IP addresses. |  |
+| [commands](outputs.tf#L23) | Run the following commands when the deployment completes to deploy the app. |  |
+| [ip_addresses](outputs.tf#L54) | The load balancers IP addresses. |  |
 <!-- END TFDOC -->

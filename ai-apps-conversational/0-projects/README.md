@@ -42,7 +42,7 @@ You should now see the `providers.tf` and `terraform.auto.tfvars` files in the [
 
 | name | description | sensitive |
 |---|---|:---:|
-| [buckets](outputs.tf#L49) | Created buckets. |  |
-| [projects](outputs.tf#L54) | Created projects. |  |
-| [service_accounts](outputs.tf#L59) | Created service accounts. |  |
+| [buckets](outputs.tf#L48) | Created buckets. |  |
+| [projects](outputs.tf#L53) | Created projects. |  |
+| [service_accounts](outputs.tf#L58) | Created service accounts. |  |
 <!-- END TFDOC -->

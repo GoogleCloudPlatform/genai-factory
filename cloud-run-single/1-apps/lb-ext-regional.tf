@@ -131,8 +131,12 @@ module "lb_external_regional" {
         { backend = "${var.name}-external-regional" }
       ]
       health_checks = []
+<<<<<<< HEAD
       # TODO troubleshoot Cloud Armor
       # security_policy = google_compute_region_security_policy.security_policy_external_regional[0].id
+=======
+      # Not supported with service extensions? security_policy = google_compute_region_security_policy.security_policy_external_regional[0].id
+>>>>>>> a97748d508df2b30dbead9e5cb3b87322e4f3bc3
     }
   }
   health_check_configs = {}

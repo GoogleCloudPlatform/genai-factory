@@ -115,6 +115,10 @@ values:
     member: serviceAccount:iac-rw@your-prefix-gf-ai-apps-srch-0.iam.gserviceaccount.com
     project: your-prefix-gf-ai-apps-srch-0
     timeouts: null
+  module.projects.terraform_data.defaults_preconditions:
+    input: null
+    output: null
+    triggers_replace: null
 
 counts:
   google_project: 1
@@ -128,7 +132,8 @@ counts:
   google_storage_bucket_iam_binding: 2
   local_file: 2
   modules: 5
-  resources: 12
+  resources: 13
+  terraform_data: 1
 
 outputs:
   buckets:
