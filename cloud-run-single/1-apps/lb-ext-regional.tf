@@ -131,7 +131,8 @@ module "lb_external_regional" {
         { backend = "${var.name}-external-regional" }
       ]
       health_checks = []
-      # Not supported with service extensions? security_policy = google_compute_region_security_policy.security_policy_external_regional[0].id
+      # TODO troubleshoot Cloud Armor
+      # security_policy = google_compute_region_security_policy.security_policy_external_regional[0].id
     }
   }
   health_check_configs = {}
@@ -169,7 +170,7 @@ resource "google_network_services_lb_traffic_extension" "traffic_ext" {
     extensions {
       name      = "ext11"
       authority = "ext11.com"
-      service   = module.lb_external_regional[0].backend_service_ids.default
+      service   = "modelarmor.${var.region}.rep.googleapis.com"
       timeout   = "0.1s"
       fail_open = false
 

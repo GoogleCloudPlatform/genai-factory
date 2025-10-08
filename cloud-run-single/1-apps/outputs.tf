@@ -53,6 +53,8 @@ output "commands" {
     --region ${var.region} \
     --image=${var.region}-docker.pkg.dev/${var.project_config.id}/${var.name}/srun \
     --set-env-vars ${local.env_vars}
+
+  #TODO: @legranda add DNS autorization commands
   EOT
 }
 
@@ -76,3 +78,4 @@ output "ip_addresses" {
     )
   }
 }
+

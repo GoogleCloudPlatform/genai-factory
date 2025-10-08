@@ -70,12 +70,12 @@ iam_by_principals:
     - roles/run.admin
     - roles/storage.admin
     - roles/storage.objectUser
+    - roles/serviceusage.serviceUsageConsumer
     # Needed for ILB only
     - roles/certificatemanager.owner
     - roles/privateca.admin
     # Needed for Model Armor
     - roles/modelarmor.admin
-
   gf-srun-0:
     - roles/logging.logWriter
   gf-srun-build-0:
