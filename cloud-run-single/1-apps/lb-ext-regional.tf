@@ -131,12 +131,7 @@ module "lb_external_regional" {
         { backend = "${var.name}-external-regional" }
       ]
       health_checks = []
-<<<<<<< HEAD
-      # TODO troubleshoot Cloud Armor
-      # security_policy = google_compute_region_security_policy.security_policy_external_regional[0].id
-=======
-      # Not supported with service extensions? security_policy = google_compute_region_security_policy.security_policy_external_regional[0].id
->>>>>>> a97748d508df2b30dbead9e5cb3b87322e4f3bc3
+      security_policy = google_compute_region_security_policy.security_policy_external_regional[0].id
     }
   }
   health_check_configs = {}
@@ -165,15 +160,14 @@ resource "google_network_services_lb_traffic_extension" "traffic_ext" {
   forwarding_rules      = [module.lb_external_regional[0].forwarding_rule.id]
 
   extension_chains {
-    name = "chain-model-armor"
+    name = "chain1-model-armor"
 
     match_condition {
       cel_expression = "request.host == '${var.lbs_config.external_regional.domain}'"
     }
 
     extensions {
-      name      = "ext11"
-      authority = "ext11.com"
+      name      = "extension-chain-1-model-armor"
       service   = "modelarmor.${var.region}.rep.googleapis.com"
       timeout   = "0.1s"
       fail_open = false
