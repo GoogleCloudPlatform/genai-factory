@@ -12,6 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+locals {
+  # Used in traffic service extension
+  forwarding_rule_self_link_with_project_number = replace(
+    module.lb_external_regional[0].forwarding_rule.self_link,
+    var.project_config.id,  
+    var.project_config.number
+  )
+}
+
 # Cloud Armor security policy
 resource "google_compute_region_security_policy" "security_policy_external_regional" {
   count   = var.lbs_config.external_regional.enable ? 1 : 0
@@ -157,13 +166,14 @@ resource "google_network_services_lb_traffic_extension" "traffic_ext" {
   location = var.region
 
   load_balancing_scheme = "EXTERNAL_MANAGED"
-  forwarding_rules      = [module.lb_external_regional[0].forwarding_rule.id]
+  forwarding_rules      = [local.forwarding_rule_self_link_with_project_number]
 
   extension_chains {
     name = "chain1-model-armor"
 
     match_condition {
-      cel_expression = "request.host == '${var.lbs_config.external_regional.domain}'"
+      # cel_expression = "request.host == '${var.lbs_config.external_regional.domain}'"
+      cel_expression = "true" # matches all traffic
     }
 
     extensions {
