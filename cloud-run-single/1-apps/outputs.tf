@@ -73,4 +73,3 @@ output "ip_addresses" {
     )
   }
 }
-
