@@ -74,15 +74,8 @@ iam_by_principals:
     # Needed for ILB only
     - roles/certificatemanager.owner
     - roles/privateca.admin
-<<<<<<< HEAD
     # Needed for Model Armor
     - roles/modelarmor.admin
-  gf-srun-0:
-=======
-  $iam_principals:service_accounts/project/gf-srun-0:
-    # Needed for Model Armor
-    - roles/modelarmor.admin
->>>>>>> a97748d508df2b30dbead9e5cb3b87322e4f3bc3
     - roles/logging.logWriter
   $iam_principals:service_accounts/project/gf-srun-build-0:
     - roles/artifactregistry.writer
@@ -92,6 +85,11 @@ iam_by_principals:
     - roles/run.admin
     - roles/storage.admin
     - roles/storage.objectUser
+  # Service agent for service extensions
+  $service_agents:dep:
+    - roles/serviceusage.serviceUsageConsumer
+    - roles/modelarmor.calloutUser
+    - roles/modelarmor.user
 
 # Grant roles/aiplatform.user as additive,
 # as it is authoritatively granted by aiplatform APIs to default SA
