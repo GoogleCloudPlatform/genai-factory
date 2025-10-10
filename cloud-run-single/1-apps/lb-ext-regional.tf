@@ -173,22 +173,24 @@ resource "google_network_services_lb_traffic_extension" "traffic_ext" {
 
     match_condition {
       # cel_expression = "request.host == '${var.lbs_config.external_regional.domain}'"
+      # cel_expression = "false" # matches no traffic
       cel_expression = "true" # matches all traffic
     }
 
     extensions {
       name      = "extension-chain-1-model-armor"
       service   = "modelarmor.${var.region}.rep.googleapis.com"
-      timeout   = "0.1s"
+      timeout   = "1s"
       fail_open = false
 
-      supported_events = ["REQUEST_HEADERS"]
-      forward_headers  = ["custom-header"]
+      supported_events = ["REQUEST_HEADERS", "REQUEST_BODY", "REQUEST_TRAILERS", "RESPONSE_HEADERS", "RESPONSE_BODY", "RESPONSE_TRAILERS"]
+
+      # forward_headers  = ["custom-header"]
       metadata = {
         model_armor_settings = <<EOT
           [
             {
-              "model" : "default",
+              "model" : "gemini-2.0-flash",
               "model_response_template_id" : "${google_model_armor_template.model-armor-template.id}",
               "user_prompt_template_id" : "${google_model_armor_template.model-armor-template.id}"
             }
