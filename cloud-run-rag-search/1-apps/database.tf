@@ -17,7 +17,7 @@ locals {
 }
 
 module "index-bucket" {
-  source        = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/gcs?ref=v45.0.0"
+  source        = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/gcs?ref=v46.0.0"
   project_id    = var.project_config.id
   prefix        = var.project_config.prefix
   name          = var.name
