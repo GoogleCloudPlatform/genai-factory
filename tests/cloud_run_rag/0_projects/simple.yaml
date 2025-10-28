@@ -15,6 +15,7 @@
 values:
   google_service_account_iam_member.me_sa_token_creator[0]:
     condition: []
+    member: user:tests@automation.com
     role: roles/iam.serviceAccountTokenCreator
     service_account_id: projects/your-prefix-gf-rrag-0/serviceAccounts/iac-rw@your-prefix-gf-rrag-0.iam.gserviceaccount.com
   local_file.providers:
@@ -64,12 +65,14 @@ values:
     members:
     - serviceAccount:iac-rw@your-prefix-gf-rrag-0.iam.gserviceaccount.com
     role: roles/storage.objectAdmin
+    timeouts: null
   ? module.projects.module.buckets["project/iac-state"].google_storage_bucket_iam_binding.authoritative["roles/storage.objectViewer"]
   : bucket: your-prefix-gf-rrag-0-iac-state
     condition: []
     members:
     - serviceAccount:iac-rw@your-prefix-gf-rrag-0.iam.gserviceaccount.com
     role: roles/storage.objectViewer
+    timeouts: null
   module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/artifactregistry.admin"]:
     condition: []
     members:
@@ -337,6 +340,10 @@ values:
     condition: []
     project: your-prefix-gf-rrag-0
     role: roles/aiplatform.user
+  module.projects.module.projects["project"].google_project_iam_member.service_agents["vertex-telemetry"]:
+    condition: []
+    project: your-prefix-gf-rrag-0
+    role: roles/aiplatform.telemetryServiceAgent
   module.projects.module.projects["project"].google_project_iam_member.service_agents["vertex-tune"]:
     condition: []
     project: your-prefix-gf-rrag-0
@@ -505,8 +512,6 @@ values:
     member: serviceAccount:iac-rw@your-prefix-gf-rrag-0.iam.gserviceaccount.com
     project: your-prefix-gf-rrag-0
     timeouts: null
-  module.projects.module.service_accounts-iam["project/iac-rw"].data.google_service_account.service_account[0]:
-    account_id: iac-rw
   ? module.projects.module.service_accounts-iam["project/iac-rw"].google_service_account_iam_member.additive["$service_account_ids:project/gf-rrag-fe-0-roles/iam.serviceAccountUser"]
   : condition: []
     role: roles/iam.serviceAccountUser
@@ -536,10 +541,10 @@ counts:
   google_bigquery_default_service_account: 1
   google_project: 1
   google_project_iam_binding: 22
-  google_project_iam_member: 27
+  google_project_iam_member: 28
   google_project_service: 12
   google_project_service_identity: 8
-  google_service_account: 7
+  google_service_account: 6
   google_service_account_iam_member: 6
   google_storage_bucket: 1
   google_storage_bucket_iam_binding: 2
