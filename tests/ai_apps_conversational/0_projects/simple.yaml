@@ -15,6 +15,7 @@
 values:
   google_service_account_iam_member.me_sa_token_creator[0]:
     condition: []
+    member: user:tests@automation.com
     role: roles/iam.serviceAccountTokenCreator
     service_account_id: projects/your-prefix-gf-ai-apps-df-0/serviceAccounts/iac-rw@your-prefix-gf-ai-apps-df-0.iam.gserviceaccount.com
   local_file.providers:
@@ -64,12 +65,14 @@ values:
     members:
     - serviceAccount:iac-rw@your-prefix-gf-ai-apps-df-0.iam.gserviceaccount.com
     role: roles/storage.objectAdmin
+    timeouts: null
   ? module.projects.module.buckets["project/iac-state"].google_storage_bucket_iam_binding.authoritative["roles/storage.objectViewer"]
   : bucket: your-prefix-gf-ai-apps-df-0-iac-state
     condition: []
     members:
     - serviceAccount:iac-rw@your-prefix-gf-ai-apps-df-0.iam.gserviceaccount.com
     role: roles/storage.objectViewer
+    timeouts: null
   module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/dialogflow.admin"]:
     condition: []
     members:
