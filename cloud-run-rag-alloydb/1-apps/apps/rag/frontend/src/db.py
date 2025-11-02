@@ -31,6 +31,7 @@ logger = logging.getLogger(__name__)
 _db_pool: sqlalchemy.engine.Engine | None = None
 _connector: Connector | None = None
 
+
 def init_db_connection_pool():
     """Initializes a connection pool using the Python Connector."""
     global _db_pool, _connector
@@ -41,13 +42,12 @@ def init_db_connection_pool():
     # Initialize the database connector
     _connector = Connector(ip_type="PSC")
 
-
-#    # The AlloyDB Connector requires ALLOYDB_INSTANCE_URI, DB_NAME, and DB_SA.
-#    if not all([config.ALLOYDB_INSTANCE_URI, config.DB_NAME, config.DB_SA]):
-#        logger.warning(
-#            "AlloyDB configuration (ALLOYDB_INSTANCE_URI, DB_NAME, DB_SA) "
-#            "is not complete. Database features will be disabled.")
-#        return
+    #    # The AlloyDB Connector requires ALLOYDB_INSTANCE_URI, DB_NAME, and DB_SA.
+    #    if not all([config.ALLOYDB_INSTANCE_URI, config.DB_NAME, config.DB_SA]):
+    #        logger.warning(
+    #            "AlloyDB configuration (ALLOYDB_INSTANCE_URI, DB_NAME, DB_SA) "
+    #            "is not complete. Database features will be disabled.")
+    #        return
 
     # This function will be called by SQLAlchemy to create new connections.
     def getconn():
@@ -60,7 +60,7 @@ def init_db_connection_pool():
             driver="pg8000",
             user=config.DB_SA,
             db=config.DB_NAME,
-            enable_iam_auth=True, # Use IAM database authentication
+            enable_iam_auth=True,  # Use IAM database authentication
         )
         logging.info("Direct connection to AlloyDB was successful!")
 
@@ -70,6 +70,7 @@ def init_db_connection_pool():
             f"Attempting to connect to AlloyDB instance '{config.ALLOYDB_INSTANCE_URI}' "
             f"in database '{config.DB_NAME}', user '{config.DB_SA}' using IAM auth."
         )
+
     logger.info(
         f"Attempting to connect to AlloyDB instance '{config.ALLOYDB_INSTANCE_URI}' in database '{config.DB_NAME}', user '{config.DB_SA}'"
     )
@@ -98,19 +99,24 @@ def init_db_connection_pool():
         _db_pool = None
         raise
 
+
 def get_db_session() -> Session:
     """Dependency to get a database session."""
     # Raise an error or handle as appropriate
     # if the DB connection is critical
     if not _db_pool:
-        logger.error("Database pool not initialized. Cannot provide DB session.")
+        logger.error(
+            "Database pool not initialized. Cannot provide DB session.")
         raise ConnectionError("Database pool not initialized.")
-    SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=_db_pool)
+    SessionLocal = sessionmaker(autocommit=False,
+                                autoflush=False,
+                                bind=_db_pool)
     db = SessionLocal()
     try:
         yield db
     finally:
         db.close()
+
 
 def search_similar_documents(db: Session, embedding: list[float],
                              top_k: int) -> list[str]:
@@ -140,12 +146,13 @@ def search_similar_documents(db: Session, embedding: list[float],
         return documents
     except sqlalchemy.exc.SQLAlchemyError as e:
         logger.error(f"Database error during similarity search: {e}",
-                      exc_info=True)
+                     exc_info=True)
         return []
     except Exception as e:
         logger.error(f"Unexpected error during similarity search: {e}",
-                      exc_info=True)
+                     exc_info=True)
         return []
+
 
 def dispose_db_pool():
     """Disposes of the database connection pool and the database connector."""

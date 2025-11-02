@@ -24,13 +24,13 @@ from src import config
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,  # Set the default logging level
-    format='%(asctime)s - %(levelname)s - %(message)s'
-)
+    format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
 # The SQLAlchemy engine and the database connector are managed globally.
 _db_pool: sqlalchemy.engine.Engine | None = None
 _connector: Connector | None = None
+
 
 def init_db_connection_pool():
     """Initializes a connection pool using the Python Connector."""
@@ -53,7 +53,7 @@ def init_db_connection_pool():
             driver="pg8000",
             user=config.DB_SA,
             db=config.DB_NAME,
-            enable_iam_auth=True, # Use IAM database authentication
+            enable_iam_auth=True,  # Use IAM database authentication
         )
 
         logging.info("Direct connection to AlloyDB was successful!")
