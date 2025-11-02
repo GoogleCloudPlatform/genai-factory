@@ -1,6 +1,6 @@
 # RAG with Cloud Run and Cloud SQL
 
-The module deploys a "Retrieval-Augmented Generation" (RAG) system, leveraging Cloud Run, Cloud SQL and BigQuery.
+This module deploys a "Retrieval-Augmented Generation" (RAG) system, leveraging Cloud Run, Cloud SQL and BigQuery. For the same architecture using AlloyDB instead of Cloud SQL, consult the [corresponding folder](../cloud-run-rag-alloydb/README.md).
 
 ![Architecture Diagram](./diagram.png)
 
