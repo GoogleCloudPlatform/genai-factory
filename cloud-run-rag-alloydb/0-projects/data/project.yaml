@@ -29,6 +29,7 @@ services:
   - compute.googleapis.com
   - dns.googleapis.com
   - run.googleapis.com
+  - secretmanager.googleapis.com # for AlloyDB default user password
   - servicenetworking.googleapis.com
   # Needed for ILB only
   - certificatemanager.googleapis.com
@@ -80,6 +81,7 @@ iam_by_principals:
     - roles/compute.securityAdmin
     - roles/dns.admin
     - roles/run.admin
+    - roles/secretmanager.admin
     - roles/storage.admin
     - roles/storage.objectCreator
     - roles/storage.objectViewer

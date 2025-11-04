@@ -28,6 +28,11 @@ module "bigquery-dataset" {
   }
 }
 
+data "google_secret_manager_secret_version_access" "alloydb_initial_password" {
+  project = var.project_config.id
+  secret  = "alloydb-initial-postgres-password"
+}
+
 module "alloydb" {
   source              = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/alloydb?ref=v46.0.0"
   project_id          = var.project_config.id
@@ -39,20 +44,23 @@ module "alloydb" {
   network_config = {
     psc_config = { allowed_consumer_projects = [var.project_config.number] }
   }
+  initial_user = {
+    user     = "postgres"
+    password = data.google_secret_manager_secret_version_access.alloydb_initial_password.secret_data
+  }
   users = {
     # https://docs.cloud.google.com/alloydb/docs/database-users/manage-iam-auth#create-user
     # "For an IAM service account, supply the service account's address
     # without the .gserviceaccount.com suffix"
     (trimsuffix(var.service_accounts["project/gf-rrag-fe-0"].email, ".gserviceaccount.com")) = {
-      type  = "ALLOYDB_IAM_USER"
-      roles = ["alloydbiamuser", "alloydbsuperuser"] # TODO
-      # roles    = ["alloydbsuperuser"] # TODO: nope, this did not help
+      type     = "ALLOYDB_IAM_USER"
+      roles    = ["alloydbiamuser", "alloydbsuperuser"]
+      roles    = ["alloydbiamuser"]
       password = null # password will be generated
     }
     (trimsuffix(var.service_accounts["project/gf-rrag-ing-0"].email, ".gserviceaccount.com")) = {
-      type  = "ALLOYDB_IAM_USER"
-      roles = ["alloydbiamuser", "alloydbsuperuser"]
-      # roles    = ["alloydbsuperuser"] # TODO: nope, this did not help
+      type     = "ALLOYDB_IAM_USER"
+      roles    = ["alloydbiamuser", "alloydbsuperuser"]
       password = null # password will be generated
     }
   }
@@ -62,7 +70,6 @@ module "alloydb" {
 }
 
 # Create a PSC endpoint using the AlloyDB PSC attachment
-
 resource "google_compute_address" "psc_consumer_address" {
   name         = var.name
   project      = var.project_config.id
@@ -72,11 +79,12 @@ resource "google_compute_address" "psc_consumer_address" {
 }
 
 resource "google_compute_forwarding_rule" "psc_consumer_fwd_rule" {
-  name                    = var.name
-  project                 = var.project_config.id
-  region                  = var.region
-  target                  = module.alloydb.service_attachment
-  load_balancing_scheme   = "" # need to override EXTERNAL default when target is a service attachment
+  name    = var.name
+  project = var.project_config.id
+  region  = var.region
+  target  = module.alloydb.service_attachment
+  # need to override EXTERNAL default when target is a service attachment
+  load_balancing_scheme   = ""
   network                 = local.vpc_id
   ip_address              = google_compute_address.psc_consumer_address.id
   allow_psc_global_access = true
@@ -85,7 +93,7 @@ resource "google_compute_forwarding_rule" "psc_consumer_fwd_rule" {
 module "psc_consumer_dns_zone" {
   source        = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/dns?ref=v46.0.0"
   project_id    = var.project_config.id
-  name          = "${var.name}-alloydb" # TODO: check, it was just var.name
+  name          = "${var.name}-alloydb"
   description   = "DNS Zone for the PSC access to AlloyDB"
   force_destroy = !var.enable_deletion_protection
   zone_config = {

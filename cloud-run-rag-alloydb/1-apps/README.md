@@ -9,6 +9,23 @@ It is responsible for deploying the components enabling the AI use case, either 
 
 This assumes you have created a project leveraging the [0-projects](../0-projects) stage.
 
+Since AlloyDB started enforcing setting an initial password for the default user, you need to first specify the password for the postgres user. The secure way to do so is set up in this repository: Google Secret Manager secret "alloydb-initial-postgres-password" is used.
+
+In order to do so, execute the following (change the commands accordingly!):
+
+```shell
+export PROJECT_ID=your_project_id_here # change this!
+gcloud secrets create alloydb-initial-postgres-password \
+  --replication-policy="automatic" \
+  --project=$PROJECT_ID
+echo your_secure_password_here | gcloud secrets versions add \
+  alloydb-initial-postgres-password \
+  --data-file=- \
+  --project=$PROJECT_ID
+```
+
+You can set up and run Terraform afterwards:
+
 ```shell
 cp terraform.tfvars.sample terraform.tfvars # Customize
 terraform init
