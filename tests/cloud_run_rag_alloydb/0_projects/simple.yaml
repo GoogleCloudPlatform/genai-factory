@@ -568,7 +568,7 @@ values:
 counts:
   google_bigquery_default_service_account: 1
   google_project: 1
-  google_project_iam_binding: 24
+  google_project_iam_binding: 25
   google_project_iam_member: 29
   google_project_service: 13
   google_project_service_identity: 9
