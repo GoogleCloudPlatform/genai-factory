@@ -28,63 +28,6 @@ module "bigquery-dataset" {
   }
 }
 
-# Networking resources for AlloyDB
-/*
-module "dns_private_zone_alloydb" {
-  count         = var.create_alloydb ? 1 : 0
-  source        = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/dns?ref=v46.0.0"
-  project_id    = var.project_config.id
-  name          = "${var.name}-alloydb"
-  force_destroy = !var.enable_deletion_protection
-  zone_config = {
-    domain = module.alloydb[0].psc_dns_name
-    private = {
-      client_networks = [local.vpc_id]
-    }
-  }
-  recordsets = {}
-}
-
-resource "google_dns_record_set" "alloydb_dns_record_set" {
-  count        = var.create_alloydb ? 1 : 0
-  project      = var.project_config.id
-  managed_zone = module.dns_private_zone_alloydb[0].name
-  name         = module.alloydb[0].psc_dns_name
-  type         = "A"
-  ttl          = 300
-  rrdatas      = [google_compute_address.alloydb_address[0].address]
-}
-
-resource "google_compute_address" "alloydb_address" {
-  count        = var.create_alloydb ? 1 : 0
-  name         = "${var.name}-alloydb"
-  project      = var.project_config.id
-  address_type = "INTERNAL"
-  subnetwork   = local.subnet_id
-  region       = var.region
-}
-
-resource "google_compute_forwarding_rule" "alloydb_psc_endpoint" {
-  count                 = var.create_alloydb ? 1 : 0
-  name                  = "${var.name}-alloydb"
-  project               = var.project_config.id
-  region                = var.region
-  target                = module.alloydb[0].service_attachment
-  load_balancing_scheme = ""
-  network               = local.vpc_id
-  ip_address            = google_compute_address.alloydb_address[0].id
-}
-
-# this was still for sql
-resource "google_compute_network_attachment" "psc_attachment" {
-  name                  = var.name
-  project               = var.project_config.id
-  region                = var.region
-  connection_preference = "ACCEPT_AUTOMATIC"
-  subnetworks           = [local.subnet_id]
-}
-*/
-
 module "alloydb" {
   source              = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/alloydb?ref=v46.0.0"
   project_id          = var.project_config.id
@@ -95,10 +38,7 @@ module "alloydb" {
   deletion_protection = var.enable_deletion_protection
   network_config = {
     psc_config = { allowed_consumer_projects = [var.project_config.number] }
-    # psa_config = { network = local.vpc_id }
   }
-  # TODO: ???
-  #  network_attachment_resource = google_compute_network_attachment.psc_attachment.id
   users = {
     # https://docs.cloud.google.com/alloydb/docs/database-users/manage-iam-auth#create-user
     # "For an IAM service account, supply the service account's address
@@ -119,11 +59,6 @@ module "alloydb" {
   flags = {
     "alloydb.iam_authentication" = "on"
   }
-  # TODO: ???
-  #  depends_on = [
-  #    google_compute_global_address.private_ip_alloc,
-  #    google_service_networking_connection.default
-  #  ]
 }
 
 # Create a PSC endpoint using the AlloyDB PSC attachment
