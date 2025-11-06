@@ -64,5 +64,5 @@ The [0-projects](../0-projects) stage generates the necessary Terraform input fi
 | name | description | sensitive |
 |---|---|:---:|
 | [commands](outputs.tf#L46) | Run the following commands when the deployment completes to deploy the app. |  |
-| [ip_addresses](outputs.tf#L120) | The load balancers IP addresses. |  |
+| [ip_addresses](outputs.tf#L112) | The load balancers IP addresses. |  |
 <!-- END TFDOC -->
