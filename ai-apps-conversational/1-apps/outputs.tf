@@ -14,8 +14,8 @@
 
 locals {
   _dialogflow_agent_id  = module.dialogflow.chat_engines["dialogflow"].chat_engine_metadata[0].dialogflow_agent
-  _dialogflow_apis      = "https://dialogflow.googleapis.com"
-  _discoveryengine_apis = "https://discoveryengine.googleapis.com"
+  _dialogflow_apis      = "https://${local.uris_prefix}dialogflow.googleapis.com"
+  _discoveryengine_apis = "https://${local.uris_prefix}discoveryengine.googleapis.com"
   agent_dir             = "./build/agent/dist"
   uris_prefix = (
     var.region_ai_applications == null || var.region_ai_applications == "global"
@@ -23,10 +23,10 @@ locals {
     : "${var.region_ai_applications}-"
   )
   uris = {
-    agent       = "${local.uris_prefix}${local._dialogflow_apis}/v3/${local._dialogflow_agent_id}:restore"
-    agent_query = "${local.uris_prefix}${local._dialogflow_apis}/v3/${local._dialogflow_agent_id}/environments/draft/sessions/any-session-id:detectIntent"
-    ds_faq      = "${local.uris_prefix}${local._discoveryengine_apis}/v1/${module.dialogflow.data_stores["faq"].name}/branches/0/documents:import"
-    ds_kb       = "${local.uris_prefix}${local._discoveryengine_apis}/v1/${module.dialogflow.data_stores["kb"].name}/branches/0/documents:import"
+    agent       = "${local._dialogflow_apis}/v3/${local._dialogflow_agent_id}:restore"
+    agent_query = "${local._dialogflow_apis}/v3/${local._dialogflow_agent_id}/environments/draft/sessions/any-session-id:detectIntent"
+    ds_faq      = "${local._discoveryengine_apis}/v1/${module.dialogflow.data_stores["faq"].name}/branches/0/documents:import"
+    ds_kb       = "${local._discoveryengine_apis}/v1/${module.dialogflow.data_stores["kb"].name}/branches/0/documents:import"
   }
 }
 
