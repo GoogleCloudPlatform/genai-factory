@@ -536,6 +536,10 @@ values:
     input: null
     output: null
     triggers_replace: null
+  module.projects.terraform_data.project-preconditions:
+    input: null
+    output: null
+    triggers_replace: null
 
 counts:
   google_bigquery_default_service_account: 1
@@ -550,8 +554,8 @@ counts:
   google_storage_bucket_iam_binding: 2
   local_file: 2
   modules: 11
-  resources: 90
-  terraform_data: 1
+  resources: 91
+  terraform_data: 2
 
 outputs:
   buckets:
