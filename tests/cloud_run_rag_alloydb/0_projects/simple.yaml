@@ -571,7 +571,7 @@ counts:
   google_storage_bucket_iam_binding: 2
   local_file: 2
   modules: 11
-  resources: 95
+  resources: 97
   terraform_data: 1
 
 outputs:
