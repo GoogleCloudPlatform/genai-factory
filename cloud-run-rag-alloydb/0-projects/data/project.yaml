@@ -91,8 +91,7 @@ iam_by_principals:
   $iam_principals:service_accounts/project/gf-rrag-fe-0:
     - roles/alloydb.client
     - roles/alloydb.databaseUser
-    - roles/iam.serviceAccountTokenCreator # TODO ???
-    - roles/serviceusage.serviceUsageConsumer # TODO
+    - roles/serviceusage.serviceUsageConsumer
   $iam_principals:service_accounts/project/gf-rrag-fe-build-0:
     - roles/artifactregistry.writer
     - roles/cloudbuild.builds.editor
@@ -106,8 +105,7 @@ iam_by_principals:
     - roles/bigquery.jobUser
     - roles/alloydb.client
     - roles/alloydb.databaseUser
-    - roles/iam.serviceAccountTokenCreator # TODO ???
-    - roles/serviceusage.serviceUsageConsumer # TODO
+    - roles/serviceusage.serviceUsageConsumer
   $iam_principals:service_accounts/project/gf-rrag-ing-build-0:
     - roles/artifactregistry.writer
     - roles/cloudbuild.builds.editor
