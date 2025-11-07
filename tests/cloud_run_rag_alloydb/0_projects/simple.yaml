@@ -168,13 +168,6 @@ values:
     - serviceAccount:iac-rw@your-prefix-gf-rrag-0.iam.gserviceaccount.com
     project: your-prefix-gf-rrag-0
     role: roles/dns.admin
-  ? module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/iam.serviceAccountTokenCreator"]
-  : condition: []
-    members:
-    - serviceAccount:gf-rrag-fe-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
-    - serviceAccount:gf-rrag-ing-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
-    project: your-prefix-gf-rrag-0
-    role: roles/iam.serviceAccountTokenCreator
   module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/logging.logWriter"]:
     condition: []
     members:
