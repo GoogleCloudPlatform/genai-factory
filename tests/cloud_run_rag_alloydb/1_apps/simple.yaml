@@ -198,7 +198,9 @@ values:
       goog-terraform-provisioned: 'true'
     encryption_config: []
     etag: null
-    initial_user: []
+    initial_user:
+    - password: fake-password
+      user: postgres
     labels: null
     location: europe-west1
     maintenance_update_policy: []
@@ -1569,21 +1571,17 @@ counts:
 outputs:
   commands: "  # Run the following commands to deploy the application.\n  # Alternatively,\
     \ deploy the application through your CI/CD pipeline.\n\n  # Install the vector\
-    \ extension in AlloyDB\n  -> gcloud alloydb users set-password postgres \\\n \
-    \     --cluster alloydb \\\n      --password 'your_complex_pwd' \\\n      --project\
-    \ prefix-gf-rrag-0 \\\n      --region europe-west1 \\\n      --impersonate-service-account=iac-rw@prefix-gf-rrag-0.iam.gserviceaccount.com\n\
-    \n\n  -> # In https://console.cloud.google.com/https://console.cloud.google.com/alloydb/locations/europe-west1\
-    \ /clusters/alloydb/studio\n     # Select the gf-rrag-0 database and enter with\
-    \ postgres user.\n     # In the Editor 1 tab, run this query: CREATE EXTENSION\
-    \ IF NOT EXISTS vector;\n     # This requires the user to be AlloyDB admin.\n\
-    \     # Then, create the database: CREATE DATABASE \"gf-rrag-0\";\n\n  # Load\
-    \ sample data into BigQuery\n  gcloud config set auth/impersonate_service_account\
-    \ iac-rw@prefix-gf-rrag-0.iam.gserviceaccount.com\n  bq load \\\n    --project_id\
-    \ prefix-gf-rrag-0 \\\n    --source_format=CSV \\\n    --skip_leading_rows=1 \\\
-    \n    --autodetect \\\n    prefix-gf-rrag-0:gf_rrag_0.gf_rrag_0 \\\n    ./data/top-100-imdb-movies.csv\n\
-    \  gcloud config unset auth/impersonate_service_account\n\n  gcloud artifacts\
-    \ repositories create gf-rrag-0 \\\n    --project=prefix-gf-rrag-0 \\\n    --location\
-    \ europe-west1 \\\n    --repository-format docker \\\n    --impersonate-service-account=iac-rw@prefix-gf-rrag-0.iam.gserviceaccount.com\n\
+    \ extension in AlloyDB\n  -> # In https://console.cloud.google.com/alloydb/locations/europe-west1/clusters/alloydb/studio\n\
+    \     # Select the gf-rrag-0 database and enter with postgres user.\n     # In\
+    \ the Editor 1 tab, run this query: CREATE EXTENSION IF NOT EXISTS vector;\n \
+    \    # This requires the user to be AlloyDB admin.\n     # Then, create the database:\
+    \ CREATE DATABASE \"gf-rrag-0\";\n\n  # Load sample data into BigQuery\n  gcloud\
+    \ config set auth/impersonate_service_account iac-rw@prefix-gf-rrag-0.iam.gserviceaccount.com\n\
+    \  bq load \\\n    --project_id prefix-gf-rrag-0 \\\n    --source_format=CSV \\\n\
+    \    --skip_leading_rows=1 \\\n    --autodetect \\\n    prefix-gf-rrag-0:gf_rrag_0.gf_rrag_0\
+    \ \\\n    ./data/top-100-imdb-movies.csv\n  gcloud config unset auth/impersonate_service_account\n\
+    \n  gcloud artifacts repositories create gf-rrag-0 \\\n    --project=prefix-gf-rrag-0\
+    \ \\\n    --location europe-west1 \\\n    --repository-format docker \\\n    --impersonate-service-account=iac-rw@prefix-gf-rrag-0.iam.gserviceaccount.com\n\
     \n  # Ingestion Cloud Run\n  gcloud builds submit ./apps/rag/ingestion \\\n  \
     \  --project prefix-gf-rrag-0 \\\n    --tag europe-west1-docker.pkg.dev/prefix-gf-rrag-0/gf-rrag-0/ingestion\
     \ \\\n    --service-account projects/prefix-gf-rrag-0/serviceAccounts/gf-rrag-ing-build-0@prefix-gf-rrag-0.iam.gserviceaccount.com\
@@ -1603,4 +1601,3 @@ outputs:
     \ \\\n    --image=europe-west1-docker.pkg.dev/prefix-gf-rrag-0/gf-rrag-0/frontend\
     \ \\\n    --set-env-vars DB_NAME=gf-rrag-0,DB_SA=gf-rrag-fe-0@prefix-gf-rrag-0.iam,DB_TABLE=gf-rrag-0,PROJECT_ID=prefix-gf-rrag-0,REGION=europe-west1\n"
   ip_addresses: __missing__
-
