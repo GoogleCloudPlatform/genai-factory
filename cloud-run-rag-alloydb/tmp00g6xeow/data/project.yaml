@@ -29,6 +29,7 @@ services:
   - compute.googleapis.com
   - dns.googleapis.com
   - run.googleapis.com
+  - secretmanager.googleapis.com # for AlloyDB default user password
   - servicenetworking.googleapis.com
   # Needed for ILB only
   - certificatemanager.googleapis.com

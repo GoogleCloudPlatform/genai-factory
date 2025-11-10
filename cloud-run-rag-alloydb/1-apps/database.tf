@@ -28,10 +28,25 @@ module "bigquery-dataset" {
   }
 }
 
+/* To avoid putting your password into the code, you can use a data source to store it,
+you can create and set it before running this code with:
+export PROJECT_ID=your_project_id_here # change this!
+gcloud secrets create alloydb-initial-postgres-password \
+  --replication-policy="automatic" \
+  --project=$PROJECT_ID
+echo your_secure_password_here | gcloud secrets versions add \
+  alloydb-initial-postgres-password \
+  --data-file=- \
+  --project=$PROJECT_ID
+```
+
+Then, in Terraform, in ../0-projects/data/project.yaml
+activate the "secretmanager.googleapis.com" API and in the current file use something like this:
 data "google_secret_manager_secret_version_access" "alloydb_initial_password" {
   project = var.project_config.id
   secret  = "alloydb-initial-postgres-password"
 }
+*/
 
 module "alloydb" {
   source              = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/alloydb?ref=v46.0.0"
@@ -45,8 +60,10 @@ module "alloydb" {
     psc_config = { allowed_consumer_projects = [var.project_config.number] }
   }
   initial_user = {
-    user     = "postgres"
-    password = data.google_secret_manager_secret_version_access.alloydb_initial_password.secret_data
+    user = "postgres"
+    # If you are using the data source:
+    # password = data.google_secret_manager_secret_version_access.alloydb_initial_password.secret_data
+    password = var.alloydb_initial_password
   }
   users = {
     # https://docs.cloud.google.com/alloydb/docs/database-users/manage-iam-auth#create-user
