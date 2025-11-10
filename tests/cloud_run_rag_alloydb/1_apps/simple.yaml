@@ -199,7 +199,7 @@ values:
     encryption_config: []
     etag: null
     initial_user:
-    - password: fake-password
+    - password: CHANGE_THIS!!!
       user: postgres
     labels: null
     location: europe-west1

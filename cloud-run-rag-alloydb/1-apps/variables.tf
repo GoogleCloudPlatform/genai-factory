@@ -13,7 +13,7 @@
 # limitations under the License.
 
 variable "alloydb_initial_password" {
-  description = "Initial password for the postgres user in AlloyDB"
+  description = "Initial password for the postgres user in AlloyDB."
   type        = string
   nullable    = false
   default     = "CHANGE_THIS!!!"
