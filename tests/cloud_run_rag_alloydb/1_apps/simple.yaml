@@ -246,7 +246,6 @@ values:
   module.alloydb.google_alloydb_user.users["gf-rrag-fe-0@prefix-gf-rrag-0.iam"]:
     database_roles:
     - alloydbiamuser
-    - alloydbsuperuser
     password: null
     timeouts: null
     user_id: gf-rrag-fe-0@prefix-gf-rrag-0.iam

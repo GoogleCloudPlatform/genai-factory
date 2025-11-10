@@ -71,7 +71,6 @@ module "alloydb" {
     # without the .gserviceaccount.com suffix"
     (trimsuffix(var.service_accounts["project/gf-rrag-fe-0"].email, ".gserviceaccount.com")) = {
       type     = "ALLOYDB_IAM_USER"
-      roles    = ["alloydbiamuser", "alloydbsuperuser"]
       roles    = ["alloydbiamuser"]
       password = null # password will be generated
     }
