@@ -1569,8 +1569,12 @@ counts:
 
 outputs:
   commands: "  # Run the following commands to deploy the application.\n  # Alternatively,\
-    \ deploy the application through your CI/CD pipeline.\n\n  # Install the vector\
-    \ extension in AlloyDB\n  -> # In https://console.cloud.google.com/alloydb/locations/europe-west1/clusters/alloydb/studio\n\
+    \ deploy the application through your CI/CD pipeline.\n\n  # Optional: after the\
+    \ AlloyDB cluster is created, if you want,\n  # you can change the default user\
+    \ password with\n  gcloud alloydb users set-password postgres \\\n  --cluster\
+    \ alloydb \\\n  --password NEW_PASSWORD_HERE \\\n  --project prefix-gf-rrag-0 \\\n\
+    \  --region europe-west1\n\n  # Install the vector extension in AlloyDB\n  -> #\
+    \ In https://console.cloud.google.com/alloydb/locations/europe-west1/clusters/alloydb/studio\n\
     \     # Select the gf-rrag-0 database and enter with postgres user.\n     # In\
     \ the Editor 1 tab, run this query: CREATE EXTENSION IF NOT EXISTS vector;\n \
     \    # This requires the user to be AlloyDB admin.\n     # Then, create the database:\
@@ -1586,7 +1590,7 @@ outputs:
     \ \\\n    --service-account projects/prefix-gf-rrag-0/serviceAccounts/gf-rrag-ing-build-0@prefix-gf-rrag-0.iam.gserviceaccount.com\
     \ \\\n    --default-buckets-behavior=REGIONAL_USER_OWNED_BUCKET \\\n    --quiet\
     \ \\\n    --impersonate-service-account=iac-rw@prefix-gf-rrag-0.iam.gserviceaccount.com\n\
-    \n  gcloud run jobs deploy gf-rrag-0-ingestion \\\n    --impersonate-service-account=iac-rw@prefix-gf-rrag-0.iam.gserviceaccount.com\
+n  gcloud run jobs deploy gf-rrag-0-ingestion \\\n    --impersonate-service-account=iac-rw@prefix-gf-rrag-0.iam.gserviceaccount.com\
     \ \\\n    --project prefix-gf-rrag-0 \\\n    --region europe-west1 \\\n    --container=ingestion\
     \ \\\n    --image=europe-west1-docker.pkg.dev/prefix-gf-rrag-0/gf-rrag-0/ingestion\
     \ \\\n    --set-env-vars BQ_DATASET=gf_rrag_0,BQ_TABLE=gf_rrag_0,DB_NAME=gf-rrag-0,DB_SA=gf-rrag-ing-0@prefix-gf-rrag-0.iam,DB_TABLE=gf-rrag-0,PROJECT_ID=prefix-gf-rrag-0,REGION=europe-west1\n\
