@@ -154,6 +154,10 @@ values:
     input: null
     output: null
     triggers_replace: null
+  module.projects.terraform_data.project-preconditions:
+    input: null
+    output: null
+    triggers_replace: null
 
 counts:
   google_project: 1
@@ -167,8 +171,8 @@ counts:
   google_storage_bucket_iam_binding: 2
   local_file: 2
   modules: 5
-  resources: 19
-  terraform_data: 1
+  resources: 20
+  terraform_data: 2
 
 outputs:
   buckets:

@@ -13,15 +13,18 @@
 # limitations under the License.
 
 module "cloud_run" {
-  source              = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/cloud-run-v2?ref=v46.0.0"
+  source              = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/cloud-run-v2?ref=v47.0.0"
   type                = "SERVICE"
   project_id          = var.project_config.id
   name                = var.name
   region              = var.region
   containers          = var.cloud_run_configs.containers
-  service_account     = var.service_accounts["project/gf-srun-0"].email
   deletion_protection = var.enable_deletion_protection
   managed_revision    = false
+  service_account_config = {
+    create = false
+    email  = var.service_accounts["project/gf-srun-0"].email
+  }
   iam = {
     "roles/run.invoker" = var.cloud_run_configs.service_invokers
   }

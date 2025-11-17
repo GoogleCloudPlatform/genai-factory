@@ -13,15 +13,18 @@
 # limitations under the License.
 
 module "cloud_run_ingestion" {
-  source              = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/cloud-run-v2?ref=v46.0.0"
+  source              = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/cloud-run-v2?ref=v47.0.0"
   project_id          = var.project_config.id
   type                = "JOB"
   name                = "${var.name}-ingestion"
   region              = var.region
-  service_account     = var.service_accounts["project/gf-rrag-ing-0"].email
   managed_revision    = false
   deletion_protection = var.enable_deletion_protection
   containers          = var.cloud_run_configs.ingestion.containers
+  service_account_config = {
+    create = false
+    email  = var.service_accounts["project/gf-rrag-ing-0"].email
+  }
   iam = {
     "roles/run.invoker" = concat(
       [var.service_accounts["project/gf-rrag-ing-sched-0"].iam_email],

@@ -13,14 +13,17 @@
 # limitations under the License.
 
 module "cloud_run_frontend" {
-  source              = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/cloud-run-v2?ref=v46.0.0"
+  source              = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/cloud-run-v2?ref=v47.0.0"
   project_id          = var.project_config.id
   type                = "SERVICE"
   name                = "${var.name}-frontend"
   region              = var.region
-  service_account     = var.service_accounts["project/gf-rrag-fe-0"].email
   deletion_protection = var.enable_deletion_protection
   managed_revision    = false
+  service_account_config = {
+    create = false
+    email  = var.service_accounts["project/gf-rrag-fe-0"].email
+  }
   containers = merge({
     cloud-sql-proxy = {
       image   = "gcr.io/cloud-sql-connectors/cloud-sql-proxy"
