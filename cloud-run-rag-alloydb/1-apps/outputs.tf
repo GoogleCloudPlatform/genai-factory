@@ -49,6 +49,14 @@ output "commands" {
   # Run the following commands to deploy the application.
   # Alternatively, deploy the application through your CI/CD pipeline.
 
+  # Optional: after the AlloyDB cluster is created, if you want,
+  # you can change the default user password with
+  gcloud alloydb users set-password postgres \
+  --cluster alloydb \
+  --password NEW_PASSWORD_HERE \
+  --project ${var.project_config.id} \
+  --region ${var.region}
+
   # Install the vector extension in AlloyDB
   -> # In https://console.cloud.google.com/alloydb/locations/${var.region}/clusters/alloydb/studio
      # Select the ${var.name} database and enter with postgres user.
