@@ -17,7 +17,7 @@ locals {
 }
 
 module "bigquery-dataset" {
-  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/bigquery-dataset?ref=v47.0.0"
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/bigquery-dataset?ref=v49.0.0"
   project_id = var.project_config.id
   id         = local.bigquery_id
   tables = {
@@ -29,7 +29,7 @@ module "bigquery-dataset" {
 }
 
 module "dns_private_zone_cloudsql" {
-  source        = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/dns?ref=v47.0.0"
+  source        = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/dns?ref=v49.0.0"
   project_id    = var.project_config.id
   name          = "${var.name}-cloudsql"
   force_destroy = !var.enable_deletion_protection
@@ -70,7 +70,7 @@ resource "google_compute_forwarding_rule" "cloudsql_psc_endpoint" {
 }
 
 module "cloudsql" {
-  source                        = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/cloudsql-instance?ref=v47.0.0"
+  source                        = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/cloudsql-instance?ref=v49.0.0"
   project_id                    = var.project_config.id
   gcp_deletion_protection       = var.enable_deletion_protection
   terraform_deletion_protection = var.enable_deletion_protection
