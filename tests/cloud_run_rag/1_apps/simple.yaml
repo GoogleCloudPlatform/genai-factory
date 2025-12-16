@@ -358,7 +358,6 @@ values:
     multi_region_settings: []
     name: gf-rrag-0-frontend
     project: prefix-gf-rrag-0
-    scaling: []
     template:
     - annotations: null
       containers:

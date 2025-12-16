@@ -359,7 +359,6 @@ values:
     multi_region_settings: []
     name: gf-rrag-search-0-frontend
     project: prefix-gf-rrag-search-0
-    scaling: []
     template:
     - annotations: null
       containers:

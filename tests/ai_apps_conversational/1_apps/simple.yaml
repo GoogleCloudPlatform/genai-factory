@@ -61,7 +61,6 @@ values:
     project: prefix-gf-ai-apps-df-0
     timeouts: null
   module.dialogflow.google_discovery_engine_data_store.default["faq"]:
-    advanced_site_search_config: []
     content_config: NO_CONTENT
     create_advanced_site_search: false
     data_store_id: gf-ai-apps-df-0-faq
@@ -74,7 +73,6 @@ values:
     - SOLUTION_TYPE_CHAT
     timeouts: null
   module.dialogflow.google_discovery_engine_data_store.default["kb"]:
-    advanced_site_search_config: []
     content_config: CONTENT_REQUIRED
     create_advanced_site_search: false
     data_store_id: gf-ai-apps-df-0-kb
