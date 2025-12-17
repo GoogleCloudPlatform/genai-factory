@@ -14,7 +14,6 @@
 
 values:
   module.ai-apps.google_discovery_engine_data_store.default["ds"]:
-    advanced_site_search_config: []
     content_config: PUBLIC_WEBSITE
     create_advanced_site_search: false
     data_store_id: gf-ai-apps-srch-0-ds

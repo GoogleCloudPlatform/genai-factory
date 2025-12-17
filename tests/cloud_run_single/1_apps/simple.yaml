@@ -248,7 +248,6 @@ values:
     multi_region_settings: []
     name: gf-srun-0
     project: your-project
-    scaling: []
     template:
     - annotations: null
       containers:

@@ -65,7 +65,7 @@ uv run pytest tests/cloud_run_single/0-projects
 
 ### Generate the inventory for a factory module
 
-Run the command below and remove your user name from the output file in path `.values.google_service_account_iam_member.me_sa_token_creator[0].member`:
+Run the command below and remove from the output file the element `.values.google_service_account_iam_member.me_sa_token_creator[0].member`:
 
 ```shell
 # Generate the inventory for cloud-run-single/0-projects
@@ -77,7 +77,7 @@ uv run tools/plan_summary.py cloud-run-single/0-projects \
 ## Add a new factory
 
 - Start copying an existing factory. [cloud-run-single](cloud-run-single/README.md) is a typical choice. Modify it as needed.
-- Update the `uv pyproject.toml` to your needs.
+- Update the uv `pyproject.toml` to your needs.
   - Please check the [official documentation](https://docs.astral.sh/uv/getting-started/installation/#standalone-installer) on how to install `uv`. UV github actions are being used for the ci pipeline to run tests and tools.
   - Use the commands from the [section above](#manage-python-app-dependencies-with-uv)
   - You can learn how to use `uv` [here](https://docs.astral.sh/uv/#highlights).

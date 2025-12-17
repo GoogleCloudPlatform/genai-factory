@@ -15,7 +15,6 @@
 values:
   google_service_account_iam_member.me_sa_token_creator[0]:
     condition: []
-    member: user:tests@automation.com
     role: roles/iam.serviceAccountTokenCreator
     service_account_id: projects/your-prefix-gf-rrag-search-0/serviceAccounts/iac-rw@your-prefix-gf-rrag-search-0.iam.gserviceaccount.com
   local_file.providers:
