@@ -1,0 +1,15 @@
+[project]
+name = "firewall-mcp"
+version = "0.1.0"
+description = "MCP Server for Google Cloud Firewall config"
+authors = [{ name = "Google LLC" }]
+license = { text = "Apache-2.0" }
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "fastmcp>=2.1.4",
+    "google-cloud-compute>=1.40.0",
+]
+
+[tool.uv]
+dev-dependencies = []
