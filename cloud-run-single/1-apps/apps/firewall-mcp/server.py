@@ -1,8 +1,9 @@
 import os
 import logging
 from typing import List, Dict, Any, Optional
-from fastmcp import FastMCP
+from fastmcp import FastMCP, Context
 from google.cloud import compute_v1
+from google.oauth2.credentials import Credentials
 from google.api_core.exceptions import GoogleAPICallError
 
 # Initialize logging
@@ -11,6 +12,37 @@ logger = logging.getLogger("firewall-mcp")
 
 # Initialize FastMCP
 mcp = FastMCP("GCP Firewall")
+
+def _get_credentials(ctx: Context) -> Optional[Credentials]:
+    """
+    Extract user credentials.
+    Priority 1: X-GCP-Access-Token header (custom header for Access Token)
+    Priority 2: Authorization header (std header, might be ID token or Access token)
+    """
+    try:
+        if not ctx.request_context or not ctx.request_context.request:
+            logger.warning("No request context available")
+            return None
+            
+        headers = ctx.request_context.request.headers
+        
+        # 1. Check custom header for explicit Access Token (passed by our client)
+        access_token = headers.get("X-GCP-Access-Token")
+        if access_token:
+            return Credentials(token=access_token)
+            
+        # 2. Fallback to Authorization header
+        auth_header = headers.get("Authorization")
+        if auth_header and auth_header.startswith("Bearer "):
+            token = auth_header.split(" ")[1]
+            return Credentials(token=token)
+            
+        logger.warning("No valid credential token found in headers")
+        return None
+        
+    except Exception as e:
+        logger.error(f"Error extracting credentials: {e}")
+        return None
 
 def _format_firewall(firewall: compute_v1.Firewall) -> Dict[str, Any]:
     """Format a Firewall rule into a dictionary."""
@@ -33,16 +65,21 @@ def _format_firewall(firewall: compute_v1.Firewall) -> Dict[str, Any]:
     }
 
 @mcp.tool()
-async def list_firewall_rules(project_id: str, filter: str = None) -> str:
+async def list_firewall_rules(ctx: Context, project_id: str, filter: str = None) -> str:
     """List firewall rules for a project.
     
     Args:
+        ctx: The FastMCP context (automatically injected).
         project_id: The Google Cloud Project ID.
         filter: Optional filter string (e.g., "name = 'my-rule'").
     """
     logger.info(f"Listing firewall rules for project: {project_id}, filter: {filter}")
     try:
-        client = compute_v1.FirewallsClient()
+        creds = _get_credentials(ctx)
+        if not creds:
+             return "Error: Could not obtain user credentials from request."
+
+        client = compute_v1.FirewallsClient(credentials=creds)
         request = compute_v1.ListFirewallsRequest(project=project_id, filter=filter)
         page_result = client.list(request=request)
         
@@ -56,15 +93,20 @@ async def list_firewall_rules(project_id: str, filter: str = None) -> str:
         return f"Error: {str(e)}"
 
 @mcp.tool()
-async def list_networks(project_id: str) -> str:
+async def list_networks(ctx: Context, project_id: str) -> str:
     """List VPC networks in a project.
     
     Args:
+        ctx: FastMCP Context.
         project_id: The Google Cloud Project ID.
     """
     logger.info(f"Listing networks for project: {project_id}")
     try:
-        client = compute_v1.NetworksClient()
+        creds = _get_credentials(ctx)
+        if not creds:
+             return "Error: Could not obtain user credentials from request."
+
+        client = compute_v1.NetworksClient(credentials=creds)
         request = compute_v1.ListNetworksRequest(project=project_id)
         page_result = client.list(request=request)
         
@@ -83,6 +125,7 @@ async def list_networks(project_id: str) -> str:
 
 @mcp.tool()
 async def create_firewall_rule(
+    ctx: Context,
     project_id: str, 
     name: str, 
     network: str = "global/networks/default",
@@ -100,6 +143,7 @@ async def create_firewall_rule(
     """Create a new firewall rule.
     
     Args:
+        ctx: FastMCP Context.
         project_id: Google Cloud Project ID.
         name: Name of the firewall rule.
         network: Network URL (e.g., "global/networks/default").
@@ -116,7 +160,11 @@ async def create_firewall_rule(
     """
     logger.info(f"Creating firewall rule {name} in {project_id}")
     try:
-        client = compute_v1.FirewallsClient()
+        creds = _get_credentials(ctx)
+        if not creds:
+             return "Error: Could not obtain user credentials from request."
+
+        client = compute_v1.FirewallsClient(credentials=creds)
         firewall = compute_v1.Firewall()
         firewall.name = name
         firewall.network = network
@@ -156,16 +204,21 @@ async def create_firewall_rule(
         return f"Error: {str(e)}"
 
 @mcp.tool()
-async def delete_firewall_rule(project_id: str, firewall_rule: str) -> str:
+async def delete_firewall_rule(ctx: Context, project_id: str, firewall_rule: str) -> str:
     """Delete a firewall rule.
     
     Args:
+        ctx: FastMCP Context.
         project_id: Google Cloud Project ID.
         firewall_rule: Name of the firewall rule to delete.
     """
     logger.info(f"Deleting firewall rule {firewall_rule} in {project_id}")
     try:
-        client = compute_v1.FirewallsClient()
+        creds = _get_credentials(ctx)
+        if not creds:
+             return "Error: Could not obtain user credentials from request."
+
+        client = compute_v1.FirewallsClient(credentials=creds)
         op = client.delete(project=project_id, firewall=firewall_rule)
         op.result()
         return f"Firewall rule {firewall_rule} deleted successfully."
@@ -175,6 +228,7 @@ async def delete_firewall_rule(project_id: str, firewall_rule: str) -> str:
 
 @mcp.tool()
 async def update_firewall_rule(
+    ctx: Context,
     project_id: str,
     firewall_rule: str,
     new_priority: int = None,
@@ -187,6 +241,7 @@ async def update_firewall_rule(
     """Update an existing firewall rule (patch).
     
     Args:
+        ctx: FastMCP Context.
         project_id: Project ID.
         firewall_rule: Name of the rule to update.
         new_priority: New priority.
@@ -198,7 +253,11 @@ async def update_firewall_rule(
     """
     logger.info(f"Updating firewall rule {firewall_rule} in {project_id}")
     try:
-        client = compute_v1.FirewallsClient()
+        creds = _get_credentials(ctx)
+        if not creds:
+             return "Error: Could not obtain user credentials from request."
+
+        client = compute_v1.FirewallsClient(credentials=creds)
         # Patch requires specifying the fields mask or sending a partial resource
         
         firewall = compute_v1.Firewall()

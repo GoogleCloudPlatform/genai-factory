@@ -40,6 +40,20 @@ def get_id_token(url: str) -> Optional[str]:
         logger.error("gcloud CLI not found. Please ensure Google Cloud SDK is installed and in your PATH.")
         return None
 
+def get_access_token() -> Optional[str]:
+    """Get a Google Cloud Access Token (OAuth2) for API calls."""
+    try:
+        result = subprocess.run(
+            ["gcloud", "auth", "print-access-token"],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        return result.stdout.strip()
+    except Exception as e:
+        logger.error(f"Error fetching Access token: {e}")
+        return None
+
 async def run_client(url: str, prompt: Optional[str] = None, tool_name: Optional[str] = None, tool_args: Optional[Dict[str, Any]] = None):
     """
     Connect to the MCP server via HTTP (Streamable) and interact using FastMCP Client.
@@ -48,17 +62,27 @@ async def run_client(url: str, prompt: Optional[str] = None, tool_name: Optional
     logger.info(f"Connecting to {url}...")
     
     auth = None
+    headers = {}
+    
     if url.startswith("http"):
-        logger.info("Attempting to fetch ID token for authentication...")
-        token = get_id_token(url)
-        if token:
-            auth = BearerAuth(token)
+        logger.info("Fetching ID token for Cloud Run authentication...")
+        id_token = get_id_token(url)
+        if id_token:
+            auth = BearerAuth(id_token)
             logger.info("Successfully retrieved ID token.")
         else:
-            logger.warning("Continuing without ID Token. If the server requires auth, this will fail.")
+            logger.warning("Continuing without ID Token. Cloud Run might reject the request.")
+
+        logger.info("Fetching Access token for Google Cloud API calls...")
+        access_token = get_access_token()
+        if access_token:
+            headers["X-GCP-Access-Token"] = access_token
+            logger.info("Successfully retrieved Access token.")
+        else:
+            logger.warning("Continuing without Access Token. Backend API calls might fail.")
 
     try:
-        transport = StreamableHttpTransport(url=url, auth=auth)
+        transport = StreamableHttpTransport(url=url, auth=auth, headers=headers)
         async with Client(transport) as client:
             logger.info("Connected to MCP Server!")
 
