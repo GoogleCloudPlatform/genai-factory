@@ -72,7 +72,6 @@ iam_by_principals:
     - roles/privateca.admin
   $iam_principals:service_accounts/project/gf-srun-0:
     - roles/logging.logWriter
-    - roles/compute.securityAdmin
   $iam_principals:service_accounts/project/gf-srun-build-0:
     - roles/artifactregistry.writer
     - roles/cloudbuild.builds.editor
