@@ -36,9 +36,9 @@ logging.info(f"A2A_PORT: {A2A_PORT}")
 logging.info(f"INTERNAL_PORT: {INTERNAL_PORT}")
 logging.info(f"INTERNAL_HOST: {INTERNAL_HOST}")
 
-a2a_app = to_a2a(agent=root_agent, 
-                 protocol=A2A_PROTOCOL, 
-                 host=A2A_HOST, 
+a2a_app = to_a2a(agent=root_agent,
+                 protocol=A2A_PROTOCOL,
+                 host=A2A_HOST,
                  port=A2A_PORT)
 
 if __name__ == "__main__":
