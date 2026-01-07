@@ -29,13 +29,16 @@ os.environ["GOOGLE_CLOUD_PROJECT"] = os.environ["PROJECT_ID"]
 os.environ["GOOGLE_CLOUD_LOCATION"] = os.environ["REGION"]
 os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = "1"
 
+
 class CountryInput(BaseModel):
     country: str = Field(description="The country to get information about.")
+
 
 class CapitalInfoOutput(BaseModel):
     capital: str = Field(description="The capital city of the country.")
     population_estimate: str = Field(
         description="An estimated population of the capital city.")
+
 
 root_agent = LlmAgent(
     name="capital_agent",
