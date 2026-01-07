@@ -193,20 +193,27 @@ jobs:
         with:
           ref: master
 
-      - uses: webfactory/ssh-agent@v0.9.0
-        with:
-          ssh-private-key: ${{ secrets.DEPLOY_KEY }}
-
-      - name: Configure Git
+      - name: Update reference to Fabric modules (${{ needs.prerequisites.outputs.latest_tag }})
+        shell: bash
         run: |
-          git config user.name "genai-factory-robot"
-          git config user.email "genai-factory-robot@google.com"
+          python tools/update_fabric_ref.py . ${{ needs.prerequisites.outputs.latest_tag }}
 
       - name: Check for file changes
         id: git-status
         run: |
           echo $(git status --porcelain)
           echo "changes=$(git status --porcelain | tr -d '\n')" >> $GITHUB_OUTPUT
+
+      - uses: webfactory/ssh-agent@v0.9.0
+        if: steps.git-status.outputs.changes != ''
+        with:
+          ssh-private-key: ${{ secrets.DEPLOY_KEY }}
+
+      - name: Configure Git
+        if: steps.git-status.outputs.changes != ''
+        run: |
+          git config user.name "genai-factory-robot"
+          git config user.email "genai-factory-robot@google.com"
 
       - name: Commit and push feature branch
         if: steps.git-status.outputs.changes != ''
