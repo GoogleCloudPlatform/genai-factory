@@ -205,7 +205,7 @@ jobs:
       - name: Check for file changes
         id: git-status
         run: |
-          git status --porcelain | tr -d '\n'
+          git status --porcelain
           echo "changes=$(git status --porcelain | tr -d '\n')" >> $GITHUB_OUTPUT
 
       - name: Commit and push feature branch
