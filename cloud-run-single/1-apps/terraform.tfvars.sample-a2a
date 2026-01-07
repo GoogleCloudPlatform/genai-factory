@@ -1,0 +1,9 @@
+lbs_config = {
+  external = {
+    domain = "your-domain.com"
+  }
+}
+
+cloud_run_configs = {
+  ingress = "INGRESS_TRAFFIC_ALL"
+}
