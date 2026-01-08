@@ -24,6 +24,7 @@ Once the applications have been deployed, learn sample commands to test them:
 - [Chat](./apps/chat/README.md)
 - [ADK](./apps/adk/README.md)
 - [Gemma3](./apps/gemma/README.md)
+- [Firewall MCP](./apps/firewall-mcp/README.md)
 
 ## I have not used 0-projects
 
