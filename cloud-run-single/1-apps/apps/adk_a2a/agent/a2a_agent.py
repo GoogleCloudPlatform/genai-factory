@@ -22,9 +22,6 @@ from . import config
 from google.adk.agents import LlmAgent
 from pydantic import BaseModel, Field
 
-from google.adk.a2a.utils.agent_to_a2a import to_a2a
-from a2a.types import AgentCard
-
 os.environ["GOOGLE_CLOUD_PROJECT"] = os.environ["PROJECT_ID"]
 os.environ["GOOGLE_CLOUD_LOCATION"] = os.environ["REGION"]
 os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = "1"
