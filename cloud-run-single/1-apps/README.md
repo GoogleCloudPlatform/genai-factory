@@ -23,6 +23,7 @@ Once the applications have been deployed, learn sample commands to test them:
 
 - [Chat](./apps/chat/README.md)
 - [ADK](./apps/adk/README.md)
+- [ADK with A2A](./apps/adk_a2a/README.md).
 - [Gemma3](./apps/gemma/README.md)
 
 ## I have not used 0-projects
