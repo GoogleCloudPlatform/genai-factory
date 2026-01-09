@@ -26,8 +26,8 @@ lbs_config = {
 # Direct Access to Cloud Run for testing (No Load Balancer)
 # ------------------------------------------------------------------------------
 # To expose Cloud Run directly to the Internet without a Load Balancer:
-# 1. set lbs_config.external.enable = false
-# 2. Uncomment the cloud_run_configs block below
+# 1. Uncomment the cloud_run_configs block below
+# 2. Optionally, set lbs_config.external.enable = false
 
 # cloud_run_configs = {
 #   ingress = "INGRESS_TRAFFIC_ALL"
