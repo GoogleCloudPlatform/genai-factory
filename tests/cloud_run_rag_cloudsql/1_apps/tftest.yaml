@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-module: cloud-run-rag/1-apps
+module: cloud-run-rag-cloudsql/1-apps
 
 tests:
   simple:

@@ -1,7 +1,7 @@
 # Cloud Run - Single / Platform Deployment
 
-This stage is part of the `Single Cloud Run factory`.
-It is responsible for deploying the components enabling the AI use case, either in the project you created in [0-projects](../0-projects) or in an existing project.
+This stage is part of `Cloud Run - Single` factory.
+It is responsible for deploying resources inside the project you created in [0-projects](../0-projects) or in an existing project.
 
 ![Architecture Diagram](../diagram.png)
 
