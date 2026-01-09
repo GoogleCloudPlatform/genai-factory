@@ -9,20 +9,6 @@ It is responsible for deploying the components enabling the AI use case, either 
 
 This assumes you have created a project leveraging the [0-projects](../0-projects) stage.
 
-Since AlloyDB started enforcing setting an initial password for the default user, you need to specify it somehow. Currently it's in var.alloydb_initial_password:
-- Either set the variable to your linking, or change the code and use a data source (example in database.tf)
-- If you keep it in the code, it will be in your Terraform state!
-- After the cluster is created, if you want, you can change the password with
-```shell
-gcloud alloydb users set-password postgres \
-  --cluster alloydb \
-  --password NEW_PASSWORD_HERE \
-  --project YOUR_PROJECT \
-  --region YOUR_REGION
-```
-
-Otherwise, set up and run Terraform like you normally would:
-
 ```shell
 cp terraform.tfvars.sample terraform.tfvars # Customize
 terraform init
@@ -62,5 +48,5 @@ The [0-projects](../0-projects) stage generates the necessary Terraform input fi
 | name | description | sensitive |
 |---|---|:---:|
 | [commands](outputs.tf#L46) | Run the following commands when the deployment completes to deploy the app. |  |
-| [ip_addresses](outputs.tf#L120) | The load balancers IP addresses. |  |
+| [ip_addresses](outputs.tf#L119) | The load balancers IP addresses. |  |
 <!-- END TFDOC -->
