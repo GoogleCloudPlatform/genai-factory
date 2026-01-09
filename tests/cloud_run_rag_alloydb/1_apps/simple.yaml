@@ -1563,6 +1563,7 @@ counts:
   modules: 14
   resources: 88
 
+outputs:
   commands: "  # Run the following commands to deploy the application.\n  # Alternatively,\
     \ deploy the application through your CI/CD pipeline.\n\n  # Install the vector extension in AlloyDB\n\
     \  gcloud alloydb users set-password postgres \\\n  --cluster alloydb \\\n  --password\
