@@ -15,7 +15,7 @@ Compatibility with master is not guaranteed.
 
 ## Factories
 
-- [Single Cloud Run](./cloud-run-single/README.md) - A secure Cloud Run deployment to interact with Gemini and optionally deploy [ADK agents](https://google.github.io/adk-docs/deploy/cloud-run/).
+- [Single Cloud Run](./cloud-run-single/README.md) - A secure Cloud Run deployment to interact with Gemini, run an [ADK agents](./cloud-run-single/1-apps/apps/adk/README.md) and expose it via [A2A](./cloud-run-single/1-apps/apps/adk_a2a/README.md) or self-host a [Gemma 3](./cloud-run-single/1-apps/apps/gemma/README.md) model with Nvidia L4 GPUs.
 - [RAG with Cloud Run and CloudSQL](./cloud-run-rag/README.md) - A "Retrieval-Augmented Generation" (RAG) system leveraging Cloud Run, Cloud SQL and BigQuery.
 - [RAG with Cloud Run and AlloyDB](./cloud-run-rag-alloydb/README.md) - A "Retrieval-Augmented Generation" (RAG) system leveraging Cloud Run, AlloyDB and BigQuery.
 - [RAG with Cloud Run and Vector Search](./cloud-run-rag-search/README.md) - A "Retrieval-Augmented Generation" (RAG) system leveraging Cloud Run and Vector Search.
