@@ -1,5 +1,33 @@
+# ------------------------------------------------------------------------------
+# Load Balancer Configuration
+# ------------------------------------------------------------------------------
+# Default: Creates an External Application Load Balancer (HTTPS).
+# TODO: Replace "your-public-domain.com" with your actual public domain.
+# ------------------------------------------------------------------------------
+
 lbs_config = {
   external = {
-    domain = "your-domain.com"
+    enable = true
+    domain = "your-public-domain.com"
   }
+
+  # ----------------------------------------------------------------------------
+  # OPTION: Internal Application Load Balancer
+  # Uncomment the block below to create an internal LB reachable via VPN/VPC.
+  # ----------------------------------------------------------------------------
+  # internal = {
+  #   enable = true
+  #   domain = "your-private-domain.com"
+  # }
 }
+
+# ------------------------------------------------------------------------------
+# Direct Access to Cloud Run for testing (No Load Balancer)
+# ------------------------------------------------------------------------------
+# To expose Cloud Run directly to the Internet without a Load Balancer:
+# 1. set lbs_config.external.enable = false
+# 2. Uncomment the cloud_run_configs block below
+
+# cloud_run_configs = {
+#   ingress = "INGRESS_TRAFFIC_ALL"
+# }
