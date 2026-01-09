@@ -1565,10 +1565,10 @@ counts:
 
 outputs:
   commands: "  # Run the following commands to deploy the application.\n  # Alternatively,\
-    \ deploy the application through your CI/CD pipeline.\n\n  # Install the vector extension in AlloyDB\n\
+    \ deploy the application through your CI/CD pipeline.\n\n  # Set the postgres user password\n\
     \  gcloud alloydb users set-password postgres \\\n  --cluster alloydb \\\n  --password\
     \ YOUR_COMPLEX_PASSWORD_HERE \\\n  --project prefix-gf-rrag-0 \\\n  --region europe-west1\n\n\
-    \  -> # In https://console.cloud.google.com/alloydb/locations/europe-west1/clusters/alloydb/studio\n\
+    \  # Install the vector extension in AlloyDB\n  -> # In https://console.cloud.google.com/alloydb/locations/europe-west1/clusters/alloydb/studio\n\
     \     # Select the gf-rrag-0 database and enter with postgres user.\n     # In\
     \ the Editor 1 tab, run this query: CREATE EXTENSION IF NOT EXISTS vector;\n \
     \    # This requires the user to be AlloyDB admin.\n     # Then, create the database:\

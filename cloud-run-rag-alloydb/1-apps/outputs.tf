@@ -49,13 +49,14 @@ output "commands" {
   # Run the following commands to deploy the application.
   # Alternatively, deploy the application through your CI/CD pipeline.
 
-  # Install the vector extension in AlloyDB
+  # Set the postgres user password
   gcloud alloydb users set-password postgres \
   --cluster alloydb \
   --password YOUR_COMPLEX_PASSWORD_HERE \
   --project ${var.project_config.id} \
   --region ${var.region}
 
+  # Install the vector extension in AlloyDB
   -> # In https://console.cloud.google.com/alloydb/locations/${var.region}/clusters/alloydb/studio
      # Select the ${var.name} database and enter with postgres user.
      # In the Editor 1 tab, run this query: CREATE EXTENSION IF NOT EXISTS vector;
