@@ -3,6 +3,7 @@
 # ------------------------------------------------------------------------------
 # Default: Creates an External Application Load Balancer (HTTPS).
 # TODO: Replace "your-public-domain.com" with your actual public domain.
+# The domain must exist and point to your LB.
 # ------------------------------------------------------------------------------
 
 lbs_config = {
