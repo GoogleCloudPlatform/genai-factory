@@ -8,7 +8,6 @@
 
 lbs_config = {
   external = {
-    enable = true
     domain = "your-public-domain.com"
   }
 
