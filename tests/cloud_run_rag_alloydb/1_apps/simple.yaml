@@ -198,9 +198,6 @@ values:
       goog-terraform-provisioned: 'true'
     encryption_config: []
     etag: null
-    initial_user:
-    - password: CHANGE_THIS!!!
-      user: postgres
     labels: null
     location: europe-west1
     maintenance_update_policy: []
