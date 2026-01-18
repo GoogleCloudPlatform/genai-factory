@@ -39,10 +39,30 @@ output "commands" {
   # Run the following commands to deploy the application.
   # Alternatively, deploy the application through your CI/CD pipeline.
 
-  curl -X PATCH https://${var.region}-aiplatform.googleapis.com/v1/${module.agent.id} \
-    -H "Authorization: Bearer $ACCESS_TOKEN" \
-    -H "Content-Type: application/json" \
-    -d '{ "description": "Updated description via curl" }'
+  tar czf source.tar.gz apps/adk-a2a &&
+
+  TAR_GZ_BASE64=$(openssl base64 -in source.tar.gz | tr -d '\n')
+
+  curl -X PATCH "https://${var.region}-aiplatform.googleapis.com/v1/${module.agent.id}" \
+  -H "Authorization: Bearer $ACCESS_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d @- <<EOF
+{
+  "spec": {
+    "sourceCodeSpec": {
+      "pythonSpec": {
+        "entrypointModule": "agent",
+        "entrypointObject": "agent",
+        "requirementsFile": "requirements.txt",
+        "version": "3.12"
+      },
+      "inlineSource": {
+        "sourceArchive": "$TAR_GZ_BASE64"
+      }
+    }
+  }
+}
+EOF
 
   # Test the agent.
 

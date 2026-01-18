@@ -33,9 +33,6 @@ module "vpc" {
   subnets = [
     merge(var.networking_config.subnet, { region = var.region })
   ]
-  subnets_proxy_only = [
-    merge(var.networking_config.subnet_proxy_only, { region = var.region })
-  ]
 }
 
 # DNS policies for Google APIs

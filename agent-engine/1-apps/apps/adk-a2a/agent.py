@@ -14,8 +14,6 @@
 
 import vertexai
 
-# from google.adk.agents import Agent
-from vertexai.agent_engines import AdkApp
 from vertexai import Client, agent_engines
 from google.genai import types
 from vertexai.preview.reasoning_engines.templates.a2a import create_agent_card
@@ -38,8 +36,8 @@ from google.adk.a2a.utils.agent_to_a2a import to_a2a
 from a2a.types import AgentCard, AgentSkill
 
 
-# Define A2A the skill for the CurrencyAgent
-currency_skill = AgentSkill(
+# Define A2A the skill for the Agent
+skill = AgentSkill(
     id='get_exchange_rate',
     name='Get Currency Exchange Rate',
     description='Retrieves the exchange rate between two currencies on a specified date.',
@@ -54,7 +52,7 @@ currency_skill = AgentSkill(
 agent_card = create_agent_card(
     agent_name='Currency Exchange Agent',
     description='An agent that can provide currency exchange rates',
-    skills=[currency_skill]
+    skills=[skill]
 )
 
 def get_exchange_rate(
@@ -99,7 +97,7 @@ def get_exchange_rate(
     )
     return response.json()
 
-class CurrencyAgentExecutorWithRunner(AgentExecutor):
+class AgentExecutorWithRunner(AgentExecutor):
     """Executor that takes an LlmAgent instance and initializes the ADK Runner internally."""
 
     def __init__(self, agent: LlmAgent):
@@ -191,11 +189,11 @@ local_agent = LlmAgent(
    tools=[get_exchange_rate]
 )
 
-a2a_agent = A2aAgent(
+agent = A2aAgent(
     agent_card=agent_card,
-    agent_executor_builder=lambda: CurrencyAgentExecutorWithRunner(
+    agent_executor_builder=lambda: AgentExecutorWithRunner(
         agent=local_agent,
     )
 )
 
-a2a_agent.set_up()
+agent.set_up()
