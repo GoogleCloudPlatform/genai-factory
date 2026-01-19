@@ -14,7 +14,7 @@
 
 resource "google_storage_bucket" "pipeline_artifacts" {
   name                        = "${var.project_config.id}-pipeline-artifacts"
-  project          = var.project_config.id
+  project                     = var.project_config.id
   location                    = var.region
   uniform_bucket_level_access = true
   force_destroy               = true
@@ -22,7 +22,7 @@ resource "google_storage_bucket" "pipeline_artifacts" {
 
 resource "google_artifact_registry_repository" "pipeline_images" {
   location      = var.region
-  project          = var.project_config.id
+  project       = var.project_config.id
   repository_id = "pipeline-images"
   description   = "Repository for custom pipeline step images"
   format        = "DOCKER"

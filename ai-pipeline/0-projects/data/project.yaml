@@ -23,10 +23,13 @@ services:
   - cloudbuild.googleapis.com
   - cloudresourcemanager.googleapis.com
   - compute.googleapis.com
+  - dns.googleapis.com
   - iam.googleapis.com
   - networkconnectivity.googleapis.com
   - serviceusage.googleapis.com
   - storage.googleapis.com
+  - sqladmin.googleapis.com
+
 
 buckets:
   iac-state:
@@ -46,6 +49,7 @@ service_accounts:
   # Application SAs
   gf-pipeline-0: {}
 
+
 # Grant roles
 iam_by_principals:
   $iam_principals:service_accounts/project/iac-rw:
@@ -56,9 +60,12 @@ iam_by_principals:
     - roles/iam.serviceAccountAdmin
     - roles/serviceusage.serviceUsageConsumer
     - roles/storage.admin
+    - roles/storage.objectAdmin
     - roles/storage.objectUser
     - roles/logging.logWriter
     - roles/networkconnectivity.admin
+    - roles/dns.admin
+    - roles/cloudsql.admin
 
 # Grant roles to service agents
 service_agents:

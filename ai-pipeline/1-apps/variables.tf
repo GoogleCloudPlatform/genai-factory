@@ -26,3 +26,53 @@ variable "region" {
   type        = string
   default     = "europe-west1"
 }
+
+variable "networking_config" {
+  description = "The networking configuration."
+  type = object({
+    create = optional(bool, true)
+    vpc_id = optional(string, "net-0")
+    subnet = optional(object({
+      ip_cidr_range = optional(string, "10.0.0.0/24")
+      name          = optional(string, "sub-0")
+    }), {})
+  })
+  nullable = false
+  default  = {}
+}
+
+variable "enable_deletion_protection" {
+  description = "Whether deletion protection should be enabled."
+  type        = bool
+  nullable    = false
+  default     = true
+}
+
+variable "db_configs" {
+  description = "The Cloud SQL configurations."
+  type = object({
+    availability_type = optional(string, "REGIONAL")
+    database_version  = optional(string, "POSTGRES_14")
+    flags             = optional(map(string), { "cloudsql.iam_authentication" = "on" })
+    tier              = optional(string, "db-f1-micro")
+  })
+  nullable = false
+  default  = {}
+}
+
+variable "service_accounts" {
+  description = "The pre-created service accounts used by the blueprint."
+  type = map(object({
+    email     = string
+    iam_email = string
+    id        = string
+  }))
+  default = {}
+}
+
+variable "name" {
+  description = "The name of the resources. This is also the project suffix if a new project is created."
+  type        = string
+  nullable    = false
+  default     = "gf-pipeline-0"
+}
