@@ -95,11 +95,3 @@ module "bucket" {
   location   = "EU"
   versioning = false
 }
-
-# Give IAM permission to the Cloud SQL SA to read from this bucket
-
-resource "google_storage_bucket_iam_member" "sql_agent_storage_access" {
-  bucket = "${random_id.bucket_prefix.hex}-bucket"
-  role   = "roles/storage.objectAdmin"
-  member = "serviceAccount:${module.cloudsql.instances["primary"].service_account_email_address}"
-}

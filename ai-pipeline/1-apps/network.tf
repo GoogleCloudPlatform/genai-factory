@@ -33,6 +33,9 @@ module "vpc" {
   subnets = [
     merge(var.networking_config.subnet, { region = var.region })
   ]
+  subnets_proxy_only = [
+    merge(var.networking_config.subnet_proxy_only, { region = var.region })
+  ]
 }
 
 # DNS policies for Google APIs
@@ -45,4 +48,36 @@ module "dns_policy_googleapis" {
     rules = "./data/dns-policy-rules.yaml"
   }
   networks = { (var.name) = module.vpc[0].id }
+}
+
+# Network Attachment for Private Vertex AI pipeline
+resource "google_compute_network_attachment" "pipeline_attachment" {
+  name                  = "pipeline-attachment"
+  project               = var.project_config.id
+  region                = var.region
+  connection_preference = "ACCEPT_AUTOMATIC"
+  subnetworks           = [module.vpc[0].subnet_ids["${var.region}/${var.networking_config.subnet.name}"]]
+}
+
+# Secure Web Proxy 
+
+# Internal IP for the Proxy
+resource "google_compute_address" "swp_address" {
+  name         = "secure-web-proxy"
+  region       = var.region
+  subnetwork   = module.vpc[0].subnet_ids["${var.region}/${var.networking_config.subnet.name}"]
+  address_type = "INTERNAL"
+  project      = var.project_config.id
+}
+
+module "secure-web-proxy" {
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-swp?ref=v51.0.0"
+  project_id = var.project_config.id
+  region     = var.region
+  name       = "secure-web-proxy"
+  network    = module.vpc[0].id
+  subnetwork = module.vpc[0].subnet_ids["${var.region}/${var.networking_config.subnet.name}"]
+  gateway_config = {
+    addresses = [google_compute_address.swp_address.address]
+  }
 }

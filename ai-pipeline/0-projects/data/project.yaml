@@ -26,6 +26,8 @@ services:
   - dns.googleapis.com
   - iam.googleapis.com
   - networkconnectivity.googleapis.com
+  - networksecurity.googleapis.com
+  - networkservices.googleapis.com
   - serviceusage.googleapis.com
   - storage.googleapis.com
   - sqladmin.googleapis.com
@@ -37,6 +39,8 @@ buckets:
     iam:
       roles/storage.objectAdmin:
         - $iam_principals:service_accounts/project/iac-rw
+        - $iam_principals:service_accounts/project/gf-pipeline-0
+
       roles/storage.objectViewer:
         - $iam_principals:service_accounts/project/iac-rw
 
@@ -48,7 +52,6 @@ service_accounts:
         - roles/iam.serviceAccountUser
   # Application SAs
   gf-pipeline-0: {}
-
 
 # Grant roles
 iam_by_principals:
@@ -66,22 +69,18 @@ iam_by_principals:
     - roles/networkconnectivity.admin
     - roles/dns.admin
     - roles/cloudsql.admin
+  $iam_principals:service_accounts/project/gf-pipeline-0:
+    - roles/aiplatform.user
+    - roles/storage.objectAdmin
+  $service_agents:aiplatform:
+    - roles/aiplatform.serviceAgent
+    - roles/compute.networkAdmin
 
-# Grant roles to service agents
-service_agents:
-  aiplatform:
-    roles:
-      - roles/aiplatform.serviceAgent
 
 # Grant roles/aiplatform.user to the application service account
 iam_bindings_additive:
-  vpl_ai_user:
-    member: $iam_principals:service_accounts/project/gf-pipeline-0
-    role: roles/aiplatform.user
-  vpl_storage_admin:
-    member: $iam_principals:service_accounts/project/gf-pipeline-0
-    role: roles/storage.admin
   # Allow the application SA to be used by the Vertex AI service
   vpl_sa_user:
     member: $iam_principals:service_accounts/project/gf-pipeline-0
     role: roles/iam.serviceAccountUser
+

@@ -23,19 +23,27 @@ terraform apply
     python3 apps/pipeline.py
     ```
 
-3.  Run the pipeline:
+3. Run the pipeline:
     ```shell
     # Extract the project ID and service account from the 0-projects stage
     export PROJECT_ID=$(cd ../0-projects && terraform output -json projects | jq -r '.project.id')
     export SA_EMAIL=$(cd ../0-projects && terraform output -json service_accounts | jq -r '."project/gf-pipeline-0".email')
 
-    # (Optional) Extract the network attachment ID for PSC Interface
-    export ATTACHMENT_ID=$(terraform output -json network_attachment | jq -r '.')
+    # Extract info from current stage
+    export REGION=$(terraform output -raw region)
+    export ATTACHMENT_ID=$(terraform output -raw network_attachment)
+    export TARGET_NETWORK=$(terraform output -raw target_network)
+    export DB_HOST=$(terraform output -raw db_host)
 
     # Run the script
     python3 apps/run_pipeline.py \
       --project $PROJECT_ID \
+      --region $REGION \
       --service_account $SA_EMAIL \
       --network_attachment $ATTACHMENT_ID \
+      --target_network $TARGET_NETWORK \
+      --db_host $DB_HOST \
+      --dns_domain "sql.goog." \
+      --csv_gcs_path gs://$PROJECT_ID-pipeline-artifacts/data/top-100-imdb-movies.csv \
       --pipeline_root gs://$PROJECT_ID-pipeline-artifacts/output
     ```

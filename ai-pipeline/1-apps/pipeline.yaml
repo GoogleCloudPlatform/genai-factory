@@ -1,14 +1,27 @@
 # PIPELINE DEFINITION
-# Name: hello-world-pipeline
-# Description: A simple Hello World Vertex AI pipeline.
+# Name: private-data-pipeline
+# Description: A pipeline that loads CSV data into a private Cloud SQL instance.
 # Inputs:
-#    name: str [Default: 'World']
+#    csv_gcs_path: str
+#    db_host: str
+#    db_name: str [Default: 'cloud-sql-db']
+#    db_user: str [Default: 'postgres']
+#    proxy_url: str
 components:
-  comp-hello-world-component:
-    executorLabel: exec-hello-world-component
+  comp-load-csv-to-sql-component:
+    executorLabel: exec-load-csv-to-sql-component
     inputDefinitions:
       parameters:
-        name:
+        csv_gcs_path:
+          parameterType: STRING
+        db_host:
+          parameterType: STRING
+        db_name:
+          parameterType: STRING
+        db_user:
+          parameterType: STRING
+        proxy_url:
+          isOptional: true
           parameterType: STRING
     outputDefinitions:
       parameters:
@@ -16,21 +29,22 @@ components:
           parameterType: STRING
 deploymentSpec:
   executors:
-    exec-hello-world-component:
+    exec-load-csv-to-sql-component:
       container:
         args:
         - --executor_input
         - '{{$}}'
         - --function_to_execute
-        - hello_world_component
+        - load_csv_to_sql_component
         command:
         - sh
         - -c
         - "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip ||\
           \ python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1\
-          \ python3 -m pip install --quiet --no-warn-script-location 'kfp==2.15.2'\
-          \ '--no-deps' 'typing-extensions>=3.7.4,<5; python_version<\"3.9\"' && \"\
-          $0\" \"$@\"\n"
+          \ python3 -m pip install --quiet --no-warn-script-location 'pg8000' 'pandas'\
+          \ 'sqlalchemy' 'google-cloud-storage'  &&  python3 -m pip install --quiet\
+          \ --no-warn-script-location 'kfp==2.15.2' '--no-deps' 'typing-extensions>=3.7.4,<5;\
+          \ python_version<\"3.9\"' && \"$0\" \"$@\"\n"
         - sh
         - -ec
         - 'program_path=$(mktemp -d)
@@ -42,30 +56,87 @@ deploymentSpec:
 
           '
         - "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import\
-          \ *\n\ndef hello_world_component(name: str) -> str:\n    greeting = f\"\
-          Hello, {name}!\"\n    print(greeting)\n    return greeting\n\n"
-        image: python:3.11
+          \ *\n\ndef load_csv_to_sql_component(\n    db_host: str, \n    db_name:\
+          \ str, \n    db_user: str, \n    csv_gcs_path: str,\n    proxy_url: str\
+          \ = None\n) -> str:\n    import logging\n    import sys\n    import os\n\
+          \    import pandas as pd\n    from sqlalchemy import create_engine, text\n\
+          \    from google.cloud import storage\n    import io\n    import socket\n\
+          \n    # Configure logging to stdout so Cloud Logging picks it up\n    logging.basicConfig(stream=sys.stdout,\
+          \ level=logging.INFO)\n    logger = logging.getLogger(\"load_csv_to_sql\"\
+          )\n\n    if proxy_url:\n        logger.info(f\"Setting proxy to {proxy_url}\"\
+          )\n        os.environ[\"http_proxy\"] = proxy_url\n        os.environ[\"\
+          https_proxy\"] = proxy_url\n\n    logger.info(\"Starting load_csv_to_sql_component\"\
+          )\n\n    # 1. Diagnostic: Check network environment\n    try:\n        hostname\
+          \ = socket.gethostname()\n        ip_address = socket.gethostbyname(hostname)\n\
+          \        logger.info(f\"Running on hostname: {hostname}, IP: {ip_address}\"\
+          )\n        logger.info(f\"Target DB Host: {db_host}\")\n\n        # Resolve\
+          \ DB host\n        db_ip = socket.gethostbyname(db_host)\n        logger.info(f\"\
+          Resolved DB Host {db_host} to IP: {db_ip}\")\n    except Exception as e:\n\
+          \        logger.warning(f\"Network diagnostic failed: {e}\")\n\n    # 2.\
+          \ Download CSV from GCS\n    try:\n        logger.info(f\"Downloading CSV\
+          \ from: {csv_gcs_path}\")\n        if not csv_gcs_path.startswith(\"gs://\"\
+          ):\n            raise ValueError(f\"Invalid GCS path: {csv_gcs_path}\")\n\
+          \n        path_segments = csv_gcs_path.replace(\"gs://\", \"\").split(\"\
+          /\", 1)\n        bucket_name = path_segments[0]\n        blob_name = path_segments[1]\n\
+          \n        storage_client = storage.Client()\n        bucket = storage_client.bucket(bucket_name)\n\
+          \        blob = bucket.blob(blob_name)\n        content = blob.download_as_text()\n\
+          \n        df = pd.read_csv(io.StringIO(content))\n        logger.info(f\"\
+          Successfully loaded {len(df)} rows from {csv_gcs_path}\")\n        logger.info(f\"\
+          Columns: {df.columns.tolist()}\")\n    except Exception as e:\n        logger.exception(\"\
+          Failed to load CSV from GCS\")\n        raise e\n\n    # 3. Connect to Cloud\
+          \ SQL and load data\n    try:\n        logger.info(f\"Connecting to Postgres\
+          \ at {db_host}...\")\n        # Connection string for pg8000\n        engine\
+          \ = create_engine(f\"postgresql+pg8000://{db_user}@{db_host}/{db_name}\"\
+          )\n\n        # Test connection\n        with engine.connect() as connection:\n\
+          \            result = connection.execute(text(\"SELECT 1\"))\n         \
+          \   logger.info(\"Database connection test successful.\")\n\n        # Create\
+          \ table if not exists and load data\n        logger.info(\"Writing dataframe\
+          \ to SQL...\")\n        df.to_sql(\"imdb_movies\", engine, if_exists=\"\
+          replace\", index=False)\n\n        logger.info(f\"Successfully loaded data\
+          \ into table 'imdb_movies' in {db_name}\")\n        return \"Success\"\n\
+          \    except Exception as e:\n        logger.exception(\"Failed to load data\
+          \ into Cloud SQL\")\n        raise e\n\n"
+        image: us-docker.pkg.dev/vertex-ai/training/scikit-learn-cpu.0-23:latest
 pipelineInfo:
-  description: A simple Hello World Vertex AI pipeline.
-  name: hello-world-pipeline
+  description: A pipeline that loads CSV data into a private Cloud SQL instance.
+  name: private-data-pipeline
 root:
   dag:
     tasks:
-      hello-world-component:
+      load-csv-to-sql-component:
         cachingOptions:
           enableCache: true
         componentRef:
-          name: comp-hello-world-component
+          name: comp-load-csv-to-sql-component
         inputs:
           parameters:
-            name:
-              componentInputParameter: name
+            csv_gcs_path:
+              componentInputParameter: csv_gcs_path
+            db_host:
+              componentInputParameter: db_host
+            db_name:
+              componentInputParameter: db_name
+            db_user:
+              componentInputParameter: db_user
+            proxy_url:
+              componentInputParameter: proxy_url
         taskInfo:
-          name: hello-world-component
+          name: load-csv-to-sql-component
   inputDefinitions:
     parameters:
-      name:
-        defaultValue: World
+      csv_gcs_path:
+        parameterType: STRING
+      db_host:
+        parameterType: STRING
+      db_name:
+        defaultValue: cloud-sql-db
+        isOptional: true
+        parameterType: STRING
+      db_user:
+        defaultValue: postgres
+        isOptional: true
+        parameterType: STRING
+      proxy_url:
         isOptional: true
         parameterType: STRING
 schemaVersion: 2.1.0

@@ -44,3 +44,27 @@ output "commands" {
   --impersonate-service-account=${var.service_accounts["project/iac-rw"].email}
   EOT
 }
+
+output "region" {
+  description = "The region where resources are deployed."
+  value       = var.region
+}
+
+output "network_attachment" {
+  description = "PSC Network Attachment ID."
+  value       = google_compute_network_attachment.pipeline_attachment.id
+}
+output "db_host" {
+  description = "The private DNS name of the Cloud SQL instance."
+  value       = google_dns_record_set.cloudsql_dns_record_set.name
+}
+
+output "target_network" {
+  description = "The VPC network ID for the pipeline."
+  value       = local.vpc_id
+}
+
+output "proxy_url" {
+  description = "The Secure Web Proxy URL."
+  value       = "https://${google_compute_address.swp_address.address}:443"
+}

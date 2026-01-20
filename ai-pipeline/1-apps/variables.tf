@@ -36,6 +36,11 @@ variable "networking_config" {
       ip_cidr_range = optional(string, "10.0.0.0/24")
       name          = optional(string, "sub-0")
     }), {})
+    subnet_proxy_only = optional(object({
+      ip_cidr_range = optional(string, "10.20.0.0/24")
+      name          = optional(string, "proxy-only-sub-0")
+      purpose       = optional(string, "REGIONAL_MANAGED_PROXY")
+    }), {})
   })
   nullable = false
   default  = {}
