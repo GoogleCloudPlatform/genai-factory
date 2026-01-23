@@ -12,63 +12,76 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+output "agent_id" {
+  description = "The agent engine agent id."
+  value       = module.agent.id
+}
+
 output "commands" {
   description = "Run the following commands when the deployment finalize the setup, deploy and test your agent."
   value       = <<EOT
-  # Store Google access token for iac-rw SA
+  # Generate access token for authentication
 
   ACCESS_TOKEN=$(gcloud auth print-access-token --impersonate-service-account=${var.service_accounts["project/iac-rw"].email})
 
-  # Setup PSC-I
-  # (thus allowing private communication of your agent with your VPC).
+  # Optionally, setup PSC-I (can't be done via Terraform, yet)
 
   curl -X PATCH "https://${var.region}-aiplatform.googleapis.com/v1/${module.agent.id}" \
     -H "Authorization: Bearer $ACCESS_TOKEN" \
     -H "Content-Type: application/json" \
     -d '{
-      "networkSpec": {
-        "private_service_connect_config": {
-          "enable_private_service_connect": true,
-          "project_allowlist": [
-            "${var.project_config.number}"
-          ]
+      "spec": {
+        "deploymentSpec": {
+          "pscInterfaceConfig": {
+            "networkAttachment": "${local.network_attachment_id}",
+            "dnsPeeringConfigs": [
+              {
+                "domain": ".",
+                "targetProject": "${var.project_config.id}",
+                "targetNetwork": "${local.vpc_name}"
+              }
+            ]
+          }
         }
       }
     }'
 
-  # Run the following commands to deploy the application.
+  # Run these commands to deploy the application.
+  # Substitute the app folder and other options as needed.
   # Alternatively, deploy the application through your CI/CD pipeline.
 
-  tar czf source.tar.gz apps/adk-a2a &&
-
-  TAR_GZ_BASE64=$(openssl base64 -in source.tar.gz | tr -d '\n')
+  tar czf ${var.source_config.tar_gz_file_name} apps/adk &&
+  TAR_GZ_BASE64=$(openssl base64 -in ${var.source_config.tar_gz_file_name} | tr -d '\n')
 
   curl -X PATCH "https://${var.region}-aiplatform.googleapis.com/v1/${module.agent.id}" \
-  -H "Authorization: Bearer $ACCESS_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d @- <<EOF
-{
-  "spec": {
-    "sourceCodeSpec": {
-      "pythonSpec": {
-        "entrypointModule": "agent",
-        "entrypointObject": "agent",
-        "requirementsFile": "requirements.txt",
-        "version": "3.12"
-      },
-      "inlineSource": {
-        "sourceArchive": "$TAR_GZ_BASE64"
+    -H "Authorization: Bearer $ACCESS_TOKEN" \
+    -H "Content-Type: application/json" \
+    -d @- <<EOF
+      {
+        "spec": {
+          "agent_framework": "${var.agent_engine_config.agent_framework}",
+          "service_account": "${var.service_accounts["project/gf-ae-0"].email}",
+          "sourceCodeSpec": {
+            "pythonSpec": {
+              "entrypointModule": "${var.source_config.entrypoint_module}",
+              "entrypointObject": "${var.source_config.entrypoint_object}",
+              "requirementsFile": "${var.source_config.requirements_path}",
+              "version": "${var.agent_engine_config.python_version}"
+            },
+            "inlineSource": {
+              "sourceArchive": "$TAR_GZ_BASE64"
+            }
+          }
+        }
       }
-    }
-  }
-}
 EOF
 
   # Test the agent.
+  # Export these environment variables.
+  # Then, refer to the README.md files in the each apps/ folder to test your agent.
 
-  curl -X POST https://${var.region}-aiplatform.googleapis.com/v1/${module.agent.id}:streamQuery \
-    -H "Authorization: Bearer $ACCESS_TOKEN" \
-    -H "Content-Type: application/json" \
-    -d '{ "input": { "message": "Hello!", "user_id": "user_123" } }'
-  EOT
+  AGENT_ID=${module.agent.id}
+  PROJECT_NUMBER=${var.project_config.number}
+  REGION=${var.region}
+EOT
 }

@@ -1,2 +1,0 @@
-google-cloud-aiplatform[adk,agent_engines]>=1.133.0
-a2a-sdk >= 0.3.22

@@ -15,7 +15,7 @@
 data "archive_file" "source" {
   type        = "tar.gz"
   source_dir  = "./apps/adk"
-  output_path = "./source.tar.gz"
+  output_path = "./${var.source_config.tar_gz_file_name}"
 }
 
 module "agent" {
@@ -27,6 +27,12 @@ module "agent" {
   agent_engine_config = {
     agent_framework = var.agent_engine_config.agent_framework
     class_methods   = var.agent_engine_config.class_methods
+    environment_variables = {
+      PROJECT_ID    = var.project_config.id
+      PROXY_ADDRESS = local.proxy_ip
+      PROXY_PORT    = var.networking_config.proxy_port
+      REGION        = var.region
+    }
   }
   bucket_config = {
     deletion_protection = var.enable_deletion_protection
@@ -34,8 +40,8 @@ module "agent" {
   }
   deployment_files = {
     source_config = {
-      entrypoint_module = "agent"
-      entrypoint_object = "agent"
+      entrypoint_module = var.source_config.entrypoint_module
+      entrypoint_object = var.source_config.entrypoint_object
       source_path       = data.archive_file.source.output_path
     }
   }

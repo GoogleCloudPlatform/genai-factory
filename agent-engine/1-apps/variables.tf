@@ -16,6 +16,7 @@ variable "agent_engine_config" {
   type = object({
     agent_framework = optional(string, "google-adk")
     class_methods   = optional(list(any), [])
+    python_version  = optional(string, "3.12")
   })
   nullable = false
   default  = {}
@@ -38,10 +39,18 @@ variable "networking_config" {
   description = "The networking configuration."
   type = object({
     create = optional(bool, true)
-    vpc_id = optional(string, "net-0")
+    # Proxy variables are used if create is set to false.
+    network_attachment_id = optional(string)
+    proxy_ip              = optional(string, "10.0.0.100")
+    proxy_port            = optional(string, "443")
+    vpc_id                = optional(string, "net-0")
     subnet = optional(object({
       ip_cidr_range = optional(string, "10.0.0.0/24")
       name          = optional(string, "sub-0")
+    }), {})
+    subnet_proxy_only = optional(object({
+      ip_cidr_range = optional(string, "10.0.100.0/24")
+      name          = optional(string, "sub-proxy-0")
     }), {})
   })
   nullable = false
@@ -78,4 +87,18 @@ variable "service_accounts" {
     id        = string
   }))
   default = {}
+}
+
+variable "source_config" {
+  description = "The source file configurations."
+  type = object({
+    entrypoint_module = optional(string, "agent")
+    entrypoint_object = optional(string, "agent")
+    # path of the requirements.txt file inside the tar.gz archive
+    requirements_path = optional(string, "requirements.txt")
+    # name of the generated tar.gz file
+    tar_gz_file_name = optional(string, "source.tar.gz")
+  })
+  nullable = false
+  default  = {}
 }
