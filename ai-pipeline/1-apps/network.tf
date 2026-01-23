@@ -82,7 +82,7 @@ module "secure-web-proxy" {
   }
   certificates = [module.certificate-manager.certificates["swp-cert"].id]
   policy_rules = {
-    all-all = {
+    allow-all = {
       priority        = 1000
       allow           = true
       session_matcher = "true"

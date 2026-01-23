@@ -48,6 +48,7 @@ import socket
 import ssl
 import requests
 import certifi
+import traceback
 
 # DEBUG: Check connectivity and Fix SSL Trust for Proxy
 try:
@@ -160,22 +161,35 @@ try:
     db_url = f"postgresql+pg8000://{{db_user}}:{{access_token}}@{{db_host}}:5432/{{db_name}}"
     
     engine = sqlalchemy.create_engine(db_url)
-    
+
     # 3. Write to SQL
     print("Writing to SQL...")
     # Assuming table name 'imdb' for this demo, or derive from filename
     table_name = "imdb" 
-    # Use 'append' so we don't need to be owner (to drop it), just need INSERT permissions
-    df.to_sql(table_name, engine, if_exists='append', index=False)
-    print(f"Successfully wrote {{len(df)}} rows to table '{{table_name}}'.")
     
-    # Verify
+    # Use 'replace' to ensure fresh table (requires DROP permissions)
+    try:
+        df.to_sql(table_name, engine, if_exists='replace', index=False)
+        print(f"Successfully wrote {{len(df)}} rows to table '{{table_name}}'.")
+    except Exception as e:
+        print(f"Replace failed: {{e}}. Trying append...")
+        # Fallback to append if replace fails (e.g. permission issues)
+        df.to_sql(table_name, engine, if_exists='append', index=False)
+    
+    # Verify and Grant Permissions
     with engine.connect() as conn:
+        # Grant usage on schema and select on table
+        print(f"Granting permissions to PUBLIC...")
+        conn.execute(sqlalchemy.text("GRANT USAGE ON SCHEMA public TO PUBLIC"))
+        conn.execute(sqlalchemy.text(f"GRANT SELECT ON {{table_name}} TO PUBLIC"))
+        conn.commit()
+        
         result = conn.execute(sqlalchemy.text(f"SELECT count(*) FROM {{table_name}}"))
         print(f"Count in DB: {{result.scalar()}}")
 
 except Exception as e:
     print(f"Error: {{e}}")
+    traceback.print_exc()
     # raise e # Optionally raise to fail the job
 
 print('Job complete. Sleeping for 10 seconds...')

@@ -34,6 +34,9 @@ terraform apply
     export NETWORK_ATTACHMENT=$(terraform output -raw network_attachment)
     export TARGET_NETWORK=$(terraform output -raw target_network)
     export DB_HOST=$(terraform output -raw db_host)
+    export PROXY_URL=$(terraform output -raw proxy_url)
+    # Staging bucket
+    export BUCKET=gs://$PROJECT_ID-pipeline-artifacts
 
     # Run the script
     python3 apps/run_pipeline.py \
@@ -48,4 +51,4 @@ terraform apply
       --pipeline_root gs://$PROJECT_ID-pipeline-artifacts/output
     ```
 
-python3 apps/pipeline_psc.py  --project $PROJECT_ID   --region $REGION   --bucket gs://$PROJECT_ID-pipeline-artifacts/output   --service_account $SA_EMAIL   --network_attachment $NETWORK_ATTACHMENT   --target_network $TARGET_NETWORK   --dns_domain "sql.goog." 
+python3 apps/pipeline_psc.py   --project $PROJECT_ID   --region $REGION   --bucket $BUCKET   --service_account $SA_EMAIL   --network_attachment $ATTACHMENT_ID   --target_network $TARGET_NETWORK   --db_host $DB_HOST   --db_user $SA_EMAIL   --proxy_url $PROXY_URL   --dns_domains "sql.goog." "proxy.internet."   --input_file gs://$PROJECT_ID-pipeline-artifacts/data/top-100-imdb-movies.csv
