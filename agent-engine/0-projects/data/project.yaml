@@ -21,11 +21,15 @@ services:
   - aiplatform.googleapis.com
   - cloudresourcemanager.googleapis.com
   - compute.googleapis.com
-  - dns.googleapis.com
   - logging.googleapis.com
   - monitoring.googleapis.com
   - serviceusage.googleapis.com
   - storage.googleapis.com
+  # Only if you set network_config.create in 1-apps
+  - dns.googleapis.com
+  # Needed for SWP if you set network_config.create in 1-apps
+  - networksecurity.googleapis.com
+  - networkservices.googleapis.com
 
 buckets:
   iac-state:
