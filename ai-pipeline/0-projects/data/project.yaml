@@ -72,15 +72,16 @@ iam_by_principals:
   $iam_principals:service_accounts/project/gf-pipeline-0:
     - roles/aiplatform.user
     - roles/storage.objectAdmin
+    - roles/cloudsql.instanceUser
+    - roles/cloudsql.client
   $service_agents:aiplatform:
     - roles/aiplatform.serviceAgent
     - roles/compute.networkAdmin
+    - roles/dns.peer
 
 
-# Grant roles/aiplatform.user to the application service account
 iam_bindings_additive:
   # Allow the application SA to be used by the Vertex AI service
   vpl_sa_user:
     member: $iam_principals:service_accounts/project/gf-pipeline-0
     role: roles/iam.serviceAccountUser
-

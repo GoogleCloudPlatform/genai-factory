@@ -31,7 +31,7 @@ terraform apply
 
     # Extract info from current stage
     export REGION=$(terraform output -raw region)
-    export ATTACHMENT_ID=$(terraform output -raw network_attachment)
+    export NETWORK_ATTACHMENT=$(terraform output -raw network_attachment)
     export TARGET_NETWORK=$(terraform output -raw target_network)
     export DB_HOST=$(terraform output -raw db_host)
 
@@ -47,3 +47,5 @@ terraform apply
       --csv_gcs_path gs://$PROJECT_ID-pipeline-artifacts/data/top-100-imdb-movies.csv \
       --pipeline_root gs://$PROJECT_ID-pipeline-artifacts/output
     ```
+
+python3 apps/pipeline_psc.py  --project $PROJECT_ID   --region $REGION   --bucket gs://$PROJECT_ID-pipeline-artifacts/output   --service_account $SA_EMAIL   --network_attachment $NETWORK_ATTACHMENT   --target_network $TARGET_NETWORK   --dns_domain "sql.goog." 

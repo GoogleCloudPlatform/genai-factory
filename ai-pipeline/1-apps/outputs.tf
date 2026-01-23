@@ -52,7 +52,7 @@ output "region" {
 
 output "network_attachment" {
   description = "PSC Network Attachment ID."
-  value       = google_compute_network_attachment.pipeline_attachment.id
+  value       = google_compute_network_attachment.pipeline_attachment.name
 }
 output "db_host" {
   description = "The private DNS name of the Cloud SQL instance."
@@ -61,7 +61,7 @@ output "db_host" {
 
 output "target_network" {
   description = "The VPC network ID for the pipeline."
-  value       = local.vpc_id
+  value       = module.vpc[0].name
 }
 
 output "proxy_url" {
