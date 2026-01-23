@@ -40,7 +40,6 @@ buckets:
       roles/storage.objectAdmin:
         - $iam_principals:service_accounts/project/iac-rw
         - $iam_principals:service_accounts/project/gf-pipeline-0
-
       roles/storage.objectViewer:
         - $iam_principals:service_accounts/project/iac-rw
 
@@ -69,6 +68,7 @@ iam_by_principals:
     - roles/networkconnectivity.admin
     - roles/dns.admin
     - roles/cloudsql.admin
+    - roles/certificatemanager.owner
   $iam_principals:service_accounts/project/gf-pipeline-0:
     - roles/aiplatform.user
     - roles/storage.objectAdmin

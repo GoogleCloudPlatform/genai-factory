@@ -12,7 +12,6 @@ def create_custom_job_psci_sample(
     replica_count: int,
     image_uri: str,
     network_attachment: str,
-    domain: str,
     target_project: str,
     target_network: str,
     input_file: str,
@@ -21,6 +20,7 @@ def create_custom_job_psci_sample(
     db_name: str,
     db_user: str,
     proxy_url: str = None,
+    dns_peering_domains: list = ["sql.goog."],
 ):
     """Custom training job sample with PSC Interface Config."""
     aiplatform.init(project=project, location=location, staging_bucket=bucket)
@@ -38,10 +38,69 @@ print('Starting PSC Job')
 if "{proxy_url}" and "{proxy_url}" != "None":
     os.environ["http_proxy"] = "{proxy_url}"
     os.environ["https_proxy"] = "{proxy_url}"
+    os.environ["no_proxy"] = "localhost,127.0.0.1,metadata.google.internal,169.254.169.254,.googleapis.com,.google.internal"
     print(f"Proxy configured: {{os.environ['https_proxy']}}")
+    print(f"No Proxy configured: {{os.environ.get('no_proxy')}}")
 
+# Install dependencies at runtime
 print("Installing dependencies...")
-subprocess.check_call([sys.executable, "-m", "pip", "install", "sqlalchemy", "pg8000", "pandas", "google-auth"])
+import socket
+import ssl
+import requests
+import certifi
+
+# DEBUG: Check connectivity and Fix SSL Trust for Proxy
+try:
+    print(f"Debug: Environment: http_proxy={{os.environ.get('http_proxy')}}, https_proxy={{os.environ.get('https_proxy')}}")
+    
+    # Parse proxy host/port
+    import urllib.parse
+    proxy_url_str = "{proxy_url}"
+    if proxy_url_str and proxy_url_str != "None":
+        parsed = urllib.parse.urlparse(proxy_url_str)
+        host = parsed.hostname
+        port = parsed.port or (443 if parsed.scheme == 'https' else 80)
+        
+        print(f"Debug: Fetching proxy certificate from {{host}}:{{port}}...")
+        cert_pem = ssl.get_server_certificate((host, port))
+        print(f"Debug: Got proxy certificate")
+
+        # Create a combined CA bundle
+        # We need the proxy cert + standard CAs (so we can still trust pypi.org)
+        # Try to find existing bundle
+        base_ca_path = certifi.where()
+        print(f"Debug: Using base CA bundle from: {{base_ca_path}}")
+
+        with open(base_ca_path, 'r') as f:
+            base_ca_content = f.read()
+        
+        combined_ca_path = "/tmp/combined_ca.pem"
+        with open(combined_ca_path, 'w') as f:
+            f.write(base_ca_content)
+            f.write("\\n")
+            f.write(cert_pem)
+        
+        print(f"Debug: Created combined CA bundle at {{combined_ca_path}}")
+        os.environ["REQUESTS_CA_BUNDLE"] = combined_ca_path
+        os.environ["SSL_CERT_FILE"] = combined_ca_path # Also help curl/openssl if they respect this
+        
+        print(f"Debug: Resolving proxy host {{host}}...")
+        ip = socket.gethostbyname(host)
+        print(f"Debug: Resolved {{host}} to {{ip}}")
+
+    # Re-test connectivity with new bundle
+    print(f"Debug: Testing connectivity to pypi.org via proxy using curl with CA bundle...")
+    # curl uses --cacert or SSL_CERT_FILE usually
+    subprocess.run(["curl", "-v", "https://pypi.org"], check=False)
+
+except Exception as e:
+    print(f"Debug: SSL/Connectivity setup failed: {{e}}")
+
+# Install dependencies using the custom CA bundle environment variable
+subprocess.check_call([
+    sys.executable, "-m", "pip", "install", 
+    "sqlalchemy", "pg8000", "pandas", "google-auth", "google-cloud-storage"
+])
 
 from google.cloud import storage
 import sqlalchemy
@@ -53,7 +112,6 @@ input_file = "{input_file}"
 db_host = "{db_host}"
 db_name = "{db_name}"
 db_user = "{db_user}"
-
 # Cloud SQL Postgres IAM requires stripping .gserviceaccount.com from the username
 if db_user.endswith(".gserviceaccount.com"):
     db_user = db_user.replace(".gserviceaccount.com", "")
@@ -65,7 +123,21 @@ try:
     # 1. Read GCS File
     if input_file.startswith("gs://"):
         print(f"Reading CSV from GCS: {{input_file}}")
-        df = pd.read_csv(input_file)
+        # Parse bucket and blob
+        parts = input_file[5:].split("/", 1)
+        bucket_name = parts[0]
+        blob_name = parts[1]
+        
+        storage_client = storage.Client()
+        bucket_obj = storage_client.bucket(bucket_name)
+        blob = bucket_obj.blob(blob_name)
+        
+        local_path = "/tmp/input.csv"
+        print(f"Downloading {{input_file}} to {{local_path}}...")
+        blob.download_to_filename(local_path)
+        print("Download complete.")
+        
+        df = pd.read_csv(local_path)
         print("Data loaded into DataFrame:")
         print(df.head())
     else:
@@ -76,7 +148,7 @@ try:
     print(f"Connecting to Database {{db_name}} at {{db_host}} as {{db_user}}...")
     
     # Get IAM Access Token for Password
-    scopes = ["https://www.googleapis.com/auth/sqlservice.login"]
+    scopes = ["https://www.googleapis.com/auth/cloud-platform", "https://www.googleapis.com/auth/sqlservice.login"]
     credentials, project = google.auth.default(scopes=scopes)
     auth_req = Request()
     credentials.refresh(auth_req)
@@ -91,8 +163,10 @@ try:
     
     # 3. Write to SQL
     print("Writing to SQL...")
+    # Assuming table name 'imdb' for this demo, or derive from filename
     table_name = "imdb" 
-    df.to_sql(table_name, engine, if_exists='replace', index=False)
+    # Use 'append' so we don't need to be owner (to drop it), just need INSERT permissions
+    df.to_sql(table_name, engine, if_exists='append', index=False)
     print(f"Successfully wrote {{len(df)}} rows to table '{{table_name}}'.")
     
     # Verify
@@ -102,6 +176,7 @@ try:
 
 except Exception as e:
     print(f"Error: {{e}}")
+    # raise e # Optionally raise to fail the job
 
 print('Job complete. Sleeping for 10 seconds...')
 time.sleep(10)
@@ -118,15 +193,18 @@ time.sleep(10)
             "args": [python_script],
         },
     }]
+    
+    dns_configs = []
+    for d in dns_peering_domains:
+        dns_configs.append({
+            "domain": d,
+            "target_project": target_project,
+            "target_network": target_network,
+        })
+
     psc_interface_config = {
         "network_attachment": network_attachment,
-        "dns_peering_configs": [
-            {
-                "domain": domain,
-                "target_project": target_project,
-                "target_network": target_network,
-            },
-        ],
+        "dns_peering_configs": dns_configs,
     }
     job = aiplatform.CustomJob(
         display_name=display_name,
@@ -152,7 +230,7 @@ if __name__ == "__main__":
     # Network args
     parser.add_argument("--network_attachment", help="PSC Network Attachment ID")
     parser.add_argument("--target_network", help="Target VPC Network URL")
-    parser.add_argument("--dns_domain", default="sql.goog.", help="DNS Domain to peer")
+    parser.add_argument("--dns_domains", default=["sql.goog.", "proxy.internet."], nargs="+", help="DNS Domains to peer (list)")
     parser.add_argument("--proxy_url", help="Secure Web Proxy URL")
     
     args = parser.parse_args()
@@ -166,7 +244,6 @@ if __name__ == "__main__":
         replica_count=1,
         image_uri="us-docker.pkg.dev/vertex-ai/training/tf-cpu.2-14.py310:latest",
         network_attachment=args.network_attachment,
-        domain=args.dns_domain,
         target_project=args.project,
         target_network=args.target_network,
         input_file=args.input_file,
@@ -175,4 +252,5 @@ if __name__ == "__main__":
         db_name=args.db_name,
         db_user=args.db_user,
         proxy_url=args.proxy_url,
+        dns_peering_domains=args.dns_domains,
     )

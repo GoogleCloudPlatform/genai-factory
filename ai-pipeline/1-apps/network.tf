@@ -80,4 +80,71 @@ module "secure-web-proxy" {
   gateway_config = {
     addresses = [google_compute_address.swp_address.address]
   }
+  certificates = [module.certificate-manager.certificates["swp-cert"].id]
+  policy_rules = {
+    all-all = {
+      priority        = 1000
+      allow           = true
+      session_matcher = "true"
+    }
+  }
+}
+
+# Create a self-signed certificate for the Proxy
+resource "tls_private_key" "private_key" {
+  algorithm = "RSA"
+  rsa_bits  = 2048
+}
+
+resource "tls_self_signed_cert" "cert" {
+  private_key_pem = tls_private_key.private_key.private_key_pem
+  subject {
+    common_name  = "swp.proxy.internet"
+    organization = "GenAI Factory"
+  }
+  validity_period_hours = 720
+  dns_names    = ["swp.proxy.internet"]
+  allowed_uses = [
+    "key_encipherment",
+    "digital_signature",
+    "server_auth",
+  ]
+}
+
+module "certificate-manager" {
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/certificate-manager?ref=v51.0.0"
+  project_id = var.project_config.id
+  certificates = {
+    swp-cert = {
+      location = var.region
+      self_managed = {
+        pem_certificate = tls_self_signed_cert.cert.cert_pem
+        pem_private_key = tls_private_key.private_key.private_key_pem
+      }
+    }
+  }
+}
+
+# DNS Zone for Proxy
+resource "google_dns_managed_zone" "proxy_zone" {
+  name        = "proxy-internet"
+  dns_name    = "proxy.internet."
+  description = "Private zone for Proxy"
+  project     = var.project_config.id
+  visibility  = "private"
+  
+  private_visibility_config {
+    networks {
+      network_url = module.vpc[0].id
+    }
+  }
+}
+
+resource "google_dns_record_set" "swp_record" {
+  name         = "swp.${google_dns_managed_zone.proxy_zone.dns_name}"
+  managed_zone = google_dns_managed_zone.proxy_zone.name
+  type         = "A"
+  ttl          = 300
+  project      = var.project_config.id
+  rrdatas      = [google_compute_address.swp_address.address]
 }

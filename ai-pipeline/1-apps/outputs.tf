@@ -66,5 +66,5 @@ output "target_network" {
 
 output "proxy_url" {
   description = "The Secure Web Proxy URL."
-  value       = "https://${google_compute_address.swp_address.address}:443"
+  value       = "https://swp.proxy.internet:443"
 }
