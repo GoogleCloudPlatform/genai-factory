@@ -50,11 +50,8 @@ import requests
 import certifi
 import traceback
 
-# DEBUG: Check connectivity and Fix SSL Trust for Proxy
+# Required to get the TLS certificate from SWP and trust it
 try:
-    print(f"Debug: Environment: http_proxy={{os.environ.get('http_proxy')}}, https_proxy={{os.environ.get('https_proxy')}}")
-    
-    # Parse proxy host/port
     import urllib.parse
     proxy_url_str = "{proxy_url}"
     if proxy_url_str and proxy_url_str != "None":
@@ -66,9 +63,6 @@ try:
         cert_pem = ssl.get_server_certificate((host, port))
         print(f"Debug: Got proxy certificate")
 
-        # Create a combined CA bundle
-        # We need the proxy cert + standard CAs (so we can still trust pypi.org)
-        # Try to find existing bundle
         base_ca_path = certifi.where()
         print(f"Debug: Using base CA bundle from: {{base_ca_path}}")
 
@@ -89,15 +83,12 @@ try:
         ip = socket.gethostbyname(host)
         print(f"Debug: Resolved {{host}} to {{ip}}")
 
-    # Re-test connectivity with new bundle
     print(f"Debug: Testing connectivity to pypi.org via proxy using curl with CA bundle...")
-    # curl uses --cacert or SSL_CERT_FILE usually
     subprocess.run(["curl", "-v", "https://pypi.org"], check=False)
 
 except Exception as e:
     print(f"Debug: SSL/Connectivity setup failed: {{e}}")
 
-# Install dependencies using the custom CA bundle environment variable
 subprocess.check_call([
     sys.executable, "-m", "pip", "install", 
     "sqlalchemy", "pg8000", "pandas", "google-auth", "google-cloud-storage"
@@ -148,16 +139,12 @@ try:
     # 2. Connect to Cloud SQL (PostgreSQL)
     print(f"Connecting to Database {{db_name}} at {{db_host}} as {{db_user}}...")
     
-    # Get IAM Access Token for Password
     scopes = ["https://www.googleapis.com/auth/cloud-platform", "https://www.googleapis.com/auth/sqlservice.login"]
     credentials, project = google.auth.default(scopes=scopes)
     auth_req = Request()
     credentials.refresh(auth_req)
     access_token = credentials.token
     
-    # Create Engine
-    # user:password@host:port/dbname
-    # We use pg8000 driver
     db_url = f"postgresql+pg8000://{{db_user}}:{{access_token}}@{{db_host}}:5432/{{db_name}}"
     
     engine = sqlalchemy.create_engine(db_url)
@@ -190,7 +177,6 @@ try:
 except Exception as e:
     print(f"Error: {{e}}")
     traceback.print_exc()
-    # raise e # Optionally raise to fail the job
 
 print('Job complete. Sleeping for 10 seconds...')
 time.sleep(10)

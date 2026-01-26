@@ -103,7 +103,7 @@ resource "tls_self_signed_cert" "cert" {
     organization = "GenAI Factory"
   }
   validity_period_hours = 720
-  dns_names    = ["swp.proxy.internet"]
+  dns_names             = ["swp.proxy.internet"]
   allowed_uses = [
     "key_encipherment",
     "digital_signature",
@@ -132,7 +132,7 @@ resource "google_dns_managed_zone" "proxy_zone" {
   description = "Private zone for Proxy"
   project     = var.project_config.id
   visibility  = "private"
-  
+
   private_visibility_config {
     networks {
       network_url = module.vpc[0].id

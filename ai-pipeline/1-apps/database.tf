@@ -82,16 +82,3 @@ module "cloudsql" {
     }
   }
 }
-
-# Generate a random 8-byte ID
-resource "random_id" "bucket_prefix" {
-  byte_length = 8
-}
-
-module "bucket" {
-  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/gcs?ref=v51.0.0"
-  project_id = var.project_config.id
-  name       = "${random_id.bucket_prefix.hex}-bucket"
-  location   = "EU"
-  versioning = false
-}

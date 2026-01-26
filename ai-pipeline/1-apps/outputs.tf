@@ -25,6 +25,7 @@ locals {
     "REGION=${var.region}"
   ]
   env_vars_frontend = join(",", local._env_vars_frontend)
+  proxy_url         = substr(google_dns_record_set.swp_record.name, 0, length(google_dns_record_set.swp_record.name) - 1)
 }
 
 output "commands" {
@@ -34,37 +35,25 @@ output "commands" {
   # Alternatively, deploy the application through your CI/CD pipeline.
 
   # Load CSV file to the Cloud Storage Bucket
-  gcloud storage cp data/top-100-imdb-movies.csv gs://${random_id.bucket_prefix.hex}-bucket/
+  gcloud storage cp data/top-100-imdb-movies.csv gs://${var.project_config.id}-pipeline-artifacts/data/
 
-  # Load data to Cloud SQL (can only import from Cloud Storage)
-  gcloud sql import csv ${var.name} gs://${random_id.bucket_prefix.hex}-bucket/top-100-imdb-movies.csv \
-  --database=cloud-sql-db \
-  --table=imdb \
-  --project=${var.project_config.id} \
-  --impersonate-service-account=${var.service_accounts["project/iac-rw"].email}
-  EOT
-}
+  # Create a python virtual environment
+  python3 -m venv venv
+  source venv/bin/activate
+  pip install --upgrade kfp google-cloud-aiplatform google-cloud-compute google-cloud-dns
 
-output "region" {
-  description = "The region where resources are deployed."
-  value       = var.region
-}
-
-output "network_attachment" {
-  description = "PSC Network Attachment ID."
-  value       = google_compute_network_attachment.pipeline_attachment.name
-}
-output "db_host" {
-  description = "The private DNS name of the Cloud SQL instance."
-  value       = google_dns_record_set.cloudsql_dns_record_set.name
-}
-
-output "target_network" {
-  description = "The VPC network ID for the pipeline."
-  value       = module.vpc[0].name
-}
-
-output "proxy_url" {
-  description = "The Secure Web Proxy URL."
-  value       = "https://swp.proxy.internet:443"
+  # Launch the Vertex AI custom job:
+  python3 apps/pipeline_psc.py \
+    --project ${var.project_config.id} \
+    --region ${var.region} \
+    --bucket gs://${var.project_config.id}-pipeline-artifacts  \
+    --service_account ${var.service_accounts["project/gf-pipeline-0"].email} \
+    --network_attachment ${google_compute_network_attachment.pipeline_attachment.name} \
+    --target_network ${module.vpc[0].name} \
+    --db_host ${google_dns_record_set.cloudsql_dns_record_set.name} \
+    --db_user ${var.service_accounts["project/gf-pipeline-0"].email} \
+    --proxy_url https://${local.proxy_url} \
+    --dns_domains "sql.goog." "proxy.internet." \
+    --input_file gs://${var.project_config.id}-pipeline-artifacts/data/top-100-imdb-movies.csv
+    EOT
 }
