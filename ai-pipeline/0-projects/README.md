@@ -35,18 +35,18 @@ The `project_config` variable allows to configure for different scenarios regard
 <!-- BEGIN TFDOC -->
 ## Variables
 
-| Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
-| <a name="input_enable_deletion_protection"></a> [enable\_deletion\_protection](#input\_enable\_deletion\_protection) | Whether deletion protection should be enabled. | `bool` | `true` | no |
-| <a name="input_enable_iac_sa_impersonation"></a> [enable\_iac\_sa\_impersonation](#input\_enable\_iac\_sa\_impersonation) | Whether the user running this module should be granted serviceAccountTokenCreator on the automation service account. | `bool` | `true` | no |
-| <a name="input_project_config"></a> [project\_config](#input\_project\_config) | The project configuration. | <pre>object({<br/>    billing_account_id = optional(string)<br/>    parent             = optional(string)<br/>    prefix             = optional(string)<br/>  })</pre> | n/a | yes |
-| <a name="input_region"></a> [region](#input\_region) | The region where to create the buckets. | `string` | `"europe-west1"` | no |
+| name | description | type | required | default |
+|---|---|:---:|:---:|:---:|
+| [project_config](variables.tf#L28) | The project configuration. | <code title="object&#40;&#123;&#10;  billing_account_id &#61; optional&#40;string&#41;&#10;  parent             &#61; optional&#40;string&#41;&#10;  prefix             &#61; optional&#40;string&#41;&#10;&#125;&#41;">object&#40;&#123;&#8230;&#125;&#41;</code> | ✓ |  |
+| [enable_deletion_protection](variables.tf#L15) | Whether deletion protection should be enabled. | <code>bool</code> |  | <code>true</code> |
+| [enable_iac_sa_impersonation](variables.tf#L22) | Whether the user running this module should be granted serviceAccountTokenCreator on the automation service account. | <code>bool</code> |  | <code>true</code> |
+| [region](variables.tf#L45) | The region where to create the buckets. | <code>string</code> |  | <code>&#34;europe-west1&#34;</code> |
 
 ## Outputs
 
-| Name | Description |
-|------|-------------|
-| <a name="output_buckets"></a> [buckets](#output\_buckets) | Created buckets. |
-| <a name="output_projects"></a> [projects](#output\_projects) | Created projects. |
-| <a name="output_service_accounts"></a> [service\_accounts](#output\_service\_accounts) | Created service accounts. |
+| name | description | sensitive |
+|---|---|:---:|
+| [buckets](outputs.tf#L47) | Created buckets. |  |
+| [projects](outputs.tf#L52) | Created projects. |  |
+| [service_accounts](outputs.tf#L57) | Created service accounts. |  |
 <!-- END TFDOC -->
