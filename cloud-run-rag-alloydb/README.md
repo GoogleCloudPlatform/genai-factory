@@ -1,6 +1,6 @@
 # RAG with Cloud Run and AlloyDB
 
-This module deploys a "Retrieval-Augmented Generation" (RAG) system, leveraging Cloud Run, AlloyDB and BigQuery. For the same architecture using Cloud SQL instead of AlloyDB, consult the [corresponding folder](../cloud-run-rag/README.md).
+This module deploys a "Retrieval-Augmented Generation" (RAG) system, leveraging Cloud Run, AlloyDB and BigQuery. For the same architecture using Cloud SQL instead of AlloyDB, consult the [corresponding folder](../cloud-run-rag-cloudsql/README.md). Click [here](../cloud-run-rag-search/README.md) instead if you want to use Vertex AI Vector Search.
 
 ![Architecture Diagram](./diagram.png)
 
