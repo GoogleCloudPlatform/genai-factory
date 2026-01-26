@@ -207,7 +207,7 @@ time.sleep(10)
             "args": [python_script],
         },
     }]
-    
+
     dns_configs = []
     for d in dns_peering_domains:
         dns_configs.append({
@@ -230,6 +230,7 @@ time.sleep(10)
         service_account=service_account,
     )
 
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--project", required=True)
@@ -248,7 +249,7 @@ if __name__ == "__main__":
                         help="Database Name")
     parser.add_argument("--db_user",
                         required=True,
-                        help="Database User (SA Email)")    
+                        help="Database User (SA Email)")
     # Network args
     parser.add_argument("--network_attachment",
                         help="PSC Network Attachment ID")
