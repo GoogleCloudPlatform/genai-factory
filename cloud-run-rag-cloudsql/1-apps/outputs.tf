@@ -49,13 +49,14 @@ output "commands" {
   # Run the following commands to deploy the application.
   # Alternatively, deploy the application through your CI/CD pipeline.
 
-  # Install the vector extension in CloudSQL
+  # Set the postgres user password
   -> gcloud sql users set-password postgres \
       --password your_complex_pwd \
       --instance ${module.cloudsql.name} \
       --project ${var.project_config.id} \
       --impersonate-service-account=${var.service_accounts["project/iac-rw"].email}
 
+  # Install the vector extension in CloudSQL
   -> # In https://console.cloud.google.com/sql/instances/${var.name}/studio
      # Select the ${var.name} database and enter with postgres user.
      # In the Editor 1 tab, run this query: CREATE EXTENSION IF NOT EXISTS vector;

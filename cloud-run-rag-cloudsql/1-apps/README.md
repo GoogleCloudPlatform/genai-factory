@@ -1,7 +1,7 @@
-# Cloud Run - RAG / Platform Deployment
+# Cloud Run - RAG with Cloud SQL / Platform Deployment
 
-This stage is part of the `Cloud Run RAG factory`.
-It is responsible for deploying the components enabling the AI use case, either in the project you created in [0-projects](../0-projects) or in an existing project.
+This stage is part of the `Cloud Run - RAG with Cloud SQL` factory.
+It is responsible for deploying resources inside the project you created in [0-projects](../0-projects) or in an existing project.
 
 ![Architecture Diagram](../diagram.png)
 
@@ -48,5 +48,5 @@ The [0-projects](../0-projects) stage generates the necessary Terraform input fi
 | name | description | sensitive |
 |---|---|:---:|
 | [commands](outputs.tf#L46) | Run the following commands when the deployment completes to deploy the app. |  |
-| [ip_addresses](outputs.tf#L117) | The load balancers IP addresses. |  |
+| [ip_addresses](outputs.tf#L118) | The load balancers IP addresses. |  |
 <!-- END TFDOC -->

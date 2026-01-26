@@ -1,7 +1,7 @@
 # Cloud Run - Single / Platform Deployment
 
-This stage is part of the `Single Cloud Run factory`.
-It is responsible for deploying the components enabling the AI use case, either in the project you created in [0-projects](../0-projects) or in an existing project.
+This stage is part of `Cloud Run - Single` factory.
+It is responsible for deploying resources inside the project you created in [0-projects](../0-projects) or in an existing project.
 
 ![Architecture Diagram](../diagram.png)
 
@@ -23,6 +23,7 @@ Once the applications have been deployed, learn sample commands to test them:
 
 - [Chat](./apps/chat/README.md)
 - [ADK](./apps/adk/README.md)
+- [ADK with A2A](./apps/adk_a2a/README.md).
 - [Gemma3](./apps/gemma/README.md)
 
 ## I have not used 0-projects
@@ -48,5 +49,5 @@ The [0-projects](../0-projects) stage generates the necessary Terraform input fi
 | name | description | sensitive |
 |---|---|:---:|
 | [commands](outputs.tf#L23) | Run the following commands when the deployment completes to deploy the app. |  |
-| [ip_addresses](outputs.tf#L64) | The load balancers IP addresses. |  |
+| [ip_addresses](outputs.tf#L76) | The load balancers IP addresses. |  |
 <!-- END TFDOC -->

@@ -32,7 +32,7 @@ output "commands" {
     --repository-format docker \
     --impersonate-service-account=${var.service_accounts["project/iac-rw"].email}
 
-  # Update chat to adk if you want to deploy the adk app instead
+  # Update chat to adk, adk_a2a or gemma if you want to deploy another app instead
 
   gcloud builds submit ./apps/chat \
     --project ${var.project_config.id} \
@@ -42,6 +42,8 @@ output "commands" {
     --quiet \
     --impersonate-service-account=${var.service_accounts["project/iac-rw"].email}
 
+  # Run the following command to deploy a sample adk or chat Service 
+
   gcloud run deploy ${var.name} \
     --impersonate-service-account=${var.service_accounts["project/iac-rw"].email} \
     --project ${var.project_config.id} \
@@ -49,7 +51,6 @@ output "commands" {
     --image=${var.region}-docker.pkg.dev/${var.project_config.id}/${var.name}/srun \
     --set-env-vars ${local.env_vars}
 
-  
   # Run the following command to deploy a sample Gemma 3 on Ollama Service
 
    gcloud run deploy ${var.name} \
@@ -58,6 +59,17 @@ output "commands" {
     --region ${var.region} \
     --image "us-docker.pkg.dev/cloudrun/container/gemma/gemma3-4b:latest" \
     --set-env-vars ${local.env_vars},OLLAMA_NUM_PARALLEL=4
+  
+  # Run the following command to deploy an agent exposed with A2A
+
+   gcloud run deploy ${var.name} \
+    --impersonate-service-account=${var.service_accounts["project/iac-rw"].email} \
+    --project ${var.project_config.id} \
+    --region ${var.region} \
+    --image=${var.region}-docker.pkg.dev/${var.project_config.id}/${var.name}/srun \
+    --set-env-vars ${local.env_vars},A2A_URL=${module.cloud_run.service_uri}\
+    --port=8003
+
   EOT
 }
 
