@@ -32,6 +32,10 @@ module "agent" {
       PROXY_ADDRESS = local.proxy_ip
       PROXY_PORT    = var.networking_config.proxy_port
       REGION        = var.region
+      # Enable ADK logging and tracing
+      # For other frameworks see https://docs.cloud.google.com/agent-builder/agent-engine/manage/tracing#adk
+      GOOGLE_CLOUD_AGENT_ENGINE_ENABLE_TELEMETRY         = tostring(var.agent_engine_config.enable_adk_telemetry),
+      OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT = tostring(var.agent_engine_config.enable_adk_msg_capture),
     }
   }
   bucket_config = {

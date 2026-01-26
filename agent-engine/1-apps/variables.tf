@@ -14,9 +14,11 @@
 
 variable "agent_engine_config" {
   type = object({
-    agent_framework = optional(string, "google-adk")
-    class_methods   = optional(list(any), [])
-    python_version  = optional(string, "3.12")
+    agent_framework        = optional(string, "google-adk")
+    class_methods          = optional(list(any), [])
+    enable_adk_telemetry   = optional(bool, true)
+    enable_adk_msg_capture = optional(bool, true)
+    python_version         = optional(string, "3.12")
   })
   nullable = false
   default  = {}

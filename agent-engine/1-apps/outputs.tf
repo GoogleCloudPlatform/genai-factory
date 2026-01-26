@@ -26,41 +26,41 @@ output "commands" {
 
   # Optionally, setup PSC-I (can't be done via Terraform, yet)
 
-  curl -X PATCH "https://${var.region}-aiplatform.googleapis.com/v1/${module.agent.id}" \
-    -H "Authorization: Bearer $ACCESS_TOKEN" \
-    -H "Content-Type: application/json" \
-    -d '{
-      "spec": {
-        "deploymentSpec": {
-          "pscInterfaceConfig": {
-            "networkAttachment": "${local.network_attachment_id}",
-            "dnsPeeringConfigs": [
-              {
-                "domain": ".",
-                "targetProject": "${var.project_config.id}",
-                "targetNetwork": "${local.vpc_name}"
-              }
-            ]
-          }
-        }
-      }
-    }'
-
-  # Run these commands to deploy the application.
-  # Substitute the app folder and other options as needed.
-  # Alternatively, deploy the application through your CI/CD pipeline.
-
-  tar czf ${var.source_config.tar_gz_file_name} apps/adk &&
-  TAR_GZ_BASE64=$(openssl base64 -in ${var.source_config.tar_gz_file_name} | tr -d '\n')
-
-  curl -X PATCH "https://${var.region}-aiplatform.googleapis.com/v1/${module.agent.id}" \
+  curl -X PATCH "https://${var.region}-aiplatform.googleapis.com/v1/${module.agent.id}?updateMask=spec.deploymentSpec.pscInterfaceConfig" \
     -H "Authorization: Bearer $ACCESS_TOKEN" \
     -H "Content-Type: application/json" \
     -d @- <<EOF
       {
         "spec": {
-          "agent_framework": "${var.agent_engine_config.agent_framework}",
-          "service_account": "${var.service_accounts["project/gf-ae-0"].email}",
+          "deploymentSpec": {
+            "pscInterfaceConfig": {
+              "networkAttachment": "${local.network_attachment_id}",
+              "dnsPeeringConfigs": [
+                {
+                  "domain": ".",
+                  "targetProject": "${var.project_config.id}",
+                  "targetNetwork": "${local.vpc_name}"
+                }
+              ]
+            }
+          }
+        }
+      }
+EOF
+
+  # Run these commands to deploy the application.
+  # Substitute the app folder and other options as needed.
+  # Alternatively, deploy the application through your CI/CD pipeline.
+
+  cd apps/adk && tar -czf ${var.source_config.tar_gz_file_name} * &&
+  cd ../../ && mv apps/adk/${var.source_config.tar_gz_file_name} . &&
+  TAR_GZ_BASE64=$(openssl base64 -in ${var.source_config.tar_gz_file_name}) &&
+  curl -X PATCH "https://${var.region}-aiplatform.googleapis.com/v1/${module.agent.id}?updateMask=spec.sourceCodeSpec" \
+    -H "Authorization: Bearer $ACCESS_TOKEN" \
+    -H "Content-Type: application/json" \
+    -d @- <<EOF
+      {
+        "spec": {
           "sourceCodeSpec": {
             "pythonSpec": {
               "entrypointModule": "${var.source_config.entrypoint_module}",

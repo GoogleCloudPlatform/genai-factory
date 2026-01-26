@@ -10,9 +10,9 @@ After the [1-apps](1-apps/README.md) deployment finishes, the commands to intera
 
 The deployment includes:
 
-- **Vertex AI Reasoning Engine** (unmanaged)
-- **GCS Bucket** for agent artifacts
-- **Service Account** for the agent
+- A **Vertex AI Reasoning Engine**, that privately access resources in your VPC.
+- A custom **Service Account** for your agent.
+- Optionally, a VPC, the subnets you need and a Secure Web Proxy (SWP) so that your agent can access the Internet through your VPC and via a proxy.
 
 ## Apply the factory
 

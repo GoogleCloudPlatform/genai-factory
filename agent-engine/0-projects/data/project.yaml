@@ -51,10 +51,18 @@ service_accounts:
 
 # Grant roles
 iam_by_principals:
+  # Service agent roles needed for Agent Engine PSC-I.
+  # Remove if network is managed somewhere else.
+  $iam_principals:service_agents/project/aiplatform:
+    - roles/compute.networkAdmin
+    - roles/dns.peer
+  $iam_principals:service_agents/project/aiplatform-re:
+    - roles/serviceusage.serviceUsageConsumer
   $iam_principals:service_accounts/project/iac-rw:
     - roles/artifactregistry.admin
     - roles/aiplatform.admin
-    # Next two roles needed only if managing VPC/firewall rules in this project
+    # Next two roles needed only if managing VPC/firewall rules in this project.
+    # Remove if network is managed somewhere else.
     - roles/compute.networkAdmin
     - roles/compute.securityAdmin
     - roles/dns.admin

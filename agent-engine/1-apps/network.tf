@@ -98,4 +98,10 @@ resource "google_compute_network_attachment" "network_attachment" {
   subnetworks = [
     local.subnet_id
   ]
+
+  # Agent Engine SA automatically populates this when PSC-I is active.
+  # It adds the tenant project id.
+  lifecycle {
+    ignore_changes = [producer_accept_lists]
+  }
 }
