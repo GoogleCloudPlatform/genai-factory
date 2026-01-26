@@ -12,19 +12,30 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-variable "project_config" {
-  description = "The project where to create the resources."
+variable "db_configs" {
+  description = "The Cloud SQL configurations."
   type = object({
-    id     = string
-    number = string
+    availability_type = optional(string, "REGIONAL")
+    database_version  = optional(string, "POSTGRES_14")
+    flags             = optional(map(string), { "cloudsql.iam_authentication" = "on" })
+    tier              = optional(string, "db-f1-micro")
   })
   nullable = false
+  default  = {}
 }
 
-variable "region" {
-  description = "The region where to create the resources."
+variable "enable_deletion_protection" {
+  description = "Whether deletion protection should be enabled."
+  type        = bool
+  nullable    = false
+  default     = true
+}
+
+variable "name" {
+  description = "The name of the resources. This is also the project suffix if a new project is created."
   type        = string
-  default     = "europe-west1"
+  nullable    = false
+  default     = "gf-pipeline-0"
 }
 
 variable "networking_config" {
@@ -46,23 +57,19 @@ variable "networking_config" {
   default  = {}
 }
 
-variable "enable_deletion_protection" {
-  description = "Whether deletion protection should be enabled."
-  type        = bool
-  nullable    = false
-  default     = true
-}
-
-variable "db_configs" {
-  description = "The Cloud SQL configurations."
+variable "project_config" {
+  description = "The project where to create the resources."
   type = object({
-    availability_type = optional(string, "REGIONAL")
-    database_version  = optional(string, "POSTGRES_14")
-    flags             = optional(map(string), { "cloudsql.iam_authentication" = "on" })
-    tier              = optional(string, "db-f1-micro")
+    id     = string
+    number = string
   })
   nullable = false
-  default  = {}
+}
+
+variable "region" {
+  description = "The region where to create the resources."
+  type        = string
+  default     = "europe-west1"
 }
 
 variable "service_accounts" {
@@ -73,11 +80,4 @@ variable "service_accounts" {
     id        = string
   }))
   default = {}
-}
-
-variable "name" {
-  description = "The name of the resources. This is also the project suffix if a new project is created."
-  type        = string
-  nullable    = false
-  default     = "gf-pipeline-0"
 }
