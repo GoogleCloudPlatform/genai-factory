@@ -14,7 +14,7 @@ To execute this stage, you need these roles:
 - `roles/resourcemanager.projectCreator` on the organization or folder where you will create the project.
 - `roles/billing.user` on the billing account you wish to use.
 
-Alternatively, you can use the more permissive `roles/owner` on the organization or folder.
+Alternatively, you can grant the more permissive `roles/owner` role on the organization or folder.
 
 ## Deploy the stage
 

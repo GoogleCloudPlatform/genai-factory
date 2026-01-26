@@ -1,18 +1,23 @@
 # Agent Engine Factory
 
-The factory deploys a Vertex AI Reasoning Engine (Agent Engine) in unmanaged mode.
+The factory deploys a Vertex AI Agent Engine (aka Reasoning Engine).
 
 ## Applications
 
-After the [1-apps](1-apps/README.md) deployment finishes, the commands to interact with the agent will be displayed.
+After the [1-apps](1-apps/README.md) deployment finishes, the Terraform output will print the commands to interact with the agent.
 
 ## Core Components
 
 The deployment includes:
 
-- A **Vertex AI Reasoning Engine**, that privately access resources in your VPC.
-- A custom **Service Account** for your agent.
-- Optionally, a VPC, the subnets you need and a Secure Web Proxy (SWP) so that your agent can access the Internet through your VPC and via a proxy.
+- The **agent**, that privately access resources in your VPC.
+- A custom **service account** used by your agent.
+- Optionally, a VPC, the subnets you need and a Secure Web Proxy (SWP), so that your agent can access the Internet through your VPC and via a proxy.
+
+## Protect access to the agent by using VPC-SC
+
+You can protect your agent with *VPC-SC* by restricting access to the `aiplatform.googleapis.com` API.
+Setting up VPC-SC is a foundational building block and it's outside the scope of this factory.
 
 ## Apply the factory
 

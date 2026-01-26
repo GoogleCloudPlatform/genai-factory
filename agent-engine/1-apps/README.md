@@ -22,11 +22,6 @@ Once deployed, use the curl commands output by Terraform to test, update, or ena
 ## I have not used 0-projects
 
 The [0-projects](../0-projects) stage generates the necessary Terraform input files for this stage. If you're not using the [0-projects stage](../0-projects), you'll need to manually add the required variables to your `terraform.tfvars` file, as defined in [variables.tf](./variables.tf).
-
-## Protect access to the agent with VPC-SC
-
-You can protect your agent with VPC-SC by restricting access to the `aiplatform.googleapis.com` API.
-Setting up VPC-SC is outside the scope of this factory.
 <!-- BEGIN TFDOC -->
 ## Variables
 
