@@ -1,3 +1,4 @@
 google-cloud-aiplatform[agent_engines]>=1.133.0
 google-adk>=1.21.1
 cloudpickle==3.0.0
+opentelemetry-instrumentation-google-genai==0.5b0

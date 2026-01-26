@@ -18,7 +18,10 @@ variable "agent_engine_config" {
     class_methods          = optional(list(any), [])
     enable_adk_telemetry   = optional(bool, true)
     enable_adk_msg_capture = optional(bool, true)
-    python_version         = optional(string, "3.12")
+    enable_psc_i           = optional(bool, true)
+    max_instances          = optional(number, 5)
+    min_instances          = optional(number, 1)
+    python_version         = optional(string, "3.13")
   })
   nullable = false
   default  = {}
@@ -40,8 +43,7 @@ variable "name" {
 variable "networking_config" {
   description = "The networking configuration."
   type = object({
-    create = optional(bool, true)
-    # Proxy variables are used if create is set to false.
+    create                = optional(bool, true)
     network_attachment_id = optional(string)
     proxy_ip              = optional(string, "10.0.0.100")
     proxy_port            = optional(string, "443")
@@ -51,8 +53,8 @@ variable "networking_config" {
       name          = optional(string, "sub-0")
     }), {})
     subnet_proxy_only = optional(object({
-      ip_cidr_range = optional(string, "10.0.100.0/24")
-      name          = optional(string, "sub-proxy-0")
+      ip_cidr_range = optional(string, "10.20.0.0/24")
+      name          = optional(string, "proxy-only-sub-0")
     }), {})
   })
   nullable = false

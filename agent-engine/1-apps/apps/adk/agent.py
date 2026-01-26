@@ -16,6 +16,8 @@ from google.adk.agents import LlmAgent
 import vertexai
 from vertexai.agent_engines import AdkApp
 
+import requests
+
 from src import config
 
 vertexai.init(
@@ -28,16 +30,16 @@ def get_exchange_rate(
     currency_to: str = "EUR",
     currency_date: str = "latest",
 ):
-    import requests
+    proxies = None
+    if getattr(config, 'ENABLE_PSC_I', True):
+        proxies = {
+            "http": f"http://{config.PROXY_ADDRESS}:{config.PROXY_PORT}",
+            "https": f"http://{config.PROXY_ADDRESS}:{config.PROXY_PORT}",
+        }
     response = requests.get(
         f"https://api.frankfurter.app/{currency_date}",
         params={"from": currency_from, "to": currency_to},
-        # Proxies are needed if you use PSC-I
-        proxies = {
-            # Set proxies to https:// if your proxy accepts HTTPS connections
-            "http"  : "http://{}:{}".format(config.PROXY_ADDRESS, config.PROXY_PORT),
-            "https" : "http://{}:{}".format(config.PROXY_ADDRESS, config.PROXY_PORT),
-        }
+        proxies=proxies
     )
     return response.json()
 

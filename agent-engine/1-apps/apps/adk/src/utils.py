@@ -12,17 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from . import utils
-
-import os
-
-PROJECT_ID=os.environ.get("PROJECT_ID")
-REGION=os.environ.get("REGION")
-
-# TODO: to be checked periodically
-# Update to gemini-3.0 when it works on regional endpoints
-MODEL_NAME=os.environ.get("MODEL_NAME", "gemini-2.5-flash")
-
-ENABLE_PSC_I = utils.str_to_bool(os.environ.get("ENABLE_PSC_I", "false"))
-PROXY_ADDRESS=os.environ.get("PROXY_ADDRESS")
-PROXY_PORT=os.environ.get("PROXY_PORT", "443")
+def str_to_bool(s):
+    """Convert a string representation of truth to True or False."""
+    s_lower = s.strip().lower()
+    if s_lower in ("yes", "true", "t", "on", "1"):
+        return True
+    else:
+        return False

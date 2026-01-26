@@ -2,6 +2,8 @@
 
 The factory deploys a Vertex AI Agent Engine (aka Reasoning Engine).
 
+![Architecture Diagram](./diagram.png)
+
 ## Applications
 
 After the [1-apps](1-apps/README.md) deployment finishes, the Terraform output will print the commands to interact with the agent.

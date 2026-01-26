@@ -1,6 +1,6 @@
-# Agent Development Kit (ADK) sample application for Cloud Run
+# Agent Development Kit (ADK) sample application for Agent Engine
 
-The application demonstrates the deployment of [Agent Development Kit (ADK)](https://google.github.io/adk-docs) agents on Cloud Run.
+The application demonstrates the deployment of [Agent Development Kit (ADK)](https://google.github.io/adk-docs) agents on Agent Engine.
 
 ## Test the agent
 

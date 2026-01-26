@@ -28,6 +28,7 @@ module "agent" {
     agent_framework = var.agent_engine_config.agent_framework
     class_methods   = var.agent_engine_config.class_methods
     environment_variables = {
+      ENABLE_PSC_I  = var.agent_engine_config.enable_psc_i
       PROJECT_ID    = var.project_config.id
       PROXY_ADDRESS = local.proxy_ip
       PROXY_PORT    = var.networking_config.proxy_port
@@ -37,6 +38,8 @@ module "agent" {
       GOOGLE_CLOUD_AGENT_ENGINE_ENABLE_TELEMETRY         = tostring(var.agent_engine_config.enable_adk_telemetry),
       OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT = tostring(var.agent_engine_config.enable_adk_msg_capture),
     }
+    max_instances = var.agent_engine_config.max_instances
+    min_instances = var.agent_engine_config.min_instances
   }
   bucket_config = {
     deletion_protection = var.enable_deletion_protection

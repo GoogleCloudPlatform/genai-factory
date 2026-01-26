@@ -56,8 +56,6 @@ iam_by_principals:
   $iam_principals:service_agents/project/aiplatform:
     - roles/compute.networkAdmin
     - roles/dns.peer
-  $iam_principals:service_agents/project/aiplatform-re:
-    - roles/serviceusage.serviceUsageConsumer
   $iam_principals:service_accounts/project/iac-rw:
     - roles/artifactregistry.admin
     - roles/aiplatform.admin
@@ -71,6 +69,9 @@ iam_by_principals:
     - roles/serviceusage.serviceUsageAdmin
   $iam_principals:service_accounts/project/gf-ae-0:
     - roles/aiplatform.user
+    - roles/serviceusage.serviceUsageConsumer
     - roles/storage.objectViewer
+    # Only if you enable tracing capabilities on the agent
+    - roles/cloudtrace.agent
     # Because of b/441480710
     - roles/viewer
