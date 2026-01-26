@@ -203,7 +203,7 @@ time.sleep(10)
         "replica_count": replica_count,
         "container_spec": {
             "image_uri": image_uri,
-            "command": ["python3", "-c"], 
+            "command": ["python3", "-c"],
             "args": [python_script],
         },
     }]
@@ -236,17 +236,29 @@ if __name__ == "__main__":
     parser.add_argument("--region", required=True)
     parser.add_argument("--bucket", required=True)
     parser.add_argument("--service_account", required=True)
-    parser.add_argument("--input_file", required=True, help="GCS URI of the file to read")
+    parser.add_argument("--input_file",
+                        required=True,
+                        help="GCS URI of the file to read")
     # Database args
-    parser.add_argument("--db_host", required=True, help="Database Host (IP or DNS)")
-    parser.add_argument("--db_name", default="cloud-sql-db", help="Database Name")
-    parser.add_argument("--db_user", required=True, help="Database User (SA Email)")
+    parser.add_argument("--db_host",
+                        required=True,
+                        help="Database Host (IP or DNS)")
+    parser.add_argument("--db_name",
+                        default="cloud-sql-db",
+                        help="Database Name")
+    parser.add_argument("--db_user",
+                        required=True,
+                        help="Database User (SA Email)")    
     # Network args
-    parser.add_argument("--network_attachment", help="PSC Network Attachment ID")
+    parser.add_argument("--network_attachment",
+                        help="PSC Network Attachment ID")
     parser.add_argument("--target_network", help="Target VPC Network URL")
-    parser.add_argument("--dns_domains", default=["sql.goog.", "proxy.internet."], nargs="+", help="DNS Domains to peer (list)")
+    parser.add_argument("--dns_domains",
+                        default=["sql.goog.", "proxy.internet."],
+                        nargs="+",
+                        help="DNS Domains to peer (list)")
     parser.add_argument("--proxy_url", help="Secure Web Proxy URL")
-    
+
     args = parser.parse_args()
 
     create_custom_job_psci_sample(
@@ -256,7 +268,8 @@ if __name__ == "__main__":
         display_name="pipeline-psc",
         machine_type="n2-standard-4",
         replica_count=1,
-        image_uri="us-docker.pkg.dev/vertex-ai/training/tf-cpu.2-14.py310:latest",
+        image_uri=
+        "us-docker.pkg.dev/vertex-ai/training/tf-cpu.2-14.py310:latest",
         network_attachment=args.network_attachment,
         target_project=args.project,
         target_network=args.target_network,
