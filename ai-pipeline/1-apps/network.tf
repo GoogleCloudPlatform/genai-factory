@@ -56,7 +56,7 @@ resource "google_compute_network_attachment" "pipeline_attachment" {
   project               = var.project_config.id
   region                = var.region
   connection_preference = "ACCEPT_AUTOMATIC"
-  subnetworks           = [module.vpc[0].subnet_ids["${var.region}/${var.networking_config.subnet.name}"]]
+  subnetworks           = [local.subnet_id]
 }
 
 # Secure Web Proxy 
@@ -65,7 +65,7 @@ resource "google_compute_network_attachment" "pipeline_attachment" {
 resource "google_compute_address" "swp_address" {
   name         = "secure-web-proxy"
   region       = var.region
-  subnetwork   = module.vpc[0].subnet_ids["${var.region}/${var.networking_config.subnet.name}"]
+  subnetwork   = local.subnet_id
   address_type = "INTERNAL"
   project      = var.project_config.id
 }
@@ -75,8 +75,8 @@ module "secure-web-proxy" {
   project_id = var.project_config.id
   region     = var.region
   name       = "secure-web-proxy"
-  network    = module.vpc[0].id
-  subnetwork = module.vpc[0].subnet_ids["${var.region}/${var.networking_config.subnet.name}"]
+  network    = local.vpc_id
+  subnetwork = local.subnet_id
   gateway_config = {
     addresses = [google_compute_address.swp_address.address]
   }
