@@ -1,4 +1,4 @@
-# Cloud Run - Single / Project Setup
+# Verte AI Pipeline / Project Setup
 
 This stage is part of the `Vertex AI pipeline factory`.
 It is responsible for setting up the Google Cloud project, activating the APIs and granting the roles you need to deploy and manage the components enabling the AI use case.
