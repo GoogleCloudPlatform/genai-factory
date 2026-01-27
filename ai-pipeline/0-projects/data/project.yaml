@@ -1,6 +1,6 @@
 ---
 
-# Copyright 2025 Google LLC
+# Copyright 2026 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -31,7 +31,6 @@ services:
   - serviceusage.googleapis.com
   - storage.googleapis.com
   - sqladmin.googleapis.com
-
 
 buckets:
   iac-state:
@@ -75,10 +74,8 @@ iam_by_principals:
     - roles/cloudsql.instanceUser
     - roles/cloudsql.client
   $service_agents:aiplatform:
-    - roles/aiplatform.serviceAgent
     - roles/compute.networkAdmin
     - roles/dns.peer
-
 
 iam_bindings_additive:
   # Allow the application SA to be used by the Vertex AI service

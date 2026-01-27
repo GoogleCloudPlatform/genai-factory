@@ -40,7 +40,7 @@ output "commands" {
   # Create a python virtual environment
   python3 -m venv venv
   source venv/bin/activate
-  pip install --upgrade kfp google-cloud-aiplatform google-cloud-compute google-cloud-dns
+  pip install --upgrade google-cloud-aiplatform
 
   # Launch the Vertex AI custom job:
   python3 apps/pipeline_psc.py \
