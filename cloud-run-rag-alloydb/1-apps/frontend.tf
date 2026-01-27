@@ -49,6 +49,9 @@ module "cloud_run_frontend" {
   service_config = {
     gen2_execution_environment = true
     ingress                    = var.cloud_run_configs.frontend.ingress
-    max_instance_count         = var.cloud_run_configs.frontend.max_instance_count
+    scaling = {
+      max_instance_count = var.cloud_run_configs.frontend.max_instance_count
+      min_instance_count = var.cloud_run_configs.frontend.min_instance_count
+    }
   }
 }
