@@ -215,11 +215,13 @@ if __name__ == "__main__":
                         help="PSC Network Attachment ID")
     parser.add_argument("--target_network", help="Target VPC Network URL")
     parser.add_argument("--dns_domains",
-                        default=["sql.goog.", "proxy.internet."],
+                        default=["sql.goog."],
                         nargs="+",
                         help="DNS Domains to peer (list)")
     parser.add_argument("--proxy_url", help="Secure Web Proxy URL")
-    parser.add_argument("--proxy_port", default="443", help="Secure Web Proxy Port")
+    parser.add_argument("--proxy_port", 
+                        default="443", 
+                        help="Secure Web Proxy Port")
 
     args = parser.parse_args()
 
