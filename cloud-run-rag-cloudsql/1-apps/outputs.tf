@@ -85,6 +85,7 @@ output "commands" {
     --tag ${var.region}-docker.pkg.dev/${var.project_config.id}/${var.name}/ingestion \
     --service-account ${var.service_accounts["project/gf-rrag-ing-build-0"].id} \
     --default-buckets-behavior=REGIONAL_USER_OWNED_BUCKET \
+    --region ${var.region} \
     --quiet \
     --impersonate-service-account=${var.service_accounts["project/iac-rw"].email}
 
@@ -102,6 +103,7 @@ output "commands" {
     --tag ${var.region}-docker.pkg.dev/${var.project_config.id}/${var.name}/frontend \
     --service-account ${var.service_accounts["project/gf-rrag-fe-build-0"].id} \
     --default-buckets-behavior=REGIONAL_USER_OWNED_BUCKET \
+    --region ${var.region} \
     --quiet \
     --impersonate-service-account=${var.service_accounts["project/iac-rw"].email}
 
