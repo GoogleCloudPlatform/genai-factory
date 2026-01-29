@@ -52,6 +52,7 @@ output "commands" {
     --db_host ${google_dns_record_set.cloudsql_dns_record_set.name} \
     --db_user ${var.service_accounts["project/gf-pipeline-0"].email} \
     --proxy_url ${local.proxy_ip} \
+    --proxy_port ${var.networking_config.proxy_port} \
     --dns_domains "sql.goog." \
     --input_file gs://${var.project_config.id}-pipeline-artifacts/data/top-100-imdb-movies.csv
     EOT

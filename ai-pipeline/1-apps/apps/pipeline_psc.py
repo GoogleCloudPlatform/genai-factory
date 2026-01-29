@@ -34,6 +34,7 @@ def create_custom_job_psci_sample(
     db_name: str,
     db_user: str,
     proxy_url: str = None,
+    proxy_port: str = "443",
     dns_peering_domains: list = ["sql.goog."],
 ):
     """Custom training job sample with PSC Interface Config."""
@@ -49,11 +50,10 @@ import traceback
 
 # Configure Proxy if provided
 if "{proxy_url}":
-    os.environ["http_proxy"] = f"http://{proxy_url}:80"
-    os.environ["https_proxy"] = f"http://{proxy_url}:443"    
+    os.environ["http_proxy"] = f"http://{proxy_url}:{proxy_port}"
+    os.environ["https_proxy"] = f"http://{proxy_url}:{proxy_port}"    
     os.environ["no_proxy"] = "localhost,127.0.0.1,metadata.google.internal,169.254.169.254,.googleapis.com,.google.internal"
-    print(f"DEBUG: HTTP proxy configured: {{os.environ['http_proxy']}}")
-    print(f"DEBUG: HTTPS proxy configured: {{os.environ['https_proxy']}}")
+    print(f"DEBUG: Proxy configured: {{os.environ['http_proxy']}}")
 
 # Install dependencies at runtime
 print("Installing dependencies...")
@@ -219,6 +219,7 @@ if __name__ == "__main__":
                         nargs="+",
                         help="DNS Domains to peer (list)")
     parser.add_argument("--proxy_url", help="Secure Web Proxy URL")
+    parser.add_argument("--proxy_port", default="443", help="Secure Web Proxy Port")
 
     args = parser.parse_args()
 
@@ -240,5 +241,6 @@ if __name__ == "__main__":
         db_name=args.db_name,
         db_user=args.db_user,
         proxy_url=args.proxy_url,
+        proxy_port=args.proxy_port,
         dns_peering_domains=args.dns_domains,
     )
