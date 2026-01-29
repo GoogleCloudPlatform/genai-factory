@@ -45,68 +45,30 @@ import time
 import os
 import subprocess
 import sys
-
-print('Starting PSC Job')
-
-# Configure Proxy if provided
-if "{proxy_url}" and "{proxy_url}" != "None":
-    os.environ["http_proxy"] = "{proxy_url}"
-    os.environ["https_proxy"] = "{proxy_url}"
-    os.environ["no_proxy"] = "localhost,127.0.0.1,metadata.google.internal,169.254.169.254,.googleapis.com,.google.internal"
-    print(f"Proxy configured: {{os.environ['https_proxy']}}")
-    print(f"No Proxy configured: {{os.environ.get('no_proxy')}}")
-
-# Install dependencies at runtime
-print("Installing dependencies...")
-import socket
-import ssl
-import requests
-import certifi
 import traceback
 
-# Required to get the TLS certificate from SWP and trust it
-try:
-    import urllib.parse
-    proxy_url_str = "{proxy_url}"
-    if proxy_url_str and proxy_url_str != "None":
-        parsed = urllib.parse.urlparse(proxy_url_str)
-        host = parsed.hostname
-        port = parsed.port or (443 if parsed.scheme == 'https' else 80)
-        
-        print(f"Debug: Fetching proxy certificate from {{host}}:{{port}}...")
-        cert_pem = ssl.get_server_certificate((host, port))
-        print(f"Debug: Got proxy certificate")
+# 1. Configure Proxy if provided (Must be first for pip to work)
+if "{proxy_url}":
+    os.environ["http_proxy"] = f"http://{proxy_url}:80"
+    os.environ["https_proxy"] = f"http://{proxy_url}:443"    
+    os.environ["no_proxy"] = "localhost,127.0.0.1,metadata.google.internal,169.254.169.254,.googleapis.com,.google.internal"
+    print(f"DEBUG: HTTP proxy configured: {{os.environ['http_proxy']}}")
+    print(f"DEBUG: HTTPS proxy configured: {{os.environ['https_proxy']}}")
+    sys.stdout.flush()
 
-        base_ca_path = certifi.where()
-        print(f"Debug: Using base CA bundle from: {{base_ca_path}}")
-
-        with open(base_ca_path, 'r') as f:
-            base_ca_content = f.read()
-        
-        combined_ca_path = "/tmp/combined_ca.pem"
-        with open(combined_ca_path, 'w') as f:
-            f.write(base_ca_content)
-            f.write("\\n")
-            f.write(cert_pem)
-        
-        print(f"Debug: Created combined CA bundle at {{combined_ca_path}}")
-        os.environ["REQUESTS_CA_BUNDLE"] = combined_ca_path
-        os.environ["SSL_CERT_FILE"] = combined_ca_path # Also help curl/openssl if they respect this
-        
-        print(f"Debug: Resolving proxy host {{host}}...")
-        ip = socket.gethostbyname(host)
-        print(f"Debug: Resolved {{host}} to {{ip}}")
-
-    print(f"Debug: Testing connectivity to pypi.org via proxy using curl with CA bundle...")
-    subprocess.run(["curl", "-v", "https://pypi.org"], check=False)
-
-except Exception as e:
-    print(f"Debug: SSL/Connectivity setup failed: {{e}}")
-
+# 2. Install dependencies at runtime
+print("Installing dependencies...")
 subprocess.check_call([
     sys.executable, "-m", "pip", "install", 
     "sqlalchemy", "pg8000", "pandas", "google-auth", "google-cloud-storage"
 ])
+
+print('Starting PSC Job')
+sys.stdout.flush()
+
+import ssl
+import requests
+import certifi
 
 from google.cloud import storage
 import sqlalchemy
@@ -124,6 +86,7 @@ if db_user.endswith(".gserviceaccount.com"):
     print(f"Adjusted DB User for IAM Auth: {{db_user}}")
 
 print(f'Reading file: {{input_file}}')
+sys.stdout.flush()
 
 try:
     # 1. Read GCS File
@@ -146,12 +109,14 @@ try:
         df = pd.read_csv(local_path)
         print("Data loaded into DataFrame:")
         print(df.head())
+        sys.stdout.flush()
     else:
         print(f"Input file {{input_file}} is not a GCS path. Exiting.")
         sys.exit(1)
 
     # 2. Connect to Cloud SQL (PostgreSQL)
     print(f"Connecting to Database {{db_name}} at {{db_host}} as {{db_user}}...")
+    sys.stdout.flush()
     
     scopes = ["https://www.googleapis.com/auth/cloud-platform", "https://www.googleapis.com/auth/sqlservice.login"]
     credentials, project = google.auth.default(scopes=scopes)
@@ -176,6 +141,7 @@ try:
         print(f"Replace failed: {{e}}. Trying append...")
         # Fallback to append if replace fails (e.g. permission issues)
         df.to_sql(table_name, engine, if_exists='append', index=False)
+    sys.stdout.flush()
     
     # Verify and Grant Permissions
     with engine.connect() as conn:
@@ -187,10 +153,12 @@ try:
         
         result = conn.execute(sqlalchemy.text(f"SELECT count(*) FROM {{table_name}}"))
         print(f"Count in DB: {{result.scalar()}}")
+        sys.stdout.flush()
 
 except Exception as e:
     print(f"Error: {{e}}")
     traceback.print_exc()
+    sys.stdout.flush()
 
 print('Job complete. Sleeping for 10 seconds...')
 time.sleep(10)
@@ -270,7 +238,7 @@ if __name__ == "__main__":
         machine_type="n2-standard-4",
         replica_count=1,
         image_uri=
-        "us-docker.pkg.dev/vertex-ai/training/tf-cpu.2-14.py310:latest",
+        "us-docker.pkg.dev/vertex-ai/training/tf-cpu.2-17.py310:latest",
         network_attachment=args.network_attachment,
         target_project=args.project,
         target_network=args.target_network,

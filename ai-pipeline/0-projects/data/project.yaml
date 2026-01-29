@@ -73,6 +73,7 @@ iam_by_principals:
     - roles/storage.objectAdmin
     - roles/cloudsql.instanceUser
     - roles/cloudsql.client
+    - roles/logging.logWriter
   $service_agents:aiplatform:
     - roles/compute.networkAdmin
     - roles/dns.peer

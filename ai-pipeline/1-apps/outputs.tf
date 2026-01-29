@@ -25,7 +25,6 @@ locals {
     "REGION=${var.region}"
   ]
   env_vars_frontend = join(",", local._env_vars_frontend)
-  proxy_url         = substr(google_dns_record_set.swp_record.name, 0, length(google_dns_record_set.swp_record.name) - 1)
 }
 
 output "commands" {
@@ -48,12 +47,12 @@ output "commands" {
     --region ${var.region} \
     --bucket gs://${var.project_config.id}-pipeline-artifacts  \
     --service_account ${var.service_accounts["project/gf-pipeline-0"].email} \
-    --network_attachment ${google_compute_network_attachment.pipeline_attachment.name} \
+    --network_attachment ${google_compute_network_attachment.network_attachment[0].name} \
     --target_network ${module.vpc[0].name} \
     --db_host ${google_dns_record_set.cloudsql_dns_record_set.name} \
     --db_user ${var.service_accounts["project/gf-pipeline-0"].email} \
-    --proxy_url https://${local.proxy_url} \
-    --dns_domains "sql.goog." "proxy.internet." \
+    --proxy_url ${local.proxy_ip} \
+    --dns_domains "sql.goog." \
     --input_file gs://${var.project_config.id}-pipeline-artifacts/data/top-100-imdb-movies.csv
     EOT
 }

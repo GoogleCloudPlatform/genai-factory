@@ -41,8 +41,11 @@ variable "name" {
 variable "networking_config" {
   description = "The networking configuration."
   type = object({
-    create = optional(bool, true)
-    vpc_id = optional(string, "net-0")
+    create                = optional(bool, true)
+    network_attachment_id = optional(string)
+    proxy_ip              = optional(string, "10.0.0.100")
+    proxy_port            = optional(string, "443")
+    vpc_id                = optional(string, "net-0")
     subnet = optional(object({
       ip_cidr_range = optional(string, "10.0.0.0/24")
       name          = optional(string, "sub-0")

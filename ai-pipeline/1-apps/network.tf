@@ -13,6 +13,16 @@
 # limitations under the License.
 
 locals {
+  network_attachment_id = (
+    var.networking_config.create
+    ? google_compute_network_attachment.network_attachment[0].id
+    : var.networking_config.network_attachment_id
+  )
+  proxy_ip = (
+    var.networking_config.create
+    ? cidrhost(var.networking_config.subnet.ip_cidr_range, 100)
+    : var.networking_config.proxy_ip
+  )
   subnet_id = (
     var.networking_config.create
     ? module.vpc[0].subnet_ids["${var.region}/${var.networking_config.subnet.name}"]
@@ -51,7 +61,8 @@ module "dns_policy_googleapis" {
 }
 
 # Network Attachment for Private Vertex AI pipeline
-resource "google_compute_network_attachment" "pipeline_attachment" {
+resource "google_compute_network_attachment" "network_attachment" {
+  count                 = (var.networking_config.create && var.networking_config.network_attachment_id == null) ? 1 : 0
   name                  = "pipeline-attachment"
   project               = var.project_config.id
   region                = var.region
@@ -59,28 +70,31 @@ resource "google_compute_network_attachment" "pipeline_attachment" {
   subnetworks           = [local.subnet_id]
 }
 
-# Secure Web Proxy 
-
-# Internal IP for the Proxy
+# Reserving a proxy IP address if it wasn't provided
 resource "google_compute_address" "swp_address" {
-  name         = "secure-web-proxy"
+  count        = (var.networking_config.create && var.networking_config.proxy_ip == "10.0.0.100") ? 1 : 0
+  name         = "${var.name}-swp"
   region       = var.region
   subnetwork   = local.subnet_id
   address_type = "INTERNAL"
   project      = var.project_config.id
+  address      = local.proxy_ip
 }
 
+# This is a minimal Secure Web Proxy (SWP) setup.
+# An explicit proxy is required for Vertex AI custom job using PSC-I
+# to go to the Internet. You can substitute this with your favorite proxy.
 module "secure-web-proxy" {
-  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-swp?ref=v51.0.0"
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-swp"
+  count      = var.networking_config.create ? 1 : 0
   project_id = var.project_config.id
   region     = var.region
-  name       = "secure-web-proxy"
+  name       = "${var.name}-swp"
   network    = local.vpc_id
   subnetwork = local.subnet_id
   gateway_config = {
-    addresses = [google_compute_address.swp_address.address]
+    addresses = [local.proxy_ip]
   }
-  certificates = [module.certificate-manager.certificates["swp-cert"].id]
   policy_rules = {
     allow-all = {
       priority        = 1000
@@ -88,63 +102,4 @@ module "secure-web-proxy" {
       session_matcher = "true"
     }
   }
-}
-
-# Create a self-signed certificate for the Proxy
-resource "tls_private_key" "private_key" {
-  algorithm = "RSA"
-  rsa_bits  = 2048
-}
-
-resource "tls_self_signed_cert" "cert" {
-  private_key_pem = tls_private_key.private_key.private_key_pem
-  subject {
-    common_name  = "swp.proxy.internet"
-    organization = "GenAI Factory"
-  }
-  validity_period_hours = 720
-  dns_names             = ["swp.proxy.internet"]
-  allowed_uses = [
-    "key_encipherment",
-    "digital_signature",
-    "server_auth",
-  ]
-}
-
-module "certificate-manager" {
-  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/certificate-manager?ref=v51.0.0"
-  project_id = var.project_config.id
-  certificates = {
-    swp-cert = {
-      location = var.region
-      self_managed = {
-        pem_certificate = tls_self_signed_cert.cert.cert_pem
-        pem_private_key = tls_private_key.private_key.private_key_pem
-      }
-    }
-  }
-}
-
-# DNS Zone for Proxy
-resource "google_dns_managed_zone" "proxy_zone" {
-  name        = "proxy-internet"
-  dns_name    = "proxy.internet."
-  description = "Private zone for Proxy"
-  project     = var.project_config.id
-  visibility  = "private"
-
-  private_visibility_config {
-    networks {
-      network_url = module.vpc[0].id
-    }
-  }
-}
-
-resource "google_dns_record_set" "swp_record" {
-  name         = "swp.${google_dns_managed_zone.proxy_zone.dns_name}"
-  managed_zone = google_dns_managed_zone.proxy_zone.name
-  type         = "A"
-  ttl          = 300
-  project      = var.project_config.id
-  rrdatas      = [google_compute_address.swp_address.address]
 }
