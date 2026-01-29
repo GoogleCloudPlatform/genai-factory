@@ -1,4 +1,4 @@
-# Copyright 2025 Google LLC
+# Copyright 2026 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -33,6 +33,7 @@ variable "cloud_run_configs" {
     gpu_zonal_redundancy_disabled = optional(bool, null)
     ingress                       = optional(string, "INGRESS_TRAFFIC_INTERNAL_LOAD_BALANCER")
     max_instance_count            = optional(number, 3)
+    min_instance_count            = optional(number, 1)
     node_selector                 = optional(map(string), null)
     service_invokers              = optional(list(string), [])
     vpc_access_egress             = optional(string, "ALL_TRAFFIC")
