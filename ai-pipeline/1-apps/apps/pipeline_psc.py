@@ -47,16 +47,15 @@ import subprocess
 import sys
 import traceback
 
-# 1. Configure Proxy if provided (Must be first for pip to work)
+# Configure Proxy if provided
 if "{proxy_url}":
     os.environ["http_proxy"] = f"http://{proxy_url}:80"
     os.environ["https_proxy"] = f"http://{proxy_url}:443"    
     os.environ["no_proxy"] = "localhost,127.0.0.1,metadata.google.internal,169.254.169.254,.googleapis.com,.google.internal"
     print(f"DEBUG: HTTP proxy configured: {{os.environ['http_proxy']}}")
     print(f"DEBUG: HTTPS proxy configured: {{os.environ['https_proxy']}}")
-    sys.stdout.flush()
 
-# 2. Install dependencies at runtime
+# Install dependencies at runtime
 print("Installing dependencies...")
 subprocess.check_call([
     sys.executable, "-m", "pip", "install", 
@@ -64,7 +63,6 @@ subprocess.check_call([
 ])
 
 print('Starting PSC Job')
-sys.stdout.flush()
 
 import ssl
 import requests
@@ -86,10 +84,9 @@ if db_user.endswith(".gserviceaccount.com"):
     print(f"Adjusted DB User for IAM Auth: {{db_user}}")
 
 print(f'Reading file: {{input_file}}')
-sys.stdout.flush()
 
 try:
-    # 1. Read GCS File
+    # Read GCS File
     if input_file.startswith("gs://"):
         print(f"Reading CSV from GCS: {{input_file}}")
         # Parse bucket and blob
@@ -109,14 +106,12 @@ try:
         df = pd.read_csv(local_path)
         print("Data loaded into DataFrame:")
         print(df.head())
-        sys.stdout.flush()
     else:
         print(f"Input file {{input_file}} is not a GCS path. Exiting.")
         sys.exit(1)
 
-    # 2. Connect to Cloud SQL (PostgreSQL)
+    # Connect to Cloud SQL (PostgreSQL)
     print(f"Connecting to Database {{db_name}} at {{db_host}} as {{db_user}}...")
-    sys.stdout.flush()
     
     scopes = ["https://www.googleapis.com/auth/cloud-platform", "https://www.googleapis.com/auth/sqlservice.login"]
     credentials, project = google.auth.default(scopes=scopes)
@@ -128,7 +123,7 @@ try:
     
     engine = sqlalchemy.create_engine(db_url)
 
-    # 3. Write to SQL
+    # Write to SQL
     print("Writing to SQL...")
     # Assuming table name 'imdb' for this demo, or derive from filename
     table_name = "imdb" 
@@ -141,7 +136,6 @@ try:
         print(f"Replace failed: {{e}}. Trying append...")
         # Fallback to append if replace fails (e.g. permission issues)
         df.to_sql(table_name, engine, if_exists='append', index=False)
-    sys.stdout.flush()
     
     # Verify and Grant Permissions
     with engine.connect() as conn:
@@ -153,12 +147,10 @@ try:
         
         result = conn.execute(sqlalchemy.text(f"SELECT count(*) FROM {{table_name}}"))
         print(f"Count in DB: {{result.scalar()}}")
-        sys.stdout.flush()
 
 except Exception as e:
     print(f"Error: {{e}}")
     traceback.print_exc()
-    sys.stdout.flush()
 
 print('Job complete. Sleeping for 10 seconds...')
 time.sleep(10)
