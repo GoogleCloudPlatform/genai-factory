@@ -219,8 +219,8 @@ if __name__ == "__main__":
                         nargs="+",
                         help="DNS Domains to peer (list)")
     parser.add_argument("--proxy_url", help="Secure Web Proxy URL")
-    parser.add_argument("--proxy_port", 
-                        default="443", 
+    parser.add_argument("--proxy_port",
+                        default="443",
                         help="Secure Web Proxy Port")
 
     args = parser.parse_args()
