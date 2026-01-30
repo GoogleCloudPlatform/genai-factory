@@ -19,13 +19,13 @@ name: gf-pipeline-0
 # Enable APIs
 services:
   - aiplatform.googleapis.com
-  - artifactregistry.googleapis.com
-  - cloudbuild.googleapis.com
   - cloudresourcemanager.googleapis.com
   - compute.googleapis.com
   - dns.googleapis.com
   - iam.googleapis.com
+  # Required for PSC Interface
   - networkconnectivity.googleapis.com
+  # Required for Secure Web Proxy
   - networksecurity.googleapis.com
   - networkservices.googleapis.com
   - serviceusage.googleapis.com
@@ -55,8 +55,6 @@ service_accounts:
 iam_by_principals:
   $iam_principals:service_accounts/project/iac-rw:
     - roles/aiplatform.admin
-    - roles/artifactregistry.admin
-    - roles/cloudbuild.builds.editor
     - roles/compute.networkAdmin
     - roles/iam.serviceAccountAdmin
     - roles/serviceusage.serviceUsageConsumer
