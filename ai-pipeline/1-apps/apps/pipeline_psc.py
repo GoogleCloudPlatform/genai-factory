@@ -58,37 +58,47 @@ if "{proxy_url}":
 # Install dependencies at runtime
 print("Installing dependencies...")
 subprocess.check_call([
-    sys.executable, "-m", "pip", "install", 
-    "sqlalchemy", "pg8000", "pandas", "google-auth", "google-cloud-storage"
+    sys.executable, "-m", "pip", "install", "--upgrade",
+    "sqlalchemy", "pg8000", "google-cloud-storage"
 ])
 
-print('Starting PSC Job')
-
-import ssl
-import requests
 import certifi
-
+import logging
+import requests
+import ssl
 from google.cloud import storage
 import sqlalchemy
 import pandas as pd
 import google.auth
 from google.auth.transport.requests import Request
 
+# Configure standard logging to stdout
+# Vertex AI captures stdout/stderr automatically, so this will appear in Cloud Logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(levelname)s: %(message)s',
+    stream=sys.stdout
+)
+logger = logging.getLogger()
+
+logger.info('Starting PSC Job')
+
 input_file = "{input_file}"
 db_host = "{db_host}"
 db_name = "{db_name}"
 db_user = "{db_user}"
+
 # Cloud SQL Postgres IAM requires stripping .gserviceaccount.com from the username
 if db_user.endswith(".gserviceaccount.com"):
     db_user = db_user.replace(".gserviceaccount.com", "")
-    print(f"Adjusted DB User for IAM Auth: {{db_user}}")
+    logger.info(f"Adjusted DB User for IAM Auth: {{db_user}}")
 
-print(f'Reading file: {{input_file}}')
+logger.info(f'Reading file: {{input_file}}')
 
 try:
     # Read GCS File
     if input_file.startswith("gs://"):
-        print(f"Reading CSV from GCS: {{input_file}}")
+        logger.info(f"Reading CSV from GCS: {{input_file}}")
         # Parse bucket and blob
         parts = input_file[5:].split("/", 1)
         bucket_name = parts[0]
@@ -99,19 +109,19 @@ try:
         blob = bucket_obj.blob(blob_name)
         
         local_path = "/tmp/input.csv"
-        print(f"Downloading {{input_file}} to {{local_path}}...")
+        logger.info(f"Downloading {{input_file}} to {{local_path}}...")
         blob.download_to_filename(local_path)
-        print("Download complete.")
+        logger.info("Download complete.")
         
         df = pd.read_csv(local_path)
-        print("Data loaded into DataFrame:")
-        print(df.head())
+        logger.info("Data loaded into DataFrame:")
+        logger.info(df.head())
     else:
-        print(f"Input file {{input_file}} is not a GCS path. Exiting.")
+        logger.info(f"Input file {{input_file}} is not a GCS path. Exiting.")
         sys.exit(1)
 
     # Connect to Cloud SQL (PostgreSQL)
-    print(f"Connecting to Database {{db_name}} at {{db_host}} as {{db_user}}...")
+    logger.info(f"Connecting to Database {{db_name}} at {{db_host}} as {{db_user}}...")
     
     scopes = ["https://www.googleapis.com/auth/cloud-platform", "https://www.googleapis.com/auth/sqlservice.login"]
     credentials, project = google.auth.default(scopes=scopes)
@@ -124,35 +134,34 @@ try:
     engine = sqlalchemy.create_engine(db_url)
 
     # Write to SQL
-    print("Writing to SQL...")
+    logger.info("Writing to SQL...")
     # Assuming table name 'imdb' for this demo, or derive from filename
     table_name = "imdb" 
     
     # Use 'replace' to ensure fresh table (requires DROP permissions)
     try:
         df.to_sql(table_name, engine, if_exists='replace', index=False)
-        print(f"Successfully wrote {{len(df)}} rows to table '{{table_name}}'.")
+        logger.info(f"Successfully wrote {{len(df)}} rows to table '{{table_name}}'.")
     except Exception as e:
-        print(f"Replace failed: {{e}}. Trying append...")
+        logger.info(f"Replace failed: {{e}}. Trying append...")
         # Fallback to append if replace fails (e.g. permission issues)
         df.to_sql(table_name, engine, if_exists='append', index=False)
     
     # Verify and Grant Permissions
     with engine.connect() as conn:
         # Grant usage on schema and select on table
-        print(f"Granting permissions to PUBLIC...")
+        logger.info(f"Granting permissions to PUBLIC...")
         conn.execute(sqlalchemy.text("GRANT USAGE ON SCHEMA public TO PUBLIC"))
         conn.execute(sqlalchemy.text(f"GRANT SELECT ON {{table_name}} TO PUBLIC"))
         conn.commit()
         
         result = conn.execute(sqlalchemy.text(f"SELECT count(*) FROM {{table_name}}"))
-        print(f"Count in DB: {{result.scalar()}}")
+        logger.info(f"Count in DB: {{result.scalar()}}")
 
 except Exception as e:
-    print(f"Error: {{e}}")
-    traceback.print_exc()
+    logger.error(f"Error: {{e}}", exc_info=True)
 
-print('Job complete. Sleeping for 10 seconds...')
+logger.info('Job complete. Sleeping for 10 seconds...')
 time.sleep(10)
 """
 
