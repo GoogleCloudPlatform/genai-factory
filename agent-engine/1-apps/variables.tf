@@ -13,6 +13,7 @@
 # limitations under the License.
 
 variable "agent_engine_config" {
+  description = "The agent configuration."
   type = object({
     agent_framework        = optional(string, "google-adk")
     class_methods          = optional(list(any), [])
@@ -26,6 +27,7 @@ variable "agent_engine_config" {
   nullable = false
   default  = {}
 }
+
 variable "enable_deletion_protection" {
   description = "Whether deletion protection should be enabled."
   type        = bool
@@ -41,7 +43,7 @@ variable "name" {
 }
 
 variable "networking_config" {
-  description = "The networking configuration."
+  description = "The agent networking configuration."
   type = object({
     create                = optional(bool, true)
     network_attachment_id = optional(string)
