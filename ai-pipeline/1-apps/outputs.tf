@@ -34,7 +34,7 @@ output "commands" {
   # Alternatively, deploy the application through your CI/CD pipeline.
 
   # Load CSV file to the Cloud Storage Bucket
-  gcloud storage cp data/top-100-imdb-movies.csv gs://${var.project_config.id}-pipeline-artifacts/data/
+  gcloud storage cp data/top-100-imdb-movies.csv gs://${var.project_config.id}-${var.name}/data/
 
   # Create a python virtual environment
   python3 -m venv venv
@@ -45,7 +45,7 @@ output "commands" {
   python3 apps/pipeline_psc.py \
     --project ${var.project_config.id} \
     --region ${var.region} \
-    --bucket gs://${var.project_config.id}-pipeline-artifacts  \
+    --bucket gs://${var.project_config.id}-${var.name}  \
     --service_account ${var.service_accounts["project/gf-pipeline-0"].email} \
     --network_attachment ${google_compute_network_attachment.network_attachment[0].name} \
     --target_network ${module.vpc[0].name} \
@@ -54,6 +54,6 @@ output "commands" {
     --proxy_url ${local.proxy_ip} \
     --proxy_port ${var.networking_config.proxy_port} \
     --dns_domains "sql.goog." \
-    --input_file gs://${var.project_config.id}-pipeline-artifacts/data/top-100-imdb-movies.csv
+    --input_file gs://${var.project_config.id}-${var.name}/data/top-100-imdb-movies.csv
     EOT
 }

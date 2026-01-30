@@ -13,7 +13,7 @@
 # limitations under the License.
 
 resource "google_storage_bucket" "pipeline_artifacts" {
-  name                        = "${var.project_config.id}-pipeline-artifacts"
+  name                        = "${var.project_config.id}-${var.name}"
   project                     = var.project_config.id
   location                    = var.region
   uniform_bucket_level_access = true
