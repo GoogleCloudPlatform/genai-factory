@@ -19,11 +19,11 @@ The deployment includes:
     - A private **Cloud SQL** (PostgreSQL) instance, accessed via PSC Service Attachment from the Vertex AI job.
     - A **Google Cloud Storage** bucket for pipeline artifacts and input files.
 
-- **Networking**:
+- **Networking** (optional, provided as an example but you can use your existing network configuration):
     - A **VPC** and subnet dedicated to the pipeline and proxy.
     - **Network Attachment** (`pipeline-attachment`) to accept PSC connections from Vertex AI.
     - **Secure Web Proxy (SWP)** with self-signed TLS certificates to filter/inspect egress traffic.
-    - **Cloud DNS** private zones and peering configurations to allow the Vertex AI job to resolve internal addresses (e.g., `sql.goog`, `proxy.internet`).
+    - **Cloud DNS** private zones and peering configurations to allow the Vertex AI job to resolve internal addresses (e.g., `sql.goog`).
 
 ## Apply the factory
 
