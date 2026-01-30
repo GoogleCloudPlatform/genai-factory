@@ -1,4 +1,4 @@
-# Copyright 2025 Google LLC
+# Copyright 2026 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -41,6 +41,9 @@ module "cloud_run" {
   service_config = {
     gen2_execution_environment = true
     ingress                    = var.cloud_run_configs.ingress
-    max_instance_count         = var.cloud_run_configs.max_instance_count
+    scaling = {
+      max_instance_count = var.cloud_run_configs.max_instance_count
+      min_instance_count = var.cloud_run_configs.min_instance_count
+    }
   }
 }

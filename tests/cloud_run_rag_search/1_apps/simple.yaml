@@ -1,4 +1,4 @@
-# Copyright 2025 Google LLC
+# Copyright 2026 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -39,6 +39,7 @@ values:
     description: null
     effective_labels:
       goog-terraform-provisioned: 'true'
+    ip_collection: null
     ip_version: null
     ipv6_endpoint_type: null
     labels: null
@@ -55,6 +56,7 @@ values:
     description: null
     effective_labels:
       goog-terraform-provisioned: 'true'
+    ip_collection: null
     ip_version: null
     ipv6_endpoint_type: null
     labels: null
@@ -138,6 +140,9 @@ values:
   google_compute_security_policy.security_policy_external[0]:
     adaptive_protection_config: []
     description: null
+    effective_labels:
+      goog-terraform-provisioned: 'true'
+    labels: null
     name: gf-rrag-search-0-external
     project: prefix-gf-rrag-search-0
     recaptcha_options_config: []
@@ -170,12 +175,15 @@ values:
       priority: 2147483647
       rate_limit_options: []
       redirect_options: []
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
     timeouts: null
   google_vertex_ai_index.index:
     description: VertexAI index.
     display_name: gf-rrag-search-0
     effective_labels:
       goog-terraform-provisioned: 'true'
+    encryption_spec: []
     index_update_method: STREAM_UPDATE
     labels: null
     metadata:
@@ -201,12 +209,14 @@ values:
     display_name: gf-rrag-search-0
     effective_labels:
       goog-terraform-provisioned: 'true'
+    encryption_spec: []
     labels: null
     network: null
     private_service_connect_config:
     - enable_private_service_connect: true
       project_allowlist:
       - prefix-gf-rrag-search-0
+      psc_automation_configs: []
     project: prefix-gf-rrag-search-0
     public_endpoint_enabled: null
     region: europe-west1
@@ -230,6 +240,7 @@ values:
   module.cas[0].google_privateca_ca_pool.default[0]:
     effective_labels:
       goog-terraform-provisioned: 'true'
+    encryption_spec: []
     issuance_policy: []
     labels: null
     location: europe-west1
@@ -372,14 +383,19 @@ values:
         name: frontend
         ports:
         - container_port: 8080
+        source_code: []
         volume_mounts: []
         working_dir: null
       encryption_key: null
       execution_environment: EXECUTION_ENVIRONMENT_GEN2
       gpu_zonal_redundancy_disabled: null
+      health_check_disabled: null
       labels: null
       node_selector: []
       revision: null
+      scaling:
+      - max_instance_count: 3
+        min_instance_count: 1
       service_account: gf-rrag-fe-0@prefix-gf-rrag-search-0.iam.gserviceaccount.com
       service_mesh: []
       session_affinity: null
@@ -1038,6 +1054,7 @@ values:
       custom_metrics: []
       description: Terraform managed.
       preference: ''
+      traffic_duration: ''
     circuit_breakers: []
     compression_mode: null
     connection_draining_timeout_sec: 300
@@ -1105,6 +1122,7 @@ values:
     project: prefix-gf-rrag-search-0
     psc_target_service: null
     region: europe-west1
+    serverless_deployment: []
     subnetwork: null
     timeouts: null
   module.lb_external[0].google_compute_target_https_proxy.new[0]:
@@ -1208,6 +1226,7 @@ values:
       max_rate_per_endpoint: null
       max_rate_per_instance: null
       max_utilization: null
+      traffic_duration: ''
     circuit_breakers: []
     connection_draining_timeout_sec: 300
     connection_tracking_policy: []
@@ -1224,6 +1243,7 @@ values:
     locality_lb_policy: null
     name: gf-rrag-search-0-internal-default
     network: null
+    network_pass_through_lb_traffic_policy: []
     outlier_detection: []
     params: []
     project: prefix-gf-rrag-search-0
@@ -1232,6 +1252,7 @@ values:
     strong_session_affinity_cookie: []
     subsetting: []
     timeouts: null
+    tls_settings: []
   module.lb_internal[0].google_compute_region_network_endpoint_group.default["gf-rrag-search-0-internal"]:
     app_engine: []
     cloud_function: []
@@ -1260,6 +1281,7 @@ values:
     default_route_action: []
     default_url_redirect: []
     description: Terraform managed.
+    header_action: []
     host_rule: []
     name: gf-rrag-search-0-internal
     path_matcher: []
@@ -1333,6 +1355,7 @@ values:
       redirect_response_code: MOVED_PERMANENTLY_DEFAULT
       strip_query: false
     description: HTTP to HTTPS redirect.
+    header_action: []
     host_rule: []
     name: gf-rrag-search-0-internal-redirect
     path_matcher: []
@@ -1342,6 +1365,7 @@ values:
     timeouts: null
   module.vpc[0].google_compute_network.network[0]:
     auto_create_subnetworks: false
+    delete_bgp_always_compare_med: false
     delete_default_routes_on_create: false
     description: Terraform-managed.
     enable_ula_internal_ipv6: null
@@ -1424,6 +1448,7 @@ values:
     project: prefix-gf-rrag-search-0
     region: europe-west1
     reserved_internal_range: null
+    resolve_subnet_mask: null
     role: null
     send_secondary_ip_range_if_empty: true
     timeouts: null
@@ -1467,3 +1492,8 @@ counts:
   google_vertex_ai_index_endpoint_deployed_index: 1
   modules: 12
   resources: 84
+
+outputs:
+  commands: __missing__
+  ip_addresses: __missing__
+

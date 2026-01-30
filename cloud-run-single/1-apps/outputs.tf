@@ -39,6 +39,7 @@ output "commands" {
     --tag ${var.region}-docker.pkg.dev/${var.project_config.id}/${var.name}/srun \
     --service-account ${var.service_accounts["project/gf-srun-build-0"].id} \
     --default-buckets-behavior=REGIONAL_USER_OWNED_BUCKET \
+    --region ${var.region} \
     --quiet \
     --impersonate-service-account=${var.service_accounts["project/iac-rw"].email}
 
