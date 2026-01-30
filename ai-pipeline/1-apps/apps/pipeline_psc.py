@@ -72,8 +72,6 @@ import pandas as pd
 import google.auth
 from google.auth.transport.requests import Request
 
-# Configure standard logging to stdout
-# Vertex AI captures stdout/stderr automatically, so this will appear in Cloud Logging
 logging.basicConfig(
     level=logging.INFO,
     format='%(levelname)s: %(message)s',
@@ -120,7 +118,6 @@ try:
         logger.info(f"Input file {{input_file}} is not a GCS path. Exiting.")
         sys.exit(1)
 
-    # Connect to Cloud SQL (PostgreSQL)
     logger.info(f"Connecting to Database {{db_name}} at {{db_host}} as {{db_user}}...")
     
     scopes = ["https://www.googleapis.com/auth/cloud-platform", "https://www.googleapis.com/auth/sqlservice.login"]
@@ -133,9 +130,7 @@ try:
     
     engine = sqlalchemy.create_engine(db_url)
 
-    # Write to SQL
     logger.info("Writing to SQL...")
-    # Assuming table name 'imdb' for this demo, or derive from filename
     table_name = "imdb" 
     
     # Use 'replace' to ensure fresh table (requires DROP permissions)
