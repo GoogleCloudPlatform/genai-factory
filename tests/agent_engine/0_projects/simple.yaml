@@ -15,7 +15,6 @@
 values:
   google_service_account_iam_member.me_sa_token_creator[0]:
     condition: []
-    member: user:admin@lucaprete.altostrat.com
     role: roles/iam.serviceAccountTokenCreator
     service_account_id: projects/test-gf-ae-0/serviceAccounts/iac-rw@test-gf-ae-0.iam.gserviceaccount.com
   local_file.providers:
