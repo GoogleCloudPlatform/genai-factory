@@ -20,37 +20,11 @@ output "agent_id" {
 output "commands" {
   description = "Run the following commands when the deployment finalize the setup, deploy and test your agent."
   value       = <<EOT
-  # Generate access token for authentication
-
-  ACCESS_TOKEN=$(gcloud auth print-access-token --impersonate-service-account=${var.service_accounts["project/iac-rw"].email})
-
-  # Optionally, setup PSC-I (can't be done via Terraform, yet)
-
-  curl -X PATCH "https://${var.region}-aiplatform.googleapis.com/v1/${module.agent.id}?updateMask=spec.deploymentSpec.pscInterfaceConfig" \
-    -H "Authorization: Bearer $ACCESS_TOKEN" \
-    -H "Content-Type: application/json" \
-    -d @- <<EOF
-      {
-        "spec": {
-          "deploymentSpec": {
-            "pscInterfaceConfig": {
-              "networkAttachment": "${local.network_attachment_id}",
-              "dnsPeeringConfigs": [
-                {
-                  "domain": ".",
-                  "targetProject": "${var.project_config.id}",
-                  "targetNetwork": "${local.vpc_name}"
-                }
-              ]
-            }
-          }
-        }
-      }
-EOF
-
   # Run these commands to deploy the application.
   # Substitute the app folder and other options as needed.
   # Alternatively, deploy the application through your CI/CD pipeline.
+
+  ACCESS_TOKEN=$(gcloud auth print-access-token --impersonate-service-account=${var.service_accounts["project/iac-rw"].email})
 
   cd apps/adk && tar -czf ${var.source_config.tar_gz_file_name} * &&
   cd ../../ && mv apps/adk/${var.source_config.tar_gz_file_name} . &&

@@ -19,7 +19,7 @@ data "archive_file" "source" {
 }
 
 module "agent" {
-  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/agent-engine?ref=v51.0.0"
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/agent-engine" #?ref=v51.0.0"
   name       = var.name
   project_id = var.project_config.id
   region     = var.region
@@ -50,6 +50,14 @@ module "agent" {
       entrypoint_module = var.source_config.entrypoint_module
       entrypoint_object = var.source_config.entrypoint_object
       source_path       = data.archive_file.source.output_path
+    }
+  }
+  networking_config = {
+    network_attachment_id = local.network_attachment_id
+    dns_peering_configs = {
+      "." = {
+        target_network_name = local.vpc_name
+      }
     }
   }
   service_account_config = {

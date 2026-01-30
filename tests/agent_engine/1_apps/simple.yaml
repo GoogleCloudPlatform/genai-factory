@@ -33,6 +33,8 @@ values:
       class_methods: null
       deployment_spec:
       - env:
+        - name: ENABLE_PSC_I
+          value: 'true'
         - name: GOOGLE_CLOUD_AGENT_ENGINE_ENABLE_TELEMETRY
           value: 'true'
         - name: OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT
@@ -45,22 +47,29 @@ values:
           value: '443'
         - name: REGION
           value: europe-west1
+        max_instances: 5
+        min_instances: 1
+        psc_interface_config:
+        - dns_peering_configs:
+          - domain: .
+            target_network: net-0
+            target_project: test-project
         secret_env: []
       package_spec: []
       service_account: agent@test-project.iam.gserviceaccount.com
       source_code_spec:
       - inline_source:
-        - source_archive: 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
+        - source_archive: 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
         python_spec:
         - entrypoint_module: agent
           entrypoint_object: agent
           requirements_file: requirements.txt
-          version: '3.12'
+          version: '3.13'
     timeouts: null
   module.agent.time_sleep.wait_5_minutes:
     create_duration: 5m
     destroy_duration: null
-    id: '2026-01-12T22:29:09Z'
+    id: '2026-01-26T10:49:57Z'
     triggers: null
   module.dns_policy_googleapis[0].google_dns_response_policy.default[0]:
     description: Terraform managed.
@@ -730,14 +739,14 @@ values:
     project: test-project
     tags: null
     timeouts: null
-  module.vpc[0].google_compute_subnetwork.proxy_only["europe-west1/sub-proxy-0"]:
+  module.vpc[0].google_compute_subnetwork.proxy_only["europe-west1/proxy-only-sub-0"]:
     description: Terraform-managed proxy-only subnet for Regional HTTPS, Internal
       HTTPS or Cross-Regional HTTPS Internal LB.
-    ip_cidr_range: 10.0.100.0/24
+    ip_cidr_range: 10.20.0.0/24
     ip_collection: null
     ipv6_access_type: null
     log_config: []
-    name: sub-proxy-0
+    name: proxy-only-sub-0
     network: net-0
     params: []
     project: test-project
@@ -779,3 +788,7 @@ counts:
   modules: 4
   resources: 52
   time_sleep: 1
+
+outputs:
+  agent_id: __missing__
+  commands: __missing__

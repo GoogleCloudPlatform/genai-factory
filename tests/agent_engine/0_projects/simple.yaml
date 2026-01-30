@@ -91,6 +91,12 @@ values:
     - serviceAccount:iac-rw@test-gf-ae-0.iam.gserviceaccount.com
     project: test-gf-ae-0
     role: roles/artifactregistry.admin
+  module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/cloudtrace.agent"]:
+    condition: []
+    members:
+    - serviceAccount:gf-ae-0@test-gf-ae-0.iam.gserviceaccount.com
+    project: test-gf-ae-0
+    role: roles/cloudtrace.agent
   module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/compute.networkAdmin"]:
     condition: []
     project: test-gf-ae-0
@@ -119,6 +125,8 @@ values:
     role: roles/serviceusage.serviceUsageAdmin
   ? module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/serviceusage.serviceUsageConsumer"]
   : condition: []
+    members:
+    - serviceAccount:gf-ae-0@test-gf-ae-0.iam.gserviceaccount.com
     project: test-gf-ae-0
     role: roles/serviceusage.serviceUsageConsumer
   module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/storage.admin"]:
@@ -357,7 +365,7 @@ values:
 counts:
   google_logging_project_settings: 1
   google_project: 1
-  google_project_iam_binding: 13
+  google_project_iam_binding: 14
   google_project_iam_member: 20
   google_project_service: 10
   google_project_service_identity: 4
@@ -368,7 +376,7 @@ counts:
   google_storage_project_service_account: 1
   local_file: 2
   modules: 7
-  resources: 61
+  resources: 62
   terraform_data: 2
 
 outputs:
@@ -384,4 +392,3 @@ outputs:
       email: iac-rw@test-gf-ae-0.iam.gserviceaccount.com
       iam_email: serviceAccount:iac-rw@test-gf-ae-0.iam.gserviceaccount.com
       id: projects/test-gf-ae-0/serviceAccounts/iac-rw@test-gf-ae-0.iam.gserviceaccount.com
-

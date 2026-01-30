@@ -1,6 +1,6 @@
 # Agent Engine Factory
 
-The factory deploys a Vertex AI Agent Engine (aka Reasoning Engine).
+The factory deploys a [Vertex AI Agent Engine (aka Reasoning Engine)](https://docs.cloud.google.com/agent-builder/agent-engine/overview).
 
 ![Architecture Diagram](./diagram.png)
 
@@ -14,7 +14,7 @@ The deployment includes:
 
 - The **agent**, that privately access resources in your VPC.
 - A custom **service account** used by your agent.
-- Optionally, a VPC, the subnets you need and a Secure Web Proxy (SWP), so that your agent can access the Internet through your VPC and via a proxy.
+- Optionally, a VPC, the subnets you need and Secure Web Proxy (SWP), so that your agent can access the Internet through your VPC and via a proxy.
 
 ## Protect access to the agent by using VPC-SC
 
