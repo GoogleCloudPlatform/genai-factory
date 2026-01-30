@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
 def str_to_bool(s):
     """Convert a string representation of truth to True or False."""
     s_lower = s.strip().lower()

@@ -25,6 +25,7 @@ vertexai.init(
     location=config.REGION,
 )
 
+
 def get_exchange_rate(
     currency_from: str = "USD",
     currency_to: str = "EUR",
@@ -36,12 +37,14 @@ def get_exchange_rate(
             "http": f"http://{config.PROXY_ADDRESS}:{config.PROXY_PORT}",
             "https": f"http://{config.PROXY_ADDRESS}:{config.PROXY_PORT}",
         }
-    response = requests.get(
-        f"https://api.frankfurter.app/{currency_date}",
-        params={"from": currency_from, "to": currency_to},
-        proxies=proxies
-    )
+    response = requests.get(f"https://api.frankfurter.app/{currency_date}",
+                            params={
+                                "from": currency_from,
+                                "to": currency_to
+                            },
+                            proxies=proxies)
     return response.json()
+
 
 root_agent = LlmAgent(
     model=config.MODEL_NAME,
