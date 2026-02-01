@@ -17,7 +17,7 @@ locals {
 }
 
 module "bigquery-dataset" {
-  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/bigquery-dataset?ref=v51.0.0"
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/bigquery-dataset?ref=v52.0.0"
   project_id = var.project_config.id
   id         = local.bigquery_id
   tables = {
@@ -29,7 +29,7 @@ module "bigquery-dataset" {
 }
 
 module "alloydb" {
-  source              = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/alloydb?ref=v51.0.0"
+  source              = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/alloydb?ref=v52.0.0"
   project_id          = var.project_config.id
   project_number      = var.project_config.number
   cluster_name        = "alloydb"
@@ -81,7 +81,7 @@ resource "google_compute_forwarding_rule" "psc_consumer_fwd_rule" {
 }
 
 module "psc_consumer_dns_zone" {
-  source        = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/dns?ref=v51.0.0"
+  source        = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/dns?ref=v52.0.0"
   project_id    = var.project_config.id
   name          = "${var.name}-alloydb"
   description   = "DNS Zone for the PSC access to AlloyDB"
