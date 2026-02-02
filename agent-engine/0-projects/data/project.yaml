@@ -59,7 +59,7 @@ iam_by_principals:
   $iam_principals:service_accounts/project/iac-rw:
     - roles/artifactregistry.admin
     - roles/aiplatform.admin
-    # Next two roles needed only if managing VPC/firewall rules in this project.
+    # Next three roles needed only if managing VPC/firewall rules in this project.
     # Remove if network is managed somewhere else.
     - roles/compute.networkAdmin
     - roles/compute.securityAdmin

@@ -16,6 +16,15 @@ The deployment includes:
 - A custom **service account** used by your agent.
 - Optionally, a VPC, the subnets you need and Secure Web Proxy (SWP), so that your agent can access the Internet through your VPC and via a proxy.
 
+## Source code deployment
+
+By default, the factory deploys your code by using *Agent Engine source based deployments*.
+This means the agent expects a *tar.gz package*, containing your agent definition and your *requirements.txt* file.
+This is the most recent way of deploying code in Agent Engine and we believe this is what most of users need to use.
+
+In case of need, the underlying Agent Engine module also supports the *serialized object deployment*.
+You can easily adapt this factory to work with it. You can find instructions directly on the [Cloud Foundation Fabric website](https://github.com/GoogleCloudPlatform/cloud-foundation-fabric/tree/master/modules/agent-engine#serialized-object-deployment).
+
 ## Protect access to the agent by using VPC-SC
 
 You can protect your agent with *VPC-SC* by restricting access to the `aiplatform.googleapis.com` API.

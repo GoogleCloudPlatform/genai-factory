@@ -43,13 +43,21 @@ variable "name" {
 }
 
 variable "networking_config" {
-  description = "The agent networking configuration."
+  description = "The networking configuration."
   type = object({
-    create                = optional(bool, true)
+    create = optional(bool, true)
+    # key is the domain
+    dns_peering_configs = optional(map(object({
+      # by default, all dns queries go to your VPC.
+      target_network_name = optional(string)
+      target_project_id   = optional(string)
+      })), {
+      "." = {}
+    })
+    # to be set if create = false
     network_attachment_id = optional(string)
     proxy_ip              = optional(string, "10.0.0.100")
     proxy_port            = optional(string, "443")
-    vpc_id                = optional(string, "net-0")
     subnet = optional(object({
       ip_cidr_range = optional(string, "10.0.0.0/24")
       name          = optional(string, "sub-0")
@@ -58,6 +66,7 @@ variable "networking_config" {
       ip_cidr_range = optional(string, "10.20.0.0/24")
       name          = optional(string, "proxy-only-sub-0")
     }), {})
+    vpc_id = optional(string, "net-0")
   })
   nullable = false
   default  = {}

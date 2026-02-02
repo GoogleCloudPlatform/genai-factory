@@ -55,8 +55,9 @@ module "agent" {
   networking_config = {
     network_attachment_id = local.network_attachment_id
     dns_peering_configs = {
-      "." = {
-        target_network_name = local.vpc_name
+      for k, v in var.networking_config.dns_peering_configs : k => {
+        target_network_name = coalesce(v.target_network_name, local.vpc_name)
+        target_project_id   = coalesce(v.target_project_id, var.project_config.id)
       }
     }
   }
