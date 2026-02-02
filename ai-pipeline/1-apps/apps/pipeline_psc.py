@@ -46,7 +46,6 @@ import time
 import os
 import subprocess
 import sys
-import traceback
 
 # Configure Proxy if provided
 if "{proxy_url}":
@@ -62,10 +61,7 @@ subprocess.check_call([
     "sqlalchemy", "pg8000", "google-cloud-storage"
 ])
 
-import certifi
 import logging
-import requests
-import ssl
 from google.cloud import storage
 import sqlalchemy
 import pandas as pd
