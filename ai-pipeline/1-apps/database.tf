@@ -14,7 +14,7 @@
 
 
 module "dns_private_zone_cloudsql" {
-  source        = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/dns?ref=v51.0.0"
+  source        = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/dns?ref=v52.0.0"
   project_id    = var.project_config.id
   name          = "${var.name}-cloudsql"
   force_destroy = !var.enable_deletion_protection
@@ -55,7 +55,7 @@ resource "google_compute_forwarding_rule" "cloudsql_psc_endpoint" {
 }
 
 module "cloudsql" {
-  source                        = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/cloudsql-instance?ref=v51.0.0"
+  source                        = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/cloudsql-instance?ref=v52.0.0"
   project_id                    = var.project_config.id
   gcp_deletion_protection       = var.enable_deletion_protection
   terraform_deletion_protection = var.enable_deletion_protection

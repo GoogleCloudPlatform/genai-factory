@@ -20,7 +20,7 @@ locals {
 }
 
 module "projects" {
-  source = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/project-factory?ref=v50.0.0"
+  source = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/project-factory?ref=v52.0.0"
   data_defaults = {
     billing_account = var.project_config.billing_account_id
     parent          = var.project_config.parent
