@@ -36,24 +36,69 @@ output "commands" {
   # Load CSV file to the Cloud Storage Bucket
   gcloud storage cp data/top-100-imdb-movies.csv gs://${var.project_config.id}-${var.name}/data/
 
-  # Create a python virtual environment
-  python3 -m venv venv
-  source venv/bin/activate
-  pip install --upgrade google-cloud-aiplatform
-
-  # Launch the Vertex AI custom job:
-  python3 apps/pipeline_psc.py \
+  # Create artifact registry repository
+  # TODO: Replace in all factories by a variable and create with Terraform if not provided by the user
+  gcloud artifacts repositories create ${var.name} \
+  --project=${var.project_config.id} \
+  --location ${var.region} \
+  --repository-format docker \
+  --impersonate-service-account=${var.service_accounts["project/iac-rw"].email}
+  
+  # Build the custom container image using Cloud Build and upload to artifact registry
+  gcloud builds submit apps/psc-pipeline \
+    --tag ${var.region}-docker.pkg.dev/${var.project_config.id}/${var.name}/psc-pipeline:latest \
     --project ${var.project_config.id} \
+    --service-account ${var.service_accounts["project/gf-pipeline-0-build-0"].id} \
+    --default-buckets-behavior=REGIONAL_USER_OWNED_BUCKET \
     --region ${var.region} \
-    --bucket gs://${var.project_config.id}-${var.name}  \
-    --service_account ${var.service_accounts["project/gf-pipeline-0"].email} \
-    --network_attachment ${google_compute_network_attachment.network_attachment[0].name} \
-    --target_network ${module.vpc[0].name} \
-    --db_host ${google_dns_record_set.cloudsql_dns_record_set.name} \
-    --db_user ${var.service_accounts["project/gf-pipeline-0"].email} \
-    --proxy_url ${local.proxy_ip} \
-    --proxy_port ${var.networking_config.proxy_port} \
-    --dns_domains "sql.goog." \
-    --input_file gs://${var.project_config.id}-${var.name}/data/top-100-imdb-movies.csv
-    EOT
+    --quiet \
+    --impersonate-service-account=${var.service_accounts["project/iac-rw"].email}
+
+  # Get the access token for the REST API
+  ACCESS_TOKEN=$(gcloud auth print-access-token --impersonate-service-account=${var.service_accounts["project/iac-rw"].email})
+  # Create the Vertex AI custom job via REST API
+  curl -X POST "https://${var.region}-aiplatform.googleapis.com/v1/projects/${var.project_config.id}/locations/${var.region}/customJobs" \
+    -H "Authorization: Bearer $ACCESS_TOKEN" \
+    -H "Content-Type: application/json" \
+    -d @- <<EOF
+{
+  "displayName": "custom-job-psc",
+  "jobSpec": {
+    "workerPoolSpecs": [
+      {
+        "machineSpec": {
+          "machineType": "n2-standard-4"
+        },
+        "replicaCount": 1,
+        "containerSpec": {
+            "imageUri": "${var.region}-docker.pkg.dev/${var.project_config.id}/${var.name}/psc-pipeline:latest",
+            "env": [
+              { "name": "PROJECT_ID", "value": "${var.project_config.id}" },
+              { "name": "REGION", "value": "${var.region}" },
+              { "name": "INPUT_FILE", "value": "gs://${var.project_config.id}-${var.name}/data/top-100-imdb-movies.csv" },
+              { "name": "DB_HOST", "value": "${google_dns_record_set.cloudsql_dns_record_set.name}" },
+              { "name": "DB_NAME", "value": "cloud-sql-db" },
+              { "name": "DB_USER", "value": "${var.service_accounts["project/gf-pipeline-0"].email}" },
+              { "name": "PROXY_ADDRESS", "value": "${local.proxy_ip}" },
+              { "name": "PROXY_PORT", "value": "${var.networking_config.proxy_port}" }
+            ]
+        }
+      }
+    ],
+    "serviceAccount": "${var.service_accounts["project/gf-pipeline-0"].email}",
+    "pscInterfaceConfig": {
+      "networkAttachment": "${local.network_attachment_id}",
+      "dnsPeeringConfigs": [
+        {
+          "domain": "sql.goog.",
+          "targetProject": "${var.project_config.id}",
+          "targetNetwork": "${module.vpc[0].name}"
+        }
+      ]
+    },
+    "enableWebAccess": true
+  }
+}
+EOF
+EOT
 }

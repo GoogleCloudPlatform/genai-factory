@@ -1,6 +1,6 @@
-# Vertex AI Pipeline / Platform Deployment
+# Vertex AI Pipelines / Platform Deployment
 
-This stage is part of the `Vertex AI pipeline factory`.
+This stage is part of the `Vertex AI pipelines factory`.
 It is responsible for deploying the components enabling the AI use case, either in the project you created in [0-projects](../0-projects) or in an existing project.
 
 This example demonstrates how to run a Vertex AI Custom Job with PSC Interface to access a private Cloud SQL database.

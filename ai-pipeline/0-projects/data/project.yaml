@@ -31,6 +31,8 @@ services:
   - serviceusage.googleapis.com
   - storage.googleapis.com
   - sqladmin.googleapis.com
+  - artifactregistry.googleapis.com
+  - cloudbuild.googleapis.com
 
 buckets:
   iac-state:
@@ -48,8 +50,11 @@ service_accounts:
     iam_sa_roles:
       $service_account_ids:project/gf-pipeline-0:
         - roles/iam.serviceAccountUser
+      $service_account_ids:project/gf-pipeline-0-build-0:
+        - roles/iam.serviceAccountUser
   # Application SAs
   gf-pipeline-0: {}
+  gf-pipeline-0-build-0: {}
 
 # Grant roles
 iam_by_principals:
@@ -66,18 +71,28 @@ iam_by_principals:
     - roles/dns.admin
     - roles/cloudsql.admin
     - roles/certificatemanager.owner
+    - roles/artifactregistry.admin
+    - roles/cloudbuild.builds.editor
+  # Used to run the Vertex AI custom job code
   $iam_principals:service_accounts/project/gf-pipeline-0:
-    - roles/aiplatform.user
     - roles/storage.objectAdmin
     - roles/cloudsql.instanceUser
     - roles/cloudsql.client
     - roles/logging.logWriter
+    - roles/artifactregistry.reader
+  # Used to build the custom container image
+  $iam_principals:service_accounts/project/gf-pipeline-0-build-0:
+    - roles/logging.logWriter
+    - roles/storage.objectAdmin
+    - roles/storage.admin
+    - roles/artifactregistry.writer
+  # Required for PSC Interface
   $service_agents:aiplatform:
     - roles/compute.networkAdmin
     - roles/dns.peer
 
+# Additive IAM bindings because Vertex AI automatically manages this role
 iam_bindings_additive:
-  # Allow the application SA to be used by the Vertex AI service
-  vpl_sa_user:
+  gf-pipeline-0_aiplatform_user:
     member: $iam_principals:service_accounts/project/gf-pipeline-0
-    role: roles/iam.serviceAccountUser
+    role: roles/aiplatform.user
