@@ -1,0 +1,393 @@
+# Copyright 2026 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+values:
+  google_service_account_iam_member.me_sa_token_creator[0]:
+    condition: []
+    role: roles/iam.serviceAccountTokenCreator
+    service_account_id: projects/test-gf-ae-0/serviceAccounts/iac-rw@test-gf-ae-0.iam.gserviceaccount.com
+  local_file.providers:
+    content_base64: null
+    directory_permission: '0777'
+    file_permission: '0644'
+    filename: ../1-apps/providers.tf
+    sensitive_content: null
+    source: null
+  local_file.tfvars:
+    content_base64: null
+    directory_permission: '0777'
+    file_permission: '0644'
+    filename: ../1-apps/terraform.auto.tfvars
+    sensitive_content: null
+    source: null
+  module.projects.module.buckets["project/iac-state"].google_storage_bucket.bucket[0]:
+    autoclass: []
+    cors: []
+    custom_placement_config: []
+    default_event_based_hold: null
+    effective_labels:
+      goog-terraform-provisioned: 'true'
+    enable_object_retention: null
+    encryption: []
+    force_destroy: false
+    hierarchical_namespace: []
+    ip_filter: []
+    labels: null
+    lifecycle_rule: []
+    location: EUROPE-WEST1
+    logging: []
+    name: test-gf-ae-0-iac-state
+    project: test-gf-ae-0
+    requester_pays: null
+    retention_policy: []
+    storage_class: STANDARD
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
+    timeouts: null
+    uniform_bucket_level_access: true
+    versioning:
+    - enabled: false
+  ? module.projects.module.buckets["project/iac-state"].google_storage_bucket_iam_binding.authoritative["roles/storage.objectAdmin"]
+  : bucket: test-gf-ae-0-iac-state
+    condition: []
+    members:
+    - serviceAccount:iac-rw@test-gf-ae-0.iam.gserviceaccount.com
+    role: roles/storage.objectAdmin
+    timeouts: null
+  ? module.projects.module.buckets["project/iac-state"].google_storage_bucket_iam_binding.authoritative["roles/storage.objectViewer"]
+  : bucket: test-gf-ae-0-iac-state
+    condition: []
+    members:
+    - serviceAccount:iac-rw@test-gf-ae-0.iam.gserviceaccount.com
+    role: roles/storage.objectViewer
+    timeouts: null
+  module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/aiplatform.admin"]:
+    condition: []
+    members:
+    - serviceAccount:iac-rw@test-gf-ae-0.iam.gserviceaccount.com
+    project: test-gf-ae-0
+    role: roles/aiplatform.admin
+  module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/aiplatform.user"]:
+    condition: []
+    members:
+    - serviceAccount:gf-ae-0@test-gf-ae-0.iam.gserviceaccount.com
+    project: test-gf-ae-0
+    role: roles/aiplatform.user
+  module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/artifactregistry.admin"]:
+    condition: []
+    members:
+    - serviceAccount:iac-rw@test-gf-ae-0.iam.gserviceaccount.com
+    project: test-gf-ae-0
+    role: roles/artifactregistry.admin
+  module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/cloudtrace.agent"]:
+    condition: []
+    members:
+    - serviceAccount:gf-ae-0@test-gf-ae-0.iam.gserviceaccount.com
+    project: test-gf-ae-0
+    role: roles/cloudtrace.agent
+  module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/compute.networkAdmin"]:
+    condition: []
+    project: test-gf-ae-0
+    role: roles/compute.networkAdmin
+  module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/compute.securityAdmin"]:
+    condition: []
+    members:
+    - serviceAccount:iac-rw@test-gf-ae-0.iam.gserviceaccount.com
+    project: test-gf-ae-0
+    role: roles/compute.securityAdmin
+  module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/dns.admin"]:
+    condition: []
+    members:
+    - serviceAccount:iac-rw@test-gf-ae-0.iam.gserviceaccount.com
+    project: test-gf-ae-0
+    role: roles/dns.admin
+  module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/dns.peer"]:
+    condition: []
+    project: test-gf-ae-0
+    role: roles/dns.peer
+  ? module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/serviceusage.serviceUsageAdmin"]
+  : condition: []
+    members:
+    - serviceAccount:iac-rw@test-gf-ae-0.iam.gserviceaccount.com
+    project: test-gf-ae-0
+    role: roles/serviceusage.serviceUsageAdmin
+  ? module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/serviceusage.serviceUsageConsumer"]
+  : condition: []
+    members:
+    - serviceAccount:gf-ae-0@test-gf-ae-0.iam.gserviceaccount.com
+    project: test-gf-ae-0
+    role: roles/serviceusage.serviceUsageConsumer
+  module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/storage.admin"]:
+    condition: []
+    members:
+    - serviceAccount:iac-rw@test-gf-ae-0.iam.gserviceaccount.com
+    project: test-gf-ae-0
+    role: roles/storage.admin
+  module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/storage.objectUser"]:
+    condition: []
+    members:
+    - serviceAccount:iac-rw@test-gf-ae-0.iam.gserviceaccount.com
+    project: test-gf-ae-0
+    role: roles/storage.objectUser
+  module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/storage.objectViewer"]:
+    condition: []
+    members:
+    - serviceAccount:gf-ae-0@test-gf-ae-0.iam.gserviceaccount.com
+    project: test-gf-ae-0
+    role: roles/storage.objectViewer
+  module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/viewer"]:
+    condition: []
+    members:
+    - serviceAccount:gf-ae-0@test-gf-ae-0.iam.gserviceaccount.com
+    project: test-gf-ae-0
+    role: roles/viewer
+  module.projects.module.projects["project"].data.google_logging_project_settings.logging_sa[0]:
+    project: test-gf-ae-0
+  module.projects.module.projects["project"].data.google_storage_project_service_account.gcs_sa[0]:
+    project: test-gf-ae-0
+    user_project: null
+  module.projects.module.projects["project"].google_project.project[0]:
+    auto_create_network: false
+    billing_account: 012345-678901-ABCDEF
+    deletion_policy: DELETE
+    effective_labels:
+      goog-terraform-provisioned: 'true'
+    folder_id: '1234567890'
+    labels: null
+    name: test-gf-ae-0
+    org_id: null
+    project_id: test-gf-ae-0
+    tags: null
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
+    timeouts: null
+  module.projects.module.projects["project"].google_project_iam_member.service_agents["aiplatform"]:
+    condition: []
+    project: test-gf-ae-0
+    role: roles/aiplatform.serviceAgent
+  module.projects.module.projects["project"].google_project_iam_member.service_agents["aiplatform-cc"]:
+    condition: []
+    project: test-gf-ae-0
+    role: roles/aiplatform.customCodeServiceAgent
+  module.projects.module.projects["project"].google_project_iam_member.service_agents["aiplatform-ft"]:
+    condition: []
+    project: test-gf-ae-0
+    role: roles/aiplatform.serviceAgent
+  module.projects.module.projects["project"].google_project_iam_member.service_agents["aiplatform-re"]:
+    condition: []
+    project: test-gf-ae-0
+    role: roles/aiplatform.reasoningEngineServiceAgent
+  module.projects.module.projects["project"].google_project_iam_member.service_agents["aiplatform-vm"]:
+    condition: []
+    project: test-gf-ae-0
+    role: roles/aiplatform.notebookServiceAgent
+  module.projects.module.projects["project"].google_project_iam_member.service_agents["compute-system"]:
+    condition: []
+    project: test-gf-ae-0
+    role: roles/compute.serviceAgent
+  module.projects.module.projects["project"].google_project_iam_member.service_agents["dns"]:
+    condition: []
+    project: test-gf-ae-0
+    role: roles/dns.serviceAgent
+  module.projects.module.projects["project"].google_project_iam_member.service_agents["monitoring-notification"]:
+    condition: []
+    project: test-gf-ae-0
+    role: roles/monitoring.notificationServiceAgent
+  module.projects.module.projects["project"].google_project_iam_member.service_agents["vertex-bp"]:
+    condition: []
+    project: test-gf-ae-0
+    role: roles/aiplatform.batchPredictionServiceAgent
+  module.projects.module.projects["project"].google_project_iam_member.service_agents["vertex-eval"]:
+    condition: []
+    project: test-gf-ae-0
+    role: roles/aiplatform.rapidevalServiceAgent
+  module.projects.module.projects["project"].google_project_iam_member.service_agents["vertex-ex"]:
+    condition: []
+    project: test-gf-ae-0
+    role: roles/aiplatform.extensionServiceAgent
+  module.projects.module.projects["project"].google_project_iam_member.service_agents["vertex-ex-cc"]:
+    condition: []
+    project: test-gf-ae-0
+    role: roles/aiplatform.extensionCustomCodeServiceAgent
+  module.projects.module.projects["project"].google_project_iam_member.service_agents["vertex-mm"]:
+    condition: []
+    project: test-gf-ae-0
+    role: roles/aiplatform.modelMonitoringServiceAgent
+  module.projects.module.projects["project"].google_project_iam_member.service_agents["vertex-moss-ft"]:
+    condition: []
+    project: test-gf-ae-0
+    role: roles/aiplatform.tuningServiceAgent
+  module.projects.module.projects["project"].google_project_iam_member.service_agents["vertex-nb"]:
+    condition: []
+    project: test-gf-ae-0
+    role: roles/aiplatform.colabServiceAgent
+  module.projects.module.projects["project"].google_project_iam_member.service_agents["vertex-op"]:
+    condition: []
+    project: test-gf-ae-0
+    role: roles/aiplatform.onlinePredictionServiceAgent
+  module.projects.module.projects["project"].google_project_iam_member.service_agents["vertex-rag"]:
+    condition: []
+    project: test-gf-ae-0
+    role: roles/aiplatform.ragServiceAgent
+  module.projects.module.projects["project"].google_project_iam_member.service_agents["vertex-shtune"]:
+    condition: []
+    project: test-gf-ae-0
+    role: roles/aiplatform.user
+  module.projects.module.projects["project"].google_project_iam_member.service_agents["vertex-telemetry"]:
+    condition: []
+    project: test-gf-ae-0
+    role: roles/aiplatform.telemetryServiceAgent
+  module.projects.module.projects["project"].google_project_iam_member.service_agents["vertex-tune"]:
+    condition: []
+    project: test-gf-ae-0
+    role: roles/aiplatform.tuningServiceAgent
+  module.projects.module.projects["project"].google_project_service.project_services["aiplatform.googleapis.com"]:
+    disable_dependent_services: false
+    disable_on_destroy: false
+    project: test-gf-ae-0
+    service: aiplatform.googleapis.com
+    timeouts: null
+  module.projects.module.projects["project"].google_project_service.project_services["cloudresourcemanager.googleapis.com"]:
+    disable_dependent_services: false
+    disable_on_destroy: false
+    project: test-gf-ae-0
+    service: cloudresourcemanager.googleapis.com
+    timeouts: null
+  module.projects.module.projects["project"].google_project_service.project_services["compute.googleapis.com"]:
+    disable_dependent_services: false
+    disable_on_destroy: false
+    project: test-gf-ae-0
+    service: compute.googleapis.com
+    timeouts: null
+  module.projects.module.projects["project"].google_project_service.project_services["dns.googleapis.com"]:
+    disable_dependent_services: false
+    disable_on_destroy: false
+    project: test-gf-ae-0
+    service: dns.googleapis.com
+    timeouts: null
+  module.projects.module.projects["project"].google_project_service.project_services["logging.googleapis.com"]:
+    disable_dependent_services: false
+    disable_on_destroy: false
+    project: test-gf-ae-0
+    service: logging.googleapis.com
+    timeouts: null
+  module.projects.module.projects["project"].google_project_service.project_services["monitoring.googleapis.com"]:
+    disable_dependent_services: false
+    disable_on_destroy: false
+    project: test-gf-ae-0
+    service: monitoring.googleapis.com
+    timeouts: null
+  module.projects.module.projects["project"].google_project_service.project_services["networksecurity.googleapis.com"]:
+    disable_dependent_services: false
+    disable_on_destroy: false
+    project: test-gf-ae-0
+    service: networksecurity.googleapis.com
+    timeouts: null
+  module.projects.module.projects["project"].google_project_service.project_services["networkservices.googleapis.com"]:
+    disable_dependent_services: false
+    disable_on_destroy: false
+    project: test-gf-ae-0
+    service: networkservices.googleapis.com
+    timeouts: null
+  module.projects.module.projects["project"].google_project_service.project_services["serviceusage.googleapis.com"]:
+    disable_dependent_services: false
+    disable_on_destroy: false
+    project: test-gf-ae-0
+    service: serviceusage.googleapis.com
+    timeouts: null
+  module.projects.module.projects["project"].google_project_service.project_services["storage.googleapis.com"]:
+    disable_dependent_services: false
+    disable_on_destroy: false
+    project: test-gf-ae-0
+    service: storage.googleapis.com
+    timeouts: null
+  module.projects.module.projects["project"].google_project_service_identity.default["aiplatform.googleapis.com"]:
+    project: test-gf-ae-0
+    service: aiplatform.googleapis.com
+    timeouts: null
+  module.projects.module.projects["project"].google_project_service_identity.default["dns.googleapis.com"]:
+    project: test-gf-ae-0
+    service: dns.googleapis.com
+    timeouts: null
+  module.projects.module.projects["project"].google_project_service_identity.default["monitoring.googleapis.com"]:
+    project: test-gf-ae-0
+    service: monitoring.googleapis.com
+    timeouts: null
+  module.projects.module.projects["project"].google_project_service_identity.default["networksecurity.googleapis.com"]:
+    project: test-gf-ae-0
+    service: networksecurity.googleapis.com
+    timeouts: null
+  module.projects.module.service-accounts["project/gf-ae-0"].google_service_account.service_account[0]:
+    account_id: gf-ae-0
+    create_ignore_already_exists: null
+    description: null
+    disabled: false
+    display_name: Terraform-managed.
+    email: gf-ae-0@test-gf-ae-0.iam.gserviceaccount.com
+    member: serviceAccount:gf-ae-0@test-gf-ae-0.iam.gserviceaccount.com
+    project: test-gf-ae-0
+    timeouts: null
+  module.projects.module.service-accounts["project/iac-rw"].google_service_account.service_account[0]:
+    account_id: iac-rw
+    create_ignore_already_exists: null
+    description: null
+    disabled: false
+    display_name: Terraform-managed.
+    email: iac-rw@test-gf-ae-0.iam.gserviceaccount.com
+    member: serviceAccount:iac-rw@test-gf-ae-0.iam.gserviceaccount.com
+    project: test-gf-ae-0
+    timeouts: null
+  ? module.projects.module.service_accounts-iam["project/iac-rw"].google_service_account_iam_member.additive["$service_account_ids:project/gf-ae-0-roles/iam.serviceAccountUser"]
+  : condition: []
+    role: roles/iam.serviceAccountUser
+    service_account_id: projects/test-gf-ae-0/serviceAccounts/gf-ae-0@test-gf-ae-0.iam.gserviceaccount.com
+  module.projects.terraform_data.defaults_preconditions:
+    input: null
+    output: null
+    triggers_replace: null
+  module.projects.terraform_data.project-preconditions:
+    input: null
+    output: null
+    triggers_replace: null
+
+counts:
+  google_logging_project_settings: 1
+  google_project: 1
+  google_project_iam_binding: 14
+  google_project_iam_member: 20
+  google_project_service: 10
+  google_project_service_identity: 4
+  google_service_account: 2
+  google_service_account_iam_member: 2
+  google_storage_bucket: 1
+  google_storage_bucket_iam_binding: 2
+  google_storage_project_service_account: 1
+  local_file: 2
+  modules: 7
+  resources: 62
+  terraform_data: 2
+
+outputs:
+  buckets:
+    project/iac-state: test-gf-ae-0-iac-state
+  projects: __missing__
+  service_accounts:
+    project/gf-ae-0:
+      email: gf-ae-0@test-gf-ae-0.iam.gserviceaccount.com
+      iam_email: serviceAccount:gf-ae-0@test-gf-ae-0.iam.gserviceaccount.com
+      id: projects/test-gf-ae-0/serviceAccounts/gf-ae-0@test-gf-ae-0.iam.gserviceaccount.com
+    project/iac-rw:
+      email: iac-rw@test-gf-ae-0.iam.gserviceaccount.com
+      iam_email: serviceAccount:iac-rw@test-gf-ae-0.iam.gserviceaccount.com
+      id: projects/test-gf-ae-0/serviceAccounts/iac-rw@test-gf-ae-0.iam.gserviceaccount.com
