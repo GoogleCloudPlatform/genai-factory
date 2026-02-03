@@ -67,9 +67,14 @@ try:
                     "missing. Exiting.")
         sys.exit(1)
 
-    logger.info(f"Connecting to Database {config.DB_NAME} at {config.DB_HOST} as {config.DB_USER}...")
+    logger.info(
+        f"Connecting to Database {config.DB_NAME} at {config.DB_HOST} as {config.DB_USER}..."
+    )
 
-    scopes = ["https://www.googleapis.com/auth/cloud-platform", "https://www.googleapis.com/auth/sqlservice.login"]
+    scopes = [
+        "https://www.googleapis.com/auth/cloud-platform",
+        "https://www.googleapis.com/auth/sqlservice.login"
+    ]
     credentials, project = google.auth.default(scopes=scopes)
     auth_req = Request()
     credentials.refresh(auth_req)
@@ -85,7 +90,8 @@ try:
     # Use 'replace' to ensure fresh table (requires DROP permissions)
     try:
         df.to_sql(table_name, engine, if_exists='replace', index=False)
-        logger.info(f"Successfully wrote {len(df)} rows to table '{table_name}'.")
+        logger.info(
+            f"Successfully wrote {len(df)} rows to table '{table_name}'.")
     except Exception as e:
         logger.info(f"Replace failed: {e}. Trying append...")
         # Fallback to append if replace fails (e.g. permission issues)
@@ -96,10 +102,12 @@ try:
         # Grant usage on schema and select on table
         logger.info(f"Granting permissions to PUBLIC...")
         conn.execute(sqlalchemy.text("GRANT USAGE ON SCHEMA public TO PUBLIC"))
-        conn.execute(sqlalchemy.text(f"GRANT SELECT ON {table_name} TO PUBLIC"))
+        conn.execute(
+            sqlalchemy.text(f"GRANT SELECT ON {table_name} TO PUBLIC"))
         conn.commit()
 
-        result = conn.execute(sqlalchemy.text(f"SELECT count(*) FROM {table_name}"))
+        result = conn.execute(
+            sqlalchemy.text(f"SELECT count(*) FROM {table_name}"))
         logger.info(f"Count in DB: {result.scalar()}")
 
 except Exception as e:
