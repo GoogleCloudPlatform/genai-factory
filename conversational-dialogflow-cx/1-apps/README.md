@@ -1,4 +1,4 @@
-# AI Applications - Conversational Agents (Dialogflow) / Platform Deployment
+# AI Applications - Conversational Agents (Dialogflow CX) / Platform Deployment
 
 This stage is part of the `AI Applications - Conversational Agents (Dialogflow)`.
 It is responsible for deploying the components enabling the AI use case, either in the project you created in [0-projects](../0-projects) or in an existing project.

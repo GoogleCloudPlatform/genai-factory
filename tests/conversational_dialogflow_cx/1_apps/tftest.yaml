@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-module: ai-apps-conversational/0-projects
+module: conversational-dialogflow-cx/1-apps
 
 tests:
   simple:
