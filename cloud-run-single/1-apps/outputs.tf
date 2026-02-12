@@ -1,4 +1,4 @@
-# Copyright 2025 Google LLC
+# Copyright 2026 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,9 +16,6 @@ locals {
   _env_vars = [
     "PROJECT_ID=${var.project_config.id}",
     "REGION=${var.region}",
-  ]
-  _env_vars_a2a = [
-    "A2A_URL=${module.cloud_run.service_uri}"
   ]
   env_vars = join(",", local._env_vars)
 }
