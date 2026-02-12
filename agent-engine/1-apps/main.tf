@@ -14,7 +14,7 @@
 
 data "archive_file" "source" {
   type        = "tar.gz"
-  source_dir  = "./apps/adk"
+  source_dir  = "./apps/${var.source_config.app_path}"
   output_path = "./${var.source_config.tar_gz_file_name}"
 }
 

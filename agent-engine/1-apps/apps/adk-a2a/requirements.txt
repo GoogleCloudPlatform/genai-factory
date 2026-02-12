@@ -1,0 +1,12 @@
+a2a==0.44
+a2a-sdk==0.3.22
+a2a-server==0.6.1
+cloudpickle==3.0.0
+google-adk>=1.21.1
+google-cloud-aiplatform[agent_engines]>=1.133.0
+google_cloud_audit_log==0.3.3
+google-cloud-appengine-logging==1.7.0
+google-cloud-logging==3.12.1
+google-cloud-pubsub==2.34.0
+opentelemetry_exporter_gcp_monitoring==1.11.0a0
+opentelemetry-instrumentation-google-genai==0.5b0
