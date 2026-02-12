@@ -17,6 +17,9 @@ locals {
     "PROJECT_ID=${var.project_config.id}",
     "REGION=${var.region}",
   ]
+  _env_vars_a2a = [
+    "A2A_URL=${module.cloud_run.service_uri}"
+  ]
   env_vars = join(",", local._env_vars)
 }
 

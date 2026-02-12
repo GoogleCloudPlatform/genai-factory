@@ -1,4 +1,4 @@
-# Copyright 2025 Google LLC
+# Copyright 2026 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,15 +17,11 @@
 
 import json
 import os
-from . import config
 
 from google.adk.agents import LlmAgent
 from pydantic import BaseModel, Field
 
-os.environ["GOOGLE_CLOUD_PROJECT"] = os.environ["PROJECT_ID"]
-os.environ["GOOGLE_CLOUD_LOCATION"] = os.environ["REGION"]
-os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = "1"
-
+from src import config
 
 class CountryInput(BaseModel):
     country: str = Field(description="The country to get information about.")
@@ -36,19 +32,16 @@ class CapitalInfoOutput(BaseModel):
     population_estimate: str = Field(
         description="An estimated population of the capital city.")
 
-
-root_agent = LlmAgent(
+agent = LlmAgent(
     name="capital_agent",
     model=config.MODEL_NAME,
-    description=
-    "Provides capital and estimated population in a specific JSON format.",
+    description="Provides capital and estimated population in a specific JSON format.",
     instruction=f"""You are an agent that provides country information.
 The user will provide the country name in a JSON format like {{"country": "country_name"}}.
 Respond ONLY with a JSON object matching this exact schema:
 {json.dumps(CapitalInfoOutput.model_json_schema(), indent=2)}
 Use your knowledge to determine the capital and estimate the population. Do not use any tools.
 """,
-    # *** NO tools parameter here - using output_schema prevents tool use ***
     input_schema=CountryInput,
     output_schema=CapitalInfoOutput,
     output_key="result",
