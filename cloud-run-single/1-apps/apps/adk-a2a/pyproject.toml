@@ -1,5 +1,5 @@
 [project]
-name = "adk_a2a"
+name = "adk-a2a"
 version = "0.1.0"
 description = "ADK sample setup."
 authors = [{ name = "Google LLC" }]

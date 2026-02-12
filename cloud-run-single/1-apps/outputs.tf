@@ -32,7 +32,7 @@ output "commands" {
     --repository-format docker \
     --impersonate-service-account=${var.service_accounts["project/iac-rw"].email}
 
-  # Update chat to adk, adk_a2a or gemma if you want to deploy another app instead
+  # Update chat to adk, adk-a2a or gemma if you want to deploy another app instead
 
   gcloud builds submit ./apps/chat \
     --project ${var.project_config.id} \
