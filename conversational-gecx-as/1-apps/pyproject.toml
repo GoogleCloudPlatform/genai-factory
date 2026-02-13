@@ -1,0 +1,22 @@
+[project]
+name = "conversational-agents"
+version = "0.1.0"
+description = "Tools to deploy and maintain Conversational Agents"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "click>=8.0",
+    "google-cloud-dialogflow-cx>=1.41.0",
+    "google-cloud-storage>=2.0.0",
+    "markdown>=3.6",
+]
+
+[project.scripts]
+agentutil = "tools.agentutil:main"
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["tools"]

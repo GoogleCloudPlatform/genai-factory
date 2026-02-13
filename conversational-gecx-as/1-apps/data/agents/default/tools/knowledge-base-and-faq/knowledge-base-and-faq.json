@@ -1,0 +1,46 @@
+{
+  "name": "932ba2cb-77a4-4148-823f-fdf6e43e588c",
+  "displayName": "knowledge-base-and-faq",
+  "description": "This is a collection of internal documents that the Customer Support Team at Cymbal Telecom consults to assist customers with their questions and issues.",
+  "dataStoreSpec": {
+    "dataStoreConnections": [ {
+      "dataStoreType": "UNSTRUCTURED",
+      "dataStore": "projects/802324843880/locations/eu/collections/default_collection/dataStores/manual-cymbal-telecom-unstructured-knowledge-base_1748945358222",
+      "documentProcessingMode": "CHUNKS",
+      "engineType": "CHAT_ENGINE",
+      "connectorConfig": {
+      
+      },
+      "createTime": {
+        "seconds": 1748945375,
+        "nanos": 788202000
+      },
+      "displayName": "[Manual] Cymbal Telecom Unstructured Knowledge Base",
+      "dialogflowAddTime": {
+        "seconds": 1748945475,
+        "nanos": 597000000
+      }
+    } ],
+    "models": {
+      "summarizationModel": {
+      
+      },
+      "rewriterModel": {
+      
+      }
+    },
+    "fallbackPrompt": {
+    
+    },
+    "groundingSettings": {
+    
+    },
+    "payloadSettings": {
+    
+    },
+    "voiceModeSettings": {
+    
+    }
+  },
+  "toolType": "CUSTOMIZED_TOOL"
+}

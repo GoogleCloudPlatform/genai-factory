@@ -1,0 +1,23 @@
+{
+    "properties": {
+        "url": {
+            "searchable": false,
+            "type": "string",
+            "retrievable": true,
+            "indexable": false,
+            "dynamicFacetable": false
+        },
+        "title": {
+            "keyPropertyMapping": "title",
+            "type": "string",
+            "retrievable": true
+        },
+        "description": {
+            "keyPropertyMapping": "description",
+            "type": "string",
+            "retrievable": true
+        }
+    },
+    "type": "object",
+    "$schema": "https://json-schema.org/draft/2020-12/schema"
+}
