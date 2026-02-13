@@ -20,12 +20,10 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 # Set the working directory in the container
 WORKDIR /app
 
-# Copy configuration files
-COPY pyproject.toml ./
-
-# Copying source files and installing dependencies
+# Copying source files
 COPY . .
 
+# Install dependencies
 RUN uv lock
 RUN uv sync --locked
 
