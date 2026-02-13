@@ -34,7 +34,7 @@ class CapitalInfoOutput(BaseModel):
         description="An estimated population of the capital city.")
 
 
-agent = LlmAgent(
+root_agent = LlmAgent(
     name="capital_agent",
     model=config.MODEL_NAME,
     description=

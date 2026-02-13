@@ -20,7 +20,7 @@ from google.adk.a2a.utils.agent_to_a2a import to_a2a
 import uvicorn
 
 from src import config
-from src.agents.capital_agent.agent import agent
+from src.agents.capital_agent.agent import root_agent
 
 os.environ["GOOGLE_CLOUD_PROJECT"] = config.PROJECT_ID
 os.environ["GOOGLE_CLOUD_LOCATION"] = config.REGION
@@ -37,7 +37,7 @@ logging.debug(f"A2A_PROTOCOL: {config.A2A_PROTOCOL}")
 logging.debug(f"INTERNAL_HOST: {config.INTERNAL_HOST}")
 logging.debug(f"INTERNAL_PORT: {config.INTERNAL_PORT}")
 
-app = to_a2a(agent=agent,
+app = to_a2a(agent=root_agent,
              protocol=config.A2A_PROTOCOL,
              host=config.A2A_HOST,
              port=config.A2A_PORT)
