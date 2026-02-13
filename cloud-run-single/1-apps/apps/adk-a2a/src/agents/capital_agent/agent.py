@@ -1,4 +1,4 @@
-# Copyright 2025 Google LLC
+# Copyright 2026 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,14 +17,11 @@
 
 import json
 import os
-from . import config
 
 from google.adk.agents import LlmAgent
 from pydantic import BaseModel, Field
 
-os.environ["GOOGLE_CLOUD_PROJECT"] = os.environ["PROJECT_ID"]
-os.environ["GOOGLE_CLOUD_LOCATION"] = os.environ["REGION"]
-os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = "1"
+from src import config
 
 
 class CountryInput(BaseModel):
@@ -48,7 +45,6 @@ Respond ONLY with a JSON object matching this exact schema:
 {json.dumps(CapitalInfoOutput.model_json_schema(), indent=2)}
 Use your knowledge to determine the capital and estimate the population. Do not use any tools.
 """,
-    # *** NO tools parameter here - using output_schema prevents tool use ***
     input_schema=CountryInput,
     output_schema=CapitalInfoOutput,
     output_key="result",

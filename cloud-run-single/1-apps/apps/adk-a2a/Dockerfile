@@ -1,4 +1,4 @@
-# Copyright 2025 Google LLC
+# Copyright 2026 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,12 +20,10 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 # Set the working directory in the container
 WORKDIR /app
 
-# Copy configuration files
-COPY pyproject.toml ./
+# Copying source files
+COPY . .
 
-# Copying source files and installing dependencies
-COPY . adk_a2a/
-
+# Install dependencies
 RUN uv lock
 RUN uv sync --locked
 
@@ -45,4 +43,4 @@ ENV PYTHONUNBUFFERED True
 
 # Set the default command to run the application using Gunicorn
 # Cloud Run injects the PORT environment variable.
-CMD ["uv", "run", "-m", "adk_a2a.main"]
+CMD ["uv", "run", "-m", "main"]

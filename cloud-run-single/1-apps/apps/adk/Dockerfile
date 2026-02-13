@@ -1,4 +1,4 @@
-# Copyright 2025 Google LLC
+# Copyright 2026 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,8 +20,11 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 # Set the working directory in the container
 WORKDIR /app
 
-# Copying source files and installing dependencies
+# Copying source files
 COPY . .
+
+# Install dependencies
+RUN uv lock
 RUN uv sync --locked
 
 RUN adduser --disabled-password --gecos "" factory && \
@@ -38,9 +41,6 @@ ENV UV_COMPILE_BYTECODE=1
 # Allow statements and log messages to immediately appear in the Knative logs
 ENV PYTHONUNBUFFERED True
 
-# Expose the port the app runs on (though Cloud Run uses the PORT env var)
-EXPOSE $PORT
-
 # Set the default command to run the application using Gunicorn
 # Cloud Run injects the PORT environment variable.
-CMD exec uvicorn main:app --host 0.0.0.0 --port $PORT
+CMD ["uv", "run", "-m", "main"]
