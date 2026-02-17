@@ -13,104 +13,36 @@
 # limitations under the License.
 
 locals {
-  _dialogflow_agent_id  = module.dialogflow.chat_engines["dialogflow"].chat_engine_metadata[0].dialogflow_agent
-  _dialogflow_apis      = "https://${local.uris_prefix}dialogflow.googleapis.com"
-  _discoveryengine_apis = "https://${local.uris_prefix}discoveryengine.googleapis.com"
-  agent_dir             = "./build/agent/dist"
-  uris_prefix = (
-    var.region_ai_applications == null || var.region_ai_applications == "global"
-    ? ""
-    : "${var.region_ai_applications}-"
-  )
-  uris = {
-    agent       = "${local._dialogflow_apis}/v3/${local._dialogflow_agent_id}:restore"
-    agent_query = "${local._dialogflow_apis}/v3/${local._dialogflow_agent_id}/environments/draft/sessions/any-session-id:detectIntent"
-    ds_faq      = "${local._discoveryengine_apis}/v1/${module.dialogflow.data_stores["faq"].name}/branches/0/documents:import"
-    ds_kb       = "${local._discoveryengine_apis}/v1/${module.dialogflow.data_stores["kb"].name}/branches/0/documents:import"
-  }
+  agent_dir = "./build/agent/dist"
 }
 
 output "commands" {
-  description = "Run these commands to complete the deployment."
+  description = "Run the following commands when the deployment completes to deploy the app."
   value       = <<EOT
-  # Run these commands to complete the deployment.
+  # Run the following commands from the project's root to deploy the application.
   # Alternatively, deploy the agent through your CI/CD pipeline.
 
-  # Get bearer token impersonating iac-rw SA
-  export BEARER_TOKEN=$(gcloud auth print-access-token \
-    --impersonate-service-account ${var.service_accounts["project/iac-rw"].email})
+      uv run bash deploy_agent.sh
 
-  # Load faq data into the data store
-  gcloud storage cp ./data/ds-faq/faq.csv ${module.ds-bucket.url}/ds-faq/ \
-    --impersonate-service-account ${var.service_accounts["project/iac-rw"].email} \
-    --billing-project ${var.project_config.id} &&
-  curl -X POST ${local.uris.ds_faq} \
-    -H "Authorization: Bearer $BEARER_TOKEN" \
-    -H "Content-Type: application/json" \
-    -H "X-Goog-User-Project: ${var.project_config.id}" \
-    -d '{
-        "autoGenerateIds": true,
-        "gcsSource":{
-          "inputUris":["${module.ds-bucket.url}/ds-faq/faq.csv"],
-          "dataSchema":"csv"
-        },
-        "reconciliationMode":"FULL"
-      }'
+  # To also ingest documents into the Knowledge Base, run:
 
-  # Load kb data into the data store
-  uv run ./tools/agentutil.py process-documents \
-    ./data/ds-kb/ \
-    ./build/data/ds-kb/ \
-    ${module.ds-bucket.url}/ds-kb/ \
-    --upload &&
-  curl -X POST ${local.uris.ds_kb} \
-    -H "Authorization: Bearer $BEARER_TOKEN" \
-    -H "Content-Type: application/json" \
-    -H "X-Goog-User-Project: ${var.project_config.id}" \
-    -d '{
-        "gcsSource":{
-          "inputUris":["${module.ds-bucket.url}/ds-kb/documents.jsonl"],
-          "dataSchema":"document"
-        },
-        "reconciliationMode":"FULL"
-      }'
+      uv run bash deploy_agent.sh --ingest-kb
 
-  # Build and deploy an agent variant
-  rm -rf ${local.agent_dir} &&
-  mkdir -p ${local.agent_dir} &&
-  cp -r ./data/agents/${var.agent_configs.variant}/* ${local.agent_dir} &&
-  uv run ./tools/agentutil.py replace-data-store \
-    "${local.agent_dir}" \
-    "knowledge-base-and-faq" \
-    UNSTRUCTURED \
-    "${module.dialogflow.data_stores["kb"].name}" &&
-  zip -r ${local.agent_dir}/agent.dist.zip ${local.agent_dir}/* &&
-  gcloud storage cp ${local.agent_dir}/agent.dist.zip ${module.build-bucket.url}/agents/agent-${var.agent_configs.variant}.dist.zip \
-    --impersonate-service-account ${var.service_accounts["project/iac-rw"].email} \
-    --billing-project ${var.project_config.id} &&
-  curl -X POST ${local.uris.agent} \
-    -H "Authorization: Bearer $BEARER_TOKEN" \
-    -H "Content-Type: application/json" \
-    -H "X-Goog-User-Project: ${var.project_config.id}" \
-    -d '{
-        "agentUri": "${module.build-bucket.url}/agents/agent-${var.agent_configs.variant}.dist.zip"
-      }'
-
-  # Query the agent
-  curl -X POST ${local.uris.agent_query} \
-  -H "Authorization: Bearer $BEARER_TOKEN" \
-  -H "Content-Type: application/json" \
-  -H "X-Goog-User-Project: ${var.project_config.id}" \
-  -d '{
-        "query_input": {
-          "language_code": "${var.agent_configs.language}",
-          "text": {
-            "text": "Hello, bot"
-          }
-        }
-      }'
-
-  # To finalize the agent configuration go to
-  # https://conversational-agents.cloud.google.com/cx/projects/${var.project_config.id}
   EOT
+}
+
+resource "local_file" "env_vars" {
+  content = <<-EOT
+# This file is generated following terraform apply. It can be read by script to interact with the deployed resources
+
+export GCP_PROJECT_ID="${var.project_config.id}"
+export BUILD_BUCKET="${google_storage_bucket.build.name}"
+export CES_APP_ID="${google_ces_app.ces_app.app_id}"
+export CES_APP_LOCATION="${google_ces_app.ces_app.location}"
+export KNOWLEDGE_BASE_DATA_STORE_LOCATION="${google_discovery_engine_data_store.knowledge_base.location}"
+export KNOWLEDGE_BASE_DATA_STORE_ID="${google_discovery_engine_data_store.knowledge_base.data_store_id}"
+export KNOWLEDGE_BASE_DATA_STORE_NAME="${google_discovery_engine_data_store.knowledge_base.name}"
+
+EOT
+  filename = "${path.module}/variables.generated.env"
 }

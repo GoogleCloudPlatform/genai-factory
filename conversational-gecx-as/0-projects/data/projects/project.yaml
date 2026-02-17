@@ -19,6 +19,7 @@ name: gf-gecx-as-0
 # Enable APIs
 services:
   - ces.googleapis.com
+  - discoveryengine.googleapis.com
 
 buckets:
   iac-state:
@@ -37,3 +38,5 @@ service_accounts:
 iam_by_principals:
   $iam_principals:service_accounts/project/iac-rw:
     - roles/ces.admin
+    - roles/storage.admin
+    - roles/discoveryengine.admin

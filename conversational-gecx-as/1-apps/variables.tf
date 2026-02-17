@@ -55,9 +55,9 @@ variable "region" {
 
 variable "region_ai_applications" {
   type        = string
-  description = "The GCP region where to deploy the data store and Dialogflow."
+  description = "The GCP region where to deploy the data store and CX Agent Studio App."
   nullable    = false
-  default     = "global"
+  default     = "us"
 }
 
 variable "service_accounts" {

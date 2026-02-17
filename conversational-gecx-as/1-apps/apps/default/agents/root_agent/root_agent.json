@@ -1,0 +1,9 @@
+{
+  "displayName": "root_agent",
+  "description": "Proactively greet the user before anything else",
+  "instruction": "agents/root_agent/instruction.txt",
+  "tools": ["kb_data_store_search"],
+  "beforeAgentCallbacks": [{
+    "pythonCode": "agents/root_agent/before_agent_callbacks/before_agent_callbacks_01/python_code.py"
+  }]
+}
