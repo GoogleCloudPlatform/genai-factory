@@ -16,7 +16,7 @@
 resource "google_compute_security_policy" "security_policy_external" {
   count   = var.lbs_config.external.enable ? 1 : 0
   name    = "${var.name}-external"
-  project = var.project_config.id
+  project = var.projects.service.id
 
   dynamic "rule" {
     for_each = (
@@ -59,7 +59,7 @@ resource "google_compute_global_address" "address_external" {
     var.lbs_config.external.ip_address == null
     ? 1 : 0
   )
-  project    = var.project_config.id
+  project    = var.projects.service.id
   name       = "${var.name}-external"
   ip_version = "IPV4"
 }
@@ -67,7 +67,7 @@ resource "google_compute_global_address" "address_external" {
 module "lb_external_redirect" {
   count               = var.lbs_config.external.enable ? 1 : 0
   source              = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-lb-app-ext?ref=v53.0.0"
-  project_id          = var.project_config.id
+  project_id          = var.projects.service.id
   name                = "${var.name}-external-redirect"
   use_classic_version = false
   forwarding_rules_config = {
@@ -91,7 +91,7 @@ module "lb_external_redirect" {
 module "lb_external" {
   count               = var.lbs_config.external.enable ? 1 : 0
   source              = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-lb-app-ext?ref=v53.0.0"
-  project_id          = var.project_config.id
+  project_id          = var.projects.service.id
   name                = "${var.name}-external"
   use_classic_version = false
   protocol            = "HTTPS"

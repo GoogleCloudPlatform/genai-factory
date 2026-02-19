@@ -102,11 +102,17 @@ variable "networking_config" {
   default  = {}
 }
 
-variable "project_config" {
-  description = "The project where to create the resources."
+variable "projects" {
+  description = "The projects where to create the resources."
   type = object({
-    id     = string
-    number = string
+    host = object({
+      id     = string
+      number = string
+    })
+    service = object({
+      id     = string
+      number = string
+    })
   })
   nullable = false
 }
