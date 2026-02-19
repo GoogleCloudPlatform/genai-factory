@@ -14,6 +14,15 @@
  * limitations under the License.
  */
 
+%{ if networking_config.create }
+networking_config = {
+  subnet_id = "${networking_config.subnet_id}"
+  vpc_id    = "${networking_config.vpc_id}"
+}
+%{ else }
+networking_config = {}
+%{ endif }
+
 prefix = ${prefix}
 
 projects = {
@@ -24,6 +33,8 @@ projects = {
   }
 %{ endfor ~}
 }
+
+region = "${region}"
 
 service_accounts = {
 %{ for k,v in service_accounts ~}
