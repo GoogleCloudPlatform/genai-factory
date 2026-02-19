@@ -44,7 +44,7 @@ module "vpc" {
   source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-vpc?ref=v53.0.0"
   count      = var.networking_config.create ? 1 : 0
   project_id = module.project_host[0].projects.host.project_id
-  name       = var.networking_config.vpc_id
+  name       = var.networking_config.vpc_name
   subnets = [
     merge(var.networking_config.subnet, { region = var.region })
   ]
