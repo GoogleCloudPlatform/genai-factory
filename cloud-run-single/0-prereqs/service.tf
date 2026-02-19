@@ -12,15 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-locals {
-  effective_user_identity = coalesce(
-    try(data.google_client_openid_userinfo.me[0].email, null),
-    "tests@automation.com"
-  )
-}
-
 module "projects" {
-  source = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/project-factory?ref=v53.0.0"
+  source = "../../../cloud-foundation-fabric/modules/project-factory"
+  # source = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/project-factory?ref=v53.0.0"
   data_defaults = {
     billing_account = var.project_config.billing_account_id
     parent          = var.project_config.parent
@@ -34,16 +28,8 @@ module "projects" {
   }
   factories_config = {
     basepath = "./data"
+    paths = {
+      projects = "projects/service"
+    }
   }
-}
-
-data "google_client_openid_userinfo" "me" {
-  count = var.enable_iac_sa_impersonation ? 1 : 0
-}
-
-resource "google_service_account_iam_member" "me_sa_token_creator" {
-  count              = var.enable_iac_sa_impersonation ? 1 : 0
-  service_account_id = module.projects.service_accounts["project/iac-rw"].id
-  role               = "roles/iam.serviceAccountTokenCreator"
-  member             = "user:${local.effective_user_identity}"
 }

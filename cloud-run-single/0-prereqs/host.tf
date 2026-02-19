@@ -12,29 +12,48 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-locals {
-  subnet_id = (
-    var.networking_config.create
-    ? module.vpc[0].subnet_ids["${var.region}/${var.networking_config.subnet.name}"]
-    : var.networking_config.subnet.name
-  )
-  vpc_id = (
-    var.networking_config.create
-    ? module.vpc[0].id
-    : var.networking_config.vpc_id
-  )
+module "project_host" {
+  source = "../../../cloud-foundation-fabric/modules/project-factory"
+  count  = var.networking_config.create ? 1 : 0
+  data_defaults = {
+    billing_account = var.project_config.billing_account_id
+    parent          = var.project_config.parent
+    prefix          = var.project_config.prefix
+    bucket = {
+      force_destroy = !var.enable_deletion_protection
+    }
+    locations = {
+      storage = var.region
+    }
+  }
+  factories_config = {
+    basepath = "./data"
+    paths = {
+      projects = "projects/host"
+    }
+  }
+  context = {
+    iam_principals = {
+      "service_accounts/service/iac-rw" = module.projects.service_accounts["service/iac-rw"].iam_email
+      "service_agents/service/run"      = module.projects.service_agents["service/run"].iam_email
+    }
+  }
 }
 
 module "vpc" {
   source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-vpc?ref=v53.0.0"
   count      = var.networking_config.create ? 1 : 0
-  project_id = var.project_config.id
-  name       = var.networking_config.vpc_id
+  project_id = module.project_host[0].projects.host.project_id
+  name       = var.networking_config.vpc_name
   subnets = [
     merge(var.networking_config.subnet, { region = var.region })
   ]
   subnets_proxy_only = [
     merge(var.networking_config.subnet_proxy_only, { region = var.region })
+  ]
+  shared_vpc_host = true
+  shared_vpc_service_projects = [
+    module.projects.projects.service.project_id
   ]
 }
 
@@ -42,10 +61,10 @@ module "vpc" {
 module "dns_policy_googleapis" {
   source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/dns-response-policy?ref=v53.0.0"
   count      = var.networking_config.create ? 1 : 0
-  project_id = var.project_config.id
+  project_id = module.project_host[0].projects.host.project_id
   name       = "googleapis"
   factories_config = {
     rules = "./data/dns-policy-rules.yaml"
   }
-  networks = { (var.name) = module.vpc[0].id }
+  networks = { vpc = module.vpc[0].id }
 }

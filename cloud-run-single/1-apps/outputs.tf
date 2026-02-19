@@ -14,7 +14,7 @@
 
 locals {
   _env_vars = [
-    "PROJECT_ID=${var.project_config.id}",
+    "PROJECT_ID=${var.projects.service.id}",
     "REGION=${var.region}",
   ]
   env_vars = join(",", local._env_vars)
@@ -27,36 +27,36 @@ output "commands" {
   # Alternatively, deploy the application through your CI/CD pipeline.
 
   gcloud artifacts repositories create ${var.name} \
-    --project=${var.project_config.id} \
+    --project=${var.projects.service.id} \
     --location ${var.region} \
     --repository-format docker \
-    --impersonate-service-account=${var.service_accounts["project/iac-rw"].email}
+    --impersonate-service-account=${var.service_accounts["service/iac-rw"].email}
 
   # Update chat to adk, adk-a2a or gemma if you want to deploy another app instead
 
   gcloud builds submit ./apps/chat \
-    --project ${var.project_config.id} \
-    --tag ${var.region}-docker.pkg.dev/${var.project_config.id}/${var.name}/srun \
-    --service-account ${var.service_accounts["project/gf-srun-build-0"].id} \
+    --project ${var.projects.service.id} \
+    --tag ${var.region}-docker.pkg.dev/${var.projects.service.id}/${var.name}/srun \
+    --service-account ${var.service_accounts["service/gf-srun-build-0"].id} \
     --default-buckets-behavior=REGIONAL_USER_OWNED_BUCKET \
     --region ${var.region} \
     --quiet \
-    --impersonate-service-account=${var.service_accounts["project/iac-rw"].email}
+    --impersonate-service-account=${var.service_accounts["service/iac-rw"].email}
 
   # Run the following command to deploy a sample adk or chat Service 
 
   gcloud run deploy ${var.name} \
-    --impersonate-service-account=${var.service_accounts["project/iac-rw"].email} \
-    --project ${var.project_config.id} \
+    --impersonate-service-account=${var.service_accounts["service/iac-rw"].email} \
+    --project ${var.projects.service.id} \
     --region ${var.region} \
-    --image=${var.region}-docker.pkg.dev/${var.project_config.id}/${var.name}/srun \
+    --image=${var.region}-docker.pkg.dev/${var.projects.service.id}/${var.name}/srun \
     --set-env-vars ${local.env_vars}
 
   # Run the following command to deploy a sample Gemma 3 on Ollama Service
 
    gcloud run deploy ${var.name} \
-    --impersonate-service-account=${var.service_accounts["project/iac-rw"].email} \
-    --project ${var.project_config.id} \
+    --impersonate-service-account=${var.service_accounts["service/iac-rw"].email} \
+    --project ${var.projects.service.id} \
     --region ${var.region} \
     --image "us-docker.pkg.dev/cloudrun/container/gemma/gemma3-4b:latest" \
     --set-env-vars ${local.env_vars},OLLAMA_NUM_PARALLEL=4
@@ -64,10 +64,10 @@ output "commands" {
   # Run the following command to deploy an agent exposed with A2A
 
    gcloud run deploy ${var.name} \
-    --impersonate-service-account=${var.service_accounts["project/iac-rw"].email} \
-    --project ${var.project_config.id} \
+    --impersonate-service-account=${var.service_accounts["service/iac-rw"].email} \
+    --project ${var.projects.service.id} \
     --region ${var.region} \
-    --image=${var.region}-docker.pkg.dev/${var.project_config.id}/${var.name}/srun \
+    --image=${var.region}-docker.pkg.dev/${var.projects.service.id}/${var.name}/srun \
     --set-env-vars ${local.env_vars},A2A_URL=${module.cloud_run.service_uri}\
     --port=8003
 

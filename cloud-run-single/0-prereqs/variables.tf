@@ -25,6 +25,24 @@ variable "enable_iac_sa_impersonation" {
   default     = true
 }
 
+variable "networking_config" {
+  description = "The networking configuration."
+  type = object({
+    create = optional(bool, true)
+    subnet = optional(object({
+      ip_cidr_range = optional(string, "10.0.0.0/24")
+      name          = optional(string, "sub-0")
+    }), {})
+    subnet_proxy_only = optional(object({
+      ip_cidr_range = optional(string, "10.20.0.0/24")
+      name          = optional(string, "proxy-only-sub-0")
+    }), {})
+    vpc_name = optional(string, "net-0")
+  })
+  nullable = false
+  default  = {}
+}
+
 variable "project_config" {
   description = "The project configuration."
   type = object({
@@ -43,7 +61,8 @@ variable "project_config" {
 }
 
 variable "region" {
-  description = "The region where to create the buckets."
   type        = string
+  description = "The GCP region where to deploy the resources."
+  nullable    = false
   default     = "europe-west1"
 }
