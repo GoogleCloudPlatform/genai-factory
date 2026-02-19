@@ -43,13 +43,6 @@ variable "cloud_run_configs" {
   default  = {}
 }
 
-variable "enable_deletion_protection" {
-  description = "Whether deletion protection should be enabled."
-  type        = bool
-  nullable    = false
-  default     = true
-}
-
 variable "lbs_config" {
   description = "The load balancers configuration."
   type = object({
@@ -82,54 +75,4 @@ variable "name" {
   type        = string
   nullable    = false
   default     = "gf-srun-0"
-}
-
-variable "networking_config" {
-  description = "The networking configuration."
-  type = object({
-    create = optional(bool, true)
-    vpc_id = optional(string, "net-0")
-    subnet = optional(object({
-      ip_cidr_range = optional(string, "10.0.0.0/24")
-      name          = optional(string, "sub-0")
-    }), {})
-    subnet_proxy_only = optional(object({
-      ip_cidr_range = optional(string, "10.20.0.0/24")
-      name          = optional(string, "proxy-only-sub-0")
-    }), {})
-  })
-  nullable = false
-  default  = {}
-}
-
-variable "projects" {
-  description = "The projects where to create the resources."
-  type = object({
-    host = object({
-      id     = string
-      number = string
-    })
-    service = object({
-      id     = string
-      number = string
-    })
-  })
-  nullable = false
-}
-
-variable "region" {
-  type        = string
-  description = "The GCP region where to deploy the resources."
-  nullable    = false
-  default     = "europe-west1"
-}
-
-variable "service_accounts" {
-  description = "The pre-created service accounts used by the blueprint."
-  type = map(object({
-    email     = string
-    iam_email = string
-    id        = string
-  }))
-  default = {}
 }

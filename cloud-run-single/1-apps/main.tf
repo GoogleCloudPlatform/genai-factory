@@ -33,8 +33,8 @@ module "cloud_run" {
     node_selector                 = var.cloud_run_configs.node_selector
     vpc_access = {
       egress  = var.cloud_run_configs.vpc_access_egress
-      network = local.vpc_id
-      subnet  = local.subnet_id
+      network = var.networking_config.vpc_id
+      subnet  = var.networking_config.subnet_id
       tags    = var.cloud_run_configs.vpc_access_tags
     }
   }

@@ -61,7 +61,7 @@ resource "google_compute_address" "address_internal" {
   project      = var.projects.service.id
   address_type = "INTERNAL"
   purpose      = "SHARED_LOADBALANCER_VIP"
-  subnetwork   = local.subnet_id
+  subnetwork   = var.networking_config.subnet_id
   region       = var.region
 }
 
@@ -85,8 +85,8 @@ module "lb_internal_redirect" {
     }
   }
   vpc_config = {
-    network    = local.vpc_id
-    subnetwork = local.subnet_id
+    network    = var.networking_config.vpc_id
+    subnetwork = var.networking_config.subnet_id
   }
 }
 
@@ -128,8 +128,8 @@ module "lb_internal" {
     ]
   }
   vpc_config = {
-    network    = local.vpc_id
-    subnetwork = local.subnet_id
+    network    = var.networking_config.vpc_id
+    subnetwork = var.networking_config.subnet_id
   }
 }
 
@@ -142,7 +142,7 @@ module "lb_internal_dns" {
   zone_config = {
     domain = "${var.lbs_config.internal.domain}."
     private = {
-      client_networks = [local.vpc_id]
+      client_networks = [var.networking_config.vpc_id]
     }
   }
   recordsets = {
