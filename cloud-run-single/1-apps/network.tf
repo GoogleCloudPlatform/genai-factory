@@ -28,7 +28,7 @@ locals {
 module "vpc" {
   source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-vpc?ref=v55.0.0"
   count      = var.networking_config.create ? 1 : 0
-  project_id = var.project_config.id
+  project_id = var.projects.host.id
   name       = var.networking_config.vpc_id
   subnets = [
     merge(var.networking_config.subnet, { region = var.region })
@@ -36,13 +36,17 @@ module "vpc" {
   subnets_proxy_only = [
     merge(var.networking_config.subnet_proxy_only, { region = var.region })
   ]
+  shared_vpc_host = true
+  shared_vpc_service_projects = [
+    var.projects.service.id
+  ]
 }
 
 # DNS policies for Google APIs
 module "dns_policy_googleapis" {
   source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/dns-response-policy?ref=v55.0.0"
   count      = var.networking_config.create ? 1 : 0
-  project_id = var.project_config.id
+  project_id = var.projects.host.id
   name       = "googleapis"
   factories_config = {
     rules = "./data/dns-policy-rules.yaml"
