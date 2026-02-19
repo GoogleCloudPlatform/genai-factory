@@ -16,10 +16,14 @@
 
 set -e
 
-if [ -f "./variables.generated.env" ]; then
-    source ./variables.generated.env
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
+
+ENV_FILE="$SCRIPT_DIR/variables.generated.env"
+
+if [ -f "$ENV_FILE" ]; then
+    source "$ENV_FILE"
 else
-    echo "Error: ./variables.generated.env not found. Please run 'terraform apply' first."
+    echo "Error: $ENV_FILE not found. Please run 'terraform apply' first."
     exit 1
 fi
 

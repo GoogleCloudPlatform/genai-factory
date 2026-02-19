@@ -15,6 +15,9 @@
 output "commands" {
   description = "Run the following commands when the deployment completes to update and mange the application."
   value       = <<EOT
+  # We wrote a variables.generated.env file in the tools directory,
+  # so you can run following commands.
+
   # Deploy the application
   uv run bash tools/deploy_agent.sh
 
