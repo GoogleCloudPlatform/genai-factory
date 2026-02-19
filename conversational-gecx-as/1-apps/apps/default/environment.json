@@ -3,11 +3,13 @@
     "kb_data_store": {
       "dataStoreTool": {
         "engineSource": {
-          "dataStoreSources": [{
-            "dataStore": {
-              "name": "projects/802324843880/locations/eu/collections/default_collection/dataStores/tf-dev-ces-blueprint-kb"
+          "dataStoreSources": [
+            {
+              "dataStore": {
+                "name": "projects/802324843880/locations/eu/collections/default_collection/dataStores/tf-dev-ces-blueprint-kb"
+              }
             }
-          }]
+          ]
         }
       }
     }

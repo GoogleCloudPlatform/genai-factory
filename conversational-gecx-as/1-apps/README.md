@@ -41,17 +41,19 @@ uv run tools/agentutil.py pull_agent {AGENT_REMOTE} data/agents/{AGENT_VARIANT}
 
 | name | description | type | required | default |
 |---|---|:---:|:---:|:---:|
-| [project_config](variables.tf#L39) | The project where to create the resources. | <code title="object&#40;&#123;&#10;  id     &#61; string&#10;  number &#61; string&#10;  prefix &#61; string&#10;&#125;&#41;">object&#40;&#123;&#8230;&#125;&#41;</code> | ✓ |  |
+| [prefix](variables.tf#L51) | The unique name prefix to be used for all global unique resources. | <code>string</code> | ✓ |  |
+| [project_config](variables.tf#L57) | The project where to create the resources. | <code title="object&#40;&#123;&#10;  id     &#61; string&#10;  number &#61; string&#10;&#125;&#41;">object&#40;&#123;&#8230;&#125;&#41;</code> | ✓ |  |
 | [agent_configs](variables.tf#L15) | The AI Applications Dialogflow agent configurations. | <code title="object&#40;&#123;&#10;  language &#61; optional&#40;string, &#34;en&#34;&#41;&#10;  variant  &#61; optional&#40;string, &#34;default&#34;&#41;&#10;&#125;&#41;">object&#40;&#123;&#8230;&#125;&#41;</code> |  | <code>&#123;&#125;</code> |
 | [enable_deletion_protection](variables.tf#L25) | Whether deletion protection should be enabled. | <code>bool</code> |  | <code>true</code> |
-| [name](variables.tf#L32) | The name of the resources. This is also the project suffix if a new project is created. | <code>string</code> |  | <code>&#34;gf-ai-apps-df-0&#34;</code> |
-| [region](variables.tf#L49) | The GCP region where to deploy the resources. | <code>string</code> |  | <code>&#34;europe-west1&#34;</code> |
-| [region_ai_applications](variables.tf#L56) | The GCP region where to deploy the data store and Dialogflow. | <code>string</code> |  | <code>&#34;global&#34;</code> |
-| [service_accounts](variables.tf#L63) | The pre-created service accounts used by the blueprint. | <code title="map&#40;object&#40;&#123;&#10;  email     &#61; string&#10;  iam_email &#61; string&#10;  id        &#61; string&#10;&#125;&#41;&#41;">map&#40;object&#40;&#123;&#8230;&#125;&#41;&#41;</code> |  | <code>&#123;&#125;</code> |
+| [gecx_as_configs](variables.tf#L32) | The ge4cx-as configurations. | <code title="object&#40;&#123;&#10;  enable_cloud_logging &#61; optional&#40;bool, true&#41;&#10;  speaking_rate        &#61; optional&#40;number, 0&#41;&#10;  supported_languages  &#61; optional&#40;list&#40;string&#41;, &#91;&#34;en-US&#34;&#93;&#41;&#10;  timezone             &#61; optional&#40;string, &#34;Europe&#47;Rome&#34;&#41;&#10;&#125;&#41;">object&#40;&#123;&#8230;&#125;&#41;</code> |  | <code>&#123;&#125;</code> |
+| [name](variables.tf#L44) | The name of the resources. | <code>string</code> |  | <code>&#34;gf-gecx-as-0&#34;</code> |
+| [region](variables.tf#L66) | The GCP region where to deploy the resources. | <code>string</code> |  | <code>&#34;europe-west1&#34;</code> |
+| [region_ai_applications](variables.tf#L73) | The GCP region where to deploy the data store and CX Agent Studio App. | <code>string</code> |  | <code>&#34;eu&#34;</code> |
+| [service_accounts](variables.tf#L86) | The pre-created service accounts used by the blueprint. | <code title="map&#40;object&#40;&#123;&#10;  email     &#61; string&#10;  iam_email &#61; string&#10;  id        &#61; string&#10;&#125;&#41;&#41;">map&#40;object&#40;&#123;&#8230;&#125;&#41;&#41;</code> |  | <code>&#123;&#125;</code> |
 
 ## Outputs
 
 | name | description | sensitive |
 |---|---|:---:|
-| [commands](outputs.tf#L33) | Run these commands to complete the deployment. |  |
+| [commands](outputs.tf#L15) | Run the following commands when the deployment completes to update and mange the application. |  |
 <!-- END TFDOC -->

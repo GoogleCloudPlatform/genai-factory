@@ -1,3 +1,17 @@
+# Copyright 2026 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 import logging
 
 import typer
@@ -6,17 +20,22 @@ from agentutil.ces.agent import CesAgent
 
 logger = logging.getLogger(__name__)
 
-app = typer.Typer(name='agentutil', help='A set of utilities to develop CX Agent Studio Apps.')
+app = typer.Typer(name='agentutil',
+                  help='A set of utilities to develop CX Agent Studio Apps.')
 
 ces_app = typer.Typer()
 app.add_typer(ces_app, name="ces", help="Utilities for CES platform")
 ces_agent_app = typer.Typer()
 ces_app.add_typer(ces_agent_app, name="agent", help="Manage CES agents")
 documents_app = typer.Typer()
-app.add_typer(documents_app, name="data-store", help="Process text documents and populate Data Stores.")
+app.add_typer(documents_app,
+              name="data-store",
+              help="Process text documents and populate Data Stores.")
+
 
 @ces_agent_app.command("replace-data-store")
-def replace_data_store_ces(target_agent_dir: str, tool_name: str, data_store_id: str):
+def replace_data_store_ces(target_agent_dir: str, tool_name: str,
+                           data_store_id: str):
     """Replace a data store reference in a tool.
     
     Args:
@@ -26,6 +45,7 @@ def replace_data_store_ces(target_agent_dir: str, tool_name: str, data_store_id:
     """
     agent = CesAgent(target_agent_dir)
     agent.replace_data_store(tool_name, data_store_id)
+
 
 @ces_agent_app.command()
 def replace_sa_auth(target_agent_dir: str, tool_name: str, sa_email: str):
@@ -39,6 +59,7 @@ def replace_sa_auth(target_agent_dir: str, tool_name: str, sa_email: str):
     agent = CesAgent(target_agent_dir)
     agent.replace_sa_auth(tool_name, sa_email)
 
+
 @ces_agent_app.command()
 def push(target_dir: str, agent_id: str, bucket: str):
     """Push local agent to remote CES agent.
@@ -50,6 +71,7 @@ def push(target_dir: str, agent_id: str, bucket: str):
     """
     agent = CesAgent(target_dir)
     agent.push(agent_id, bucket)
+
 
 @ces_agent_app.command()
 def pull(agent_id: str, target_dir: str, bucket: str, environment: str = None):
@@ -64,13 +86,12 @@ def pull(agent_id: str, target_dir: str, bucket: str, environment: str = None):
     agent = CesAgent(target_dir)
     agent.pull(agent_id, bucket, environment)
 
+
 @documents_app.command('ingest')
-def process_data_store_documents(
-    source_dir: str,
-    target_dir: str,
-    gcs_bucket_folder_path: str,
-    ingest_to: str = None
-) -> None:
+def process_data_store_documents(source_dir: str,
+                                 target_dir: str,
+                                 gcs_bucket_folder_path: str,
+                                 ingest_to: str = None) -> None:
     """
     Preprocesses Markdown files for Data Store ingestion.
 
@@ -92,10 +113,13 @@ def process_data_store_documents(
         Exception: For errors during GCS upload.
     """
     from agentutil.document_processing.data_store import process_data_store_documents
-    process_data_store_documents(source_dir, target_dir, gcs_bucket_folder_path, ingest_to)
+    process_data_store_documents(source_dir, target_dir,
+                                 gcs_bucket_folder_path, ingest_to)
+
 
 def main():
     app()
+
 
 if __name__ == "__main__":
     main()

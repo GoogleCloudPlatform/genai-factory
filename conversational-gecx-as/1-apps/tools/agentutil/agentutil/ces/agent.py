@@ -1,3 +1,17 @@
+# Copyright 2026 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 import logging
 import json
 import time
@@ -20,6 +34,7 @@ logger = logging.getLogger(__name__)
 
 
 class CesAgent:
+
     def __init__(self, local_agent_path: str):
         self.local_agent_path = Path(local_agent_path)
         self.credentials, self.project_id = google.auth.default()
@@ -33,9 +48,7 @@ class CesAgent:
             "X-Goog-User-Project": self.project_id or "",
         }
 
-    def replace_data_store(
-        self, tool_name: str, data_store_id: str
-    ):
+    def replace_data_store(self, tool_name: str, data_store_id: str):
         """Replace a data store reference in environment.json.
 
         Args:
@@ -45,8 +58,7 @@ class CesAgent:
         env_path = self.local_agent_path / "environment.json"
         if not env_path.exists():
             raise FileNotFoundError(
-                f"environment.json not found in {self.local_agent_path}"
-            )
+                f"environment.json not found in {self.local_agent_path}")
 
         with open(env_path, "r") as f:
             data = json.load(f)
@@ -58,8 +70,7 @@ class CesAgent:
             tool_config = data.get("tools", {}).get(tool_name)
             if not tool_config:
                 raise ValueError(
-                    f"Tool '{tool_name}' not found in environment.json tools."
-                )
+                    f"Tool '{tool_name}' not found in environment.json tools.")
 
             ds_tool = tool_config.get("dataStoreTool")
             if not ds_tool:
@@ -67,12 +78,16 @@ class CesAgent:
                     f"Tool '{tool_name}' is not a Data Store tool (missing 'dataStoreTool')."
                 )
 
-            sources = ds_tool.get("engineSource", {}).get("dataStoreSources", [])
+            sources = ds_tool.get("engineSource",
+                                  {}).get("dataStoreSources", [])
             if not sources:
-                raise ValueError(f"No dataStoreSources found in tool '{tool_name}'.")
+                raise ValueError(
+                    f"No dataStoreSources found in tool '{tool_name}'.")
 
             if len(sources) > 1:
-                raise ValueError(f"Tool '{tool_name}' has multiple data store sources. Only one is supported.")
+                raise ValueError(
+                    f"Tool '{tool_name}' has multiple data store sources. Only one is supported."
+                )
 
             # Update the first source as per reference
             sources[0]["dataStore"]["name"] = data_store_id
@@ -99,8 +114,7 @@ class CesAgent:
         env_path = self.local_agent_path / "environment.json"
         if not env_path.exists():
             raise FileNotFoundError(
-                f"environment.json not found in {self.local_agent_path}"
-            )
+                f"environment.json not found in {self.local_agent_path}")
 
         with open(env_path, "r") as f:
             data = json.load(f)
@@ -121,9 +135,8 @@ class CesAgent:
                     f"Toolset '{tool_name}' does not appear to be an OpenAPI toolset."
                 )
 
-            auth_config = openapi.get("apiAuthentication", {}).get(
-                "serviceAccountAuthConfig"
-            )
+            auth_config = openapi.get("apiAuthentication",
+                                      {}).get("serviceAccountAuthConfig")
             if not auth_config:
                 raise ValueError(
                     f"serviceAccountAuthConfig not found for toolset '{tool_name}'."
@@ -134,7 +147,9 @@ class CesAgent:
             with open(env_path, "w") as f:
                 json.dump(data, f, indent=4)
 
-            logger.info(f"✅ Updated Service Account for tool {tool_name} to: {sa_email}")
+            logger.info(
+                f"✅ Updated Service Account for tool {tool_name} to: {sa_email}"
+            )
 
         except Exception as e:
             logger.error(f"❌ Failed to update SA auth for {tool_name}: {e}")
@@ -189,11 +204,13 @@ class CesAgent:
         # 1. Zip
         logger.info(f"Zipping agent from {self.local_agent_path}")
         zip_buffer = io.BytesIO()
-        with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zip_file:
+        with zipfile.ZipFile(zip_buffer, "w",
+                             zipfile.ZIP_DEFLATED) as zip_file:
             for root, _, files in os.walk(self.local_agent_path):
                 for file in files:
                     file_path = Path(root) / file
-                    local_arcname = file_path.relative_to(self.local_agent_path)
+                    local_arcname = file_path.relative_to(
+                        self.local_agent_path)
                     arcname = Path("agent") / local_arcname
                     zip_file.write(file_path, arcname)
         zip_buffer.seek(0)
@@ -204,9 +221,8 @@ class CesAgent:
         gcs_uri = f"gs://{bucket_name}/{blob_name}"
 
         logger.info(f"Uploading to {gcs_uri}")
-        storage_client = storage.Client(
-            project=self.project_id, credentials=self.credentials
-        )
+        storage_client = storage.Client(project=self.project_id,
+                                        credentials=self.credentials)
         bucket = storage_client.bucket(bucket_name)
         blob = bucket.blob(blob_name)
         blob.upload_from_file(zip_buffer)
@@ -223,14 +239,18 @@ class CesAgent:
             payload = {
                 "appId": app_id,
                 "gcsUri": gcs_uri,
-                "importOptions": {"conflictResolutionStrategy": "OVERWRITE"},
+                "importOptions": {
+                    "conflictResolutionStrategy": "OVERWRITE"
+                },
             }
         else:
             raise ValueError(
                 "agent_id must be in format projects/.../locations/.../apps/..."
             )
 
-        response = requests.post(url, headers=self._get_headers(), json=payload)
+        response = requests.post(url,
+                                 headers=self._get_headers(),
+                                 json=payload)
         if response.status_code != 200:
             raise RuntimeError(f"Import request failed: {response.text}")
 
@@ -241,7 +261,7 @@ class CesAgent:
 
         try:
             op_result = self._poll_operation(op_name)
-            
+
             # Check for warnings in the result response
             # Format: response.warnings[]
             response_data = op_result.get("response", {})
@@ -255,9 +275,10 @@ class CesAgent:
             logger.error(f"❌ Push failed: {e}")
             raise
 
-    def pull(
-        self, agent_id: str, bucket_name: str, environment_id: Optional[str] = None
-    ):
+    def pull(self,
+             agent_id: str,
+             bucket_name: str,
+             environment_id: Optional[str] = None):
         """Pull (export) remote CES agent to local path.
 
         Args:
@@ -275,7 +296,9 @@ class CesAgent:
         payload = {"gcsUri": gcs_uri, "exportFormat": "JSON"}
 
         logger.info(f"Exporting agent {agent_id} to {gcs_uri}")
-        response = requests.post(url, headers=self._get_headers(), json=payload)
+        response = requests.post(url,
+                                 headers=self._get_headers(),
+                                 json=payload)
 
         if response.status_code != 200:
             raise RuntimeError(f"Export request failed: {response.text}")
@@ -294,9 +317,8 @@ class CesAgent:
                 shutil.rmtree(self.local_agent_path)
             self.local_agent_path.mkdir(parents=True, exist_ok=True)
 
-            storage_client = storage.Client(
-                project=self.project_id, credentials=self.credentials
-            )
+            storage_client = storage.Client(project=self.project_id,
+                                            credentials=self.credentials)
             bucket = storage_client.bucket(bucket_name)
             blob = bucket.blob(blob_name)
 
@@ -306,7 +328,8 @@ class CesAgent:
             with zipfile.ZipFile(io.BytesIO(zip_bytes)) as z:
                 # We look for a single top level directory
                 top_level_dirs = {
-                    item.split("/")[0] for item in z.namelist() if "/" in item
+                    item.split("/")[0]
+                    for item in z.namelist() if "/" in item
                 }
 
                 if len(top_level_dirs) == 1:
@@ -314,12 +337,14 @@ class CesAgent:
                     z.extractall(self.local_agent_path)
 
                     # Check if we have one subdir
-                    params = [p for p in self.local_agent_path.iterdir() if p.is_dir()]
+                    params = [
+                        p for p in self.local_agent_path.iterdir()
+                        if p.is_dir()
+                    ]
                     if len(params) == 1 and not any(
-                        f.is_file()
-                        for f in self.local_agent_path.iterdir()
-                        if f.name != ".DS_Store"
-                    ):
+                            f.is_file()
+                            for f in self.local_agent_path.iterdir()
+                            if f.name != ".DS_Store"):
                         # Move everything up
                         subdir = params[0]
                         for item in subdir.iterdir():
@@ -354,7 +379,8 @@ class CesAgent:
         """Discover SAs in environment.json and check 'Service Account User' role."""
         env_path = self.local_agent_path / "environment.json"
         if not env_path.exists():
-            logger.warning("No environment.json found. Skipping permission check.")
+            logger.warning(
+                "No environment.json found. Skipping permission check.")
             return
 
         with open(env_path, "r") as f:
@@ -364,12 +390,10 @@ class CesAgent:
         sas_to_check = set()
 
         for tool_name, toolset in toolsets.items():
-            sa = (
-                toolset.get("openApiToolset", {})
-                .get("apiAuthentication", {})
-                .get("serviceAccountAuthConfig", {})
-                .get("serviceAccount")
-            )
+            sa = (toolset.get("openApiToolset",
+                              {}).get("apiAuthentication",
+                                      {}).get("serviceAccountAuthConfig",
+                                              {}).get("serviceAccount"))
             if sa:
                 sas_to_check.add(sa)
 
@@ -384,7 +408,8 @@ class CesAgent:
         )
 
         for sa in sas_to_check:
-            if not has_sa_user_role(sa, user_email, self.project_id, self.credentials):
+            if not has_sa_user_role(sa, user_email, self.project_id,
+                                    self.credentials):
                 raise PermissionError(
                     f"User {user_email} does not have 'roles/iam.serviceAccountUser' on {sa} or project. Without this permission, the import operation will fail, as the service account is used to authenticate at least one OpenAPI tool in the app."
                 )

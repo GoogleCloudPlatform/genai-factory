@@ -12,37 +12,28 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-locals {
-  agent_dir = "./build/agent/dist"
-}
-
 output "commands" {
-  description = "Run the following commands when the deployment completes to deploy the app."
+  description = "Run the following commands when the deployment completes to update and mange the application."
   value       = <<EOT
-  # Run the following commands from the project's root to deploy the application.
-  # Alternatively, deploy the agent through your CI/CD pipeline.
+  # Deploy the application
+  uv run bash tools/deploy_agent.sh
 
-      uv run bash deploy_agent.sh
-
-  # To also ingest documents into the Knowledge Base, run:
-
-      uv run bash deploy_agent.sh --ingest-kb
-
+  # Ingest documents into the Knowledge Base
+  uv run bash tools/deploy_agent.sh --ingest-kb
   EOT
 }
 
 resource "local_file" "env_vars" {
-  content = <<-EOT
+  content  = <<-EOT
 # This file is generated following terraform apply. It can be read by script to interact with the deployed resources
 
-export GCP_PROJECT_ID="${var.project_config.id}"
 export BUILD_BUCKET="${google_storage_bucket.build.name}"
-export CES_APP_ID="${google_ces_app.ces_app.app_id}"
-export CES_APP_LOCATION="${google_ces_app.ces_app.location}"
-export KNOWLEDGE_BASE_DATA_STORE_LOCATION="${google_discovery_engine_data_store.knowledge_base.location}"
+export GCP_PROJECT_ID="${var.project_config.id}"
+export CES_APP_ID="${google_ces_app.gecx_as_app.app_id}"
+export CES_APP_LOCATION="${google_ces_app.gecx_as_app.location}"
 export KNOWLEDGE_BASE_DATA_STORE_ID="${google_discovery_engine_data_store.knowledge_base.data_store_id}"
+export KNOWLEDGE_BASE_DATA_STORE_LOCATION="${google_discovery_engine_data_store.knowledge_base.location}"
 export KNOWLEDGE_BASE_DATA_STORE_NAME="${google_discovery_engine_data_store.knowledge_base.name}"
-
 EOT
-  filename = "${path.module}/variables.generated.env"
+  filename = "./tools/variables.generated.env"
 }

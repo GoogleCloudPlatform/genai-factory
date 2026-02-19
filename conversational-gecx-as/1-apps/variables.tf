@@ -29,11 +29,29 @@ variable "enable_deletion_protection" {
   default     = true
 }
 
+variable "gecx_as_configs" {
+  description = "The ge4cx-as configurations."
+  type = object({
+    enable_cloud_logging = optional(bool, true)
+    speaking_rate        = optional(number, 0)
+    supported_languages  = optional(list(string), ["en-US"])
+    timezone             = optional(string, "Europe/Rome")
+  })
+  nullable = false
+  default  = {}
+}
+
 variable "name" {
-  description = "The name of the resources. This is also the project suffix if a new project is created."
+  description = "The name of the resources."
   type        = string
   nullable    = false
-  default     = "gf-ai-apps-df-0"
+  default     = "gf-gecx-as-0"
+}
+
+variable "prefix" {
+  description = "The unique name prefix to be used for all global unique resources."
+  type        = string
+  nullable    = false
 }
 
 variable "project_config" {
@@ -41,23 +59,28 @@ variable "project_config" {
   type = object({
     id     = string
     number = string
-    prefix = string
   })
   nullable = false
 }
 
 variable "region" {
-  type        = string
   description = "The GCP region where to deploy the resources."
+  type        = string
   nullable    = false
   default     = "europe-west1"
 }
 
 variable "region_ai_applications" {
-  type        = string
   description = "The GCP region where to deploy the data store and CX Agent Studio App."
+  type        = string
   nullable    = false
-  default     = "us"
+  default     = "eu"
+  validation {
+    condition = (
+      var.region_ai_applications == "eu" || var.region_ai_applications == "us"
+    )
+    error_message = "region_ai_applications should be set either to eu or us."
+  }
 }
 
 variable "service_accounts" {

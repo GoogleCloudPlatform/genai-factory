@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
+prefix = "${prefix}"
 project_config = {
   id     = "${projects.project.id}"
   number = "${projects.project.number}"
-  prefix = "${projects.project.prefix}"
 }
 service_accounts = {
 %{ for k,v in service_accounts ~}

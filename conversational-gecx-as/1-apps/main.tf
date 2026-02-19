@@ -14,88 +14,96 @@
 
 resource "google_storage_bucket" "build" {
   project                     = var.project_config.id
-  name                        = "${var.name}-build-${var.project_config.number}"
+  name                        = "${var.prefix}-${var.name}-build"
   location                    = var.region
   uniform_bucket_level_access = true
   force_destroy               = !var.enable_deletion_protection
 }
 
 resource "google_discovery_engine_data_store" "knowledge_base" {
-  project           = var.project_config.id
-  location          = var.region_ai_applications
-  data_store_id     = "${var.name}-kb"
-  display_name      = "[${var.name}] Knowledge Base"
-  industry_vertical           = "GENERIC"
-  content_config              = "CONTENT_REQUIRED"
-  solution_types              = ["SOLUTION_TYPE_CHAT"]
+  data_store_id                = "${var.name}-kb"
+  display_name                 = "${var.name} knowledge base"
+  project                      = var.project_config.id
+  location                     = var.region_ai_applications
+  industry_vertical            = "GENERIC"
+  content_config               = "CONTENT_REQUIRED"
+  solution_types               = ["SOLUTION_TYPE_CHAT"]
+  skip_default_schema_creation = true
+
   document_processing_config {
-    default_parsing_config  {
+    default_parsing_config {
       layout_parsing_config {
-        enable_table_annotation = true
         enable_image_annotation = true
+        enable_table_annotation = true
       }
     }
+
     chunking_config {
       layout_based_chunking_config {
-        chunk_size = 500
+        chunk_size                = 500
         include_ancestor_headings = true
       }
     }
   }
-  skip_default_schema_creation = true
 }
 
 resource "google_discovery_engine_schema" "knowledge_base" {
+  schema_id     = "${var.name}-kb-schema"
   project       = var.project_config.id
   location      = var.region_ai_applications
   data_store_id = google_discovery_engine_data_store.knowledge_base.data_store_id
-  schema_id     = "${var.name}-kb-schema"
-  json_schema   = file("knowledge_base_data_store_schema.json")
+  json_schema   = file("./data/knowledge-base/knowledge_base_data_store_schema.json")
 }
 
-resource "google_ces_app" "ces_app" {
-  project = var.project_config.id
-  app_id = "${var.name}-agent"
-  location = var.region_ai_applications
-  description = "An example Gemini Enterprise for CX application"
-  display_name = "[${var.name}] Agent"
+resource "google_ces_app" "gecx_as_app" {
+  app_id       = "${var.name}-agent"
+  display_name = "${var.name} Agent"
+  project      = var.project_config.id
+  location     = var.region_ai_applications
+  description  = "A sample Gemini Enterprise for CX application."
 
   language_settings {
-    default_language_code    = "en-US"
-    supported_language_codes = ["fr-CA"]
+    default_language_code = var.gecx_as_configs.supported_languages[0]
+    supported_language_codes = (
+      slice(
+        var.gecx_as_configs.supported_languages,
+        1,
+        length(var.gecx_as_configs.supported_languages)
+    ))
     enable_multilingual_support = true
   }
 
   audio_processing_config {
-    synthesize_speech_configs {
-      language_code = "en-US"
-      speaking_rate = 0
-    }
-    synthesize_speech_configs {
-      language_code = "fr-CA"
-      speaking_rate = 0
+    dynamic "synthesize_speech_configs" {
+      for_each = toset(var.gecx_as_configs.supported_languages)
+
+      content {
+        language_code = synthesize_speech_configs.value
+        speaking_rate = var.gecx_as_configs.speaking_rate
+      }
     }
   }
 
   logging_settings {
     cloud_logging_settings {
-      enable_cloud_logging = true
+      enable_cloud_logging = var.gecx_as_configs.enable_cloud_logging
     }
   }
+
   time_zone_settings {
-    time_zone = "America/Los_Angeles"
+    time_zone = var.gecx_as_configs.timezone
   }
 
   lifecycle {
-    # Updates after first apply will be controlled by the agent export itself
+    # After the first apply, agent export will control updates
     ignore_changes = [
-      root_agent,
-      global_instruction,
-      variable_declarations,
       data_store_settings,
+      global_instruction,
+      guardrails,
       language_settings,
       pinned,
-      guardrails
+      root_agent,
+      variable_declarations
     ]
   }
 }
