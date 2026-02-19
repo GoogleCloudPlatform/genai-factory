@@ -14,10 +14,17 @@
  * limitations under the License.
  */
 
-project_config = {
-  id     = "${projects.project.id}"
-  number = "${projects.project.number}"
+prefix = ${prefix}
+
+projects = {
+%{ for k,v in projects ~}
+  "${k}" = {
+    id     = "${v.id}"
+    number = "${v.number}"
+  }
+%{ endfor ~}
 }
+
 service_accounts = {
 %{ for k,v in service_accounts ~}
   "${k}" = {

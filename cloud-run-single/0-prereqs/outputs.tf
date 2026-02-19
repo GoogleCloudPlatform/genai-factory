@@ -25,10 +25,10 @@ locals {
     }
   }
   providers = {
-    project_id      = local.projects.project.id
-    project_number  = local.projects.project.number
-    bucket          = local.buckets["project/iac-state"]
-    service_account = local.service_accounts["project/iac-rw"].email
+    project_id      = local.projects.service.id
+    project_number  = local.projects.service.number
+    bucket          = local.buckets["service/iac-state"]
+    service_account = local.service_accounts["service/iac-rw"].email
   }
   service_accounts = {
     for k, v in module.projects.service_accounts : k => {
@@ -38,8 +38,8 @@ locals {
     }
   }
   tfvars = {
+    prefix           = var.project_config.prefix
     projects         = local.projects
-    buckets          = local.buckets
     service_accounts = local.service_accounts
   }
 }
@@ -47,6 +47,11 @@ locals {
 output "buckets" {
   description = "Created buckets."
   value       = local.buckets
+}
+
+output "prefix" {
+  description = "The name prefix for global scope resources."
+  value       = var.project_config.prefix
 }
 
 output "projects" {
