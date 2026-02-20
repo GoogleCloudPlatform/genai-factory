@@ -16,7 +16,14 @@
 
 set -e
 
-alias agentutil="uv run agentutil"
+
+# Change to the script's directory
+cd "$(dirname "$0")"
+
+function agentutil() {
+  uv run agentutil "$@"
+}
+
 
 uv sync
 

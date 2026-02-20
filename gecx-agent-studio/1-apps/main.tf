@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# This bucket is used to store resources during import/export operations
 resource "google_storage_bucket" "build" {
   project                     = var.project_config.id
   name                        = "${var.prefix}-${var.name}-build"
@@ -56,8 +57,8 @@ resource "google_discovery_engine_schema" "knowledge_base" {
 }
 
 resource "google_ces_app" "gecx_as_app" {
-  app_id       = "${var.name}-agent"
-  display_name = "${var.name} Agent"
+  app_id       = "${var.name}-app"
+  display_name = "${var.name} App"
   project      = var.project_config.id
   location     = var.region_ai_applications
   description  = "A sample Gemini Enterprise for CX application."
@@ -103,7 +104,9 @@ resource "google_ces_app" "gecx_as_app" {
       language_settings,
       pinned,
       root_agent,
-      variable_declarations
+      variable_declarations,
+      audio_processing_config,
+      time_zone_settings,
     ]
   }
 }
