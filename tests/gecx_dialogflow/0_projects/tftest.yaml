@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-module: conversational-dialogflow-cx/1-apps
+module: gecx-dialogflow/0-projects
 
 tests:
   simple:
