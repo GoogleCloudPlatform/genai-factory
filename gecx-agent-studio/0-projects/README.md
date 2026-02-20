@@ -1,6 +1,6 @@
-# Conversational Agents - Gemini Enterprise for Customer Experience Agent Studio (gecx-as) / Project Setup
+# Conversational Agents - Gemini Enterprise for Customer Experience (GECX) Agent Studio (gecx-as) / Project Setup
 
-This stage is part of the `AI Applications - Conversational Agents (Dialogflow)`.
+This stage is part of the `Conversational Agents - Gemini Enterprise for Customer Experience (GECX) Agent Studio (gecx-as)`.
 It is responsible for setting up the Google Cloud project, activating the APIs and granting the roles you need to deploy and manage the components enabling the AI use case.
 
 It leverages the Cloud Foundation Fabric [`project-factory`](https://github.com/GoogleCloudPlatform/cloud-foundation-fabric/tree/master/modules/project-factory).
