@@ -22,7 +22,6 @@ locals {
     for k, v in module.projects.projects : k => {
       id     = v.project_id
       number = v.number
-      prefix = var.project_config.prefix
     }
   }
   providers = {
@@ -49,6 +48,11 @@ locals {
 output "buckets" {
   description = "Created buckets."
   value       = local.buckets
+}
+
+output "prefix" {
+  description = "The unique name prefix to be used for all global unique resources."
+  value       = var.project_config.prefix
 }
 
 output "projects" {
