@@ -1,0 +1,31 @@
+[project]
+name = "agentutil"
+version = "0.0.1"
+description = "A set of tools to manipulate agents (vendorized for genai-factory)"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "google-cloud-storage>=2.19.0",
+    "markdown>=3.8",
+    "pydantic-settings>=2.10.1",
+    "python-slugify>=8.0.4",
+    "python-frontmatter>=1.1.0",
+    "pyyaml>=6.0.2",
+    "requests>=2.32.3",
+    "retry>=0.9.2",
+    "retrying>=1.4.2",
+    "tabulate>=0.9.0",
+    "typer>=0.19.2",
+]
+
+[project.scripts]
+agentutil = "agentutil.main:main"
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = [
+    "agentutil"
+]

@@ -1,0 +1,53 @@
+{
+  "displayName": "[TF] [dev] CES Blueprint Agent",
+  "description": "An example Gemini Enterprise for CX application",
+  "rootAgent": "root_agent",
+  "audioProcessingConfig": {
+    "synthesizeSpeechConfigs": {
+      "en-US": {
+      }
+    }
+  },
+  "loggingSettings": {
+    "cloudLoggingSettings": {
+      "enableCloudLogging": true
+    }
+  },
+  "guardrails": ["Safety Guardrail Default", "Prompt Guardrail Default"],
+  "variableDeclarations": [{
+    "name": "internal__event_type",
+    "description": "(internal) This variable is populated when an event is detected",
+    "schema": {
+      "type": "STRING",
+      "default": null
+    }
+  }, {
+    "name": "ui__brand_name",
+    "description": "(ui) The agent is instructed to use this brand name during the conversation",
+    "schema": {
+      "type": "STRING",
+      "default": "Cymbal Telecom"
+    }
+  }, {
+    "name": "ui__brand_code",
+    "description": "(ui) If set, the agent will filter Data Store documents based on this brand code",
+    "schema": {
+      "type": "STRING",
+      "default": "cymbal"
+    }
+  }],
+  "dataStoreSettings": {
+  },
+  "languageSettings": {
+    "defaultLanguageCode": "en-US",
+    "supportedLanguageCodes": [],
+    "enableMultilingualSupport": false
+  },
+  "defaultChannelProfile": {
+  },
+  "timeZoneSettings": {
+    "timeZone": "Europe/Rome"
+  },
+  "pinned": true,
+  "toolExecutionMode": "PARALLEL"
+}
