@@ -133,6 +133,6 @@ counts:
 
 outputs:
   commands: "  # variables.generated.env generated in the scripts directory.\n  #\
-    \ You can now run the following commands:\n\n  # Deploy the application\n  bash\
+    \ You can now run the following commands:\n\n  # Deploy the CX Agent Studio application\n  bash\
     \ scripts/deploy_agent.sh\n\n  # Ingest documents in the data store\n  bash scripts/deploy_agent.sh\
     \ --ingest-kb\n"
