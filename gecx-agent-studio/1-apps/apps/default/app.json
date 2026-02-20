@@ -5,8 +5,6 @@
   "audioProcessingConfig": {
     "synthesizeSpeechConfigs": {
       "en-US": {
-      },
-      "fr-CA": {
       }
     }
   },
@@ -42,13 +40,13 @@
   },
   "languageSettings": {
     "defaultLanguageCode": "en-US",
-    "supportedLanguageCodes": ["fr-CA"],
-    "enableMultilingualSupport": true
+    "supportedLanguageCodes": [],
+    "enableMultilingualSupport": false
   },
   "defaultChannelProfile": {
   },
   "timeZoneSettings": {
-    "timeZone": "America/Los_Angeles"
+    "timeZone": "Europe/Rome"
   },
   "pinned": true,
   "toolExecutionMode": "PARALLEL"

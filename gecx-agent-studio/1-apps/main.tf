@@ -71,7 +71,7 @@ resource "google_ces_app" "gecx_as_app" {
         1,
         length(var.gecx_as_configs.supported_languages)
     ))
-    enable_multilingual_support = true
+    enable_multilingual_support = false
   }
 
   audio_processing_config {
@@ -98,6 +98,7 @@ resource "google_ces_app" "gecx_as_app" {
   lifecycle {
     # After the first apply, agent export will control updates
     ignore_changes = [
+      description,
       data_store_settings,
       global_instruction,
       guardrails,
