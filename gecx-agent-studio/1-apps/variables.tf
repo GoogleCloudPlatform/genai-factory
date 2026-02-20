@@ -12,16 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-variable "agent_configs" {
-  description = "The AI Applications Dialogflow agent configurations."
-  type = object({
-    language = optional(string, "en")
-    variant  = optional(string, "default")
-  })
-  nullable = false
-  default  = {}
-}
-
 variable "enable_deletion_protection" {
   description = "Whether deletion protection should be enabled."
   type        = bool
@@ -29,6 +19,9 @@ variable "enable_deletion_protection" {
   default     = true
 }
 
+# By default, these values are overridden when you redeploy the app
+# by using agentutil. Update the ignore_changes in the google_ces_app resource
+# to fully manage and update the resource via terraform.
 variable "gecx_as_configs" {
   description = "The ge4cx-as configurations."
   type = object({
@@ -84,7 +77,7 @@ variable "region_ai_applications" {
 }
 
 variable "service_accounts" {
-  description = "The pre-created service accounts used by the blueprint."
+  description = "The pre-created service accounts used by the factory."
   type = map(object({
     email     = string
     iam_email = string

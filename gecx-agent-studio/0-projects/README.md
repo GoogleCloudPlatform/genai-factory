@@ -1,6 +1,6 @@
-# Conversational Agents - Gemini Enterprise for Customer Experience (GECX) Agent Studio (gecx-as) / Project Setup
+# Gemini Enterprise for Customer Experience Agent Studio (GECX-AS) / Project Setup
 
-This stage is part of the `Conversational Agents - Gemini Enterprise for Customer Experience (GECX) Agent Studio (gecx-as)`.
+This stage is part of the `Gemini Enterprise for Customer Experience Agent Studio (GECX-AS)`.
 It is responsible for setting up the Google Cloud project, activating the APIs and granting the roles you need to deploy and manage the components enabling the AI use case.
 
 It leverages the Cloud Foundation Fabric [`project-factory`](https://github.com/GoogleCloudPlatform/cloud-foundation-fabric/tree/master/modules/project-factory).
@@ -42,7 +42,8 @@ You should now see the `providers.tf` and `terraform.auto.tfvars` files in the [
 
 | name | description | sensitive |
 |---|---|:---:|
-| [buckets](outputs.tf#L49) | Created buckets. |  |
-| [projects](outputs.tf#L54) | Created projects. |  |
-| [service_accounts](outputs.tf#L59) | Created service accounts. |  |
+| [buckets](outputs.tf#L48) | Created buckets. |  |
+| [prefix](outputs.tf#L53) | The unique name prefix to be used for all global unique resources. |  |
+| [projects](outputs.tf#L58) | Created projects. |  |
+| [service_accounts](outputs.tf#L63) | Created service accounts. |  |
 <!-- END TFDOC -->

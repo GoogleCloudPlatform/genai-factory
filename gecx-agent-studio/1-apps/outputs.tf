@@ -15,13 +15,13 @@
 output "commands" {
   description = "Run the following commands when the deployment completes to update and mange the application."
   value       = <<EOT
-  # We wrote a variables.generated.env file in the scripts directory,
-  # so you can run following commands.
+  # variables.generated.env generated in the scripts directory.
+  # You can now run the following commands:
 
   # Deploy the application
   bash scripts/deploy_agent.sh
 
-  # Ingest documents into the Knowledge Base
+  # Ingest documents in the data store
   bash scripts/deploy_agent.sh --ingest-kb
   EOT
 }

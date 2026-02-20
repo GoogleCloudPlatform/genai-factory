@@ -1,6 +1,6 @@
-# Conversational Agents - Gemini Enterprise for Customer Experience (GECX) Agent Studio (gecx-as)
+# Gemini Enterprise for Customer Experience - Agent Studio (GECX-AS)
 
-This factory automates the deployment of a [Customer Experience Agent Studio](https://cloud.google.com/products/gemini-enterprise-for-customer-experience/agent-studio) application connected to an unstructured [Data Store]((https://docs.cloud.google.com/dialogflow/cx/docs/concept/data-store)) backed by a [Google Cloud Storage (GCS) ](https://cloud.google.com/storage/docs/introduction) bucket.
+This factory automates the deployment of a [Gemini Enterprise for Customer Experience - Agent Studio (GECX-AS)](https://cloud.google.com/products/gemini-enterprise-for-customer-experience/agent-studio) application connected to an unstructured [Data Store]((https://docs.cloud.google.com/dialogflow/cx/docs/concept/data-store)) backed by a [Google Cloud Storage (GCS) ](https://cloud.google.com/storage/docs/introduction) bucket.
 
 ![Architecture Diagram](./diagram.png)
 
@@ -8,9 +8,11 @@ This factory automates the deployment of a [Customer Experience Agent Studio](ht
 
 The deployment orchestrates the following Google Cloud resources:
 
-- An **CX Agent Studio** application: The conversational agent builder.
-- A **Data Store**: An unstructured data store that indexes and serves content to the agent.
-- A **GCS bucket**: Used by Admin/CI-CD processes to store and load the agent configuration and to store source files for the data store ingestion.
+- A **GECX Agent Studio** application: the conversational agent builder.
+- A **data store**: an unstructured data store that indexes and serves content to the agent.
+- A **GCS bucket**: Used by admin/CI-CD processes to store and load the agent configuration and to store source files for the data store ingestion.
+
+It complements the factory a script ingest documents in the data store and to deploy the application.
 
 ## Apply the factory
 
