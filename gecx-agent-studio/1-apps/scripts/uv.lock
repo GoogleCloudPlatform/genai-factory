@@ -5,7 +5,7 @@ requires-python = ">=3.13"
 [[package]]
 name = "agentutil"
 version = "0.0.1"
-source = { editable = "scripts/agentutil" }
+source = { editable = "agentutil" }
 dependencies = [
     { name = "google-cloud-storage" },
     { name = "markdown" },
@@ -115,17 +115,6 @@ wheels = [
 ]
 
 [[package]]
-name = "conversational-agents"
-version = "0.1.0"
-source = { editable = "." }
-dependencies = [
-    { name = "agentutil" },
-]
-
-[package.metadata]
-requires-dist = [{ name = "agentutil", editable = "scripts/agentutil" }]
-
-[[package]]
 name = "decorator"
 version = "5.2.1"
 source = { registry = "https://us-python.pkg.dev/artifact-foundry-prod/ah-3p-staging-python/simple/" }
@@ -133,6 +122,17 @@ sdist = { url = "https://us-python.pkg.dev/artifact-foundry-prod/ah-3p-staging-p
 wheels = [
     { url = "https://us-python.pkg.dev/artifact-foundry-prod/ah-3p-staging-python/decorator/decorator-5.2.1-py3-none-any.whl", hash = "sha256:d316bb415a2d9e2d2b3abcc4084c6502fc09240e292cd76a76afc106a1c8e04a" },
 ]
+
+[[package]]
+name = "gecx-agent-studio-blueprint"
+version = "0.1.0"
+source = { editable = "." }
+dependencies = [
+    { name = "agentutil" },
+]
+
+[package.metadata]
+requires-dist = [{ name = "agentutil", editable = "agentutil" }]
 
 [[package]]
 name = "google-api-core"

@@ -19,10 +19,10 @@ output "commands" {
   # so you can run following commands.
 
   # Deploy the application
-  uv run bash scripts/deploy_agent.sh
+  (cd scripts && uv run bash deploy_agent.sh)
 
   # Ingest documents into the Knowledge Base
-  uv run bash scripts/deploy_agent.sh --ingest-kb
+  (cd scripts && uv run bash deploy_agent.sh --ingest-kb)
   EOT
 }
 
