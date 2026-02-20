@@ -15,14 +15,14 @@
 output "commands" {
   description = "Run the following commands when the deployment completes to update and mange the application."
   value       = <<EOT
-  # We wrote a variables.generated.env file in the tools directory,
+  # We wrote a variables.generated.env file in the scripts directory,
   # so you can run following commands.
 
   # Deploy the application
-  uv run bash tools/deploy_agent.sh
+  uv run bash scripts/deploy_agent.sh
 
   # Ingest documents into the Knowledge Base
-  uv run bash tools/deploy_agent.sh --ingest-kb
+  uv run bash scripts/deploy_agent.sh --ingest-kb
   EOT
 }
 
@@ -38,5 +38,5 @@ export KNOWLEDGE_BASE_DATA_STORE_ID="${google_discovery_engine_data_store.knowle
 export KNOWLEDGE_BASE_DATA_STORE_LOCATION="${google_discovery_engine_data_store.knowledge_base.location}"
 export KNOWLEDGE_BASE_DATA_STORE_NAME="${google_discovery_engine_data_store.knowledge_base.name}"
 EOT
-  filename = "./tools/variables.generated.env"
+  filename = "./scripts/variables.generated.env"
 }

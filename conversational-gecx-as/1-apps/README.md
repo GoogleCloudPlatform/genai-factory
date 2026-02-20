@@ -34,7 +34,7 @@ The [0-projects](../0-projects) stage generates the necessary Terraform input fi
 You can pull remote copies of your agent variants into your `data/agents` directory by using this command:
 
 ```shell
-uv run tools/agentutil.py pull_agent {AGENT_REMOTE} data/agents/{AGENT_VARIANT}
+uv run scripts/agentutil.py pull_agent {AGENT_REMOTE} data/agents/{AGENT_VARIANT}
 ```
 <!-- BEGIN TFDOC -->
 ## Variables
