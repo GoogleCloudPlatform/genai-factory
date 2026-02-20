@@ -1,6 +1,6 @@
-# Gemini Enterprise for Customer Experience Agent Studio (GECX-AS) / Project Setup
+# Gemini Enterprise for Customer Experience (GECX) - CX Agent Studio / Project Setup
 
-This stage is part of the `Gemini Enterprise for Customer Experience Agent Studio (GECX-AS)`.
+This stage is part of the `# Gemini Enterprise for Customer Experience (GECX) - CX Agent Studio` factory.
 It is responsible for setting up the Google Cloud project, activating the APIs and granting the roles you need to deploy and manage the components enabling the AI use case.
 
 It leverages the Cloud Foundation Fabric [`project-factory`](https://github.com/GoogleCloudPlatform/cloud-foundation-fabric/tree/master/modules/project-factory).

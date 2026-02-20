@@ -13,12 +13,12 @@
 # limitations under the License.
 
 output "commands" {
-  description = "Run the following commands when the deployment completes to update and mange the application."
+  description = "Run the following commands when the deployment completes to update and manage the application."
   value       = <<EOT
   # variables.generated.env generated in the scripts directory.
   # You can now run the following commands:
 
-  # Deploy the application
+  # Deploy the CX Agent Studio application
   bash scripts/deploy_agent.sh
 
   # Ingest documents in the data store

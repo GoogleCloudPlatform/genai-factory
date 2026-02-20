@@ -1,6 +1,6 @@
-# Gemini Enterprise for Customer Experience Agent Studio (GECX-AS) / Platform Deployment
+# Gemini Enterprise for Customer Experience (GECX) - CX Agent Studio / Platform Deployment
 
-This stage is part of the `Gemini Enterprise for Customer Experience Agent Studio (GECX-AS)` factory.
+This stage is part of the `# Gemini Enterprise for Customer Experience (GECX) - CX Agent Studio` factory.
 It is responsible for deploying the components enabling the AI use case, either in the project you created in [0-projects](../0-projects) or in an existing project.
 
 ![Architecture Diagram](../diagram.png)
@@ -54,5 +54,5 @@ uv run scripts/agentutil.py pull_agent {AGENT_REMOTE} data/agents/{AGENT_VARIANT
 
 | name | description | sensitive |
 |---|---|:---:|
-| [commands](outputs.tf#L15) | Run the following commands when the deployment completes to update and mange the application. |  |
+| [commands](outputs.tf#L15) | Run the following commands when the deployment completes to update and manage the application. |  |
 <!-- END TFDOC -->
