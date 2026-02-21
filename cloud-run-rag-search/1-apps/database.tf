@@ -73,6 +73,7 @@ resource "google_vertex_ai_index_endpoint_deployed_index" "index_deployment" {
   region            = var.region
   index             = google_vertex_ai_index.index.id
   index_endpoint    = google_vertex_ai_index_endpoint.index_endpoint.id
+  deployment_tier   = var.vector_search_config.deployment_tier
 
   dedicated_resources {
     max_replica_count = var.vector_search_config.max_replica_count
