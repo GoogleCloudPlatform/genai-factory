@@ -74,6 +74,7 @@ resource "google_vertex_ai_index_endpoint_deployed_index" "index_deployment" {
   index             = google_vertex_ai_index.index.id
   index_endpoint    = google_vertex_ai_index_endpoint.index_endpoint.id
 
+
   dedicated_resources {
     max_replica_count = var.vector_search_config.max_replica_count
     min_replica_count = var.vector_search_config.min_replica_count
