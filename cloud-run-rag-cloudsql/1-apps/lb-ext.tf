@@ -1,4 +1,4 @@
-# Copyright 2025 Google LLC
+# Copyright 2026 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -66,7 +66,7 @@ resource "google_compute_global_address" "address_external" {
 
 module "lb_external_redirect" {
   count               = var.lbs_config.external.enable ? 1 : 0
-  source              = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-lb-app-ext?ref=v52.0.0"
+  source              = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-lb-app-ext?ref=v53.0.0"
   project_id          = var.project_config.id
   name                = "${var.name}-redirect"
   use_classic_version = false
@@ -90,7 +90,7 @@ module "lb_external_redirect" {
 
 module "lb_external" {
   count               = var.lbs_config.external.enable ? 1 : 0
-  source              = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-lb-app-ext?ref=v52.0.0"
+  source              = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-lb-app-ext?ref=v53.0.0"
   project_id          = var.project_config.id
   name                = "${var.name}-external"
   use_classic_version = false

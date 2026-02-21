@@ -1,4 +1,4 @@
-# Copyright 2025 Google LLC
+# Copyright 2026 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ locals {
 }
 
 module "vpc" {
-  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-vpc?ref=v52.0.0"
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-vpc?ref=v53.0.0"
   count      = var.networking_config.create ? 1 : 0
   project_id = var.project_config.id
   name       = var.networking_config.vpc_id
@@ -40,7 +40,7 @@ module "vpc" {
 
 # DNS policies for Google APIs
 module "dns_policy_googleapis" {
-  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/dns-response-policy?ref=v52.0.0"
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/dns-response-policy?ref=v53.0.0"
   count      = var.networking_config.create ? 1 : 0
   project_id = var.project_config.id
   name       = "googleapis"

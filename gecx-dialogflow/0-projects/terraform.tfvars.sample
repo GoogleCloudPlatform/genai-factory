@@ -1,0 +1,5 @@
+project_config = {
+  billing_account_id = "billing-acct-id"
+  parent             = "organizations/1122334455"
+  prefix             = "your-prefix"
+}

@@ -1,0 +1,138 @@
+# Copyright 2026 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+values:
+  google_ces_app.gecx_as_app:
+    app_id: gf-gecx-as-0-app
+    audio_processing_config:
+    - ambient_sound_config: []
+      barge_in_config: []
+      inactivity_timeout: null
+      synthesize_speech_configs:
+      - language_code: en-US
+        speaking_rate: 0
+        voice: ''
+    client_certificate_settings: []
+    data_store_settings: []
+    default_channel_profile: []
+    description: A sample Gemini Enterprise for CX application.
+    display_name: gf-gecx-as-0 App
+    evaluation_metrics_thresholds: []
+    global_instruction: null
+    guardrails: null
+    language_settings:
+    - default_language_code: en-US
+      enable_multilingual_support: false
+      fallback_action: null
+      supported_language_codes: []
+    location: eu
+    logging_settings:
+    - audio_recording_config: []
+      bigquery_export_settings: []
+      cloud_logging_settings:
+      - enable_cloud_logging: true
+      conversation_logging_settings: []
+      redaction_config: []
+    metadata: null
+    model_settings: []
+    pinned: null
+    project: prefix-gf-ai-apps-df-0
+    root_agent: null
+    time_zone_settings:
+    - time_zone: Europe/Rome
+    timeouts: null
+    variable_declarations: []
+  google_discovery_engine_data_store.knowledge_base:
+    content_config: CONTENT_REQUIRED
+    create_advanced_site_search: false
+    data_store_id: gf-gecx-as-0-kb
+    display_name: gf-gecx-as-0 knowledge base
+    document_processing_config:
+    - chunking_config:
+      - layout_based_chunking_config:
+        - chunk_size: 500
+          include_ancestor_headings: true
+      default_parsing_config:
+      - digital_parsing_config: []
+        layout_parsing_config:
+        - enable_image_annotation: true
+          enable_table_annotation: true
+          exclude_html_classes: null
+          exclude_html_elements: null
+          exclude_html_ids: null
+          structured_content_types: null
+        ocr_parsing_config: []
+      parsing_config_overrides: []
+    industry_vertical: GENERIC
+    kms_key_name: null
+    location: eu
+    project: prefix-gf-ai-apps-df-0
+    skip_default_schema_creation: true
+    solution_types:
+    - SOLUTION_TYPE_CHAT
+    timeouts: null
+  google_discovery_engine_schema.knowledge_base:
+    data_store_id: gf-gecx-as-0-kb
+    json_schema: '{"$schema":"https://json-schema.org/draft/2020-12/schema","properties":{"brand_code":{"dynamicFacetable":false,"indexable":true,"retrievable":true,"searchable":false,"type":"string"},"title":{"keyPropertyMapping":"title","retrievable":true,"type":"string"},"url":{"dynamicFacetable":false,"indexable":false,"retrievable":true,"searchable":false,"type":"string"}},"type":"object"}'
+    location: eu
+    project: prefix-gf-ai-apps-df-0
+    schema_id: gf-gecx-as-0-kb-schema
+    timeouts: null
+  google_storage_bucket.build:
+    autoclass: []
+    cors: []
+    custom_placement_config: []
+    default_event_based_hold: null
+    effective_labels:
+      goog-terraform-provisioned: 'true'
+    enable_object_retention: null
+    encryption: []
+    force_destroy: false
+    hierarchical_namespace: []
+    ip_filter: []
+    labels: null
+    lifecycle_rule: []
+    location: EUROPE-WEST1
+    logging: []
+    name: prefix-gf-gecx-as-0-build
+    project: prefix-gf-ai-apps-df-0
+    requester_pays: null
+    retention_policy: []
+    storage_class: STANDARD
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
+    timeouts: null
+    uniform_bucket_level_access: true
+  local_file.env_vars:
+    content_base64: null
+    directory_permission: '0777'
+    file_permission: '0777'
+    filename: ./scripts/variables.generated.env
+    sensitive_content: null
+    source: null
+
+counts:
+  google_ces_app: 1
+  google_discovery_engine_data_store: 1
+  google_discovery_engine_schema: 1
+  google_storage_bucket: 1
+  local_file: 1
+  modules: 0
+  resources: 5
+
+outputs:
+  commands: "  # variables.generated.env generated in the scripts directory.\n  #\
+    \ You can now run the following commands:\n\n  # Deploy the CX Agent Studio application\n  bash\
+    \ scripts/deploy_agent.sh\n\n  # Ingest documents in the data store\n  bash scripts/deploy_agent.sh\
+    \ --ingest-kb\n"

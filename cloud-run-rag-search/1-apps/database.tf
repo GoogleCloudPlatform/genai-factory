@@ -1,4 +1,4 @@
-# Copyright 2025 Google LLC
+# Copyright 2026 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@ locals {
 }
 
 module "index-bucket" {
-  source        = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/gcs?ref=v52.0.0"
+  source        = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/gcs?ref=v53.0.0"
   project_id    = var.project_config.id
   prefix        = var.project_config.prefix
   name          = var.name

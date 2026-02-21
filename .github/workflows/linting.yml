@@ -1,4 +1,4 @@
-# Copyright 2025 Google LLC
+# Copyright 2026 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -95,7 +95,7 @@ jobs:
         run: |
           uv run python tools/check_links.py . \
             --no-show-summary \
-            --exclude ./ai-apps-conversational/1-apps/data/ds-kb
+            --exclude ./gecx-dialogflow/1-apps/data/ds-kb
 
       - name: Check python formatting
         id: yapf

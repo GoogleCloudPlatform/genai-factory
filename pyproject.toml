@@ -4,7 +4,10 @@ version = "0.1.0"
 description = "GenAI factory project for development test and tools."
 readme = "README.md"
 requires-python = ">=3.12"
-dependencies = ["beautifulsoup4>=4.13.4", "click>=8.2.1"]
+dependencies = [
+    "beautifulsoup4>=4.13.4",
+    "click>=8.2.1",
+]
 
 
 [dependency-groups]

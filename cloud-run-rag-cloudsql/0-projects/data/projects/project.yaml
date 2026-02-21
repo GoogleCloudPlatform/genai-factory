@@ -1,0 +1,121 @@
+---
+
+# Copyright 2026 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+name: gf-rrag-0
+
+# Enable APIs
+services:
+  # Needed both for ILB and ELB
+  - aiplatform.googleapis.com
+  - artifactregistry.googleapis.com
+  - bigquery.googleapis.com
+  - cloudbuild.googleapis.com
+  - cloudresourcemanager.googleapis.com
+  - cloudscheduler.googleapis.com
+  - compute.googleapis.com
+  - dns.googleapis.com
+  - run.googleapis.com
+  - sqladmin.googleapis.com
+  # Needed for ILB only
+  - certificatemanager.googleapis.com
+  - privateca.googleapis.com
+
+buckets:
+  iac-state:
+    description: Terraform state bucket
+    iam:
+      roles/storage.objectAdmin:
+        - $iam_principals:service_accounts/project/iac-rw
+      roles/storage.objectViewer:
+        - $iam_principals:service_accounts/project/iac-rw
+
+service_accounts:
+  # Automation SAs
+  iac-rw:
+    iam_sa_roles:
+      $service_account_ids:project/gf-rrag-fe-0:
+        - roles/iam.serviceAccountUser
+      $service_account_ids:project/gf-rrag-fe-build-0:
+        - roles/iam.serviceAccountUser
+      $service_account_ids:project/gf-rrag-ing-0:
+        - roles/iam.serviceAccountUser
+      $service_account_ids:project/gf-rrag-ing-build-0:
+        - roles/iam.serviceAccountUser
+      $service_account_ids:project/gf-rrag-ing-sched-0:
+        - roles/iam.serviceAccountUser
+  # Application SAs
+  gf-rrag-fe-0: {}
+  gf-rrag-fe-build-0: {}
+  gf-rrag-ing-0: {}
+  gf-rrag-ing-build-0: {}
+  gf-rrag-ing-sched-0: {}
+
+# Grant roles
+iam:
+  roles/privateca.certificateRequester:
+    - $service_agents:certificatemanager
+iam_by_principals:
+  $iam_principals:service_accounts/project/iac-rw:
+    - roles/artifactregistry.admin
+    - roles/cloudbuild.builds.editor
+    - roles/bigquery.user
+    - roles/cloudscheduler.admin
+    - roles/cloudsql.admin
+    - roles/compute.loadBalancerAdmin
+    - roles/compute.networkAdmin
+    - roles/compute.securityAdmin
+    - roles/dns.admin
+    - roles/run.admin
+    - roles/storage.admin
+    - roles/storage.objectCreator
+    - roles/storage.objectViewer
+    # Needed for ILB only
+    - roles/certificatemanager.owner
+    - roles/privateca.admin
+  $iam_principals:service_accounts/project/gf-rrag-fe-0:
+    - roles/cloudsql.client
+    - roles/cloudsql.instanceUser
+  $iam_principals:service_accounts/project/gf-rrag-fe-build-0:
+    - roles/artifactregistry.writer
+    - roles/cloudbuild.builds.editor
+    - roles/logging.logWriter
+    - roles/run.admin
+    - roles/storage.admin
+    - roles/storage.objectCreator
+    - roles/storage.objectViewer
+  $iam_principals:service_accounts/project/gf-rrag-ing-0:
+    - roles/bigquery.dataViewer
+    - roles/bigquery.jobUser
+    - roles/cloudsql.client
+    - roles/cloudsql.instanceUser
+  $iam_principals:service_accounts/project/gf-rrag-ing-build-0:
+    - roles/artifactregistry.writer
+    - roles/cloudbuild.builds.editor
+    - roles/logging.logWriter
+    - roles/run.admin
+    - roles/storage.admin
+    - roles/storage.objectCreator
+    - roles/storage.objectViewer
+
+# Grant roles/aiplatform.user as additive,
+# as it is authoritatively granted by aiplatform APIs to default SA
+iam_bindings_additive:
+  run_fe_ai_user:
+    member: $iam_principals:service_accounts/project/gf-rrag-fe-0
+    role: roles/aiplatform.user
+  run_ing_ai_user:
+    member: $iam_principals:service_accounts/project/gf-rrag-ing-0
+    role: roles/aiplatform.user

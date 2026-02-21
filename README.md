@@ -10,18 +10,19 @@ Genai-factory is a collection of **end-to-end blueprints to deploy generative AI
 
 ## Cloud Foundation Fabric Compatibility
 
-Works with Cloud Foundation Fabric from [v47.0.0](https://github.com/GoogleCloudPlatform/cloud-foundation-fabric/tree/v47.0.0).
+Works with Cloud Foundation Fabric from [v53.0.0](https://github.com/GoogleCloudPlatform/cloud-foundation-fabric/tree/v53.0.0).
 Compatibility with master is not guaranteed.
 
 ## Factories
 
 - [Agent Engine](./agent-engine/README.md) - An instance of Agent Engine that privately access your VPC resources, accesses Internet via SWP HTTP Proxy, running [ADK](./agent-engine/1-apps/apps/adk/README.md).
-- [Single Cloud Run](./cloud-run-single/README.md) - A secure Cloud Run deployment to interact with Gemini, run an [ADK agents](./cloud-run-single/1-apps/apps/adk/README.md) and expose it via [A2A](./cloud-run-single/1-apps/apps/adk_a2a/README.md) or self-host a [Gemma 3](./cloud-run-single/1-apps/apps/gemma/README.md) model with Nvidia L4 GPUs.
+- [Single Cloud Run](./cloud-run-single/README.md) - A secure Cloud Run deployment to interact with Gemini, run an [ADK agents](./cloud-run-single/1-apps/apps/adk/README.md) and expose it via [A2A](./cloud-run-single/1-apps/apps/adk-a2a/README.md) or self-host a [Gemma 3](./cloud-run-single/1-apps/apps/gemma/README.md) model with Nvidia L4 GPUs.
 - [RAG with Cloud Run and CloudSQL](./cloud-run-rag-cloudsql/README.md) - A "Retrieval-Augmented Generation" (RAG) system leveraging Cloud Run, Cloud SQL and BigQuery.
 - [RAG with Cloud Run and AlloyDB](./cloud-run-rag-alloydb/README.md) - A "Retrieval-Augmented Generation" (RAG) system leveraging Cloud Run, AlloyDB and BigQuery.
 - [RAG with Cloud Run and Vector Search](./cloud-run-rag-search/README.md) - A "Retrieval-Augmented Generation" (RAG) system leveraging Cloud Run and Vector Search.
 - [AI Application search (Vector AI Search)](./ai-apps-search/README.md) - An AI-based search engine, configured to search content from a connected data store, indexing web pages from public websites.
-- [AI Application conversational agent (Dialogflow CX)](./ai-apps-conversational/README.md) - A chat engine ([Dialogflow CX](https://cloud.google.com/dialogflow/docs)) backed by two data stores, reading csv and json data from a GCS bucket.
+- [GECX Agent Studio](./gecx-agent-studio/README.md) - A [Gemini Enterprise - CX Agent Studio](https://cloud.google.com/products/gemini-enterprise-for-customer-experience/agent-studio) application connected to an unstructured [data store](https://docs.cloud.google.com/customer-engagement-ai/conversational-agents/ps/tool/data-store) backed by a [GCS](https://cloud.google.com/storage/docs/introduction) bucket.
+- [GECX Dialogflow)](./gecx-dialogflow/README.md) - A chat engine based on [Dialogflow CX](https://cloud.google.com/dialogflow/docs), backed by two data stores, reading csv and json data from a [GCS](https://cloud.google.com/storage/docs/introduction) bucket.
 
 These sample infrastructure deployments and applications can be used to be further extended and to ship your own application code.
 

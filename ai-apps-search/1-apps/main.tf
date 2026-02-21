@@ -1,4 +1,4 @@
-# Copyright 2025 Google LLC
+# Copyright 2026 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
 # See https://github.com/GoogleCloudPlatform/cloud-foundation-fabric/blob/master/modules/ai-applications/variables.tf
 # to learn how to customize this.
 module "ai-apps" {
-  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/ai-applications?ref=v52.0.0"
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/ai-applications?ref=v53.0.0"
   name       = var.name
   project_id = var.project_config.id
   location   = var.region_ai_applications

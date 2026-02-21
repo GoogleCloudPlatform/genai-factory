@@ -1,4 +1,4 @@
-# Copyright 2025 Google LLC
+# Copyright 2026 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 
 module "cas" {
   count      = var.lbs_config.internal.enable ? 1 : 0
-  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/certificate-authority-service?ref=v52.0.0"
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/certificate-authority-service?ref=v53.0.0"
   project_id = var.project_config.id
   location   = var.region
   ca_pool_config = {

@@ -1,4 +1,4 @@
-# Copyright 2025 Google LLC
+# Copyright 2026 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ locals {
 }
 
 module "projects" {
-  source = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/project-factory?ref=v52.0.0"
+  source = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/project-factory?ref=v53.0.0"
   data_defaults = {
     billing_account = var.project_config.billing_account_id
     parent          = var.project_config.parent
@@ -33,7 +33,7 @@ module "projects" {
     }
   }
   factories_config = {
-    projects = "./data"
+    basepath = "./data"
   }
 }
 

@@ -1,4 +1,4 @@
-# Copyright 2025 Google LLC
+# Copyright 2026 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ output "commands" {
     --repository-format docker \
     --impersonate-service-account=${var.service_accounts["project/iac-rw"].email}
 
-  # Update chat to adk, adk_a2a or gemma if you want to deploy another app instead
+  # Update chat to adk, adk-a2a or gemma if you want to deploy another app instead
 
   gcloud builds submit ./apps/chat \
     --project ${var.project_config.id} \
