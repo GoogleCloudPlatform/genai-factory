@@ -383,6 +383,7 @@ values:
         name: frontend
         ports:
         - container_port: 8080
+        readiness_probe: []
         source_code: []
         volume_mounts: []
         working_dir: null
