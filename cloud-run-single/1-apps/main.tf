@@ -15,7 +15,7 @@
 module "cloud_run" {
   source              = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/cloud-run-v2?ref=v53.0.0"
   type                = "SERVICE"
-  project_id          = var.project_config.id
+  project_id          = var.projects.service.id
   name                = var.name
   region              = var.region
   containers          = var.cloud_run_configs.containers
@@ -23,7 +23,7 @@ module "cloud_run" {
   managed_revision    = false
   service_account_config = {
     create = false
-    email  = var.service_accounts["project/gf-srun-0"].email
+    email  = var.service_accounts["service/gf-srun-0"].email
   }
   iam = {
     "roles/run.invoker" = var.cloud_run_configs.service_invokers
@@ -33,8 +33,8 @@ module "cloud_run" {
     node_selector                 = var.cloud_run_configs.node_selector
     vpc_access = {
       egress  = var.cloud_run_configs.vpc_access_egress
-      network = local.vpc_id
-      subnet  = local.subnet_id
+      network = var.networking_config.vpc_id
+      subnet  = var.networking_config.subnet_id
       tags    = var.cloud_run_configs.vpc_access_tags
     }
   }
