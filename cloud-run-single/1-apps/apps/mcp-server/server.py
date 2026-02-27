@@ -1,3 +1,17 @@
+# Copyright 2026 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 import os
 import logging
 from typing import List, Dict, Any, Optional
@@ -8,10 +22,11 @@ from google.api_core.exceptions import GoogleAPICallError
 
 # Initialize logging
 logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger("firewall-mcp")
+logger = logging.getLogger("sample-mcp-server")
 
 # Initialize FastMCP
 mcp = FastMCP("GCP Firewall")
+
 
 def _get_credentials(ctx: Context) -> Optional[Credentials]:
     """
@@ -23,74 +38,100 @@ def _get_credentials(ctx: Context) -> Optional[Credentials]:
         if not ctx.request_context or not ctx.request_context.request:
             logger.warning("No request context available")
             return None
-            
+
         headers = ctx.request_context.request.headers
-        
+
         # 1. Check custom header for explicit Access Token (passed by our client)
         access_token = headers.get("X-GCP-Access-Token")
         if access_token:
             return Credentials(token=access_token)
-            
+
         # 2. Fallback to Authorization header
         auth_header = headers.get("Authorization")
         if auth_header and auth_header.startswith("Bearer "):
             token = auth_header.split(" ")[1]
             return Credentials(token=token)
-            
+
         logger.warning("No valid credential token found in headers")
         return None
-        
+
     except Exception as e:
         logger.error(f"Error extracting credentials: {e}")
         return None
 
+
 def _format_firewall(firewall: compute_v1.Firewall) -> Dict[str, Any]:
     """Format a Firewall rule into a dictionary."""
     return {
-        "id": str(firewall.id),
-        "name": firewall.name,
-        "network": firewall.network,
-        "priority": firewall.priority,
-        "direction": firewall.direction,
-        "source_ranges": list(firewall.source_ranges),
-        "destination_ranges": list(firewall.destination_ranges),
-        "source_tags": list(firewall.source_tags),
-        "target_tags": list(firewall.target_tags),
-        "source_service_accounts": list(firewall.source_service_accounts),
-        "target_service_accounts": list(firewall.target_service_accounts),
-        "allowed": [{"IPProtocol": allowed.I_p_protocol, "ports": list(allowed.ports)} for allowed in firewall.allowed],
-        "denied": [{"IPProtocol": denied.I_p_protocol, "ports": list(denied.ports)} for denied in firewall.denied],
-        "disabled": firewall.disabled,
-        "description": firewall.description,
+        "id":
+        str(firewall.id),
+        "name":
+        firewall.name,
+        "network":
+        firewall.network,
+        "priority":
+        firewall.priority,
+        "direction":
+        firewall.direction,
+        "source_ranges":
+        list(firewall.source_ranges),
+        "destination_ranges":
+        list(firewall.destination_ranges),
+        "source_tags":
+        list(firewall.source_tags),
+        "target_tags":
+        list(firewall.target_tags),
+        "source_service_accounts":
+        list(firewall.source_service_accounts),
+        "target_service_accounts":
+        list(firewall.target_service_accounts),
+        "allowed": [{
+            "IPProtocol": allowed.I_p_protocol,
+            "ports": list(allowed.ports)
+        } for allowed in firewall.allowed],
+        "denied": [{
+            "IPProtocol": denied.I_p_protocol,
+            "ports": list(denied.ports)
+        } for denied in firewall.denied],
+        "disabled":
+        firewall.disabled,
+        "description":
+        firewall.description,
     }
 
+
 @mcp.tool()
-async def list_firewall_rules(ctx: Context, project_id: str, filter: str = None) -> str:
+async def list_firewall_rules(ctx: Context,
+                              project_id: str,
+                              filter: str = None) -> str:
     """List firewall rules for a project.
-    
+
     Args:
         ctx: The FastMCP context (automatically injected).
         project_id: The Google Cloud Project ID.
         filter: Optional filter string (e.g., "name = 'my-rule'").
     """
-    logger.info(f"Listing firewall rules for project: {project_id}, filter: {filter}")
+    logger.info(
+        f"Listing firewall rules for project: {project_id}, filter: {filter}")
     try:
         creds = _get_credentials(ctx)
         if not creds:
-             return "Error: Could not obtain user credentials from request."
+            return "Error: Could not obtain user credentials from request."
 
         client = compute_v1.FirewallsClient(credentials=creds)
-        request = compute_v1.ListFirewallsRequest(project=project_id, filter=filter)
+        request = compute_v1.ListFirewallsRequest(project=project_id,
+                                                  filter=filter)
         page_result = client.list(request=request)
-        
+
         rules = []
         for rule in page_result:
             rules.append(_format_firewall(rule))
-            
+
         return str(rules)
     except Exception as e:
         logger.error(f"Error listing firewall rules: {e}")
         return f"Error: {str(e)}"
+
 
 @mcp.tool()
 async def list_networks(ctx: Context, project_id: str) -> str:
@@ -104,44 +145,46 @@ async def list_networks(ctx: Context, project_id: str) -> str:
     try:
         creds = _get_credentials(ctx)
         if not creds:
-             return "Error: Could not obtain user credentials from request."
+            return "Error: Could not obtain user credentials from request."
 
         client = compute_v1.NetworksClient(credentials=creds)
         request = compute_v1.ListNetworksRequest(project=project_id)
         page_result = client.list(request=request)
-        
+
         networks = []
         for network in page_result:
             networks.append({
-                "name": network.name,
-                "self_link": network.self_link,
-                "subnetworks": list(network.subnetworks) if network.subnetworks else []
+                "name":
+                network.name,
+                "self_link":
+                network.self_link,
+                "subnetworks":
+                list(network.subnetworks) if network.subnetworks else []
             })
-            
+
         return str(networks)
     except Exception as e:
         logger.error(f"Error listing networks: {e}")
         return f"Error: {str(e)}"
 
+
 @mcp.tool()
-async def create_firewall_rule(
-    ctx: Context,
-    project_id: str, 
-    name: str, 
-    network: str = "global/networks/default",
-    description: str = "",
-    priority: int = 1000,
-    direction: str = "INGRESS",
-    source_ranges: List[str] = None,
-    source_tags: List[str] = None,
-    target_tags: List[str] = None,
-    source_service_accounts: List[str] = None,
-    target_service_accounts: List[str] = None,
-    allow_tcp_ports: List[str] = None,
-    deny_tcp_ports: List[str] = None
-) -> str:
+async def create_firewall_rule(ctx: Context,
+                               project_id: str,
+                               name: str,
+                               network: str = "global/networks/default",
+                               description: str = "",
+                               priority: int = 1000,
+                               direction: str = "INGRESS",
+                               source_ranges: List[str] = None,
+                               source_tags: List[str] = None,
+                               target_tags: List[str] = None,
+                               source_service_accounts: List[str] = None,
+                               target_service_accounts: List[str] = None,
+                               allow_tcp_ports: List[str] = None,
+                               deny_tcp_ports: List[str] = None) -> str:
     """Create a new firewall rule.
-    
+
     Args:
         ctx: FastMCP Context.
         project_id: Google Cloud Project ID.
@@ -162,7 +205,7 @@ async def create_firewall_rule(
     try:
         creds = _get_credentials(ctx)
         if not creds:
-             return "Error: Could not obtain user credentials from request."
+            return "Error: Could not obtain user credentials from request."
 
         client = compute_v1.FirewallsClient(credentials=creds)
         firewall = compute_v1.Firewall()
@@ -171,7 +214,7 @@ async def create_firewall_rule(
         firewall.description = description
         firewall.priority = priority
         firewall.direction = direction
-        
+
         if source_ranges:
             firewall.source_ranges = source_ranges
         if source_tags:
@@ -182,13 +225,13 @@ async def create_firewall_rule(
             firewall.source_service_accounts = source_service_accounts
         if target_service_accounts:
             firewall.target_service_accounts = target_service_accounts
-            
+
         if allow_tcp_ports:
             allow = compute_v1.Allowed()
             allow.I_p_protocol = "tcp"
             allow.ports = allow_tcp_ports
             firewall.allowed.append(allow)
-            
+
         if deny_tcp_ports:
             deny = compute_v1.Denied()
             deny.I_p_protocol = "tcp"
@@ -196,15 +239,17 @@ async def create_firewall_rule(
             firewall.denied.append(deny)
 
         op = client.insert(project=project_id, firewall_resource=firewall)
-        op.result() # Wait for completion
-        
+        op.result()  # Wait for completion
+
         return f"Firewall rule {name} created successfully."
     except Exception as e:
         logger.error(f"Error creating firewall rule: {e}")
         return f"Error: {str(e)}"
 
+
 @mcp.tool()
-async def delete_firewall_rule(ctx: Context, project_id: str, firewall_rule: str) -> str:
+async def delete_firewall_rule(ctx: Context, project_id: str,
+                               firewall_rule: str) -> str:
     """Delete a firewall rule.
     
     Args:
@@ -216,7 +261,7 @@ async def delete_firewall_rule(ctx: Context, project_id: str, firewall_rule: str
     try:
         creds = _get_credentials(ctx)
         if not creds:
-             return "Error: Could not obtain user credentials from request."
+            return "Error: Could not obtain user credentials from request."
 
         client = compute_v1.FirewallsClient(credentials=creds)
         op = client.delete(project=project_id, firewall=firewall_rule)
@@ -226,18 +271,18 @@ async def delete_firewall_rule(ctx: Context, project_id: str, firewall_rule: str
         logger.error(f"Error deleting firewall rule: {e}")
         return f"Error: {str(e)}"
 
+
 @mcp.tool()
 async def update_firewall_rule(
-    ctx: Context,
-    project_id: str,
-    firewall_rule: str,
-    new_priority: int = None,
-    new_source_ranges: List[str] = None,
-    new_source_tags: List[str] = None,
-    new_target_tags: List[str] = None,
-    new_source_service_accounts: List[str] = None,
-    new_target_service_accounts: List[str] = None
-) -> str:
+        ctx: Context,
+        project_id: str,
+        firewall_rule: str,
+        new_priority: int = None,
+        new_source_ranges: List[str] = None,
+        new_source_tags: List[str] = None,
+        new_target_tags: List[str] = None,
+        new_source_service_accounts: List[str] = None,
+        new_target_service_accounts: List[str] = None) -> str:
     """Update an existing firewall rule (patch).
     
     Args:
@@ -255,14 +300,14 @@ async def update_firewall_rule(
     try:
         creds = _get_credentials(ctx)
         if not creds:
-             return "Error: Could not obtain user credentials from request."
+            return "Error: Could not obtain user credentials from request."
 
         client = compute_v1.FirewallsClient(credentials=creds)
         # Patch requires specifying the fields mask or sending a partial resource
-        
+
         firewall = compute_v1.Firewall()
-        firewall.name = firewall_rule 
-        
+        firewall.name = firewall_rule
+
         # We need to set fields we want to change
         if new_priority is not None:
             firewall.priority = new_priority
@@ -276,13 +321,16 @@ async def update_firewall_rule(
             firewall.source_service_accounts = new_source_service_accounts
         if new_target_service_accounts is not None:
             firewall.target_service_accounts = new_target_service_accounts
-            
-        op = client.patch(project=project_id, firewall=firewall_rule, firewall_resource=firewall)
+
+        op = client.patch(project=project_id,
+                          firewall=firewall_rule,
+                          firewall_resource=firewall)
         op.result()
         return f"Firewall rule {firewall_rule} updated successfully."
     except Exception as e:
         logger.error(f"Error updating firewall rule: {e}")
         return f"Error: {str(e)}"
+
 
 if __name__ == "__main__":
     import sys

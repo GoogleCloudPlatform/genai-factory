@@ -1,3 +1,17 @@
+# Copyright 2026 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 import asyncio
 import argparse
 import sys
@@ -12,11 +26,10 @@ from fastmcp.client.transports import StreamableHttpTransport
 from fastmcp.client.auth import BearerAuth
 
 # Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s'
-)
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
+
 
 def get_id_token(url: str) -> Optional[str]:
     """
@@ -24,12 +37,10 @@ def get_id_token(url: str) -> Optional[str]:
     This avoids direct dependencies on google-auth libraries.
     """
     try:
-        result = subprocess.run(
-            ["gcloud", "auth", "print-identity-token"],
-            capture_output=True,
-            text=True,
-            check=True
-        )
+        result = subprocess.run(["gcloud", "auth", "print-identity-token"],
+                                capture_output=True,
+                                text=True,
+                                check=True)
         token = result.stdout.strip()
         return token
 
@@ -37,33 +48,38 @@ def get_id_token(url: str) -> Optional[str]:
         logger.error(f"Error fetching ID token via gcloud: {e.stderr}")
         return None
     except FileNotFoundError:
-        logger.error("gcloud CLI not found. Please ensure Google Cloud SDK is installed and in your PATH.")
+        logger.error(
+            "gcloud CLI not found. Please ensure Google Cloud SDK is installed and in your PATH."
+        )
         return None
+
 
 def get_access_token() -> Optional[str]:
     """Get a Google Cloud Access Token (OAuth2) for API calls."""
     try:
-        result = subprocess.run(
-            ["gcloud", "auth", "print-access-token"],
-            capture_output=True,
-            text=True,
-            check=True
-        )
+        result = subprocess.run(["gcloud", "auth", "print-access-token"],
+                                capture_output=True,
+                                text=True,
+                                check=True)
         return result.stdout.strip()
     except Exception as e:
         logger.error(f"Error fetching Access token: {e}")
         return None
 
-async def run_client(url: str, prompt: Optional[str] = None, tool_name: Optional[str] = None, tool_args: Optional[Dict[str, Any]] = None):
+
+async def run_client(url: str,
+                     prompt: Optional[str] = None,
+                     tool_name: Optional[str] = None,
+                     tool_args: Optional[Dict[str, Any]] = None):
     """
     Connect to the MCP server via HTTP (Streamable) and interact using FastMCP Client.
     """
-    
+
     logger.info(f"Connecting to {url}...")
-    
+
     auth = None
     headers = {}
-    
+
     if url.startswith("http"):
         logger.info("Fetching ID token for Cloud Run authentication...")
         id_token = get_id_token(url)
@@ -71,7 +87,9 @@ async def run_client(url: str, prompt: Optional[str] = None, tool_name: Optional
             auth = BearerAuth(id_token)
             logger.info("Successfully retrieved ID token.")
         else:
-            logger.warning("Continuing without ID Token. Cloud Run might reject the request.")
+            logger.warning(
+                "Continuing without ID Token. Cloud Run might reject the request."
+            )
 
         logger.info("Fetching Access token for Google Cloud API calls...")
         access_token = get_access_token()
@@ -79,10 +97,14 @@ async def run_client(url: str, prompt: Optional[str] = None, tool_name: Optional
             headers["X-GCP-Access-Token"] = access_token
             logger.info("Successfully retrieved Access token.")
         else:
-            logger.warning("Continuing without Access Token. Backend API calls might fail.")
+            logger.warning(
+                "Continuing without Access Token. Backend API calls might fail."
+            )
 
     try:
-        transport = StreamableHttpTransport(url=url, auth=auth, headers=headers)
+        transport = StreamableHttpTransport(url=url,
+                                            auth=auth,
+                                            headers=headers)
         async with Client(transport) as client:
             logger.info("Connected to MCP Server!")
 
@@ -95,10 +117,11 @@ async def run_client(url: str, prompt: Optional[str] = None, tool_name: Optional
             # Call tool if requested
             if tool_name:
                 logger.info(f"Calling tool: {tool_name} with args {tool_args}")
-                result = await client.call_tool(tool_name, arguments=tool_args or {})
+                result = await client.call_tool(tool_name,
+                                                arguments=tool_args or {})
                 print("\n--- Result ---")
                 if hasattr(result, "content"):
-                     for content in result.content:
+                    for content in result.content:
                         if hasattr(content, "text"):
                             print(content.text)
                         else:
@@ -109,30 +132,41 @@ async def run_client(url: str, prompt: Optional[str] = None, tool_name: Optional
     except Exception as e:
         logger.error(f"Connection failed: {e}")
         if hasattr(e, "response") and e.response:
-             try:
-                 print(f"\n[Debug] Response status: {e.response.status_code}")
-                 print(f"[Debug] Response headers: {e.response.headers}")
-                 print(f"[Debug] Response text: {e.response.text}")
-             except Exception:
-                 pass
+            try:
+                print(f"\n[Debug] Response status: {e.response.status_code}")
+                print(f"[Debug] Response headers: {e.response.headers}")
+                print(f"[Debug] Response text: {e.response.text}")
+            except Exception:
+                pass
 
         if "401" in str(e) or "403" in str(e):
-             print("\n[!] Authentication failed. Try running: `gcloud auth print-identity-token` to verify you can get a token.")
+            print(
+                "\n[!] Authentication failed. Try running: `gcloud auth print-identity-token` to verify you can get a token."
+            )
+
 
 def main():
-    parser = argparse.ArgumentParser(description="Authenticated MCP Test Client (FastMCP HTTP)")
-    parser.add_argument("url", help="URL of the MCP server (e.g., https://service.run.app/mcp)")
-    
+    parser = argparse.ArgumentParser(
+        description="Authenticated MCP Test Client (FastMCP HTTP)")
+    parser.add_argument(
+        "url",
+        help="URL of the MCP server (e.g., https://service.run.app/mcp)")
+
     subparsers = parser.add_subparsers(dest="command", help="Command to run")
     subparsers.add_parser("list", help="List available tools")
-    
+
     call_parser = subparsers.add_parser("call", help="Call a specific tool")
     call_parser.add_argument("tool_name", help="Name of the tool to call")
-    call_parser.add_argument("--args", help="JSON string of arguments", default="{}")
-    call_parser.add_argument("--arg", action="append", help="Key=Value argument (can be used multiple times)")
+    call_parser.add_argument("--args",
+                             help="JSON string of arguments",
+                             default="{}")
+    call_parser.add_argument(
+        "--arg",
+        action="append",
+        help="Key=Value argument (can be used multiple times)")
 
     args = parser.parse_args()
-    
+
     if not args.command:
         args.command = "list"
 
@@ -144,18 +178,19 @@ def main():
             except json.JSONDecodeError:
                 logger.error("Invalid JSON in --args")
                 sys.exit(1)
-        
+
         if args.arg:
             for item in args.arg:
                 if "=" in item:
                     k, v = item.split("=", 1)
                     tool_args[k] = v
-    
-    asyncio.run(run_client(
-        args.url, 
-        tool_name=args.tool_name if args.command == "call" else None,
-        tool_args=tool_args
-    ))
+
+    asyncio.run(
+        run_client(
+            args.url,
+            tool_name=args.tool_name if args.command == "call" else None,
+            tool_args=tool_args))
+
 
 if __name__ == "__main__":
     main()
