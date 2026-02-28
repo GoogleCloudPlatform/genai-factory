@@ -32,8 +32,8 @@ output "commands" {
     --repository-format docker \
     --impersonate-service-account=${var.service_accounts["project/iac-rw"].email}
 
-  # Update chat to adk, adk-a2a or gemma if you want to deploy another app instead
-
+  # Update chat to adk, adk-a2a, gemma or mcp-server
+  # if you want to deploy another app instead
   gcloud builds submit ./apps/chat \
     --project ${var.project_config.id} \
     --tag ${var.region}-docker.pkg.dev/${var.project_config.id}/${var.name}/srun \
@@ -43,7 +43,7 @@ output "commands" {
     --quiet \
     --impersonate-service-account=${var.service_accounts["project/iac-rw"].email}
 
-  # Run the following command to deploy a sample adk or chat Service 
+  # Run the following command to deploy a sample adk or chat Service
 
   gcloud run deploy ${var.name} \
     --impersonate-service-account=${var.service_accounts["project/iac-rw"].email} \
@@ -60,7 +60,7 @@ output "commands" {
     --region ${var.region} \
     --image "us-docker.pkg.dev/cloudrun/container/gemma/gemma3-4b:latest" \
     --set-env-vars ${local.env_vars},OLLAMA_NUM_PARALLEL=4
-  
+
   # Run the following command to deploy an agent exposed with A2A
 
    gcloud run deploy ${var.name} \

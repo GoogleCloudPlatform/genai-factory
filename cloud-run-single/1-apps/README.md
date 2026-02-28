@@ -25,6 +25,7 @@ Once the applications have been deployed, learn sample commands to test them:
 - [ADK](./apps/adk/README.md)
 - [ADK with A2A](./apps/adk-a2a/README.md).
 - [Gemma3](./apps/gemma/README.md)
+- [MCP server](./apps/mcp-server/README.md)
 
 ## I have not used 0-projects
 
