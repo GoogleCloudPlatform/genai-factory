@@ -1,0 +1,98 @@
+---
+
+# Copyright 2026 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+name: gf-pipeline-0
+
+# Enable APIs
+services:
+  - aiplatform.googleapis.com
+  - cloudresourcemanager.googleapis.com
+  - compute.googleapis.com
+  - dns.googleapis.com
+  - iam.googleapis.com
+  # Required for PSC Interface
+  - networkconnectivity.googleapis.com
+  # Required for Secure Web Proxy
+  - networksecurity.googleapis.com
+  - networkservices.googleapis.com
+  - serviceusage.googleapis.com
+  - storage.googleapis.com
+  - sqladmin.googleapis.com
+  - artifactregistry.googleapis.com
+  - cloudbuild.googleapis.com
+
+buckets:
+  iac-state:
+    description: Terraform state bucket
+    iam:
+      roles/storage.objectAdmin:
+        - $iam_principals:service_accounts/project/iac-rw
+        - $iam_principals:service_accounts/project/gf-pipeline-0
+      roles/storage.objectViewer:
+        - $iam_principals:service_accounts/project/iac-rw
+
+service_accounts:
+  # Automation SAs
+  iac-rw:
+    iam_sa_roles:
+      $service_account_ids:project/gf-pipeline-0:
+        - roles/iam.serviceAccountUser
+      $service_account_ids:project/gf-pipeline-0-build-0:
+        - roles/iam.serviceAccountUser
+  # Application SAs
+  gf-pipeline-0: {}
+  gf-pipeline-0-build-0: {}
+
+# Grant roles
+iam_by_principals:
+  $iam_principals:service_accounts/project/iac-rw:
+    - roles/aiplatform.admin
+    - roles/compute.networkAdmin
+    - roles/iam.serviceAccountAdmin
+    - roles/serviceusage.serviceUsageConsumer
+    - roles/storage.admin
+    - roles/storage.objectAdmin
+    - roles/storage.objectUser
+    - roles/logging.logWriter
+    - roles/networkconnectivity.admin
+    - roles/dns.admin
+    - roles/cloudsql.admin
+    - roles/certificatemanager.owner
+    - roles/artifactregistry.admin
+    - roles/cloudbuild.builds.editor
+  # Used to run the Vertex AI custom job code
+  $iam_principals:service_accounts/project/gf-pipeline-0:
+    - roles/storage.objectAdmin
+    - roles/cloudsql.instanceUser
+    - roles/cloudsql.client
+    - roles/logging.logWriter
+    - roles/artifactregistry.reader
+  # Used to build the custom container image
+  $iam_principals:service_accounts/project/gf-pipeline-0-build-0:
+    - roles/logging.logWriter
+    - roles/storage.objectAdmin
+    - roles/storage.admin
+    - roles/artifactregistry.writer
+  # Required for PSC Interface
+  $service_agents:aiplatform:
+    - roles/compute.networkAdmin
+    - roles/dns.peer
+
+# Additive IAM bindings because Vertex AI automatically manages this role
+iam_bindings_additive:
+  gf-pipeline-0_aiplatform_user:
+    member: $iam_principals:service_accounts/project/gf-pipeline-0
+    role: roles/aiplatform.user
