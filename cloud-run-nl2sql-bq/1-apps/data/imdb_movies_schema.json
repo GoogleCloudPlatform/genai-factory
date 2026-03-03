@@ -1,0 +1,32 @@
+[
+  {
+    "name": "rank",
+    "type": "INTEGER",
+    "description": "The ranking of the movie in the top 100 IMDB list."
+  },
+  {
+    "name": "title",
+    "type": "STRING",
+    "description": "The title of the movie."
+  },
+  {
+    "name": "description",
+    "type": "STRING",
+    "description": "A brief synopsis of the movie."
+  },
+  {
+    "name": "genre",
+    "type": "STRING",
+    "description": "The genre(s) associated with the movie, typically represented as a list-like string."
+  },
+  {
+    "name": "rating",
+    "type": "FLOAT",
+    "description": "The IMDB rating of the movie, out of 10."
+  },
+  {
+    "name": "year",
+    "type": "INTEGER",
+    "description": "The release year of the movie."
+  }
+]
