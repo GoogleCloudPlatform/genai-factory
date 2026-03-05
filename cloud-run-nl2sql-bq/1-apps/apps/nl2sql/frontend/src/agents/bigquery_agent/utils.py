@@ -38,20 +38,16 @@ def get_database_settings() -> dict[str, Any]:
 def get_bigquery_schema_and_samples() -> tuple[str, dict[str, Any]]:
     """Retrieves schema and sample values for the BigQuery dataset tables."""
     client = bigquery.Client(project=config.BQ_COMPUTE_PROJECT_ID)
-    dataset_ref = bigquery.DatasetReference(
-        config.BQ_DATA_PROJECT_ID, config.BQ_DATASET_ID
-    )
+    dataset_ref = bigquery.DatasetReference(config.BQ_DATA_PROJECT_ID,
+                                            config.BQ_DATASET_ID)
     description = client.get_dataset(dataset_ref).description or ""
 
     tables_context = {}
     for table in client.list_tables(dataset_ref):
         table_info = client.get_table(
-            bigquery.TableReference(dataset_ref, table.table_id)
-        )
-        table_schema = [
-            (schema_field.name, schema_field.field_type)
-            for schema_field in table_info.schema
-        ]
+            bigquery.TableReference(dataset_ref, table.table_id))
+        table_schema = [(schema_field.name, schema_field.field_type)
+                        for schema_field in table_info.schema]
         table_ref = dataset_ref.table(table.table_id)
 
         tables_context[str(table_ref)] = {

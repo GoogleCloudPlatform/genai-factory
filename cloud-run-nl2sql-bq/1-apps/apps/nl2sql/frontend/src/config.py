@@ -27,8 +27,8 @@ BQ_TABLE_NAME = os.environ.get("BQ_TABLE_NAME")
 INTERNAL_PORT = int(os.environ.get("PORT", 8080))
 
 AGENT_DIR = os.environ.get(
-    "AGENT_DIR", os.path.join(os.path.dirname(os.path.abspath(__file__)), "agents")
-)
+    "AGENT_DIR",
+    os.path.join(os.path.dirname(os.path.abspath(__file__)), "agents"))
 
 ALLOWED_ORIGINS = os.environ.get("ALLOWED_ORIGINS", ["*"])
 SERVE_WEB_INTERFACE = os.environ.get("SERVE_WEB_INTERFACE", False)
