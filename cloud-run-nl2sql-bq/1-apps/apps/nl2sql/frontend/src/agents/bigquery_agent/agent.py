@@ -55,14 +55,20 @@ def get_root_agent() -> LlmAgent:
 
     def load_database_settings_in_context(callback_context: CallbackContext):
         """Load database settings into the callback context on first use."""
-        session_id = callback_context.session.id if callback_context.session else "Unknown"
+        session_id = (
+            callback_context.session.id if callback_context.session else "Unknown"
+        )
         logger.info(f"[Session: {session_id}] Executing before_agent_callback.")
-        
+
         if "database_settings" not in callback_context.state:
-            logger.info(f"[Session: {session_id}] loading database_settings into context state.")
+            logger.info(
+                f"[Session: {session_id}] loading database_settings into context state."
+            )
             callback_context.state["database_settings"] = database_settings
         else:
-            logger.info(f"[Session: {session_id}] database_settings already present in context state.")
+            logger.info(
+                f"[Session: {session_id}] database_settings already present in context state."
+            )
 
     return LlmAgent(
         model=Gemini(
