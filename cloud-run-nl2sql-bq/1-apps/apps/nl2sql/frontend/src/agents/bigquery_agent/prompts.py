@@ -15,7 +15,6 @@
 # Code source and reworked from
 # https://google.github.io/adk-docs/agents/llm-agents
 
-
 ROOT_AGENT_PROMPT = """You are a BigQuery NL2SQL agent.
 Convert natural language to Google Standard SQL.
 Use the provided schemas. Return ONLY valid SQL without markdown.

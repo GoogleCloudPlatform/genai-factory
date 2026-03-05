@@ -42,23 +42,23 @@ logger = logging.getLogger(__name__)
 
 # Tool setup for a minimal bigquery nl2sql agent
 bigquery_tool_config = BigQueryToolConfig(write_mode=WriteMode.BLOCKED)
-bigquery_toolset = BigQueryToolset(
-    tool_filter=["execute_sql"], bigquery_tool_config=bigquery_tool_config
-)
+bigquery_toolset = BigQueryToolset(tool_filter=["execute_sql"],
+                                   bigquery_tool_config=bigquery_tool_config)
 
 
 def get_root_agent() -> LlmAgent:
     """Creates and returns the root agent."""
     logger.info("Initializing the bigquery_agent...")
     database_settings = get_database_settings()
-    logger.info("Successfully loaded database settings during agent initialization.")
+    logger.info(
+        "Successfully loaded database settings during agent initialization.")
 
     def load_database_settings_in_context(callback_context: CallbackContext):
         """Load database settings into the callback context on first use."""
-        session_id = (
-            callback_context.session.id if callback_context.session else "Unknown"
-        )
-        logger.info(f"[Session: {session_id}] Executing before_agent_callback.")
+        session_id = (callback_context.session.id
+                      if callback_context.session else "Unknown")
+        logger.info(
+            f"[Session: {session_id}] Executing before_agent_callback.")
 
         if "database_settings" not in callback_context.state:
             logger.info(
@@ -88,19 +88,16 @@ def get_root_agent() -> LlmAgent:
         ),
         name="bigquery_agent",
         instruction=(
-            ROOT_AGENT_PROMPT.format(
-                bq_data_project_id=config.PROJECT_ID, bq_dataset_id=config.BQ_DATASET_ID
-            )
-            + get_dataset_definitions_for_instructions(database_settings)
-        ),
-        global_instruction=(
-            f"You are a Data Science and Data Analytics Multi Agent System. Today's date: {date.today()}\n"
-        ),
+            ROOT_AGENT_PROMPT.format(bq_data_project_id=config.PROJECT_ID,
+                                     bq_dataset_id=config.BQ_DATASET_ID) +
+            get_dataset_definitions_for_instructions(database_settings)),
+        global_instruction=
+        (f"You are a Data Science and Data Analytics Multi Agent System. Today's date: {date.today()}\n"
+         ),
         tools=[bigquery_toolset],
         before_agent_callback=load_database_settings_in_context,
         generate_content_config=types.GenerateContentConfig(
-            temperature=0.01, http_options=types.HttpOptions(timeout=120000)
-        ),
+            temperature=0.01, http_options=types.HttpOptions(timeout=120000)),
     )
 
 
