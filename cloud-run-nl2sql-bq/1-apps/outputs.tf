@@ -26,7 +26,7 @@ locals {
     "REGION=${var.region}"
   ]
 
-  env_vars_frontend  = join(",", local._env_vars_frontend)
+  env_vars_frontend = join(",", local._env_vars_frontend)
 }
 
 output "commands" {
