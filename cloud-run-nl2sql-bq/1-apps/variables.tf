@@ -12,13 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-variable "alloydb_initial_password" {
-  description = "Initial password for the postgres user in AlloyDB."
-  type        = string
-  nullable    = false
-  default     = "CHANGE_THIS!!!"
-}
-
 # Only used when ILBs are created.
 # CA pools can't be recreated in the same project with the same name.
 # This can be handy during experimentation
