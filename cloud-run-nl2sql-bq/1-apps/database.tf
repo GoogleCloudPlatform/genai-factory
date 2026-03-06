@@ -17,7 +17,7 @@ locals {
 }
 
 module "bigquery-dataset" {
-  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/bigquery-dataset?ref=v53.0.0"
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/bigquery-dataset?ref=v54.0.0"
   project_id = var.project_config.id
   id         = local.bigquery_id
   tables = {
