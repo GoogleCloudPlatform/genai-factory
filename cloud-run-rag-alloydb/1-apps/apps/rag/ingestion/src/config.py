@@ -23,7 +23,7 @@ BQ_TABLE = os.environ.get("BQ_TABLE", "gf-rrag-0")
 BQ_BATCH_SIZE = int(os.environ.get("BATCH_SIZE_BQ", 1000))
 
 # Generative Model Configuration
-LLM_MODEL_NAME = os.environ.get("MODEL_NAME", "gemini-2.0-flash")
+LLM_MODEL_NAME = os.environ.get("MODEL_NAME", "gemini-2.5-flash")
 LLM_TEMPERATURE = float(os.environ.get("TEMPERATURE", 0.7))
 LLM_TOP_P = float(os.environ.get("TOP_P", 1.0))
 LLM_TOP_K = int(os.environ.get("TOP_K", 32))
