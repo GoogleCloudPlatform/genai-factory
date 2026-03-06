@@ -1,0 +1,5 @@
+project_config = {
+  billing_account_id = "your_billing_id"
+  parent             = "organizations/xxxxxxxxxxx"
+  prefix             = "your_prefix"
+}

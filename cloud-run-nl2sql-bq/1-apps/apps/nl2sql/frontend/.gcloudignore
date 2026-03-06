@@ -1,0 +1,34 @@
+# Git
+.git
+.gitignore
+
+# Virtualenv
+.venv
+venv
+
+# Python cache
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+
+# IDE/Editor specific
+.vscode
+.idea
+.gemini
+
+# Build artifacts
+*.egg-info
+build
+dist
+node_modules
+
+# Caches
+.ruff_cache
+.pytest_cache
+.mypy_cache
+
+# Other
+cloudbuild*.yaml
+*.md
+.env
