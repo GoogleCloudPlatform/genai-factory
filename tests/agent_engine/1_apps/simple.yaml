@@ -69,7 +69,6 @@ values:
   module.agent.time_sleep.wait_5_minutes:
     create_duration: 5m
     destroy_duration: null
-    id: '2026-01-26T10:49:57Z'
     triggers: null
   module.dns_policy_googleapis[0].google_dns_response_policy.default[0]:
     description: Terraform managed.
