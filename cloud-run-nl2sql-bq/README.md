@@ -1,6 +1,6 @@
-# NL2SQL with BigQuery
+# Natural Language to Structured Query Language (NL2SQL) with BigQuery
 
-The factory deploys a secure Cloud Run instance to run AI applications serving a NL2SQL agent based on ADK and using BigQuery as the knowledge base.
+The factory deploys a secure Cloud Run instance to run AI applications serving a Natural Language to Structured Query Language (NL2SQL) agent based on ADK and using BigQuery as the knowledge base.
 
 ![Architecture Diagram](./diagram.png)
 
