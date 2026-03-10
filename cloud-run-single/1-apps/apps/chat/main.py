@@ -42,6 +42,7 @@ genai_client = genai.Client(vertexai=True,
                             project=config.PROJECT_ID,
                             location=config.REGION)
 logger.info("Google GenAI client initialized successfully.")
+logger.info("Model armor template: %s", config.MODEL_ARMOR_TEMPLATE)
 
 MODEL_NAME = config.MODEL_NAME
 MODEL_CONFIG = types.GenerateContentConfig(
@@ -50,6 +51,9 @@ MODEL_CONFIG = types.GenerateContentConfig(
     top_k=config.TOP_K,
     candidate_count=config.CANDIDATE_COUNT,
     max_output_tokens=config.MAX_OUTPUT_TOKENS,
+    model_armor_config=types.ModelArmorConfig(
+        prompt_template_name=config.MODEL_ARMOR_TEMPLATE
+    )
 )
 
 

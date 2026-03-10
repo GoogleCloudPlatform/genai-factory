@@ -17,9 +17,10 @@ import os
 PROJECT_ID = os.environ.get("PROJECT_ID")
 REGION = os.environ.get("REGION", "europe-west1")
 
-MODEL_NAME = os.environ.get("MODEL_NAME", "gemini-2.0-flash")
+MODEL_NAME = os.environ.get("MODEL_NAME", "gemini-2.5-flash")
 TEMPERATURE = 0.9
 TOP_P = 1.0
 TOP_K = 32
 CANDIDATE_COUNT = 1
 MAX_OUTPUT_TOKENS = 8192
+MODEL_ARMOR_TEMPLATE = os.environ.get("MODEL_ARMOR_TEMPLATE")

@@ -30,6 +30,9 @@ services:
   # Needed for ILB only
   - certificatemanager.googleapis.com
   - privateca.googleapis.com
+  # Needed for Model Armor
+  - modelarmor.googleapis.com
+  - networkservices.googleapis.com
 
 buckets:
   iac-state:
@@ -70,6 +73,8 @@ iam_by_principals:
     # Needed for ILB only
     - roles/certificatemanager.owner
     - roles/privateca.admin
+    # Needed for Model Armor
+    - roles/modelarmor.admin
   $iam_principals:service_accounts/project/gf-srun-0:
     - roles/logging.logWriter
   $iam_principals:service_accounts/project/gf-srun-build-0:
@@ -80,6 +85,9 @@ iam_by_principals:
     - roles/run.admin
     - roles/storage.admin
     - roles/storage.objectUser
+  # Vertex AI SA is the one calling model armor via genai SDK
+  $iam_principals:service_agents/project/aiplatform:
+    - roles/modelarmor.user
 
 # Grant roles/aiplatform.user as additive,
 # as it is authoritatively granted by aiplatform APIs to default SA
