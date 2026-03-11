@@ -13,52 +13,44 @@
 # limitations under the License.
 
 resource "google_model_armor_template" "model_armor_template" {
+  count = var.model_armor_config.enabled ? 1 : 0
   project     = var.project_config.id
   location    = var.region
   template_id = "model-armor-template"
 
   filter_config {
     rai_settings {
-      rai_filters {
-        filter_type      = "HATE_SPEECH"
-        confidence_level = "MEDIUM_AND_ABOVE"
-      }
-      rai_filters {
-        filter_type      = "DANGEROUS"
-        confidence_level = "MEDIUM_AND_ABOVE"
-      }
-      rai_filters {
-        filter_type      = "HARASSMENT"
-        confidence_level = "MEDIUM_AND_ABOVE"
-      }
-      rai_filters {
-        filter_type      = "SEXUALLY_EXPLICIT"
-        confidence_level = "MEDIUM_AND_ABOVE"
+      dynamic "rai_filters" {
+        for_each = var.model_armor_config.rai_filters
+        content {
+          filter_type      = rai_filters.key
+          confidence_level = rai_filters.value
+        }
       }
     }
     sdp_settings {
       basic_config {
-        filter_enforcement = "ENABLED"
+        filter_enforcement = var.model_armor_config.sdp.enabled
       }
     }
     pi_and_jailbreak_filter_settings {
-      filter_enforcement = "ENABLED"
-      confidence_level   = "MEDIUM_AND_ABOVE"
+      filter_enforcement = var.model_armor_config.pi_and_jailbreak.enabled
+      confidence_level   = var.model_armor_config.pi_and_jailbreak.confidence_level
     }
     malicious_uri_filter_settings {
-      filter_enforcement = "ENABLED"
+      filter_enforcement = var.model_armor_config.malicious_uri.enabled
     }
   }
 
   template_metadata {
     custom_llm_response_safety_error_message = "This is a custom error message for LLM response"
-    log_template_operations                  = true
-    log_sanitize_operations                  = true
+    log_template_operations                  = var.model_armor_config.logging
+    log_sanitize_operations                  = var.model_armor_config.logging
     ignore_partial_invocation_failures       = true
     custom_prompt_safety_error_code          = 400
     custom_prompt_safety_error_message       = "This is a custom error message for prompt"
     custom_llm_response_safety_error_code    = 401
-    enforcement_type                         = "INSPECT_ONLY"
+    enforcement_type                         = var.model_armor_config.enforcement_type
 
     multi_language_detection {
       enable_multi_language_detection = true

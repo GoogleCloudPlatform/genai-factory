@@ -76,6 +76,43 @@ variable "lbs_config" {
   }
 }
 
+variable "model_armor_config" {
+  description = "The model armor configuration."
+  type = object({
+    enabled = optional(bool, true)
+    # Possible values: INSPECT_ONLY, INSPECT_AND_BLOCK
+    enforcement_type = optional(string, "INSPECT_AND_BLOCK")
+    logging = optional(bool, true)
+
+    # Sensitive Data Protection (DLP)
+    sdp = optional(object({
+      # Possible values for enabled field: ENABLED, DISABLED
+      enabled = optional(string, "ENABLED")
+    }), {})
+
+    # Malicious URI Filter
+    malicious_uri = optional(object({
+      enabled = optional(string, "ENABLED")
+    }), {})
+    
+    # PI and Jailbreak
+    pi_and_jailbreak = optional(object({
+      enabled          = optional(string, "ENABLED")
+      confidence_level = optional(string, "MEDIUM_AND_ABOVE")
+    }), {})
+
+    # Responsible AI (RAI) filters
+    rai_filters = optional(object({
+      HATE_SPEECH       = optional(string, "MEDIUM_AND_ABOVE")
+      DANGEROUS         = optional(string, "MEDIUM_AND_ABOVE")
+      HARASSMENT        = optional(string, "MEDIUM_AND_ABOVE")
+      SEXUALLY_EXPLICIT = optional(string, "MEDIUM_AND_ABOVE")
+    }), {})
+  })
+  nullable = false
+  default  = {}
+}
+
 variable "name" {
   description = "The name of the resources. This is also the project suffix if a new project is created."
   type        = string
