@@ -1,19 +1,3 @@
-#!/usr/bin/env python
-
-# Copyright 2026 Google LLC
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 import requests
 
 import vertexai
@@ -41,19 +25,20 @@ from a2a.types import (
 from a2a.utils import new_agent_text_message
 from a2a.utils.errors import ServerError
 
-from src import config
-
-vertexai.init(
-    project=config.PROJECT_ID,
-    location=config.REGION,
-)
-
-vertexai.init(project="lptest002-ae-test", location="europe-west4")
+vertexai.init(project="xxxx",
+              location="europe-west1",
+              staging_bucket="gs://xxxx")
 
 client = vertexai.Client(
-    project=config.PROJECT_ID,
-    location=config.REGION,
+    project="xxxx",
+    location="europe-west1",
 )
+
+requirements = [
+    "a2a-sdk>=0.3.4",
+    "cloudpickle==3.0",
+    "google-cloud-aiplatform[agent_engines, adk]"
+]
 
 # Define the skill for the CurrencyAgent
 currency_skill = AgentSkill(
@@ -170,12 +155,6 @@ def get_exchange_rate(
     Uses the Frankfurter API (https://api.frankfurter.app/) to obtain
     exchange rate data.
     """
-    proxies = None
-    if getattr(config, 'ENABLE_PSC_I', True):
-        proxies = {
-            "http": f"http://{config.PROXY_ADDRESS}:{config.PROXY_PORT}",
-            "https": f"http://{config.PROXY_ADDRESS}:{config.PROXY_PORT}",
-        }
     try:
         response = requests.get(
             f"https://api.frankfurter.app/{currency_date}",
@@ -183,7 +162,6 @@ def get_exchange_rate(
                 "from": currency_from,
                 "to": currency_to
             },
-            proxies=proxies
         )
         response.raise_for_status()
         return response.json()
@@ -192,15 +170,22 @@ def get_exchange_rate(
 
 
 llm_agent = LlmAgent(
-    model=config.MODEL_NAME,
+    model='gemini-2.5-flash',
     name='currency_exchange_agent',
     description='An agent that can provide currency exchange rates.',
     instruction="""You are a helpful currency exchange assistant.
                    Use the get_exchange_rate tool to answer user questions.
                    If the tool returns an error, inform the user about the error.""",
-    tools=[get_exchange_rate])
+    tools=[get_exchange_rate],
+)
 
-agent = A2aAgent(agent_card=agent_card,
-                 agent_executor_builder=lambda:
-                 CurrencyAgentExecutorWithRunner(agent=llm_agent))
+agent = A2aAgent(
+    agent_card=agent_card,
+    agent_executor_builder=lambda: CurrencyAgentExecutorWithRunner(
+        agent=llm_agent, ))
 agent.set_up()
+
+remote_agent = agent_engines.create(
+    agent,
+    requirements=requirements,
+)
