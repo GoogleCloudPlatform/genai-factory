@@ -1,4 +1,0 @@
-google-cloud-aiplatform[agent_engines]
-google-adk[a2a]
-cloudpickle
-opentelemetry-instrumentation-google-genai
