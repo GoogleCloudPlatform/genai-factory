@@ -43,7 +43,7 @@ data "google_client_openid_userinfo" "me" {
 
 resource "google_service_account_iam_member" "me_sa_token_creator" {
   count              = var.enable_iac_sa_impersonation ? 1 : 0
-  service_account_id = module.projects.service_accounts["project/iac-rw"].id
+  service_account_id = module.projects.service_accounts["service/iac-rw"].id
   role               = "roles/iam.serviceAccountTokenCreator"
   member             = "user:${local.effective_user_identity}"
 }
