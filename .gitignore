@@ -248,6 +248,7 @@ test-results-raw.xml
 
 # Agents
 **/*.agentutil
+.adk/
 
 # Agent Engine - exclude generated tar.gz files
 agent-engine/1-apps/*.tar.gz
