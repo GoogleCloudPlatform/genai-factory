@@ -19,6 +19,14 @@ variable "enable_deletion_protection" {
   default     = true
 }
 
+variable "host_project_ids" {
+  # tfdoc:variable:source 2-networking
+  description = "Host project for the shared VPC."
+  type        = map(string)
+  nullable    = false
+  default     = {}
+}
+
 variable "networking_config" {
   description = "The networking configuration."
   type = object({
@@ -28,19 +36,20 @@ variable "networking_config" {
   nullable = false
 }
 
-variable "projects" {
-  description = "The projects where to create the resources."
-  type = object({
-    host = object({
-      id     = string
-      number = string
-    })
-    service = object({
-      id     = string
-      number = string
-    })
-  })
-  nullable = false
+variable "project_ids" {
+  # tfdoc:variable:source 0-org-setup
+  description = "Projects ids for projects created in the bootstrap stage."
+  type        = map(string)
+  nullable    = false
+  default     = {}
+}
+
+variable "project_numbers" {
+  # tfdoc:variable:source 0-org-setup
+  description = "Projects numbers for projects created in the bootstrap stage."
+  type        = map(string)
+  nullable    = false
+  default     = {}
 }
 
 variable "region" {
@@ -58,4 +67,20 @@ variable "service_accounts" {
     id        = string
   }))
   nullable = false
+}
+
+variable "subnet_self_links" {
+  # tfdoc:variable:source 2-networking
+  description = "Shared VPC subnet IDs."
+  type        = map(map(string))
+  nullable    = false
+  default     = {}
+}
+
+variable "vpc_self_links" {
+  # tfdoc:variable:source 2-networking
+  description = "Shared VPC name => self link mappings."
+  type        = map(string)
+  nullable    = false
+  default     = {}
 }
