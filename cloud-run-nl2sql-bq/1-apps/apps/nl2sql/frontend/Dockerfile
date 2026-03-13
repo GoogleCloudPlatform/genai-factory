@@ -28,7 +28,7 @@ ENV PYTHONUNBUFFERED True
 
 # Installing separately from its dependencies allows optimal layer caching
 COPY . /app
-RUN uv sync --locked
+RUN uv sync --locked --no-dev
 
 # Place executables in the environment at the front of the path
 ENV PATH="/app/.venv/bin:$PATH"
