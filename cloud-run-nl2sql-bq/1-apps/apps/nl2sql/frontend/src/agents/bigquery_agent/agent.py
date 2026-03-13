@@ -41,7 +41,9 @@ os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = "1"
 logger = logging.getLogger(__name__)
 
 # Tool setup for a minimal bigquery nl2sql agent
-bigquery_tool_config = BigQueryToolConfig(write_mode=WriteMode.BLOCKED)
+bigquery_tool_config = BigQueryToolConfig(
+    write_mode=WriteMode.BLOCKED,
+    compute_project_id=config.BQ_COMPUTE_PROJECT_ID)
 bigquery_toolset = BigQueryToolset(tool_filter=["execute_sql"],
                                    bigquery_tool_config=bigquery_tool_config)
 
@@ -88,12 +90,13 @@ def get_root_agent() -> LlmAgent:
         ),
         name="bigquery_agent",
         instruction=(
-            ROOT_AGENT_PROMPT.format(bq_data_project_id=config.PROJECT_ID,
-                                     bq_dataset_id=config.BQ_DATASET_ID) +
+            ROOT_AGENT_PROMPT.format(
+                bq_data_project_id=config.BQ_DATA_PROJECT_ID,
+                bq_dataset_id=config.BQ_DATASET_ID) +
             get_dataset_definitions_for_instructions(database_settings)),
-        global_instruction=
-        (f"You are a Data Science and Data Analytics Multi Agent System. Today's date: {date.today()}\n"
-         ),
+        global_instruction=(
+            f"You are a BigQuery NL2SQL agent. Today's date: {date.today()}\n"
+        ),
         tools=[bigquery_toolset],
         before_agent_callback=load_database_settings_in_context,
         generate_content_config=types.GenerateContentConfig(

@@ -25,7 +25,7 @@ curl -X POST ${APP_ADDRESS}/run_sse \
     "new_message": {
         "role": "user",
         "parts": [{
-        "text": "Which movie has the highest rating?"
+        "text": "Which 5 users have the most orders?"
         }]
     },
     "streaming": false

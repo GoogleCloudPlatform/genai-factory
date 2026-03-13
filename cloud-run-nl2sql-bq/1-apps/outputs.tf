@@ -19,8 +19,8 @@ locals {
   )
 
   _env_vars_frontend = [
-    "BQ_DATASET_ID=${local.bigquery_id}",
-    "BQ_TABLE_NAME=${local.bigquery_id}",
+    "BQ_DATA_PROJECT_ID=bigquery-public-data",
+    "BQ_DATASET_ID=thelook_ecommerce",
     "DB_SA=${local._sa_db_frontend}",
     "PROJECT_ID=${var.project_config.id}",
     "REGION=${var.region}"
@@ -34,17 +34,6 @@ output "commands" {
   value       = <<EOT
   # Run the following commands to deploy the application.
   # Alternatively, deploy the application through your CI/CD pipeline.
-
-  # Load sample data into BigQuery
-  gcloud config set auth/impersonate_service_account ${var.service_accounts["project/iac-rw"].email}
-  bq load \
-    --project_id ${var.project_config.id} \
-    --source_format=CSV \
-    --skip_leading_rows=1 \
-    --autodetect \
-    ${var.project_config.id}:${local.bigquery_id}.${local.bigquery_id} \
-    ./data/top-100-imdb-movies.csv
-  gcloud config unset auth/impersonate_service_account
 
   gcloud artifacts repositories create ${var.name} \
     --project=${var.project_config.id} \

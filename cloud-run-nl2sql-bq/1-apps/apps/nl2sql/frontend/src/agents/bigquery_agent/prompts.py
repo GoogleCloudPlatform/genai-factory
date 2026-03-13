@@ -15,8 +15,9 @@
 # Code source and reworked from
 # https://google.github.io/adk-docs/agents/llm-agents
 
-ROOT_AGENT_PROMPT = """You are a BigQuery NL2SQL agent.
-Convert natural language to Google Standard SQL.
-Use the provided schemas. Return ONLY valid SQL without markdown.
+ROOT_AGENT_PROMPT = """You are a BigQuery assistant.
+Answer questions by executing Google Standard SQL queries using the provided tools.
+Use fully qualified table names: `project.dataset.table`.
+Summarize the results for the user in natural language.
 Project: {bq_data_project_id}, Dataset: {bq_dataset_id}
 """

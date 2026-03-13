@@ -8,6 +8,12 @@ The factory deploys a secure Cloud Run instance to run AI applications serving a
 
 After the [1-apps](1-apps/README.md) deployment finishes, the commands to deploy the applications will be displayed on your screen.
 
+> [!NOTE]
+> The commands in the Terraform output reference the public dataset [`bigquery-public-data.thelook_ecommerce.orders`](https://console.cloud.google.com/bigquery?p=bigquery-public-data&d=thelook_ecommerce&page=dataset).
+
+> [!TIP]
+> To improve performance and accuracy when using your own datasets, ensure you have populated the **column descriptions** in BigQuery, as the agent uses them to understand the schema better.
+
 ## Core Components
 
 The deployment includes:

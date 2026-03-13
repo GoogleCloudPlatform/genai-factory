@@ -19,10 +19,9 @@ PROJECT_ID = os.environ.get("PROJECT_ID")
 REGION = os.environ.get("REGION", "europe-west1")
 
 ROOT_AGENT_MODEL = os.environ.get("MODEL_NAME", "gemini-2.5-flash")
-BQ_COMPUTE_PROJECT_ID = os.environ.get("MODEL_NAME", PROJECT_ID)
-BQ_DATA_PROJECT_ID = os.environ.get("MODEL_NAME", PROJECT_ID)
+BQ_COMPUTE_PROJECT_ID = os.environ.get("BQ_COMPUTE_PROJECT_ID", PROJECT_ID)
+BQ_DATA_PROJECT_ID = os.environ.get("BQ_DATA_PROJECT_ID")
 BQ_DATASET_ID = os.environ.get("BQ_DATASET_ID")
-BQ_TABLE_NAME = os.environ.get("BQ_TABLE_NAME")
 
 INTERNAL_PORT = int(os.environ.get("PORT", 8080))
 

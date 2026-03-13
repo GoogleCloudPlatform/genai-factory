@@ -75,12 +75,4 @@ def get_dataset_definitions_for_instructions(database_settings: dict) -> str:
 </DATASETS>
 """
 
-    if "cross_dataset_relations" in database_settings:
-        dataset_definitions += f"""
-<CROSS_DATASET_RELATIONS>
---------- The cross dataset relations between the configured datasets. ---------
-{database_settings["cross_dataset_relations"]}
-</CROSS_DATASET_RELATIONS>
-"""
-
     return dataset_definitions

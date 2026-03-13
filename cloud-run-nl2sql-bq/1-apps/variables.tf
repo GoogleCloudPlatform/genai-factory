@@ -71,17 +71,6 @@ variable "enable_deletion_protection" {
   default     = true
 }
 
-variable "ingestion_schedule_configs" {
-  description = "The configuration of the Cloud Scheduler that calls invokes the Cloud Run ingestion job."
-  type = object({
-    attempt_deadline = optional(string, "60s")
-    retry_count      = optional(number, 3)
-    schedule         = optional(string, "*/30 * * * *")
-  })
-  nullable = false
-  default  = {}
-}
-
 variable "lbs_config" {
   description = "The load balancers configuration."
   type = object({

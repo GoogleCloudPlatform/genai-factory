@@ -122,61 +122,6 @@ values:
     terraform_labels:
       goog-terraform-provisioned: 'true'
     timeouts: null
-  module.bigquery-dataset.google_bigquery_dataset.default:
-    dataset_id: gf_nl2sql_bq_0
-    default_encryption_configuration: []
-    default_partition_expiration_ms: null
-    default_table_expiration_ms: null
-    delete_contents_on_destroy: false
-    description: Terraform managed.
-    effective_labels:
-      goog-terraform-provisioned: 'true'
-    external_catalog_dataset_options: []
-    external_dataset_reference: []
-    friendly_name: null
-    labels: null
-    location: EU
-    max_time_travel_hours: '168'
-    project: prefix-gf-nl2sql-bq-0
-    resource_tags: null
-    terraform_labels:
-      goog-terraform-provisioned: 'true'
-    timeouts: null
-  module.bigquery-dataset.google_bigquery_table.default["gf_nl2sql_bq_0"]:
-    biglake_configuration: []
-    clustering: null
-    dataset_id: gf_nl2sql_bq_0
-    deletion_protection: true
-    description: Terraform managed.
-    effective_labels:
-      goog-terraform-provisioned: 'true'
-    encryption_configuration: []
-    external_catalog_table_options: []
-    external_data_configuration: []
-    friendly_name: gf_nl2sql_bq_0
-    ignore_auto_generated_schema: false
-    ignore_schema_changes: null
-    labels: null
-    materialized_view: []
-    project: prefix-gf-nl2sql-bq-0
-    range_partitioning: []
-    require_partition_filter: null
-    resource_tags: null
-    schema: '[{"description":"The ranking of the movie in the top 100 IMDB list.","name":"rank","type":"INTEGER"},{"description":"The
-      title of the movie.","name":"title","type":"STRING"},{"description":"A brief
-      synopsis of the movie.","name":"description","type":"STRING"},{"description":"The
-      genre(s) associated with the movie, typically represented as a list-like string.","name":"genre","type":"STRING"},{"description":"The
-      IMDB rating of the movie, out of 10.","name":"rating","type":"FLOAT"},{"description":"The
-      release year of the movie.","name":"year","type":"INTEGER"}]'
-    schema_foreign_type_info: []
-    table_constraints: []
-    table_id: gf_nl2sql_bq_0
-    table_metadata_view: null
-    table_replication_info: []
-    terraform_labels:
-      goog-terraform-provisioned: 'true'
-    time_partitioning: []
-    view: []
   module.cas[0].google_privateca_ca_pool.default[0]:
     effective_labels:
       goog-terraform-provisioned: 'true'
@@ -1326,8 +1271,6 @@ values:
     timeouts: null
 
 counts:
-  google_bigquery_dataset: 1
-  google_bigquery_table: 1
   google_certificate_manager_certificate: 1
   google_certificate_manager_certificate_issuance_config: 1
   google_cloud_run_v2_service: 1
@@ -1357,18 +1300,14 @@ counts:
   google_dns_response_policy_rule: 39
   google_privateca_ca_pool: 1
   google_privateca_certificate_authority: 1
-  modules: 11
-  resources: 77
+  modules: 10
+  resources: 75
 
 outputs:
   commands: "  # Run the following commands to deploy the application.\n  # Alternatively,\
-    \ deploy the application through your CI/CD pipeline.\n\n  # Load sample data\
-    \ into BigQuery\n  gcloud config set auth/impersonate_service_account iac-rw@prefix-gf-nl2sql-bq-0.iam.gserviceaccount.com\n\
-    \  bq load \\\n    --project_id prefix-gf-nl2sql-bq-0 \\\n    --source_format=CSV\
-    \ \\\n    --skip_leading_rows=1 \\\n    --autodetect \\\n    prefix-gf-nl2sql-bq-0:gf_nl2sql_bq_0.gf_nl2sql_bq_0\
-    \ \\\n    ./data/top-100-imdb-movies.csv\n  gcloud config unset auth/impersonate_service_account\n\
-    \n  gcloud artifacts repositories create gf-nl2sql-bq-0 \\\n    --project=prefix-gf-nl2sql-bq-0\
-    \ \\\n    --location europe-west1 \\\n    --repository-format docker \\\n    --impersonate-service-account=iac-rw@prefix-gf-nl2sql-bq-0.iam.gserviceaccount.com\n\
+    \ deploy the application through your CI/CD pipeline.\n\n  gcloud artifacts repositories\
+    \ create gf-nl2sql-bq-0 \\\n    --project=prefix-gf-nl2sql-bq-0 \\\n    --location\
+    \ europe-west1 \\\n    --repository-format docker \\\n    --impersonate-service-account=iac-rw@prefix-gf-nl2sql-bq-0.iam.gserviceaccount.com\n\
     \n  # Frontend Cloud Run\n  gcloud builds submit ./apps/nl2sql/frontend \\\n \
     \   --project prefix-gf-nl2sql-bq-0 \\\n    --tag europe-west1-docker.pkg.dev/prefix-gf-nl2sql-bq-0/gf-nl2sql-bq-0/frontend\
     \ \\\n    --service-account projects/prefix-gf-nl2sql-bq-0/serviceAccounts/gf-nl2sql-bq-fe-build-0@prefix-gf-nl2sql-bq-0.iam.gserviceaccount.com\
@@ -1377,6 +1316,6 @@ outputs:
     \n  gcloud run deploy gf-nl2sql-bq-0-frontend \\\n    --impersonate-service-account=iac-rw@prefix-gf-nl2sql-bq-0.iam.gserviceaccount.com\
     \ \\\n    --project prefix-gf-nl2sql-bq-0 \\\n    --region europe-west1 \\\n \
     \   --container=frontend \\\n    --image=europe-west1-docker.pkg.dev/prefix-gf-nl2sql-bq-0/gf-nl2sql-bq-0/frontend\
-    \ \\\n    --set-env-vars BQ_DATASET_ID=gf_nl2sql_bq_0,BQ_TABLE_NAME=gf_nl2sql_bq_0,DB_SA=gf-nl2sql-bq-fe-0@prefix-gf-nl2sql-bq-0.iam,PROJECT_ID=prefix-gf-nl2sql-bq-0,REGION=europe-west1\n"
+    \ \\\n    --set-env-vars BQ_DATA_PROJECT_ID=bigquery-public-data,BQ_DATASET_ID=thelook_ecommerce,DB_SA=gf-nl2sql-bq-fe-0@prefix-gf-nl2sql-bq-0.iam,PROJECT_ID=prefix-gf-nl2sql-bq-0,REGION=europe-west1\n"
   ip_addresses: __missing__
 

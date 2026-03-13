@@ -30,6 +30,8 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 logger.info("Starting up FastAPI application...")
 logger.info(f"Project ID: {config.PROJECT_ID}")
+logger.info(f"BQ Compute Project ID: {config.BQ_COMPUTE_PROJECT_ID}")
+logger.info(f"BQ Data Project ID: {config.BQ_DATA_PROJECT_ID}")
 logger.info(f"BQ Dataset ID: {config.BQ_DATASET_ID}")
 logger.info(f"Agents Directory: {config.AGENT_DIR}")
 
