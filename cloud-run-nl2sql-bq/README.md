@@ -4,8 +4,6 @@ This factory deploys a "Natural Language 2 SQL" (NL2SQL) system on Cloud Run to 
 
 ![Architecture Diagram](./diagram.png)
 
-A Cloud Run job periodically ingests sample [movies data](./1-apps/data/top-100-imdb-movies.csv) from BigQuery, creates embeddings and stores them in an AlloyDB database. Another Cloud Run frontend application leverages the text embeddings from the AlloyDB database and answers questions on these movies in json format.
-
 The deployment includes:
 
 - A **database**: an instance of BigQuery. You will upload some public data to it.
@@ -23,3 +21,7 @@ The deployment includes:
 
 - Enter the [0-projects](0-projects/README.md) folder and follow the instructions to setup your GCP project, service accounts and permissions
 - Go to the [1-apps](1-apps/README.md) folder and follow the instructions to deploy the components inside the project
+
+## Query the database
+
+Once the factory is deployed, learn how to query the database by following the instructions in the [nl2sql application README](./1-apps/apps/nl2sql/frontend/README.md).
