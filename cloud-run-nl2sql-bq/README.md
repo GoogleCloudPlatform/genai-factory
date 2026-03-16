@@ -1,14 +1,14 @@
 # Natural Language to SQL (NL2SQL) for BigQuery
 
-This factory deploys a "Natural Language 2 SQL" (NL2SQL) system on Cloud Run to query a dataset in BigQuery.
+This factory deploys a "Natural Language 2 SQL" (NL2SQL) agent on Cloud Run that allows users query a datasets in BigQuery by using natural language.
 
 ![Architecture Diagram](./diagram.png)
 
 The deployment includes:
 
-- A **database**: an instance of BigQuery. You will upload some public data to it.
+- A **BigQuery database**: You will upload some public data to it.
 
-- An **agent** running on **Cloud Run** (configured with authentication and direct VPC egress)
+- An **agent** running on **Cloud Run** (configured with authentication and direct VPC egress).
 
 - An **exposure layer** that allows you to securely access your instance of Cloud Run, made of:
   - a **Global external application load balancer** (+ Cloud Armor IP allowlist security backend policy + HTTP to HTTPS redirect + managed certificates). This is created by default.
