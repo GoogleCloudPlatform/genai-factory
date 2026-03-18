@@ -80,9 +80,9 @@ variable "lbs_config" {
 variable "model_armor_config" {
   description = "The model armor configuration."
   type = object({
-    enabled = optional(bool, true)
+    enabled          = optional(bool, true)
     enforcement_type = optional(string, "INSPECT_AND_BLOCK")
-    logging = optional(bool, true)
+    logging          = optional(bool, true)
 
     # Sensitive Data Protection (DLP)
     sdp = optional(object({
@@ -93,7 +93,7 @@ variable "model_armor_config" {
     malicious_uri = optional(object({
       enabled = optional(string, "ENABLED")
     }), {})
-    
+
     # PI and Jailbreak
     pi_and_jailbreak = optional(object({
       enabled          = optional(string, "ENABLED")
