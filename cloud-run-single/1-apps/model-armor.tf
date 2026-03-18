@@ -19,6 +19,7 @@ resource "google_model_armor_template" "model_armor_template" {
   template_id = "model-armor-template"
 
   filter_config {
+
     rai_settings {
       dynamic "rai_filters" {
         for_each = var.model_armor_config.rai_filters
@@ -28,15 +29,18 @@ resource "google_model_armor_template" "model_armor_template" {
         }
       }
     }
+
     sdp_settings {
       basic_config {
         filter_enforcement = var.model_armor_config.sdp.enabled
       }
     }
+
     pi_and_jailbreak_filter_settings {
       filter_enforcement = var.model_armor_config.pi_and_jailbreak.enabled
       confidence_level   = var.model_armor_config.pi_and_jailbreak.confidence_level
     }
+
     malicious_uri_filter_settings {
       filter_enforcement = var.model_armor_config.malicious_uri.enabled
     }
