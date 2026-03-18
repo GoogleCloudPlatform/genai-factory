@@ -80,13 +80,11 @@ variable "model_armor_config" {
   description = "The model armor configuration."
   type = object({
     enabled = optional(bool, true)
-    # Possible values: INSPECT_ONLY, INSPECT_AND_BLOCK
     enforcement_type = optional(string, "INSPECT_AND_BLOCK")
     logging = optional(bool, true)
 
     # Sensitive Data Protection (DLP)
     sdp = optional(object({
-      # Possible values for enabled field: ENABLED, DISABLED
       enabled = optional(string, "ENABLED")
     }), {})
 
@@ -111,6 +109,31 @@ variable "model_armor_config" {
   })
   nullable = false
   default  = {}
+
+  validation {
+    condition     = contains(["INSPECT_ONLY", "INSPECT_AND_BLOCK"], var.model_armor_config.enforcement_type)
+    error_message = "The enforcement_type must be either 'INSPECT_ONLY' or 'INSPECT_AND_BLOCK'."
+  }
+
+  validation {
+    condition = alltrue([
+      contains(["ENABLED", "DISABLED"], var.model_armor_config.sdp.enabled),
+      contains(["ENABLED", "DISABLED"], var.model_armor_config.malicious_uri.enabled),
+      contains(["ENABLED", "DISABLED"], var.model_armor_config.pi_and_jailbreak.enabled)
+    ])
+    error_message = "The 'enabled' field for sdp, malicious_uri, and pi_and_jailbreak must be either 'ENABLED' or 'DISABLED'."
+  }
+
+  validation {
+    condition = alltrue([
+      contains(["LOW_AND_ABOVE", "MEDIUM_AND_ABOVE", "HIGH_AND_ABOVE"], var.model_armor_config.pi_and_jailbreak.confidence_level),
+      contains(["LOW_AND_ABOVE", "MEDIUM_AND_ABOVE", "HIGH_AND_ABOVE"], var.model_armor_config.rai_filters.HATE_SPEECH),
+      contains(["LOW_AND_ABOVE", "MEDIUM_AND_ABOVE", "HIGH_AND_ABOVE"], var.model_armor_config.rai_filters.DANGEROUS),
+      contains(["LOW_AND_ABOVE", "MEDIUM_AND_ABOVE", "HIGH_AND_ABOVE"], var.model_armor_config.rai_filters.HARASSMENT),
+      contains(["LOW_AND_ABOVE", "MEDIUM_AND_ABOVE", "HIGH_AND_ABOVE"], var.model_armor_config.rai_filters.SEXUALLY_EXPLICIT),
+    ])
+    error_message = "The confidence_level must be 'LOW_AND_ABOVE', 'MEDIUM_AND_ABOVE', or 'HIGH_AND_ABOVE'."
+  }
 }
 
 variable "name" {
