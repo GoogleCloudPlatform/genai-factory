@@ -1,0 +1,9 @@
+{
+  "pythonFunction": {
+    "name": "kb_data_store_search",
+    "pythonCode": "tools/kb_data_store_search/python_function/python_code.py",
+    "description": "Queries the brand\u0027s Knowledge Base and returns an answer for the given question. The result comes from a RAG system that will look for relevant snippets and generate the answer, if found.\n\nArgs:\n    query: The query to search for.\n\nReturns:\n    The output of the datastore tool (answer and snippets)"
+  },
+  "executionType": "SYNCHRONOUS",
+  "displayName": "kb_data_store_search"
+}

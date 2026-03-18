@@ -5,7 +5,7 @@ It is responsible for setting up the Google Cloud project, activating the APIs a
 
 It leverages the Cloud Foundation Fabric [`project-factory`](https://github.com/GoogleCloudPlatform/cloud-foundation-fabric/tree/master/modules/project-factory).
 
-You can refer to the [YAML project configuration](data/project.yaml) for more details about enabled APIs and roles assigned in the project.
+You can refer to the [YAML project configuration](data/projects/project.yaml) for more details about enabled APIs and roles assigned in the project.
 
 ## Required roles
 

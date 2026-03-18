@@ -1,0 +1,15 @@
+{
+  "dataStoreTool": {
+    "name": "kb_data_store",
+    "description": "This Data Store contains Knowledge Base documents that answer general questions for different values of `brand_code` (i.e. different company brands that are managed by the same agent). A filter like the following MUST be included when querying the Data Store: \"brand_code: ANY(\\\"$BRAND_CODE\\\")\". For example, this would be an invocation payload for the Cymbal Telecom brand:\n\n{\n    \"query\": query,\n    \"filter\": \"brand_code: ANY(\\\"cymbal\\\")\"\n  }",
+    "engineSource": {
+      "dataStoreSources": [{
+        "dataStore": {
+          "name": "$env_var"
+        }
+      }]
+    }
+  },
+  "executionType": "SYNCHRONOUS",
+  "displayName": "kb_data_store"
+}

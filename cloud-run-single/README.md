@@ -12,8 +12,9 @@ Cloud run single allows deploying these applications:
 
 - **Chat:** a secure backend exposing a JSON interface to communicate with Gemini through Vertex APIs.
 - **ADK:** a sample, secure [Agent Development Kit (ADK) deployment](./1-apps/apps/adk/README.md).
-- **ADK with A2A:** a sample, secure [Agent Development Kit (ADK) deployment exposed with A2A](./1-apps/apps/adk_a2a/README.md).
+- **ADK with A2A:** a sample, secure [Agent Development Kit (ADK) deployment exposed with A2A](./1-apps/apps/adk-a2a/README.md).
 - **Gemma:** a sample deployment of Gemma 3 using Cloud Run GPUs.
+- **MCP Server:** a sample Model Context Protocol (MCP) server to manage GCP Firewall rules by impersonating the user calling the server.
 
 ## Core Components
 

@@ -1,4 +1,4 @@
-# Copyright 2025 Google LLC
+# Copyright 2026 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -39,6 +39,7 @@ variable "cloud_run_configs" {
       deletion_protection = optional(bool, true)
       ingress             = optional(string, "INGRESS_TRAFFIC_INTERNAL_LOAD_BALANCER")
       max_instance_count  = optional(number, 3)
+      min_instance_count  = optional(number, 1)
       service_invokers    = optional(list(string), [])
       vpc_access_egress   = optional(string, "ALL_TRAFFIC")
       vpc_access_tags     = optional(list(string), [])
@@ -52,6 +53,7 @@ variable "cloud_run_configs" {
       deletion_protection = optional(bool, true)
       ingress             = optional(string, "INGRESS_TRAFFIC_INTERNAL_ONLY")
       max_instance_count  = optional(number, 3)
+      min_instance_count  = optional(number, 1)
       service_invokers    = optional(list(string), [])
       vpc_access_egress   = optional(string, "ALL_TRAFFIC")
       vpc_access_tags     = optional(list(string), [])
@@ -173,8 +175,9 @@ variable "vector_search_config" {
     approximate_neighbors_count = optional(number, 150)
     dimensions                  = optional(number, 768)
     distance_measure_type       = optional(string, "DOT_PRODUCT_DISTANCE")
-    index_shard_size            = optional(string, "SHARD_SIZE_SMALL")
+    index_shard_size            = optional(string, "SHARD_SIZE_SO_DYNAMIC")
     index_update_method         = optional(string, "STREAM_UPDATE")
+    deployment_tier             = optional(string, "STORAGE")
     # see https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/vertex_ai_index_endpoint_deployed_index#dedicated_resources-1
     # for machine_type values and combo with index shard size.
     machine_type = optional(string, "e2-standard-2")

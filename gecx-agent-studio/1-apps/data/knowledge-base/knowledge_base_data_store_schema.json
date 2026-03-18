@@ -1,0 +1,25 @@
+{
+    "properties": {
+        "url": {
+            "searchable": false,
+            "type": "string",
+            "retrievable": true,
+            "indexable": false,
+            "dynamicFacetable": false
+        },
+        "title": {
+            "keyPropertyMapping": "title",
+            "type": "string",
+            "retrievable": true
+        },
+        "brand_code": {
+            "type": "string",
+            "retrievable": true,
+            "searchable": false,
+            "indexable": true,
+            "dynamicFacetable": false
+        }
+    },
+    "type": "object",
+    "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

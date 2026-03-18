@@ -1,0 +1,15 @@
+[project]
+name = "gecx-agent-studio-blueprint"
+version = "0.1.0"
+description = "Tools to deploy and maintain Conversational Agents"
+requires-python = ">=3.13"
+dependencies = [
+    "agentutil",
+]
+
+[tool.uv.sources]
+agentutil = { path = "./agentutil", editable = true }
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
