@@ -52,11 +52,9 @@ MODEL_CONFIG = types.GenerateContentConfig(
     candidate_count=config.CANDIDATE_COUNT,
     max_output_tokens=config.MAX_OUTPUT_TOKENS,
     # (Optional) Model Armor configuration
-    model_armor_config=(
-        types.ModelArmorConfig(prompt_template_name=config.MODEL_ARMOR_TEMPLATE)
-        if config.MODEL_ARMOR_TEMPLATE else None
-    )
-)
+    model_armor_config=(types.ModelArmorConfig(
+        prompt_template_name=config.MODEL_ARMOR_TEMPLATE)
+                        if config.MODEL_ARMOR_TEMPLATE else None))
 
 
 @app.get("/")
@@ -82,7 +80,7 @@ async def predict_route(request: Prompt):
             detail="Internal server error: Model not initialized.")
 
     logger.debug("Received prediction request with prompt: '%s...'",
-                request.prompt[:100])
+                 request.prompt[:100])
 
     try:
         response = genai_client.models.generate_content(
@@ -94,13 +92,13 @@ async def predict_route(request: Prompt):
         # --- Process Response ---
         prediction_text = response.text
         if prediction_text:
-            logger.debug(
-                "Successfully received prediction from Vertex AI: %s",
-                prediction_text[:100]
-            )
+            logger.debug("Successfully received prediction from Vertex AI: %s",
+                         prediction_text[:100])
         else:
             prediction_text = "Prompt was blocked by Model Armor."
-            logger.warning("Vertex AI returned an empty response. It may have been blocked by Model Armor.")
+            logger.warning(
+                "Vertex AI returned an empty response. It may have been blocked by Model Armor."
+            )
 
     except exceptions.GoogleAPIError as e:
         logger.error("Vertex AI API call failed: %s", e, exc_info=True)
