@@ -134,6 +134,16 @@ values:
     - serviceAccount:gf-srun-build-0@your-prefix-gf-srun-0.iam.gserviceaccount.com
     project: your-prefix-gf-srun-0
     role: roles/logging.logWriter
+  module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/modelarmor.admin"]:
+    condition: []
+    members:
+    - serviceAccount:iac-rw@your-prefix-gf-srun-0.iam.gserviceaccount.com
+    project: your-prefix-gf-srun-0
+    role: roles/modelarmor.admin
+  module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/modelarmor.user"]:
+    condition: []
+    project: your-prefix-gf-srun-0
+    role: roles/modelarmor.user
   module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/privateca.admin"]:
     condition: []
     members:
@@ -229,6 +239,10 @@ values:
     condition: []
     project: your-prefix-gf-srun-0
     role: roles/dns.serviceAgent
+  module.projects.module.projects["project"].google_project_iam_member.service_agents["modelarmor"]:
+    condition: []
+    project: your-prefix-gf-srun-0
+    role: roles/modelarmor.serviceAgent
   module.projects.module.projects["project"].google_project_iam_member.service_agents["serverless-robot-prod"]:
     condition: []
     project: your-prefix-gf-srun-0
@@ -323,6 +337,18 @@ values:
     project: your-prefix-gf-srun-0
     service: dns.googleapis.com
     timeouts: null
+  module.projects.module.projects["project"].google_project_service.project_services["modelarmor.googleapis.com"]:
+    disable_dependent_services: false
+    disable_on_destroy: false
+    project: your-prefix-gf-srun-0
+    service: modelarmor.googleapis.com
+    timeouts: null
+  module.projects.module.projects["project"].google_project_service.project_services["networkservices.googleapis.com"]:
+    disable_dependent_services: false
+    disable_on_destroy: false
+    project: your-prefix-gf-srun-0
+    service: networkservices.googleapis.com
+    timeouts: null
   module.projects.module.projects["project"].google_project_service.project_services["privateca.googleapis.com"]:
     disable_dependent_services: false
     disable_on_destroy: false
@@ -356,6 +382,10 @@ values:
   module.projects.module.projects["project"].google_project_service_identity.default["dns.googleapis.com"]:
     project: your-prefix-gf-srun-0
     service: dns.googleapis.com
+    timeouts: null
+  module.projects.module.projects["project"].google_project_service_identity.default["modelarmor.googleapis.com"]:
+    project: your-prefix-gf-srun-0
+    service: modelarmor.googleapis.com
     timeouts: null
   module.projects.module.projects["project"].google_project_service_identity.default["privateca.googleapis.com"]:
     project: your-prefix-gf-srun-0
@@ -414,17 +444,17 @@ values:
 
 counts:
   google_project: 1
-  google_project_iam_binding: 15
-  google_project_iam_member: 25
-  google_project_service: 10
-  google_project_service_identity: 6
+  google_project_iam_binding: 17
+  google_project_iam_member: 26
+  google_project_service: 12
+  google_project_service_identity: 7
   google_service_account: 3
   google_service_account_iam_member: 3
   google_storage_bucket: 1
   google_storage_bucket_iam_binding: 2
   local_file: 2
   modules: 8
-  resources: 70
+  resources: 76
   terraform_data: 2
 
 outputs:
@@ -444,3 +474,4 @@ outputs:
       email: iac-rw@your-prefix-gf-srun-0.iam.gserviceaccount.com
       iam_email: serviceAccount:iac-rw@your-prefix-gf-srun-0.iam.gserviceaccount.com
       id: projects/your-prefix-gf-srun-0/serviceAccounts/iac-rw@your-prefix-gf-srun-0.iam.gserviceaccount.com
+

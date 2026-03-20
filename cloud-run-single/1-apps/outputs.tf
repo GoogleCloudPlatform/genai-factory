@@ -16,6 +16,7 @@ locals {
   _env_vars = [
     "PROJECT_ID=${var.project_config.id}",
     "REGION=${var.region}",
+    try("MODEL_ARMOR_TEMPLATE=${google_model_armor_template.model_armor_template[0].name}", "")
   ]
   env_vars = join(",", local._env_vars)
 }
