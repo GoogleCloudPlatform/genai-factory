@@ -122,6 +122,48 @@ values:
     terraform_labels:
       goog-terraform-provisioned: 'true'
     timeouts: null
+  google_model_armor_template.model_armor_template[0]:
+    effective_labels:
+      goog-terraform-provisioned: 'true'
+    filter_config:
+    - malicious_uri_filter_settings:
+      - filter_enforcement: ENABLED
+      pi_and_jailbreak_filter_settings:
+      - confidence_level: MEDIUM_AND_ABOVE
+        filter_enforcement: ENABLED
+      rai_settings:
+      - rai_filters:
+        - confidence_level: MEDIUM_AND_ABOVE
+          filter_type: DANGEROUS
+        - confidence_level: MEDIUM_AND_ABOVE
+          filter_type: HARASSMENT
+        - confidence_level: MEDIUM_AND_ABOVE
+          filter_type: HATE_SPEECH
+        - confidence_level: MEDIUM_AND_ABOVE
+          filter_type: SEXUALLY_EXPLICIT
+      sdp_settings:
+      - advanced_config: []
+        basic_config:
+        - filter_enforcement: ENABLED
+    labels: null
+    location: europe-west1
+    project: your-project
+    template_id: model-armor-template
+    template_metadata:
+    - custom_llm_response_safety_error_code: 401
+      custom_llm_response_safety_error_message: This is a custom error message for
+        LLM response
+      custom_prompt_safety_error_code: 400
+      custom_prompt_safety_error_message: This is a custom error message for prompt
+      enforcement_type: INSPECT_AND_BLOCK
+      ignore_partial_invocation_failures: true
+      log_sanitize_operations: true
+      log_template_operations: true
+      multi_language_detection:
+      - enable_multi_language_detection: true
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
+    timeouts: null
   module.cas[0].google_privateca_ca_pool.default[0]:
     effective_labels:
       goog-terraform-provisioned: 'true'
@@ -266,6 +308,7 @@ values:
         image: us-docker.pkg.dev/cloudrun/container/hello
         liveness_probe: []
         name: ai
+        readiness_probe: []
         source_code: []
         volume_mounts: []
         working_dir: null
@@ -1295,10 +1338,11 @@ counts:
   google_dns_record_set: 1
   google_dns_response_policy: 1
   google_dns_response_policy_rule: 39
+  google_model_armor_template: 1
   google_privateca_ca_pool: 1
   google_privateca_certificate_authority: 1
   modules: 10
-  resources: 75
+  resources: 76
 
 outputs:
   commands: __missing__
