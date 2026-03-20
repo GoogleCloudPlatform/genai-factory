@@ -14,10 +14,28 @@
  * limitations under the License.
  */
 
-project_config = {
-  id     = "${projects.project.id}"
-  number = "${projects.project.number}"
+%{ if networking_config.create }
+networking_config = {
+  subnet_id = "${networking_config.subnet_id}"
+  vpc_id    = "${networking_config.vpc_id}"
 }
+%{ else }
+networking_config = {}
+%{ endif }
+
+prefix = ${prefix}
+
+projects = {
+%{ for k,v in projects ~}
+  "${k}" = {
+    id     = "${v.id}"
+    number = "${v.number}"
+  }
+%{ endfor ~}
+}
+
+region = "${region}"
+
 service_accounts = {
 %{ for k,v in service_accounts ~}
   "${k}" = {
