@@ -16,7 +16,7 @@ variable "agent_engine_config" {
   description = "The agent configuration."
   type = object({
     agent_framework        = optional(string, "google-adk")
-    class_methods          = optional(list(any), [])
+    class_methods          = optional(string)
     enable_adk_telemetry   = optional(bool, true)
     enable_adk_msg_capture = optional(bool, true)
     enable_psc_i           = optional(bool, true)
