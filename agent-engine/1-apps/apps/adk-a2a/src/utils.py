@@ -12,8 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-module: agent-engine/1-apps
 
-tests:
-  simple:
-  a2a:
+def str_to_bool(s: str) -> bool:
+    """Convert a string representation of truth to True or False."""
+    s_lower = s.strip().lower()
+    if s_lower in ("yes", "true", "t", "on", "1"):
+        return True
+    else:
+        return False

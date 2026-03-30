@@ -26,8 +26,8 @@ output "commands" {
 
   ACCESS_TOKEN=$(gcloud auth print-access-token --impersonate-service-account=${var.service_accounts["project/iac-rw"].email})
 
-  cd apps/adk && tar -czf ${var.source_config.tar_gz_file_name} * &&
-  cd ../../ && mv apps/adk/${var.source_config.tar_gz_file_name} . &&
+  cd apps/${var.source_config.app_path} && tar -czf ${var.source_config.tar_gz_file_name} * &&
+  cd ../../ && mv apps/${var.source_config.app_path}/${var.source_config.tar_gz_file_name} . &&
   TAR_GZ_BASE64=$(openssl base64 -in ${var.source_config.tar_gz_file_name}) &&
   curl -X PATCH "https://${var.region}-aiplatform.googleapis.com/v1/${module.agent.id}?updateMask=spec.sourceCodeSpec" \
     -H "Authorization: Bearer $ACCESS_TOKEN" \

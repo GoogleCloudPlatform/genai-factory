@@ -14,7 +14,7 @@
 
 data "archive_file" "source" {
   type        = "tar.gz"
-  source_dir  = "./apps/adk"
+  source_dir  = "./apps/${var.source_config.app_path}"
   output_path = "./${var.source_config.tar_gz_file_name}"
 }
 
@@ -26,7 +26,14 @@ module "agent" {
   managed    = false
   agent_engine_config = {
     agent_framework = var.agent_engine_config.agent_framework
-    class_methods   = var.agent_engine_config.class_methods
+    class_methods = try(
+      templatefile(var.agent_engine_config.class_methods, {
+        agent_name = var.name
+        project_id = var.project_config.id
+        region     = var.region
+      }),
+      var.agent_engine_config.class_methods
+    )
     environment_variables = {
       ENABLE_PSC_I  = var.agent_engine_config.enable_psc_i
       PROJECT_ID    = var.project_config.id

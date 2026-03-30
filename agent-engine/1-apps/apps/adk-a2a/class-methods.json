@@ -1,0 +1,58 @@
+[
+  {
+    "name": "on_message_send",
+    "api_mode": "a2a_extension",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "required": [
+        "request",
+        "context"
+      ]
+    },
+    "description": null,
+    "a2a_agent_card": "{\"additionalInterfaces\":null,\"capabilities\":{\"extensions\":null,\"pushNotifications\":null,\"stateTransitionHistory\":null,\"streaming\":false},\"defaultInputModes\":[\"text/plain\"],\"defaultOutputModes\":[\"application/json\"],\"description\":\"An agent that can provide currency exchange rates\",\"documentationUrl\":null,\"iconUrl\":null,\"name\":\"Currency Exchange Agent\",\"preferredTransport\":\"HTTP+JSON\",\"protocolVersion\":\"0.3.0\",\"provider\":null,\"security\":null,\"securitySchemes\":null,\"signatures\":null,\"skills\":[{\"description\":\"Retrieves the exchange rate between two currencies on a specified date.\",\"examples\":[\"What is the exchange rate from USD to EUR?\",\"How many Japanese Yen is 1 US dollar worth today?\"],\"id\":\"get_exchange_rate\",\"inputModes\":null,\"name\":\"Get Currency Exchange Rate\",\"outputModes\":null,\"security\":null,\"tags\":[\"Finance\",\"Currency\",\"Exchange Rate\"]}],\"supportsAuthenticatedExtendedCard\":true,\"url\":\"https://${region}-aiplatform.googleapis.com/v1beta1/projects/${project_id}/locations/${region}/reasoningEngines/${agent_name}/a2a\",\"version\":\"1.0.0\"}"
+  },
+  {
+    "name": "on_get_task",
+    "api_mode": "a2a_extension",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "required": [
+        "request",
+        "context"
+      ]
+    },
+    "description": null,
+    "a2a_agent_card": "{\"additionalInterfaces\":null,\"capabilities\":{\"extensions\":null,\"pushNotifications\":null,\"stateTransitionHistory\":null,\"streaming\":false},\"defaultInputModes\":[\"text/plain\"],\"defaultOutputModes\":[\"application/json\"],\"description\":\"An agent that can provide currency exchange rates\",\"documentationUrl\":null,\"iconUrl\":null,\"name\":\"Currency Exchange Agent\",\"preferredTransport\":\"HTTP+JSON\",\"protocolVersion\":\"0.3.0\",\"provider\":null,\"security\":null,\"securitySchemes\":null,\"signatures\":null,\"skills\":[{\"description\":\"Retrieves the exchange rate between two currencies on a specified date.\",\"examples\":[\"What is the exchange rate from USD to EUR?\",\"How many Japanese Yen is 1 US dollar worth today?\"],\"id\":\"get_exchange_rate\",\"inputModes\":null,\"name\":\"Get Currency Exchange Rate\",\"outputModes\":null,\"security\":null,\"tags\":[\"Finance\",\"Currency\",\"Exchange Rate\"]}],\"supportsAuthenticatedExtendedCard\":true,\"url\":\"https://${region}-aiplatform.googleapis.com/v1beta1/projects/${project_id}/locations/${region}/reasoningEngines/${agent_name}/a2a\",\"version\":\"1.0.0\"}"
+  },
+  {
+    "name": "on_cancel_task",
+    "api_mode": "a2a_extension",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "required": [
+        "request",
+        "context"
+      ]
+    },
+    "description": null,
+    "a2a_agent_card": "{\"additionalInterfaces\":null,\"capabilities\":{\"extensions\":null,\"pushNotifications\":null,\"stateTransitionHistory\":null,\"streaming\":false},\"defaultInputModes\":[\"text/plain\"],\"defaultOutputModes\":[\"application/json\"],\"description\":\"An agent that can provide currency exchange rates\",\"documentationUrl\":null,\"iconUrl\":null,\"name\":\"Currency Exchange Agent\",\"preferredTransport\":\"HTTP+JSON\",\"protocolVersion\":\"0.3.0\",\"provider\":null,\"security\":null,\"securitySchemes\":null,\"signatures\":null,\"skills\":[{\"description\":\"Retrieves the exchange rate between two currencies on a specified date.\",\"examples\":[\"What is the exchange rate from USD to EUR?\",\"How many Japanese Yen is 1 US dollar worth today?\"],\"id\":\"get_exchange_rate\",\"inputModes\":null,\"name\":\"Get Currency Exchange Rate\",\"outputModes\":null,\"security\":null,\"tags\":[\"Finance\",\"Currency\",\"Exchange Rate\"]}],\"supportsAuthenticatedExtendedCard\":true,\"url\":\"https://${region}-aiplatform.googleapis.com/v1beta1/projects/${project_id}/locations/${region}/reasoningEngines/${agent_name}/a2a\",\"version\":\"1.0.0\"}"
+  },
+  {
+    "name": "handle_authenticated_agent_card",
+    "api_mode": "a2a_extension",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "required": [
+        "request",
+        "context"
+      ]
+    },
+    "description": null,
+    "a2a_agent_card": "{\"additionalInterfaces\":null,\"capabilities\":{\"extensions\":null,\"pushNotifications\":null,\"stateTransitionHistory\":null,\"streaming\":false},\"defaultInputModes\":[\"text/plain\"],\"defaultOutputModes\":[\"application/json\"],\"description\":\"An agent that can provide currency exchange rates\",\"documentationUrl\":null,\"iconUrl\":null,\"name\":\"Currency Exchange Agent\",\"preferredTransport\":\"HTTP+JSON\",\"protocolVersion\":\"0.3.0\",\"provider\":null,\"security\":null,\"securitySchemes\":null,\"signatures\":null,\"skills\":[{\"description\":\"Retrieves the exchange rate between two currencies on a specified date.\",\"examples\":[\"What is the exchange rate from USD to EUR?\",\"How many Japanese Yen is 1 US dollar worth today?\"],\"id\":\"get_exchange_rate\",\"inputModes\":null,\"name\":\"Get Currency Exchange Rate\",\"outputModes\":null,\"security\":null,\"tags\":[\"Finance\",\"Currency\",\"Exchange Rate\"]}],\"supportsAuthenticatedExtendedCard\":true,\"url\":\"https://${region}-aiplatform.googleapis.com/v1beta1/projects/${project_id}/locations/${region}/reasoningEngines/${agent_name}/a2a\",\"version\":\"1.0.0\"}"
+  }
+]

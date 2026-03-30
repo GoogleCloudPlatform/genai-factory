@@ -12,6 +12,10 @@ cp terraform.tfvars.sample terraform.tfvars # Customize if needed
 terraform init
 terraform apply
 
+# If you want to deploy the ADK+A2A agent, run:
+terraform apply \
+  -var='agent_engine_config={"class_methods": "apps/adk-a2a/class-methods.json"}'
+
 # Follow the commands in the output.
 ```
 
@@ -35,7 +39,7 @@ The [0-projects](../0-projects) stage generates the necessary Terraform input fi
 | [networking_config](variables.tf#L45) | The networking configuration. | <code title="object&#40;&#123;&#10;  create &#61; optional&#40;bool, true&#41;&#10;  dns_peering_configs &#61; optional&#40;map&#40;object&#40;&#123;&#10;    target_network_name &#61; optional&#40;string&#41;&#10;    target_project_id   &#61; optional&#40;string&#41;&#10;    &#125;&#41;&#41;, &#123;&#10;    &#34;.&#34; &#61; &#123;&#125;&#10;  &#125;&#41;&#10;  network_attachment_id &#61; optional&#40;string&#41;&#10;  proxy_ip              &#61; optional&#40;string, &#34;10.0.0.100&#34;&#41;&#10;  proxy_port            &#61; optional&#40;string, &#34;443&#34;&#41;&#10;  subnet &#61; optional&#40;object&#40;&#123;&#10;    ip_cidr_range &#61; optional&#40;string, &#34;10.0.0.0&#47;24&#34;&#41;&#10;    name          &#61; optional&#40;string, &#34;sub-0&#34;&#41;&#10;  &#125;&#41;, &#123;&#125;&#41;&#10;  subnet_proxy_only &#61; optional&#40;object&#40;&#123;&#10;    ip_cidr_range &#61; optional&#40;string, &#34;10.20.0.0&#47;24&#34;&#41;&#10;    name          &#61; optional&#40;string, &#34;proxy-only-sub-0&#34;&#41;&#10;  &#125;&#41;, &#123;&#125;&#41;&#10;  vpc_id &#61; optional&#40;string, &#34;net-0&#34;&#41;&#10;&#125;&#41;">object&#40;&#123;&#8230;&#125;&#41;</code> |  | <code>&#123;&#125;</code> |
 | [region](variables.tf#L90) | The GCP region where to deploy the resources. | <code>string</code> |  | <code>&#34;europe-west1&#34;</code> |
 | [service_accounts](variables.tf#L97) | The pre-created service accounts used by the blueprint. | <code title="map&#40;object&#40;&#123;&#10;  email     &#61; string&#10;  iam_email &#61; string&#10;  id        &#61; string&#10;&#125;&#41;&#41;">map&#40;object&#40;&#123;&#8230;&#125;&#41;&#41;</code> |  | <code>&#123;&#125;</code> |
-| [source_config](variables.tf#L107) | The source file configurations. | <code title="object&#40;&#123;&#10;  entrypoint_module &#61; optional&#40;string, &#34;agent&#34;&#41;&#10;  entrypoint_object &#61; optional&#40;string, &#34;agent&#34;&#41;&#10;  requirements_path &#61; optional&#40;string, &#34;requirements.txt&#34;&#41;&#10;  tar_gz_file_name &#61; optional&#40;string, &#34;source.tar.gz&#34;&#41;&#10;&#125;&#41;">object&#40;&#123;&#8230;&#125;&#41;</code> |  | <code>&#123;&#125;</code> |
+| [source_config](variables.tf#L107) | The source file configurations. | <code title="object&#40;&#123;&#10;  app_path          &#61; optional&#40;string, &#34;adk&#34;&#41;&#10;  entrypoint_module &#61; optional&#40;string, &#34;agent&#34;&#41;&#10;  entrypoint_object &#61; optional&#40;string, &#34;agent&#34;&#41;&#10;  requirements_path &#61; optional&#40;string, &#34;requirements.txt&#34;&#41;&#10;  tar_gz_file_name &#61; optional&#40;string, &#34;source.tar.gz&#34;&#41;&#10;&#125;&#41;">object&#40;&#123;&#8230;&#125;&#41;</code> |  | <code>&#123;&#125;</code> |
 
 ## Outputs
 
