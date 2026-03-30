@@ -13,7 +13,7 @@
 # limitations under the License.
 
 
-def str_to_bool(s):
+def str_to_bool(s: str) -> bool:
     """Convert a string representation of truth to True or False."""
     s_lower = s.strip().lower()
     if s_lower in ("yes", "true", "t", "on", "1"):
