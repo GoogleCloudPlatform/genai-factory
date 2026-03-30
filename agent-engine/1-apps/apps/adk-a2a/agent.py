@@ -177,14 +177,12 @@ def get_exchange_rate(
             "https": f"http://{config.PROXY_ADDRESS}:{config.PROXY_PORT}",
         }
     try:
-        response = requests.get(
-            f"https://api.frankfurter.app/{currency_date}",
-            params={
-                "from": currency_from,
-                "to": currency_to
-            },
-            proxies=proxies
-        )
+        response = requests.get(f"https://api.frankfurter.app/{currency_date}",
+                                params={
+                                    "from": currency_from,
+                                    "to": currency_to
+                                },
+                                proxies=proxies)
         response.raise_for_status()
         return response.json()
     except requests.exceptions.RequestException as e:
