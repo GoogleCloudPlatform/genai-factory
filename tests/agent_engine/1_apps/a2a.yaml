@@ -23,6 +23,7 @@ values:
     region: europe-west1
     timeouts: null
   module.agent.google_vertex_ai_reasoning_engine.unmanaged[0]:
+    deletion_policy: null
     description: Terraform managed.
     display_name: test-agent
     encryption_spec: []
@@ -30,7 +31,35 @@ values:
     region: europe-west1
     spec:
     - agent_framework: google-adk
-      class_methods: null
+      class_methods: '[{"a2a_agent_card":"{\"additionalInterfaces\":null,\"capabilities\":{\"extensions\":null,\"pushNotifications\":null,\"stateTransitionHistory\":null,\"streaming\":false},\"defaultInputModes\":[\"text/plain\"],\"defaultOutputModes\":[\"application/json\"],\"description\":\"An
+        agent that can provide currency exchange rates\",\"documentationUrl\":null,\"iconUrl\":null,\"name\":\"Currency
+        Exchange Agent\",\"preferredTransport\":\"HTTP+JSON\",\"protocolVersion\":\"0.3.0\",\"provider\":null,\"security\":null,\"securitySchemes\":null,\"signatures\":null,\"skills\":[{\"description\":\"Retrieves
+        the exchange rate between two currencies on a specified date.\",\"examples\":[\"What
+        is the exchange rate from USD to EUR?\",\"How many Japanese Yen is 1 US dollar
+        worth today?\"],\"id\":\"get_exchange_rate\",\"inputModes\":null,\"name\":\"Get
+        Currency Exchange Rate\",\"outputModes\":null,\"security\":null,\"tags\":[\"Finance\",\"Currency\",\"Exchange
+        Rate\"]}],\"supportsAuthenticatedExtendedCard\":true,\"url\":\"https://europe-west1-aiplatform.googleapis.com/v1beta1/projects/test-project/locations/europe-west1/reasoningEngines/test-agent/a2a\",\"version\":\"1.0.0\"}","api_mode":"a2a_extension","description":null,"name":"on_message_send","parameters":{"properties":{},"required":["request","context"],"type":"object"}},{"a2a_agent_card":"{\"additionalInterfaces\":null,\"capabilities\":{\"extensions\":null,\"pushNotifications\":null,\"stateTransitionHistory\":null,\"streaming\":false},\"defaultInputModes\":[\"text/plain\"],\"defaultOutputModes\":[\"application/json\"],\"description\":\"An
+        agent that can provide currency exchange rates\",\"documentationUrl\":null,\"iconUrl\":null,\"name\":\"Currency
+        Exchange Agent\",\"preferredTransport\":\"HTTP+JSON\",\"protocolVersion\":\"0.3.0\",\"provider\":null,\"security\":null,\"securitySchemes\":null,\"signatures\":null,\"skills\":[{\"description\":\"Retrieves
+        the exchange rate between two currencies on a specified date.\",\"examples\":[\"What
+        is the exchange rate from USD to EUR?\",\"How many Japanese Yen is 1 US dollar
+        worth today?\"],\"id\":\"get_exchange_rate\",\"inputModes\":null,\"name\":\"Get
+        Currency Exchange Rate\",\"outputModes\":null,\"security\":null,\"tags\":[\"Finance\",\"Currency\",\"Exchange
+        Rate\"]}],\"supportsAuthenticatedExtendedCard\":true,\"url\":\"https://europe-west1-aiplatform.googleapis.com/v1beta1/projects/test-project/locations/europe-west1/reasoningEngines/test-agent/a2a\",\"version\":\"1.0.0\"}","api_mode":"a2a_extension","description":null,"name":"on_get_task","parameters":{"properties":{},"required":["request","context"],"type":"object"}},{"a2a_agent_card":"{\"additionalInterfaces\":null,\"capabilities\":{\"extensions\":null,\"pushNotifications\":null,\"stateTransitionHistory\":null,\"streaming\":false},\"defaultInputModes\":[\"text/plain\"],\"defaultOutputModes\":[\"application/json\"],\"description\":\"An
+        agent that can provide currency exchange rates\",\"documentationUrl\":null,\"iconUrl\":null,\"name\":\"Currency
+        Exchange Agent\",\"preferredTransport\":\"HTTP+JSON\",\"protocolVersion\":\"0.3.0\",\"provider\":null,\"security\":null,\"securitySchemes\":null,\"signatures\":null,\"skills\":[{\"description\":\"Retrieves
+        the exchange rate between two currencies on a specified date.\",\"examples\":[\"What
+        is the exchange rate from USD to EUR?\",\"How many Japanese Yen is 1 US dollar
+        worth today?\"],\"id\":\"get_exchange_rate\",\"inputModes\":null,\"name\":\"Get
+        Currency Exchange Rate\",\"outputModes\":null,\"security\":null,\"tags\":[\"Finance\",\"Currency\",\"Exchange
+        Rate\"]}],\"supportsAuthenticatedExtendedCard\":true,\"url\":\"https://europe-west1-aiplatform.googleapis.com/v1beta1/projects/test-project/locations/europe-west1/reasoningEngines/test-agent/a2a\",\"version\":\"1.0.0\"}","api_mode":"a2a_extension","description":null,"name":"on_cancel_task","parameters":{"properties":{},"required":["request","context"],"type":"object"}},{"a2a_agent_card":"{\"additionalInterfaces\":null,\"capabilities\":{\"extensions\":null,\"pushNotifications\":null,\"stateTransitionHistory\":null,\"streaming\":false},\"defaultInputModes\":[\"text/plain\"],\"defaultOutputModes\":[\"application/json\"],\"description\":\"An
+        agent that can provide currency exchange rates\",\"documentationUrl\":null,\"iconUrl\":null,\"name\":\"Currency
+        Exchange Agent\",\"preferredTransport\":\"HTTP+JSON\",\"protocolVersion\":\"0.3.0\",\"provider\":null,\"security\":null,\"securitySchemes\":null,\"signatures\":null,\"skills\":[{\"description\":\"Retrieves
+        the exchange rate between two currencies on a specified date.\",\"examples\":[\"What
+        is the exchange rate from USD to EUR?\",\"How many Japanese Yen is 1 US dollar
+        worth today?\"],\"id\":\"get_exchange_rate\",\"inputModes\":null,\"name\":\"Get
+        Currency Exchange Rate\",\"outputModes\":null,\"security\":null,\"tags\":[\"Finance\",\"Currency\",\"Exchange
+        Rate\"]}],\"supportsAuthenticatedExtendedCard\":true,\"url\":\"https://europe-west1-aiplatform.googleapis.com/v1beta1/projects/test-project/locations/europe-west1/reasoningEngines/test-agent/a2a\",\"version\":\"1.0.0\"}","api_mode":"a2a_extension","description":null,"name":"handle_authenticated_agent_card","parameters":{"properties":{},"required":["request","context"],"type":"object"}}]'
       deployment_spec:
       - env:
         - name: ENABLE_PSC_I
@@ -70,6 +99,7 @@ values:
   module.agent.time_sleep.wait_5_minutes:
     create_duration: 5m
     destroy_duration: null
+    id: '2026-01-26T10:49:57Z'
     triggers: null
   module.dns_policy_googleapis[0].google_dns_response_policy.default[0]:
     description: Terraform managed.
@@ -792,4 +822,3 @@ counts:
 outputs:
   agent_id: __missing__
   commands: __missing__
-
