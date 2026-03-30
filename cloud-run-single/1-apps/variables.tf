@@ -76,3 +76,18 @@ variable "name" {
   nullable    = false
   default     = "gf-srun-0"
 }
+
+variable "networking_configs" {
+  description = "The keys of the networking resources used for lookups in variables from stage 0."
+  type = object({
+    host_project = string
+    subnet       = string
+    vpc          = string
+  })
+  default = {
+    host_project = "prod-spoke-0"
+    subnet       = "prod-default"
+    subnet_proxy = "prod-proxy"
+    vpc          = "prod-spoke-0"
+  }
+}
