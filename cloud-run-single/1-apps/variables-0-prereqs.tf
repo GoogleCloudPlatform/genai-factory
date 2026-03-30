@@ -27,29 +27,14 @@ variable "host_project_ids" {
   default     = {}
 }
 
-variable "networking_config" {
-  description = "The networking configuration."
-  type = object({
-    subnet_id = string
-    vpc_id    = string
-  })
-  nullable = false
+variable "project_id" {
+  description = "The id of the project where to create the resources."
+  type        = string
 }
 
-variable "project_ids" {
-  # tfdoc:variable:source 0-org-setup
-  description = "Projects ids for projects created in the bootstrap stage."
-  type        = map(string)
-  nullable    = false
-  default     = {}
-}
-
-variable "project_numbers" {
-  # tfdoc:variable:source 0-org-setup
-  description = "Projects numbers for projects created in the bootstrap stage."
-  type        = map(string)
-  nullable    = false
-  default     = {}
+variable "project_number" {
+  description = "The number of the project where to create the resources."
+  type        = string
 }
 
 variable "region" {
