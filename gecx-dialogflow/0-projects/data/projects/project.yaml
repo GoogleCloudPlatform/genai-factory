@@ -20,6 +20,21 @@ name: gf-ai-apps-df-0
 services:
   - dialogflow.googleapis.com
   - discoveryengine.googleapis.com
+  # Needed for Cloud Function (function create only)
+  - artifactregistry.googleapis.com
+  - cloudbuild.googleapis.com
+  - cloudfunctions.googleapis.com
+  - logging.googleapis.com
+  - run.googleapis.com
+  # Needed for network creation (function create only)
+  - compute.googleapis.com
+  - dns.googleapis.com
+  # Needed for ILB creation (function create only)
+  - certificatemanager.googleapis.com
+  - privateca.googleapis.com
+  # Only needed if you define private endpoints to be reached
+  # via Service Directory
+  - servicedirectory.googleapis.com
 
 buckets:
   iac-state:
@@ -33,6 +48,18 @@ buckets:
 service_accounts:
   # Automation SAs
   iac-rw:
+    iam_sa_roles:
+      $iam_principals:service_agents/project/run:
+        - roles/iam.serviceAccountTokenCreator
+      $service_account_ids:project/gecx-df-0:
+        - roles/iam.serviceAccountUser
+      $service_account_ids:project/gecx-df-build-0:
+        - roles/iam.serviceAccountUser
+  # Cloud Function SA (only used if Cloud Function is created)
+  gecx-df-0: {}
+  # SA dedicated for the Cloud Function build
+  # (only used if Cloud Function is created)
+  gecx-df-build-0: {}
 
 # Grant roles
 iam_by_principals:
@@ -41,3 +68,31 @@ iam_by_principals:
     - roles/discoveryengine.admin
     - roles/serviceusage.serviceUsageConsumer
     - roles/storage.admin
+    # Needed to create Cloud Functions (function create only)
+    - roles/cloudfunctions.admin
+    # Needed for network administration (function create only)
+    - roles/compute.networkAdmin
+    - roles/compute.securityAdmin
+    - roles/dns.admin
+    # Needed for ILB (function create only)
+    - roles/certificatemanager.owner
+    - roles/privateca.admin
+    # Only needed if you define private endpoints to be reached
+    # via Service Directory
+    - roles/servicedirectory.admin
+  # The following role assignments are used only if Cloud Function is created
+  $iam_principals:service_accounts/project/gecx-df-0:
+    - roles/logging.logWriter
+  $iam_principals:service_accounts/project/gecx-df-build-0:
+    - roles/artifactregistry.writer
+    - roles/cloudbuild.builds.editor
+    - roles/iam.serviceAccountUser
+    - roles/logging.logWriter
+    - roles/run.admin
+    - roles/storage.admin
+    - roles/storage.objectUser
+  $iam_principals:service_agents/project/certificatemanager:
+    - roles/privateca.certificateRequester
+  $iam_principals:service_agents/project/dialogflow:
+    - roles/servicedirectory.pscAuthorizedService
+    - roles/servicedirectory.viewer

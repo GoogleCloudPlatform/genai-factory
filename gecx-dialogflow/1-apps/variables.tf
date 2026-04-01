@@ -13,10 +13,33 @@
 # limitations under the License.
 
 variable "agent_configs" {
-  description = "The AI Applications Dialogflow agent configurations."
+  description = "The Dialogflow agent configurations."
   type = object({
     language = optional(string, "en")
     variant  = optional(string, "default")
+  })
+  nullable = false
+  default  = {}
+}
+
+# Only used when ILBs are created.
+# CA pools can't be recreated in the same project with the same name.
+# This can be handy during experimentation
+variable "ca_pool_name_suffix" {
+  description = "The name suffix of the CA pool used for app ILB certificates."
+  type        = string
+  nullable    = false
+  default     = "ca-pool-0"
+}
+
+variable "cloud_function_config" {
+  description = "The configuration of an optional Cloud Function to reach via Service Directory."
+  type = object({
+    bundle_path            = optional(string, "data/function")
+    create                 = optional(bool, false)
+    direct_vpc_egress_mode = optional(string, "VPC_EGRESS_ALL_TRAFFIC")
+    direct_vpc_egress_tags = optional(list(string), [])
+    service_invokers       = optional(list(string), [])
   })
   nullable = false
   default  = {}
@@ -29,11 +52,46 @@ variable "enable_deletion_protection" {
   default     = true
 }
 
+variable "lbs_config" {
+  description = "The internal load balancers configuration (relevant only if cloud_function_config.create = true)."
+  type = object({
+    internal = object({
+      # The optional load balancer IP address.
+      # If not specified, the module will create one.
+      ip_address        = optional(string)
+      domain            = optional(string, "example.com")
+      allowed_ip_ranges = optional(list(string), ["0.0.0.0/0"])
+    })
+  })
+  nullable = false
+  default = {
+    internal = {}
+  }
+}
+
 variable "name" {
-  description = "The name of the resources. This is also the project suffix if a new project is created."
+  description = "The name of the resources."
   type        = string
   nullable    = false
-  default     = "gf-ai-apps-df-0"
+  default     = "gf-gecx-df-0"
+}
+
+variable "networking_config" {
+  description = "The networking configuration."
+  type = object({
+    create = optional(bool, true)
+    vpc_id = optional(string, "net-0")
+    subnet = optional(object({
+      ip_cidr_range = optional(string, "10.0.0.0/24")
+      name          = optional(string, "sub-0")
+    }), {})
+    subnet_proxy_only = optional(object({
+      ip_cidr_range = optional(string, "10.20.0.0/24")
+      name          = optional(string, "proxy-only-sub-0")
+    }), {})
+  })
+  nullable = false
+  default  = {}
 }
 
 variable "project_config" {
@@ -68,4 +126,15 @@ variable "service_accounts" {
     id        = string
   }))
   default = {}
+}
+
+# If the Cloud Function is created, its endpoint is automatically created
+variable "service_directory_endpoints_configs" {
+  description = "The endpoints to be optionally created in Service Directory."
+  type = map(object({
+    ip_addresses = list(string)
+    port         = optional(number, 443)
+  }))
+  nullable = false
+  default  = {}
 }
