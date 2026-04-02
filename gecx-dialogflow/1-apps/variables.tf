@@ -22,6 +22,12 @@ variable "agent_configs" {
   default  = {}
 }
 
+variable "bucket_name" {
+  description = "The name for all GCS buckets added after the prefix. If not specified, var.name is used instead."
+  type        = string
+  default     = null
+}
+
 # Only used when ILBs are created.
 # CA pools can't be recreated in the same project with the same name.
 # This can be handy during experimentation

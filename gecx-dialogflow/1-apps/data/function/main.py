@@ -17,7 +17,7 @@ from flask import jsonify
 
 
 @functions_framework.http
-def dialogflow_webhook(request):
+def main(request):
     """HTTP Cloud Function for Dialogflow CX Webhook fulfillment.
     
     Args:

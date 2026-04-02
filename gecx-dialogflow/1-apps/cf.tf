@@ -13,12 +13,13 @@
 # limitations under the License.
 
 module "cloud_function" {
-  count       = var.cloud_function_config.create ? 1 : 0
-  source      = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/cloud-function-v2?ref=v54.1.0"
-  project_id  = var.project_config.id
-  region      = var.region
-  name        = var.name
-  bucket_name = module.gcs_bucket.name
+  count            = var.cloud_function_config.create ? 1 : 0
+  source           = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/cloud-function-v2?ref=v54.1.0"
+  project_id       = var.project_config.id
+  region           = var.region
+  name             = var.name
+  bucket_name      = module.gcs_bucket.name
+  ingress_settings = "ALLOW_INTERNAL_AND_GCLB"
   bundle_config = {
     path = var.cloud_function_config.bundle_path
   }
@@ -32,12 +33,12 @@ module "cloud_function" {
     create = false
     email  = var.service_accounts["project/gecx-df-0"].email
   }
-  build_service_account = var.service_accounts["project/gecx-df-0"].email
+  build_service_account = var.service_accounts["project/gecx-df-0"].id
   iam = {
     "roles/run.invoker" = concat(
       var.cloud_function_config.service_invokers,
       # This allows Dialogflow CX (through its service agent) to call the function
-      ["serviceAccount:service-agent-project-${var.project_config.number}@gcp-sa-dialogflow.iam.gserviceaccount.com"]
+      ["serviceAccount:service-${var.project_config.number}@gcp-sa-dialogflow.iam.gserviceaccount.com"]
     )
   }
 }
@@ -46,7 +47,7 @@ module "gcs_bucket" {
   source                   = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/gcs?ref=v54.1.0"
   project_id               = var.project_config.id
   prefix                   = var.project_config.prefix
-  name                     = var.name
+  name                     = local.bucket_name
   location                 = var.region
   versioning               = true
   public_access_prevention = "enforced"
