@@ -12,11 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+locals {
+  bucket_name = coalesce(var.bucket_name, var.name)
+}
+
 module "ds-bucket" {
   source        = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/gcs?ref=v54.2.0"
   project_id    = var.project_config.id
   prefix        = var.project_config.prefix
-  name          = "${var.name}-ds"
+  name          = "${local.bucket_name}-ds"
   location      = var.region
   versioning    = true
   force_destroy = !var.enable_deletion_protection
@@ -26,7 +30,7 @@ module "build-bucket" {
   source        = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/gcs?ref=v54.2.0"
   project_id    = var.project_config.id
   prefix        = var.project_config.prefix
-  name          = "${var.name}-build"
+  name          = "${local.bucket_name}-build"
   location      = var.region
   versioning    = true
   force_destroy = !var.enable_deletion_protection
