@@ -55,7 +55,7 @@ locals {
     ? merge(
       var.service_directory_endpoints_configs,
       {
-        cloud-function = {
+        test-function = {
           ip_addresses = [local.lb_int_ip_address]
           port         = 443
         }
@@ -77,7 +77,7 @@ resource "google_service_directory_namespace" "sd_namespace" {
 
 resource "google_service_directory_service" "sd_services" {
   for_each   = local.service_directory_endpoints_configs
-  service_id = "${var.name}-${each.key}"
+  service_id = each.key
   namespace  = google_service_directory_namespace.sd_namespace[0].id
 }
 

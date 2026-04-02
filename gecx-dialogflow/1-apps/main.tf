@@ -42,13 +42,15 @@ module "dialogflow" {
   source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/ai-applications?ref=v54.2.0"
   name       = var.name
   project_id = var.project_config.id
-  location   = var.region_ai_applications
+  location   = var.region_agent
   data_stores_configs = {
     faq = {
+      location       = var.region_datastores
       content_config = "NO_CONTENT"
       solution_types = ["SOLUTION_TYPE_CHAT"]
     }
     kb = {
+      location                     = var.region_datastores
       content_config               = "CONTENT_REQUIRED"
       solution_types               = ["SOLUTION_TYPE_CHAT"]
       skip_default_schema_creation = true
