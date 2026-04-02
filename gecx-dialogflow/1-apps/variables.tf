@@ -117,9 +117,16 @@ variable "region" {
   default     = "europe-west1"
 }
 
-variable "region_ai_applications" {
+variable "region_agent" {
   type        = string
-  description = "The GCP region where to deploy the data store and Dialogflow."
+  description = "The GCP region where to deploy the Dialogflow agents."
+  nullable    = false
+  default     = "global"
+}
+
+variable "region_datastores" {
+  type        = string
+  description = "The GCP region where to deploy the Dialogflow data stores."
   nullable    = false
   default     = "global"
 }

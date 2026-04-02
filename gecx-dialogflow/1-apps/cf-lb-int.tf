@@ -134,7 +134,9 @@ module "lb_internal" {
   }
 }
 
-# DNS Zone for internal resolution
+# DNS Zone backed by Service Directory.
+# Service Directory service names are directly recorded here.
+# No need to insert them manually
 module "lb_internal_dns" {
   count      = var.cloud_function_config.create ? 1 : 0
   source     = "github.com/terraform-google-modules/cloud-foundation-fabric//modules/dns"
@@ -143,15 +145,11 @@ module "lb_internal_dns" {
   zone_config = {
     domain = "${var.lbs_config.internal.domain}."
     private = {
-      client_networks = [local.vpc_id]
+      client_networks             = [local.vpc_id]
+      service_directory_namespace = google_service_directory_namespace.sd_namespace[0].id
     }
   }
-  recordsets = {
-    ("A ${var.lbs_config.internal.domain}") = {
-      records = [module.lb_internal[0].address]
-      ttl     = 300
-    }
-  }
+  recordsets = {}
 }
 
 # LB certificate

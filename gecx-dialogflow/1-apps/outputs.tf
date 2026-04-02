@@ -14,13 +14,18 @@
 
 locals {
   _dialogflow_agent_id  = module.dialogflow.chat_engines["dialogflow"].chat_engine_metadata[0].dialogflow_agent
-  _dialogflow_apis      = "https://${local.uris_prefix}dialogflow.googleapis.com"
-  _discoveryengine_apis = "https://${local.uris_prefix}discoveryengine.googleapis.com"
+  _dialogflow_apis      = "https://${local.uris_prefix_agent}dialogflow.googleapis.com"
+  _discoveryengine_apis = "https://${local.uris_prefix_ds}discoveryengine.googleapis.com"
   agent_dir             = "./build/agent/dist"
-  uris_prefix = (
-    var.region_ai_applications == null || var.region_ai_applications == "global"
+  uris_prefix_agent = (
+    var.region_agent == null || var.region_agent == "global"
     ? ""
-    : "${var.region_ai_applications}-"
+    : "${var.region_agent}-"
+  )
+  uris_prefix_ds = (
+    var.region_datastores == null || var.region_datastores == "global"
+    ? ""
+    : "${var.region_datastores}-"
   )
   uris = {
     agent       = "${local._dialogflow_apis}/v3/${local._dialogflow_agent_id}:restore"
