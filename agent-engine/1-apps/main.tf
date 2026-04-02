@@ -19,7 +19,7 @@ data "archive_file" "source" {
 }
 
 module "agent" {
-  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/agent-engine?ref=v54.1.0"
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/agent-engine?ref=v54.2.0"
   name       = var.name
   project_id = var.project_config.id
   region     = var.region
