@@ -14,12 +14,13 @@
 
 module "cloud_function" {
   count            = var.cloud_function_config.create ? 1 : 0
-  source           = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/cloud-function-v2?ref=v54.1.0"
+  source           = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/cloud-function-v2?ref=v54.2.0"
   project_id       = var.project_config.id
-  region           = var.region
+  region           = var.regions.resources
   name             = var.name
   bucket_name      = module.gcs_bucket.name
-  ingress_settings = "ALLOW_INTERNAL_AND_GCLB"
+  ingress_settings = "ALLOW_INTERNAL_ONLY"
+  # ingress_settings = "ALLOW_INTERNAL_AND_GCLB"
   bundle_config = {
     path = var.cloud_function_config.bundle_path
   }
@@ -44,11 +45,12 @@ module "cloud_function" {
 }
 
 module "gcs_bucket" {
-  source                   = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/gcs?ref=v54.1.0"
+  source                   = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/gcs?ref=v54.2.0"
   project_id               = var.project_config.id
   prefix                   = var.project_config.prefix
   name                     = local.bucket_name
-  location                 = var.region
+  location                 = var.regions.resources
   versioning               = true
   public_access_prevention = "enforced"
+  force_destroy            = !var.enable_deletion_protection
 }

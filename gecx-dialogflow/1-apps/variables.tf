@@ -110,25 +110,16 @@ variable "project_config" {
   nullable = false
 }
 
-variable "region" {
-  type        = string
-  description = "The GCP region where to deploy the resources."
-  nullable    = false
-  default     = "europe-west1"
-}
-
-variable "region_agent" {
-  type        = string
+variable "regions" {
   description = "The GCP region where to deploy the Dialogflow agents."
-  nullable    = false
-  default     = "global"
-}
-
-variable "region_datastores" {
-  type        = string
-  description = "The GCP region where to deploy the Dialogflow data stores."
-  nullable    = false
-  default     = "global"
+  type = object({
+    agent      = optional(string, "europe-west1")
+    datastores = optional(string, "eu")
+    engine     = optional(string, "eu")
+    resources  = optional(string, "europe-west1")
+  })
+  nullable = false
+  default  = {}
 }
 
 variable "service_accounts" {
@@ -142,12 +133,23 @@ variable "service_accounts" {
 }
 
 # If the Cloud Function is created, its endpoint is automatically created
-variable "service_directory_endpoints_configs" {
+variable "service_directory_configs" {
   description = "The endpoints to be optionally created in Service Directory."
-  type = map(object({
-    ip_addresses = list(string)
-    port         = optional(number, 443)
-  }))
+  type = object({
+    cloud_dns_domain            = optional(string)
+    create_firewall_policy_rule = optional(bool, false)
+    endpoints = optional(map(object({
+      address  = string
+      port     = number
+      network  = optional(string, null)
+      metadata = optional(map(string), {})
+    })), {})
+    namespace_name = optional(string)
+    services = optional(map(object({
+      endpoints = list(string)
+      metadata  = optional(map(string), {})
+    })), {})
+  })
   nullable = false
   default  = {}
 }
