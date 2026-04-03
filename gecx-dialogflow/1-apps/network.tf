@@ -15,7 +15,7 @@
 locals {
   subnet_id = (
     var.networking_config.create
-    ? module.vpc[0].subnet_ids["${var.region}/${var.networking_config.subnet.name}"]
+    ? module.vpc[0].subnet_ids["${var.regions.resources}/${var.networking_config.subnet.name}"]
     : var.networking_config.subnet.name
   )
   vpc_id = (
@@ -26,21 +26,21 @@ locals {
 }
 
 module "vpc" {
-  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-vpc?ref=v54.1.0"
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-vpc?ref=v54.2.0"
   count      = var.networking_config.create ? 1 : 0
   project_id = var.project_config.id
   name       = var.networking_config.vpc_id
   subnets = [
-    merge(var.networking_config.subnet, { region = var.region })
+    merge(var.networking_config.subnet, { region = var.regions.resources })
   ]
   subnets_proxy_only = [
-    merge(var.networking_config.subnet_proxy_only, { region = var.region })
+    merge(var.networking_config.subnet_proxy_only, { region = var.regions.resources })
   ]
 }
 
 # DNS policies for Google APIs
 module "dns_policy_googleapis" {
-  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/dns-response-policy?ref=v54.1.0"
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/dns-response-policy?ref=v54.2.0"
   count      = var.networking_config.create ? 1 : 0
   project_id = var.project_config.id
   name       = "googleapis"
@@ -51,12 +51,8 @@ module "dns_policy_googleapis" {
 }
 
 module "firewall-policy" {
-  count = (
-    var.networking_config.create
-    && var.cloud_function_config.create
-    ? 1 : 0
-  )
-  source    = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-firewall-policy?ref=v54.1.0"
+  count     = var.service_directory_configs.create_firewall_policy_rule ? 1 : 0
+  source    = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-firewall-policy?ref=v54.2.0"
   name      = var.name
   parent_id = var.project_config.id
   region    = "global"
@@ -71,7 +67,7 @@ module "firewall-policy" {
         source_ranges = ["35.199.192.0/19"]
         layer4_configs = [{
           protocol = "tcp"
-          ports    = local.service_directory_ports
+          ports    = [80, 443]
         }]
       }
     }

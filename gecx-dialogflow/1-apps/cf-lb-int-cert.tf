@@ -14,9 +14,9 @@
 
 module "cas" {
   count      = var.cloud_function_config.create ? 1 : 0
-  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/certificate-authority-service?ref=v54.1.0"
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/certificate-authority-service?ref=v54.2.0"
   project_id = var.project_config.id
-  location   = var.region
+  location   = var.regions.resources
   ca_pool_config = {
     create_pool = {
       tier = "DEVOPS"

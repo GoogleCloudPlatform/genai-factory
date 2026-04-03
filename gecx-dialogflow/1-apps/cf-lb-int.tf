@@ -24,7 +24,7 @@ resource "google_compute_region_security_policy" "security_policy_internal" {
   count   = var.cloud_function_config.create ? 1 : 0
   name    = "${var.name}-internal"
   project = var.project_config.id
-  region  = var.region
+  region  = var.regions.resources
   type    = "CLOUD_ARMOR"
 
   dynamic "rules" {
@@ -69,15 +69,15 @@ resource "google_compute_address" "address_internal" {
   address_type = "INTERNAL"
   purpose      = "SHARED_LOADBALANCER_VIP"
   subnetwork   = local.subnet_id
-  region       = var.region
+  region       = var.regions.resources
 }
 
 module "lb_internal_redirect" {
   count                = var.cloud_function_config.create ? 1 : 0
-  source               = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-lb-app-int?ref=v54.1.0"
+  source               = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-lb-app-int?ref=v54.2.0"
   name                 = "${var.name}-internal-redirect"
   project_id           = var.project_config.id
-  region               = var.region
+  region               = var.regions.resources
   health_check_configs = {}
   address              = local.lb_int_ip_address
   urlmap_config = {
@@ -96,10 +96,10 @@ module "lb_internal_redirect" {
 
 module "lb_internal" {
   count                = var.cloud_function_config.create ? 1 : 0
-  source               = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-lb-app-int?ref=v54.1.0"
+  source               = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-lb-app-int?ref=v54.2.0"
   name                 = "${var.name}-internal"
   project_id           = var.project_config.id
-  region               = var.region
+  region               = var.regions.resources
   protocol             = "HTTPS"
   health_check_configs = {}
   address              = local.lb_int_ip_address
@@ -116,7 +116,7 @@ module "lb_internal" {
   neg_configs = {
     ("${var.name}-internal") = {
       cloudrun = {
-        region = var.region
+        region = var.regions.resources
         target_service = {
           name = module.cloud_function[0].function_name
         }
@@ -134,32 +134,14 @@ module "lb_internal" {
   }
 }
 
-# DNS Zone backed by Service Directory.
-# Service Directory service names are directly recorded here.
-# No need to insert them manually
-module "lb_internal_dns" {
-  count      = var.cloud_function_config.create ? 1 : 0
-  source     = "github.com/terraform-google-modules/cloud-foundation-fabric//modules/dns"
-  project_id = var.project_config.id
-  name       = var.name
-  zone_config = {
-    domain = "${var.lbs_config.internal.domain}."
-    private = {
-      client_networks             = [local.vpc_id]
-      service_directory_namespace = google_service_directory_namespace.sd_namespace[0].id
-    }
-  }
-  recordsets = {}
-}
-
 # LB certificate
 module "certificate_manager" {
   count      = var.cloud_function_config.create ? 1 : 0
-  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/certificate-manager?ref=v54.1.0"
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/certificate-manager?ref=v54.2.0"
   project_id = var.project_config.id
   certificates = {
     (var.name) = {
-      location = var.region
+      location = var.regions.resources
       managed = {
         domains         = [var.lbs_config.internal.domain]
         issuance_config = var.name
@@ -168,7 +150,7 @@ module "certificate_manager" {
   }
   issuance_configs = {
     (var.name) = {
-      location                   = var.region
+      location                   = var.regions.resources
       ca_pool                    = module.cas[0].ca_pool_id
       key_algorithm              = "ECDSA_P256"
       lifetime                   = "1814400s"

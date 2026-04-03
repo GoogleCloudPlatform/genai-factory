@@ -18,14 +18,14 @@ locals {
   _discoveryengine_apis = "https://${local.uris_prefix_ds}discoveryengine.googleapis.com"
   agent_dir             = "./build/agent/dist"
   uris_prefix_agent = (
-    var.region_agent == null || var.region_agent == "global"
+    var.regions.agent == null || var.regions.agent == "global"
     ? ""
-    : "${var.region_agent}-"
+    : "${var.regions.agent}-"
   )
   uris_prefix_ds = (
-    var.region_datastores == null || var.region_datastores == "global"
+    var.regions.datastores == null || var.regions.datastores == "global"
     ? ""
-    : "${var.region_datastores}-"
+    : "${var.regions.datastores}-"
   )
   uris = {
     agent       = "${local._dialogflow_apis}/v3/${local._dialogflow_agent_id}:restore"
