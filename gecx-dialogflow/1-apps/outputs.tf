@@ -13,7 +13,7 @@
 # limitations under the License.
 
 locals {
-  _dialogflow_agent_id  = module.dialogflow.chat_engines["dialogflow"].chat_engine_metadata[0].dialogflow_agent
+  _dialogflow_agent_id  = module.dialogflow.chat_agent_id
   _dialogflow_apis      = "https://${local.uris_prefix_agent}dialogflow.googleapis.com"
   _discoveryengine_apis = "https://${local.uris_prefix_ds}discoveryengine.googleapis.com"
   agent_dir             = "./build/agent/dist"

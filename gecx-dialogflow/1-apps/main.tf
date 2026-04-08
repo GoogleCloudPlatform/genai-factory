@@ -71,22 +71,20 @@ module "dialogflow" {
     }
   }
   engines_configs = {
-    dialogflow = {
-      engine_location = var.regions.engine
-      data_store_ids = [
-        "faq",
-        "kb"
-      ]
-      industry_vertical = "GENERIC"
-      company_name      = "Cymbal"
-      chat_engine_config = {
-        agent_config = {
-          location = var.regions.agent
-        }
-        allow_cross_region    = true
-        default_language_code = "en-us"
-        time_zone             = "Europe/Rome"
+    engine_location = var.regions.engine
+    data_store_ids = [
+      "faq",
+      "kb"
+    ]
+    industry_vertical = "GENERIC"
+    company_name      = "Cymbal"
+    chat_engine_config = {
+      agent_config = {
+        location = var.regions.agent
       }
+      allow_cross_region    = true
+      default_language_code = "en-us"
+      time_zone             = "Europe/Rome"
     }
   }
 }
