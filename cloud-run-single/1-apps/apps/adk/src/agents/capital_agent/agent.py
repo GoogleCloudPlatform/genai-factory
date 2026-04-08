@@ -22,6 +22,7 @@ from google.adk.agents import LlmAgent
 from pydantic import BaseModel, Field
 
 from src import config
+from src.model_armor import model_armor
 
 
 class CountryInput(BaseModel):
@@ -53,4 +54,7 @@ Use your knowledge to determine the capital and estimate the population. Do not 
     input_schema=CountryInput,
     output_schema=CapitalInfoOutput,
     output_key="result",
+    # Model Armor inspection of the prompt and LLM reply
+    before_model_callback=model_armor.sanitize_request,
+    after_model_callback=model_armor.sanitize_response
 )
