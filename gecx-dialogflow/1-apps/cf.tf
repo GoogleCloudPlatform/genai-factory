@@ -13,8 +13,7 @@
 # limitations under the License.
 
 module "cloud_function" {
-  count            = var.cloud_function_config.create ? 1 : 0
-  source           = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/cloud-function-v2?ref=v54.2.0"
+  source           = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/cloud-function-v2?ref=v54.3.0"
   project_id       = var.project_config.id
   region           = var.regions.resources
   name             = var.name
@@ -45,7 +44,7 @@ module "cloud_function" {
 }
 
 module "gcs_bucket" {
-  source                   = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/gcs?ref=v54.2.0"
+  source                   = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/gcs?ref=v54.3.0"
   project_id               = var.project_config.id
   prefix                   = var.project_config.prefix
   name                     = local.bucket_name

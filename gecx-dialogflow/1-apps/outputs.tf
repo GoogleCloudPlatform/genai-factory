@@ -33,94 +33,40 @@ locals {
     ds_faq      = "${local._discoveryengine_apis}/v1/${module.dialogflow.data_stores["faq"].name}/branches/0/documents:import"
     ds_kb       = "${local._discoveryengine_apis}/v1/${module.dialogflow.data_stores["kb"].name}/branches/0/documents:import"
   }
+  webhooks = merge(
+    {
+      function = {
+        uri = module.cloud_function.uri
+      }
+    },
+    {
+      for k, v in module.service_directory.service_id
+      : "sd-${k}" => {
+        allowed_ca_certs  = var.service_directory_configs.services[k].allowed_ca_certs
+        service_directory = v
+        uri               = "${module.service_directory.service_names[k]}.${var.service_directory_configs.cloud_dns_domain}"
+      }
+    }
+  )
 }
 
 output "commands" {
   description = "Run these commands to complete the deployment."
-  value       = <<EOT
-  # Run these commands to complete the deployment.
-  # Alternatively, deploy the agent through your CI/CD pipeline.
-
-  # Get bearer token impersonating iac-rw SA
-  export BEARER_TOKEN=$(gcloud auth print-access-token \
-    --impersonate-service-account ${var.service_accounts["project/iac-rw"].email})
-
-  # Load faq data into the data store
-  gcloud storage cp ./data/ds-faq/faq.csv ${module.ds-bucket.url}/ds-faq/ \
-    --impersonate-service-account ${var.service_accounts["project/iac-rw"].email} \
-    --billing-project ${var.project_config.id} &&
-  curl -X POST ${local.uris.ds_faq} \
-    -H "Authorization: Bearer $BEARER_TOKEN" \
-    -H "Content-Type: application/json" \
-    -H "X-Goog-User-Project: ${var.project_config.id}" \
-    -d '{
-        "autoGenerateIds": true,
-        "gcsSource":{
-          "inputUris":["${module.ds-bucket.url}/ds-faq/faq.csv"],
-          "dataSchema":"csv"
-        },
-        "reconciliationMode":"FULL"
-      }'
-
-  # Load kb data into the data store
-  uv run ./scripts/agentutil.py process-documents \
-    ./data/ds-kb/ \
-    ./build/data/ds-kb/ \
-    ${module.ds-bucket.url}/ds-kb/ \
-    --upload &&
-  curl -X POST ${local.uris.ds_kb} \
-    -H "Authorization: Bearer $BEARER_TOKEN" \
-    -H "Content-Type: application/json" \
-    -H "X-Goog-User-Project: ${var.project_config.id}" \
-    -d '{
-        "gcsSource":{
-          "inputUris":["${module.ds-bucket.url}/ds-kb/documents.jsonl"],
-          "dataSchema":"document"
-        },
-        "reconciliationMode":"FULL"
-      }'
-
-  # Build and deploy an agent variant
-  rm -rf ${local.agent_dir} &&
-  mkdir -p ${local.agent_dir} &&
-  cp -r ./data/agents/${var.agent_configs.variant}/* ${local.agent_dir} &&
-  uv run ./scripts/agentutil.py replace-data-store \
-    "${local.agent_dir}" \
-    "knowledge-base-and-faq" \
-    UNSTRUCTURED \
-    "${module.dialogflow.data_stores["kb"].name}" &&
-  uv run ./scripts/agentutil.py replace-data-store \
-    "./build/agent/dist" \
-    "knowledge-base-and-faq" \
-    STRUCTURED \
-    "${module.dialogflow.data_stores["faq"].name}" &&
-  zip -r ${local.agent_dir}/agent.dist.zip ${local.agent_dir}/* &&
-  gcloud storage cp ${local.agent_dir}/agent.dist.zip ${module.build-bucket.url}/agents/agent-${var.agent_configs.variant}.dist.zip \
-    --impersonate-service-account ${var.service_accounts["project/iac-rw"].email} \
-    --billing-project ${var.project_config.id} &&
-  curl -X POST ${local.uris.agent} \
-    -H "Authorization: Bearer $BEARER_TOKEN" \
-    -H "Content-Type: application/json" \
-    -H "X-Goog-User-Project: ${var.project_config.id}" \
-    -d '{
-        "agentUri": "${module.build-bucket.url}/agents/agent-${var.agent_configs.variant}.dist.zip"
-      }'
-
-  # Query the agent
-  curl -X POST ${local.uris.agent_query} \
-  -H "Authorization: Bearer $BEARER_TOKEN" \
-  -H "Content-Type: application/json" \
-  -H "X-Goog-User-Project: ${var.project_config.id}" \
-  -d '{
-        "query_input": {
-          "language_code": "${var.agent_configs.language}",
-          "text": {
-            "text": "Hello, bot"
-          }
-        }
-      }'
-
-  # To finalize the agent configuration go to
-  # https://conversational-agents.cloud.google.com/projects/${var.project_config.id}/locations/${var.regions["agent"]}/agents
-  EOT
+  value = templatefile("./templates/outputs.sh", {
+    agent_dir        = local.agent_dir
+    agent_language   = var.agent_configs.language
+    agent_region     = var.regions["agent"]
+    agent_uri        = local.uris["agent"]
+    agent_uri_query  = local.uris["agent_query"]
+    agent_variant    = var.agent_configs.variant
+    bucket_url_build = module.build-bucket.url
+    bucket_url_ds    = module.ds-bucket.url
+    ds_name_faq      = module.dialogflow.data_stores["faq"].name
+    ds_name_kb       = module.dialogflow.data_stores["kb"].name
+    ds_uri_faq       = local.uris["ds_faq"]
+    ds_uri_kb        = local.uris["ds_kb"]
+    project_id       = var.project_config.id
+    service_accounts = var.service_accounts
+    webhooks         = local.webhooks
+  })
 }

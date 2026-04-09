@@ -13,35 +13,33 @@
 # limitations under the License.
 
 module "service_directory" {
-  count      = length(var.service_directory_configs.endpoints) == 0 ? 0 : 1
-  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/service-directory?ref=v54.2.0"
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/service-directory?ref=v54.3.0"
   project_id = var.project_config.id
   location   = var.regions.resources
   name       = coalesce(var.service_directory_configs.namespace_name, var.name)
   services = {
     for k, v in var.service_directory_configs.services
-    : k => { endpoints = v.endpoints, metadata = v.metadata }
+    : k => { endpoints = v.endpoints, metadata = null}
   }
   endpoint_config = {
     for k, v in var.service_directory_configs.endpoints
-    : k => { address = v.address, port = v.port, metadata = v.metadata }
+    : k => { address = v.address, port = v.port, metadata = null}
   }
 }
 
 module "dns_service_directory" {
   count = (
-    var.service_directory_configs == null
-    || var.service_directory_configs.cloud_dns_domain == null
+    try(var.service_directory_configs.cloud_dns_domain, null) == null
     ? 0 : 1
   )
-  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/dns?ref=v54.2.0"
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/dns?ref=v54.3.0"
   project_id = var.project_config.id
   name       = replace(var.service_directory_configs.cloud_dns_domain, ".", "-")
   zone_config = {
     domain = "${var.service_directory_configs.cloud_dns_domain}."
     private = {
       client_networks             = [local.vpc_id]
-      service_directory_namespace = module.service_directory[0].id
+      service_directory_namespace = module.service_directory.id
     }
   }
 }

@@ -22,6 +22,7 @@ import io
 import json
 import logging
 import shutil
+import uuid
 import zipfile
 from enum import Enum
 from pathlib import Path
@@ -326,6 +327,83 @@ def process_documents(source_dir: str, dest_dir: str, gcs_path: str,
 
     except Exception as e:
         click.secho(f"\nAn error occurred: {e}", fg="red")
+
+
+@main.command()
+@click.argument("target_agent_dir",
+                type=click.Path(exists=True,
+                                file_okay=False,
+                                dir_okay=True,
+                                writable=True))
+@click.argument("display_name")
+@click.argument("uri")
+@click.option(
+    "--service-directory",
+    help="The Service Directory service name (e.g., projects/.../services/...)."
+)
+@click.option("--allowed-ca-certs",
+              multiple=True,
+              help="Allowed CA certificates for Service Directory.")
+@click.option("--timeout",
+              type=int,
+              default=5,
+              help="Timeout in seconds. Default is 5.")
+def create_webhook(target_agent_dir: str, display_name: str, uri: str,
+                   service_directory: Optional[str], allowed_ca_certs: tuple,
+                   timeout: int):
+    """
+    Creates a new webhook configuration file in the agent directory.
+
+    TARGET_AGENT_DIR: Local directory of the exported agent.
+    DISPLAY_NAME: The display name of the webhook.
+    URI: The URI of the generic web service.
+
+    Example:
+        agentutil create-webhook ./my-agent my-webhook https://...
+    """
+    agent_path = Path(target_agent_dir)
+    webhooks_dir = agent_path / "webhooks"
+    webhooks_dir.mkdir(parents=True, exist_ok=True)
+
+    webhook_id = str(uuid.uuid4())
+
+    webhook_data = {
+        "name": webhook_id,
+        "displayName": display_name,
+        "timeout": {
+            "seconds": timeout
+        }
+    }
+
+    if service_directory:
+        sd_config = {
+            "service": service_directory,
+            "genericWebService": {
+                "uri": uri,
+                "webhookType": "STANDARD"
+            }
+        }
+        if allowed_ca_certs:
+            sd_config["genericWebService"]["allowedCaCerts"] = list(
+                allowed_ca_certs)
+        webhook_data["serviceDirectory"] = sd_config
+    else:
+        webhook_data["genericWebService"] = {
+            "uri": uri,
+            "webhookType": "STANDARD"
+        }
+
+    webhook_file = webhooks_dir / f"{display_name}.json"
+
+    try:
+        with webhook_file.open('w', encoding='utf-8') as f:
+            json.dump(webhook_data, f, indent=2)
+
+        click.secho(
+            f"✅ Successfully created webhook '{display_name}' at {webhook_file}",
+            fg="green")
+    except Exception as e:
+        click.secho(f"Error creating webhook file: {e}", fg="red")
 
 
 if __name__ == "__main__":

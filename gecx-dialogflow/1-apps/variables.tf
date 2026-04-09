@@ -42,7 +42,6 @@ variable "cloud_function_config" {
   description = "The configuration of an optional Cloud Function to reach via Service Directory."
   type = object({
     bundle_path            = optional(string, "data/function")
-    create                 = optional(bool, false)
     direct_vpc_egress_mode = optional(string, "VPC_EGRESS_ALL_TRAFFIC")
     direct_vpc_egress_tags = optional(list(string), [])
     service_invokers       = optional(list(string), [])
@@ -56,23 +55,6 @@ variable "enable_deletion_protection" {
   type        = bool
   nullable    = false
   default     = true
-}
-
-variable "lbs_config" {
-  description = "The internal load balancers configuration (relevant only if cloud_function_config.create = true)."
-  type = object({
-    internal = object({
-      # The optional load balancer IP address.
-      # If not specified, the module will create one.
-      ip_address        = optional(string)
-      domain            = optional(string, "example.com")
-      allowed_ip_ranges = optional(list(string), ["0.0.0.0/0"])
-    })
-  })
-  nullable = false
-  default = {
-    internal = {}
-  }
 }
 
 variable "name" {
@@ -137,19 +119,31 @@ variable "service_directory_configs" {
   description = "The endpoints to be optionally created in Service Directory."
   type = object({
     cloud_dns_domain            = optional(string)
-    create_firewall_policy_rule = optional(bool, false)
+    create_firewall_policy_rule = optional(bool, true)
     endpoints = optional(map(object({
-      address  = string
-      port     = number
-      network  = optional(string, null)
-      metadata = optional(map(string), {})
+      address = string
+      port    = number
     })), {})
     namespace_name = optional(string)
     services = optional(map(object({
-      endpoints = list(string)
-      metadata  = optional(map(string), {})
+      allowed_ca_certs = optional(list(string))
+      endpoints        = list(string)
     })), {})
   })
   nullable = false
-  default  = {}
+  default = {
+    cloud_dns_domain            = "example.com"
+    create_firewall_policy_rule = true
+    endpoints = {
+      onprem-ep-one = {
+        address = "192.168.0.100"
+        port    = 443
+      }
+    }
+    services = {
+      onprem = {
+        endpoints = ["onprem-ep-one"]
+      }
+    }
+  }
 }

@@ -17,7 +17,7 @@ locals {
 }
 
 module "ds-bucket" {
-  source        = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/gcs?ref=v54.2.0"
+  source        = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/gcs?ref=v54.3.0"
   project_id    = var.project_config.id
   prefix        = var.project_config.prefix
   name          = "${local.bucket_name}-ds"
@@ -27,7 +27,7 @@ module "ds-bucket" {
 }
 
 module "build-bucket" {
-  source        = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/gcs?ref=v54.2.0"
+  source        = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/gcs?ref=v54.3.0"
   project_id    = var.project_config.id
   prefix        = var.project_config.prefix
   name          = "${local.bucket_name}-build"
@@ -39,8 +39,7 @@ module "build-bucket" {
 # See https://github.com/GoogleCloudPlatform/cloud-foundation-fabric/blob/master/modules/ai-applications/variables.tf
 # to learn how to customize this.
 module "dialogflow" {
-  source = "../../../cloud-foundation-fabric/modules/ai-applications"
-  # source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/ai-applications?ref=v54.2.0"
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/ai-applications?ref=v54.3.0"
   name       = var.name
   project_id = var.project_config.id
   location   = var.regions.agent
@@ -55,7 +54,7 @@ module "dialogflow" {
       content_config               = "CONTENT_REQUIRED"
       solution_types               = ["SOLUTION_TYPE_CHAT"]
       skip_default_schema_creation = true
-      json_schema                  = file("./data/ds-kb-schema.json")
+      json_schema                  = file("./data/ds-kb/ds-kb-schema.json")
       document_processing_config = {
         chunking_config = {
           layout_based_chunking_config = {
