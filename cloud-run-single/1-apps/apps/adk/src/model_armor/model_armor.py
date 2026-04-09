@@ -51,7 +51,7 @@ async def sanitize_request(callback_context: CallbackContext,
     if not user_text:
         return None
 
-    logger.info(f"Screening user prompt: '{user_text[:80]}...'")
+    logger.info(f"Screening user prompt")
     
     try:
         sanitize_request = modelarmor_v1.SanitizeUserPromptRequest(
@@ -94,7 +94,7 @@ async def sanitize_response(callback_context: CallbackContext,
     if not llm_response_text:
         return llm_response
 
-    logger.info(f"Screening llm response: '{llm_response_text[:80]}...'")
+    logger.info(f"Screening llm response")
     
     try:
         sanitize_request = modelarmor_v1.SanitizeUserPromptRequest(
