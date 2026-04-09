@@ -63,7 +63,7 @@ output "commands" {
       }'
 
   # Load kb data into the data store
-  uv run ./tools/agentutil.py process-documents \
+  uv run ./scripts/agentutil.py process-documents \
     ./data/ds-kb/ \
     ./build/data/ds-kb/ \
     ${module.ds-bucket.url}/ds-kb/ \
@@ -84,11 +84,16 @@ output "commands" {
   rm -rf ${local.agent_dir} &&
   mkdir -p ${local.agent_dir} &&
   cp -r ./data/agents/${var.agent_configs.variant}/* ${local.agent_dir} &&
-  uv run ./tools/agentutil.py replace-data-store \
+  uv run ./scripts/agentutil.py replace-data-store \
     "${local.agent_dir}" \
     "knowledge-base-and-faq" \
     UNSTRUCTURED \
     "${module.dialogflow.data_stores["kb"].name}" &&
+  uv run ./scripts/agentutil.py replace-data-store \
+    "./build/agent/dist" \
+    "knowledge-base-and-faq" \
+    STRUCTURED \
+    "${module.dialogflow.data_stores["faq"].name}" &&
   zip -r ${local.agent_dir}/agent.dist.zip ${local.agent_dir}/* &&
   gcloud storage cp ${local.agent_dir}/agent.dist.zip ${module.build-bucket.url}/agents/agent-${var.agent_configs.variant}.dist.zip \
     --impersonate-service-account ${var.service_accounts["project/iac-rw"].email} \
@@ -116,6 +121,6 @@ output "commands" {
       }'
 
   # To finalize the agent configuration go to
-  # https://conversational-agents.cloud.google.com/cx/projects/${var.project_config.id}
+  # https://conversational-agents.cloud.google.com/projects/${var.project_config.id}/locations/${var.regions["agent"]}/agents
   EOT
 }
