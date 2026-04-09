@@ -19,11 +19,11 @@ module "service_directory" {
   name       = coalesce(var.service_directory_configs.namespace_name, var.name)
   services = {
     for k, v in var.service_directory_configs.services
-    : k => { endpoints = v.endpoints, metadata = null}
+    : k => { endpoints = v.endpoints, metadata = null }
   }
   endpoint_config = {
     for k, v in var.service_directory_configs.endpoints
-    : k => { address = v.address, port = v.port, metadata = null}
+    : k => { address = v.address, port = v.port, metadata = null }
   }
 }
 
