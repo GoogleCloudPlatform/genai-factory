@@ -32,7 +32,6 @@ services:
   - privateca.googleapis.com
   # Needed for Model Armor
   - modelarmor.googleapis.com
-  - networkservices.googleapis.com
 
 buckets:
   iac-state:
