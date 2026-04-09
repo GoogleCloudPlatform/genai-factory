@@ -30,14 +30,12 @@ module "ai-apps" {
     }
   }
   engines_configs = {
-    app = {
-      data_store_ids = [
-        "ds"
-      ]
-      industry_vertical = "GENERIC"
-      search_engine_config = {
-        search_tier = "SEARCH_TIER_ENTERPRISE"
-      }
+    data_store_ids = [
+      "ds"
+    ]
+    industry_vertical = "GENERIC"
+    search_engine_config = {
+      search_tier = "SEARCH_TIER_ENTERPRISE"
     }
   }
 }
