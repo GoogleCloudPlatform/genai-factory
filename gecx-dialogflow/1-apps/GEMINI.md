@@ -42,7 +42,7 @@ This flow updates the data stores used by the conversational agent.
 
 This step utilizes the local `agentutil.py process-documents` CLI tool to preprocess markdown files and upload them to GCS.
 
-- **Command:** `uv run ./tools/agentutil.py process-documents`
+- **Command:** `uv run scripts/agentutil/agentutil.py process-documents`
 - **Variables:**
   - `module.ds-bucket.url` (Produced by Terraform module `ds-bucket`)
 
@@ -86,7 +86,7 @@ This flow packages a local agent variant, patches it with the correct data store
 
 This step utilizes the local `agentutil.py replace-data-store` CLI tool to modify the agent's files in-place, updating data store connections with actual IDs provisioned by Terraform.
 
-- **Command:** `uv run ./tools/agentutil.py replace-data-store`
+- **Command:** `uv run scripts/agentutil/agentutil.py replace-data-store`
 - **Variables:**
   - `local.agent_dir` (Static Terraform local)
   - `module.dialogflow.data_stores["kb"].name` (Produced by Terraform `module.dialogflow`)
@@ -151,7 +151,7 @@ This flow synchronizes changes made in the Dialogflow CX UI back to the local re
 
 #### Step 1: Export and Extract Agent
 
-- **Command:** `uv run tools/agentutil.py pull_agent`
+- **Command:** `uv run scripts/agentutil/agentutil.py pull_agent`
 - **Variables:**
   - `AGENT_REMOTE` (Provided by the User)
   - `AGENT_VARIANT` (Provided by the User)
@@ -162,7 +162,7 @@ This flow creates a new webhook configuration file dynamically within an agent v
 
 #### Step 1: Generate Webhook Configuration
 
-- **Command:** `uv run scripts/agentutil.py create-webhook`
+- **Command:** `uv run scripts/agentutil/agentutil.py create-webhook`
 - **Variables:**
   - `TARGET_AGENT_DIR` (Provided by the User, e.g., `./data/agents/default`)
   - `DISPLAY_NAME` (Provided by the User)

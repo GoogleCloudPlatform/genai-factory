@@ -23,7 +23,7 @@ curl -X POST ${ds_uri_faq} \
     }'
 
 # Load kb data into the data store
-uv run ./scripts/agentutil.py process-documents \
+uv run ./scripts/agentutil/agentutil.py process-documents \
   ./data/ds-kb/ \
   ./build/data/ds-kb/ \
   ${bucket_url_ds}/ds-kb/ \
@@ -44,12 +44,12 @@ curl -X POST ${ds_uri_kb} \
 rm -rf ${agent_dir} &&
 mkdir -p ${agent_dir} &&
 cp -r ./data/agents/${agent_variant}/* ${agent_dir} &&
-uv run ./scripts/agentutil.py replace-data-store \
+uv run ./scripts/agentutil/agentutil.py replace-data-store \
   "${agent_dir}" \
   "knowledge-base-and-faq" \
   UNSTRUCTURED \
   "${ds_name_kb}" &&
-uv run ./scripts/agentutil.py replace-data-store \
+uv run ./scripts/agentutil/agentutil.py replace-data-store \
   "./build/agent/dist" \
   "knowledge-base-and-faq" \
   STRUCTURED \
@@ -68,7 +68,7 @@ curl -X POST ${agent_uri} \
 
 
 %{ for k,v in webhooks ~}
-uv run ./scripts/agentutil.py create-webhook \
+uv run ./scripts/agentutil/agentutil.py create-webhook \
   ${agent_dir} \
   ${k} \
   ${v.uri}%{ if try(length(v.allowed_ca_certs) > 0, false) || try(v.service_directory, null) != null } \%{ endif }%{ if try(length(v.allowed_ca_certs) > 0, false) }

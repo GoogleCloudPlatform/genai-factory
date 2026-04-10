@@ -1,3 +1,17 @@
+# /// script
+# requires-python = ">=3.13"
+# dependencies = [
+#     "click",
+#     "google-cloud-dialogflow-cx",
+#     "google-cloud-storage",
+#     "markdown",
+# ]
+#
+# [[tool.uv.index]]
+# url = "https://pypi.org/simple"
+# default = true
+# ///
+
 # Copyright 2026 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
