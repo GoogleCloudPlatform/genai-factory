@@ -1,0 +1,15 @@
+{
+  "name": "b5579160-c245-47d9-87ac-9827a0e8b3a3",
+  "displayName": "test-with-sd",
+  "timeout": {
+    "seconds": 5
+  },
+  "serviceDirectory": {
+    "service": "projects/lpa-gf-gecx-df-0/locations/europe-west1/namespaces/gf-gecx-df-0/services/test-function",
+    "genericWebService": {
+      "uri": "https://test-function.example.com",
+      "allowedCaCerts": [ "MIIDSjCCAjKgAwIBAgITKyALJzq+NWcgAejKu05S3Li+CzANBgkqhkiG9w0BAQsFADAtMRUwEwYDVQQKEwxnZi1nZWN4LWRmLTAxFDASBgNVBAMTC2V4YW1wbGUuY29tMB4XDTI2MDQwMjA4Mjc0NFoXDTM2MDMzMDA4Mjc0M1owLTEVMBMGA1UEChMMZ2YtZ2VjeC1kZi0wMRQwEgYDVQQDEwtleGFtcGxlLmNvbTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAKkkh1G3tHRBl6yWeUN7RS5erBMY0z+fqHHR1kMhsTDRt0TcYyNFHq+XvGc7ELZmJcbSSEn9YI7SFXXKKter2W5Vdgdg/NtZFvWlFs2X17o70EogbtZjlrOPG+/PKK4sks4ZwBc97F9P6rEhkLOASE9cXlTf1S5JEmFKwFhRK/KLm2hfT6c7rQUwKTnOGdaXD7+EhrElSRM+QzTfSOCxJERgEqozkadhsH/NKQK7MNHFGu0fVVrAfGXZjNomlIJYzKpqrBiIz3DZxAj4bEowYvNtnxRXUoDwJJ5LiYtGsPM34LY7udCWTEaINVPovsExGGFsjI9ou2FNygE/8IZfnz8CAwEAAaNjMGEwDgYDVR0PAQH/BAQDAgEGMA8GA1UdEwEB/wQFMAMBAf8wHQYDVR0OBBYEFDEz2DV/msZkllfcH/jVsHPnY1BEMB8GA1UdIwQYMBaAFDEz2DV/msZkllfcH/jVsHPnY1BEMA0GCSqGSIb3DQEBCwUAA4IBAQBjFsoB6g2uB9Lk3JIFFRYbtGjmaqoVF++8oupAK4lxNyI+T22hH43UUfaWwSWvVCI35005e5ftSrvNC+BouugNJKwAGcUnN/FTWtW4kfcZz3dqMd0oWw1UGq+pDUYaYbi/9mkj39YPrCzfZOACqQoPBGel4ViSZ2pu49muA+ISNs9srxArrsEmr+MOE5oy9DEUNw4p7v26MRX6u+sDdRKq9VPDrcadgYkyBzsv2unKCS7PBbt2B2zr+vW6coqjNksrUpiPr25gyazWJaclwihJQPr2cx2fxjv8/AO2+63N7Q/IXyIG1f/QedLYLyd/L7OD++tMpESfcnm7nJWfFC2g" ],
+      "webhookType": "STANDARD"
+    }
+  }
+}

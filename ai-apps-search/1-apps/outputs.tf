@@ -13,7 +13,7 @@
 # limitations under the License.
 
 locals {
-  address = "https://discoveryengine.googleapis.com/v1/${module.ai-apps.search_engines["app"].name}/servingConfigs/default_search:search"
+  address = "https://discoveryengine.googleapis.com/v1/${module.ai-apps.search_engine.name}/servingConfigs/default_search:search"
   query   = "FAST networking stage documentation"
 }
 

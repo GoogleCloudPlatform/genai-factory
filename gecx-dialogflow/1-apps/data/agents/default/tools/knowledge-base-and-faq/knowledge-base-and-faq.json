@@ -3,13 +3,14 @@
   "displayName": "knowledge-base-and-faq",
   "description": "This is a collection of internal documents that the Customer Support Team at Cymbal Telecom consults to assist customers with their questions and issues.",
   "dataStoreSpec": {
-    "dataStoreConnections": [ {
+    "dataStoreConnections": [
+      {
       "dataStoreType": "UNSTRUCTURED",
-      "dataStore": "projects/802324843880/locations/eu/collections/default_collection/dataStores/manual-cymbal-telecom-unstructured-knowledge-base_1748945358222",
+      "dataStore": "projects/xxxxxxxxxx/locations/xxxxxxxxxx/collections/default_collection/dataStores/xxxxxxxxxx",
       "documentProcessingMode": "CHUNKS",
       "engineType": "CHAT_ENGINE",
       "connectorConfig": {
-      
+
       },
       "createTime": {
         "seconds": 1748945375,
@@ -20,27 +21,40 @@
         "seconds": 1748945475,
         "nanos": 597000000
       }
-    } ],
+    }, {
+      "dataStoreType": "STRUCTURED",
+      "dataStore": "projects/xxxxxxxxxx/locations/xxxxxxxxxx/collections/default_collection/dataStores/xxxxxxxxxx",
+      "documentProcessingMode": "DOCUMENTS",
+      "engineType": "CHAT_ENGINE",
+      "connectorConfig": {
+
+      },
+      "createTime": {
+        "seconds": 1775140240,
+        "nanos": 507932000
+      },
+      "displayName": "gf-gecx-df-0-faq",
+      "dialogflowAddTime": {
+        "seconds": 1775639733,
+        "nanos": 364000000
+      }
+    }
+  ],
     "models": {
       "summarizationModel": {
-      
+        "model": "default"
       },
       "rewriterModel": {
-      
+        "model": "default"
       }
     },
-    "fallbackPrompt": {
-    
-    },
     "groundingSettings": {
-    
+
     },
     "payloadSettings": {
-    
+
     },
-    "voiceModeSettings": {
-    
-    }
+    "mode": "MODE_DEFAULT"
   },
   "toolType": "CUSTOMIZED_TOOL"
 }

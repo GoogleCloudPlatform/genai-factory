@@ -73,7 +73,8 @@ jobs:
       - name: Boilerplate
         id: boilerplate
         run: |
-          uv run python tools/check_boilerplate.py $GITHUB_WORKSPACE
+          uv run python tools/check_boilerplate.py $GITHUB_WORKSPACE \
+            --exclude-file gecx-dialogflow/1-apps/templates/outputs.sh
 
       - name: Terraform Linting Check
         id: fmt

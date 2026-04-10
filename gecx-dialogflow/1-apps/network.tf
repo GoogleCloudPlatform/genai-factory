@@ -15,7 +15,7 @@
 locals {
   subnet_id = (
     var.networking_config.create
-    ? module.vpc[0].subnet_ids["${var.region}/${var.networking_config.subnet.name}"]
+    ? module.vpc[0].subnet_ids["${var.regions.resources}/${var.networking_config.subnet.name}"]
     : var.networking_config.subnet.name
   )
   vpc_id = (
@@ -31,10 +31,10 @@ module "vpc" {
   project_id = var.project_config.id
   name       = var.networking_config.vpc_id
   subnets = [
-    merge(var.networking_config.subnet, { region = var.region })
+    merge(var.networking_config.subnet, { region = var.regions.resources })
   ]
   subnets_proxy_only = [
-    merge(var.networking_config.subnet_proxy_only, { region = var.region })
+    merge(var.networking_config.subnet_proxy_only, { region = var.regions.resources })
   ]
 }
 
@@ -48,4 +48,28 @@ module "dns_policy_googleapis" {
     rules = "./data/dns-policy-rules.yaml"
   }
   networks = { (var.name) = module.vpc[0].id }
+}
+
+module "firewall-policy" {
+  count     = var.service_directory_configs.create_firewall_policy_rule ? 1 : 0
+  source    = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-firewall-policy?ref=v54.3.0"
+  name      = var.name
+  parent_id = var.project_config.id
+  region    = "global"
+  attachments = {
+    vpc = local.vpc_id
+  }
+  egress_rules = {}
+  ingress_rules = {
+    allow-service-directory = {
+      priority = 1000
+      match = {
+        source_ranges = ["35.199.192.0/19"]
+        layer4_configs = [{
+          protocol = "tcp"
+          ports    = [80, 443]
+        }]
+      }
+    }
+  }
 }
