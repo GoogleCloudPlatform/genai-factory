@@ -10,12 +10,12 @@ Genai-factory is a collection of **end-to-end blueprints to deploy generative AI
 
 ## Cloud Foundation Fabric Compatibility
 
-Works with Cloud Foundation Fabric from [v53.0.0](https://github.com/GoogleCloudPlatform/cloud-foundation-fabric/tree/v53.0.0).
+Works with Cloud Foundation Fabric from [v54.3.0](https://github.com/GoogleCloudPlatform/cloud-foundation-fabric/tree/v54.3.0).
 Compatibility with master is not guaranteed.
 
 ## Factories
 
-- [Agent Engine](./agent-engine/README.md) - An instance of Agent Engine that privately access your VPC resources, accesses Internet via SWP HTTP Proxy, running [ADK](./agent-engine/1-apps/apps/adk/README.md).
+- [Agent Engine](./agent-engine/README.md) - An instance of Agent Engine that privately access your VPC resources, accesses Internet via SWP HTTP Proxy, running [ADK](./agent-engine/1-apps/apps/adk/README.md) or [ADK with A2A support](./agent-engine/1-apps/apps/adk-a2a/README.md).
 - [Single Cloud Run](./cloud-run-single/README.md) - A secure Cloud Run deployment to interact with Gemini, run an [ADK agent](./cloud-run-single/1-apps/apps/adk/README.md), an [ADK agent exposed via A2A](./cloud-run-single/1-apps/apps/adk-a2a/README.md), a self-hosted [Gemma 3](./cloud-run-single/1-apps/apps/gemma/README.md) model with Nvidia L4 GPUs or a sample [MCP server](./cloud-run-single/1-apps/apps/mcp-server/README.md)
 - [Natural Language to SQL (NL2SQL)](./cloud-run-nl2sql-bq/README.md) - A secure agent on Cloud Run that allows users to securely query data from BigQuery by using a natural language.
 - [RAG with Cloud Run and CloudSQL](./cloud-run-rag-cloudsql/README.md) - A "Retrieval-Augmented Generation" (RAG) system leveraging Cloud Run, Cloud SQL and BigQuery.

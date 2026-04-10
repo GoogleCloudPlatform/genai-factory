@@ -12,22 +12,26 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+locals {
+  bucket_name = coalesce(var.bucket_name, var.name)
+}
+
 module "ds-bucket" {
-  source        = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/gcs?ref=v54.0.0"
+  source        = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/gcs?ref=v54.3.0"
   project_id    = var.project_config.id
   prefix        = var.project_config.prefix
-  name          = "${var.name}-ds"
-  location      = var.region
+  name          = "${local.bucket_name}-ds"
+  location      = var.regions.resources
   versioning    = true
   force_destroy = !var.enable_deletion_protection
 }
 
 module "build-bucket" {
-  source        = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/gcs?ref=v54.0.0"
+  source        = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/gcs?ref=v54.3.0"
   project_id    = var.project_config.id
   prefix        = var.project_config.prefix
-  name          = "${var.name}-build"
-  location      = var.region
+  name          = "${local.bucket_name}-build"
+  location      = var.regions.resources
   versioning    = true
   force_destroy = !var.enable_deletion_protection
 }
@@ -35,20 +39,22 @@ module "build-bucket" {
 # See https://github.com/GoogleCloudPlatform/cloud-foundation-fabric/blob/master/modules/ai-applications/variables.tf
 # to learn how to customize this.
 module "dialogflow" {
-  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/ai-applications?ref=v54.0.0"
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/ai-applications?ref=v54.3.0"
   name       = var.name
   project_id = var.project_config.id
-  location   = var.region_ai_applications
+  location   = var.regions.agent
   data_stores_configs = {
     faq = {
+      location       = var.regions.datastores
       content_config = "NO_CONTENT"
       solution_types = ["SOLUTION_TYPE_CHAT"]
     }
     kb = {
+      location                     = var.regions.datastores
       content_config               = "CONTENT_REQUIRED"
       solution_types               = ["SOLUTION_TYPE_CHAT"]
       skip_default_schema_creation = true
-      json_schema                  = file("./data/ds-kb-schema.json")
+      json_schema                  = file("./data/ds-kb/ds-kb-schema.json")
       document_processing_config = {
         chunking_config = {
           layout_based_chunking_config = {
@@ -64,17 +70,20 @@ module "dialogflow" {
     }
   }
   engines_configs = {
-    dialogflow = {
-      data_store_ids = [
-        "faq",
-        "kb"
-      ]
-      industry_vertical = "GENERIC"
-      company_name      = "Cymbal"
-      chat_engine_config = {
-        default_language_code = "en-us"
-        time_zone             = "Europe/Rome"
+    engine_location = var.regions.engine
+    data_store_ids = [
+      "faq",
+      "kb"
+    ]
+    industry_vertical = "GENERIC"
+    company_name      = "Cymbal"
+    chat_engine_config = {
+      agent_config = {
+        location = var.regions.agent
       }
+      allow_cross_region    = true
+      default_language_code = "en-us"
+      time_zone             = "Europe/Rome"
     }
   }
 }

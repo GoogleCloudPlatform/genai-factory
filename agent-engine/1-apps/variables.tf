@@ -16,7 +16,7 @@ variable "agent_engine_config" {
   description = "The agent configuration."
   type = object({
     agent_framework        = optional(string, "google-adk")
-    class_methods          = optional(list(any), [])
+    class_methods          = optional(string)
     enable_adk_telemetry   = optional(bool, true)
     enable_adk_msg_capture = optional(bool, true)
     enable_psc_i           = optional(bool, true)
@@ -107,6 +107,7 @@ variable "service_accounts" {
 variable "source_config" {
   description = "The source file configurations."
   type = object({
+    app_path          = optional(string, "adk")
     entrypoint_module = optional(string, "agent")
     entrypoint_object = optional(string, "agent")
     # path of the requirements.txt file inside the tar.gz archive
