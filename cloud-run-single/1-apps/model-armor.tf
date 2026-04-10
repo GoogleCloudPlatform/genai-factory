@@ -63,12 +63,12 @@ resource "google_model_armor_template" "model_armor_template" {
 }
 
 resource "google_model_armor_floorsetting" "floorsetting" {
-  count       = var.model_armor_floorsetting_config.enabled ? 1 : 0
-  location    = "global"
-  parent      = "projects/${var.project_config.id}"
+  count    = var.model_armor_floorsetting_config.enabled ? 1 : 0
+  location = "global"
+  parent   = "projects/${var.project_config.id}"
 
   filter_config {
-    
+
     rai_settings {
       dynamic "rai_filters" {
         for_each = var.model_armor_floorsetting_config.rai_filters
@@ -100,9 +100,9 @@ resource "google_model_armor_floorsetting" "floorsetting" {
   integrated_services = ["AI_PLATFORM"]
 
   ai_platform_floor_setting {
-    inspect_only            = var.model_armor_floorsetting_config.enforcement_type == "INSPECT_ONLY" ? true : null
-    inspect_and_block       = var.model_armor_floorsetting_config.enforcement_type == "INSPECT_AND_BLOCK" ? true : null
-    enable_cloud_logging    = var.model_armor_floorsetting_config.logging
+    inspect_only         = var.model_armor_floorsetting_config.enforcement_type == "INSPECT_ONLY" ? true : null
+    inspect_and_block    = var.model_armor_floorsetting_config.enforcement_type == "INSPECT_AND_BLOCK" ? true : null
+    enable_cloud_logging = var.model_armor_floorsetting_config.logging
   }
 
   floor_setting_metadata {
