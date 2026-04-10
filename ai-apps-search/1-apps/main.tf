@@ -15,7 +15,7 @@
 # See https://github.com/GoogleCloudPlatform/cloud-foundation-fabric/blob/master/modules/ai-applications/variables.tf
 # to learn how to customize this.
 module "ai-apps" {
-  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/ai-applications?ref=v54.2.0"
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/ai-applications?ref=v54.3.0"
   name       = var.name
   project_id = var.project_config.id
   location   = var.region_ai_applications
@@ -30,14 +30,12 @@ module "ai-apps" {
     }
   }
   engines_configs = {
-    app = {
-      data_store_ids = [
-        "ds"
-      ]
-      industry_vertical = "GENERIC"
-      search_engine_config = {
-        search_tier = "SEARCH_TIER_ENTERPRISE"
-      }
+    data_store_ids = [
+      "ds"
+    ]
+    industry_vertical = "GENERIC"
+    search_engine_config = {
+      search_tier = "SEARCH_TIER_ENTERPRISE"
     }
   }
 }

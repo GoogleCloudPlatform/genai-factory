@@ -20,20 +20,24 @@ values:
     display_name: gf-ai-apps-srch-0-ds
     document_processing_config: []
     industry_vertical: GENERIC
+    kms_key_name: null
     location: global
     project: prefix-gf-ai-apps-srch-0
     skip_default_schema_creation: false
     solution_types:
     - SOLUTION_TYPE_SEARCH
     timeouts: null
-  module.ai-apps.google_discovery_engine_search_engine.default["app"]:
+  module.ai-apps.google_discovery_engine_search_engine.default[0]:
+    app_type: null
     collection_id: default_collection
     common_config: []
     data_store_ids:
     - gf-ai-apps-srch-0-ds
-    display_name: gf-ai-apps-srch-0-app
-    engine_id: gf-ai-apps-srch-0-app
+    disable_analytics: null
+    display_name: gf-ai-apps-srch-0
+    engine_id: gf-ai-apps-srch-0
     industry_vertical: GENERIC
+    kms_key_name: null
     location: global
     project: prefix-gf-ai-apps-srch-0
     search_engine_config:
@@ -55,3 +59,7 @@ counts:
   google_discovery_engine_target_site: 1
   modules: 1
   resources: 3
+
+outputs:
+  commands: __missing__
+
