@@ -41,10 +41,17 @@ _MATCH_STRING = (r'^\s*[#\*]\sCopyright [0-9]{4} Google LLC$\s+[#\*]\s+'
 _MATCH_RE = re.compile(_MATCH_STRING, re.M)
 
 
-def check_files(root, files, errors, warnings):
+def check_files(root, files, errors, warnings, exclude_files=None):
+  if exclude_files is None:
+    exclude_files = set()
+  else:
+    exclude_files = {os.path.abspath(f) for f in exclude_files}
+
   for fname in files:
     if fname in _MATCH_FILES or os.path.splitext(fname)[1] in _MATCH_FILES:
       fpath = os.path.abspath(os.path.join(root, fname))
+      if fpath in exclude_files:
+        continue
       content = open(fpath).read()
       if _EXCLUDE_RE.search(content):
         continue
@@ -58,16 +65,17 @@ def check_files(root, files, errors, warnings):
 @click.command()
 @click.argument('paths', type=str, nargs=-1)
 @click.option('--scan-files', default=False, is_flag=True)
-def main(paths, scan_files=False):
+@click.option('--exclude-file', multiple=True, type=click.Path(), help='Paths of files to exclude.')
+def main(paths, scan_files=False, exclude_file=None):
   "Cycle through files in paths and check for the Apache 2.0 boilerplate."
   errors, warnings = [], []
   if scan_files:
-    check_files("./", paths, errors, warnings)
+    check_files("./", paths, errors, warnings, exclude_file)
   else:
     for dir in paths:
       for root, dirs, files in os.walk(dir):
         dirs[:] = [d for d in dirs if d not in _EXCLUDE_DIRS]
-        check_files(root, files, errors, warnings)
+        check_files(root, files, errors, warnings, exclude_file)
 
   if warnings:
     print('The following files cannot be accessed:')

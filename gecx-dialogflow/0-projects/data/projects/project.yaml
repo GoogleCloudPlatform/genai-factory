@@ -14,30 +14,85 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: gf-ai-apps-df-0
+name: gf-gecx-df-0
 
 # Enable APIs
 services:
   - dialogflow.googleapis.com
   - discoveryengine.googleapis.com
+  # Needed for Cloud Function (function create only)
+  - artifactregistry.googleapis.com
+  - cloudbuild.googleapis.com
+  - cloudfunctions.googleapis.com
+  - logging.googleapis.com
+  - run.googleapis.com
+  # Needed for network creation (function create only)
+  - compute.googleapis.com
+  - dns.googleapis.com
+  # Needed for ILB creation (function create only)
+  - certificatemanager.googleapis.com
+  - privateca.googleapis.com
+  # Only needed if you define private endpoints to be reached
+  # via Service Directory
+  - servicedirectory.googleapis.com
 
 buckets:
   iac-state:
     description: Terraform state bucket
     iam:
       roles/storage.objectAdmin:
-        - $iam_principals:service_accounts/project/iac-rw
+        - $iam_principals:service_accounts/_self_/iac-rw
       roles/storage.objectViewer:
-        - $iam_principals:service_accounts/project/iac-rw
+        - $iam_principals:service_accounts/_self_/iac-rw
 
 service_accounts:
   # Automation SAs
   iac-rw:
+    iam_bindings_additive:
+      cloud-run-token-creator:
+        member: $iam_principals:service_agents/_self_/cloudrun
+        role: roles/iam.serviceAccountTokenCreator
+    iam_sa_roles:
+      $service_account_ids:_self_/gecx-df-0:
+        - roles/iam.serviceAccountUser
+      $service_account_ids:_self_/gecx-df-build-0:
+        - roles/iam.serviceAccountUser
+  # Cloud Function SA (only used if Cloud Function is created)
+  gecx-df-0: {}
+  # SA dedicated for the Cloud Function build
+  # (only used if Cloud Function is created)
+  gecx-df-build-0: {}
 
 # Grant roles
 iam_by_principals:
-  $iam_principals:service_accounts/project/iac-rw:
+  $iam_principals:service_accounts/_self_/iac-rw:
     - roles/dialogflow.admin
     - roles/discoveryengine.admin
     - roles/serviceusage.serviceUsageConsumer
     - roles/storage.admin
+    # Needed to create Cloud Functions (function create only)
+    - roles/cloudfunctions.admin
+    # Needed for network administration (function create only)
+    - roles/compute.networkAdmin
+    - roles/compute.securityAdmin
+    - roles/dns.admin
+    # Needed for ILB (function create only)
+    - roles/certificatemanager.owner
+    - roles/compute.loadBalancerAdmin
+    - roles/privateca.admin
+    # Only needed if you define private endpoints to be reached
+    # via Service Directory
+    - roles/servicedirectory.admin
+  # The following role assignments are used only if Cloud Function is created
+  $iam_principals:service_accounts/_self_/gecx-df-0:
+    - roles/logging.logWriter
+    - roles/storage.objectViewer
+    - roles/artifactregistry.writer
+  $iam_principals:service_accounts/_self_/gecx-df-build-0:
+    - roles/run.builder
+    - roles/artifactregistry.reader
+  $iam_principals:service_agents/_self_/certificatemanager:
+    - roles/privateca.certificateRequester
+  $iam_principals:service_agents/_self_/dialogflow:
+    - roles/servicedirectory.pscAuthorizedService
+    - roles/servicedirectory.viewer

@@ -16,3 +16,4 @@ module: agent-engine/1-apps
 
 tests:
   simple:
+  a2a:

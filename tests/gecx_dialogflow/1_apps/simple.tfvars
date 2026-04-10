@@ -20,9 +20,19 @@ project_config = {
   prefix = "prefix"
 }
 service_accounts = {
+  "project/gecx-df-0" = {
+    email     = "gecx-df-0@prefix-gf-gecx-df-0.iam.gserviceaccount.com"
+    iam_email = "serviceAccount:gecx-df-0@prefix-gf-gecx-df-0.iam.gserviceaccount.com"
+    id        = "projects/prefix-gf-gecx-df-0/serviceAccounts/gecx-df-0@prefix-gf-gecx-df-0.iam.gserviceaccount.com"
+  }
+  "project/gecx-df-build-0" = {
+    email     = "gecx-df-build-0@prefix-gf-gecx-df-0.iam.gserviceaccount.com"
+    iam_email = "serviceAccount:gecx-df-build-0@prefix-gf-gecx-df-0.iam.gserviceaccount.com"
+    id        = "projects/prefix-gf-gecx-df-0/serviceAccounts/gecx-df-build-0@prefix-gf-gecx-df-0.iam.gserviceaccount.com"
+  }
   "project/iac-rw" = {
-    email     = "iac-rw@prefix-gf-ai-apps-df-0.iam.gserviceaccount.com"
-    iam_email = "serviceAccount:iac-rw@prefix-gf-ai-apps-df-0.iam.gserviceaccount.com"
-    id        = "projects/prefix-gf-ai-apps-df-0/serviceAccounts/iac-rw@prefix-gf-ai-apps-df-0.iam.gserviceaccount.com"
+    email     = "iac-rw@prefix-gf-gecx-df-0.iam.gserviceaccount.com"
+    iam_email = "serviceAccount:iac-rw@prefix-gf-gecx-df-0.iam.gserviceaccount.com"
+    id        = "projects/prefix-gf-gecx-df-0/serviceAccounts/iac-rw@prefix-gf-gecx-df-0.iam.gserviceaccount.com"
   }
 }

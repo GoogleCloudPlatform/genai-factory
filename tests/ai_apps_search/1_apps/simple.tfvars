@@ -18,10 +18,3 @@ project_config = {
   id     = "prefix-gf-ai-apps-srch-0"
   number = "123456789012"
 }
-service_accounts = {
-  "project/iac-rw" = {
-    email     = "iac-rw@prefix-gf-ai-apps-srch-0.iam.gserviceaccount.com"
-    iam_email = "serviceAccount:iac-rw@prefix-gf-ai-apps-srch-0.iam.gserviceaccount.com"
-    id        = "projects/prefix-gf-ai-apps-srch-0/serviceAccounts/iac-rw@prefix-gf-ai-apps-srch-0.iam.gserviceaccount.com"
-  }
-}
