@@ -18,10 +18,9 @@ The deployment consists of the following key components:
 - A **GCS bucket (build)** to source the AI Applications engine (Dialogflow agent configuration) from.
 
 **(Optional) Serverless Resources**
-- A sample **Cloud Function** configured to be accessed privately or through load balancers and direct VPC egress.
-- An **Internal application load balancer** pointing to the Function (+ Cloud Armor IP allowlist security backend policy + HTTP to HTTPS redirect + managed certificates + CAS + Cloud DNS private zone).
-- **Service Directory** to implement [Private Network Access](https://docs.cloud.google.com/service-directory/docs/private-network-access-overview) and privately connect to the function.
-- All the **underlying network resources**: a VPC, a subnet, some firewall policy rules for Service Directory, Private Google APIs routes and DNS policies. Optionally, this can be your (shared) VPC.
+- A sample **Cloud Function** configured to be accessed privately and configured with direct VPC egress. The function is accessible via webhook that directly access it from the user VPC.
+- **Service Directory** to implement [Private Network Access](https://docs.cloud.google.com/service-directory/docs/private-network-access-overview) and privately connect to a private IP on-premises. The blueprint uses one random private IP that users can customize.
+- All the **underlying network resources**: a VPC, a subnet, a firewall policy rule for Service Directory, Private Google APIs routes and DNS response policies. Optionally, this can be your (shared) VPC.
 
 ## Apply the factory
 

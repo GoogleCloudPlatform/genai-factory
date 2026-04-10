@@ -36,6 +36,8 @@ You can pull remote copies of your agent variants into your `data/agents` direct
 ```shell
 uv run scripts/agentutil/agentutil.py pull_agent {AGENT_REMOTE} data/agents/{AGENT_VARIANT}
 ```
+
+You can see the full list of commands available in agentutil.py [here](./scripts/agentutil/README.md).
 <!-- BEGIN TFDOC -->
 ## Variables
 
