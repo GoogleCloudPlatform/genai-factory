@@ -77,8 +77,8 @@ variable "lbs_config" {
   }
 }
 
-variable "model_armor_config" {
-  description = "The model armor configuration."
+variable "model_armor_template_config" {
+  description = "The model armor configuration for your application."
   type = object({
     enabled          = optional(bool, true)
     enforcement_type = optional(string, "INSPECT_AND_BLOCK")
@@ -97,43 +97,103 @@ variable "model_armor_config" {
     # PI and Jailbreak
     pi_and_jailbreak = optional(object({
       enabled          = optional(string, "ENABLED")
-      confidence_level = optional(string, "MEDIUM_AND_ABOVE")
+      confidence_level = optional(string, "HIGH")
     }), {})
 
     # Responsible AI (RAI) filters
     rai_filters = optional(object({
-      HATE_SPEECH       = optional(string, "MEDIUM_AND_ABOVE")
-      DANGEROUS         = optional(string, "MEDIUM_AND_ABOVE")
-      HARASSMENT        = optional(string, "MEDIUM_AND_ABOVE")
-      SEXUALLY_EXPLICIT = optional(string, "MEDIUM_AND_ABOVE")
+      HATE_SPEECH       = optional(string, "HIGH")
+      DANGEROUS         = optional(string, "HIGH")
+      HARASSMENT        = optional(string, "HIGH")
+      SEXUALLY_EXPLICIT = optional(string, "HIGH")
     }), {})
   })
   nullable = false
   default  = {}
 
   validation {
-    condition     = contains(["INSPECT_ONLY", "INSPECT_AND_BLOCK"], var.model_armor_config.enforcement_type)
+    condition     = contains(["INSPECT_ONLY", "INSPECT_AND_BLOCK"], var.model_armor_template_config.enforcement_type)
     error_message = "The enforcement_type must be either 'INSPECT_ONLY' or 'INSPECT_AND_BLOCK'."
   }
 
   validation {
     condition = alltrue([
-      contains(["ENABLED", "DISABLED"], var.model_armor_config.sdp.enabled),
-      contains(["ENABLED", "DISABLED"], var.model_armor_config.malicious_uri.enabled),
-      contains(["ENABLED", "DISABLED"], var.model_armor_config.pi_and_jailbreak.enabled)
+      contains(["ENABLED", "DISABLED"], var.model_armor_template_config.sdp.enabled),
+      contains(["ENABLED", "DISABLED"], var.model_armor_template_config.malicious_uri.enabled),
+      contains(["ENABLED", "DISABLED"], var.model_armor_template_config.pi_and_jailbreak.enabled)
     ])
     error_message = "The 'enabled' field for sdp, malicious_uri, and pi_and_jailbreak must be either 'ENABLED' or 'DISABLED'."
   }
 
   validation {
     condition = alltrue([
-      contains(["LOW_AND_ABOVE", "MEDIUM_AND_ABOVE", "HIGH_AND_ABOVE"], var.model_armor_config.pi_and_jailbreak.confidence_level),
-      contains(["LOW_AND_ABOVE", "MEDIUM_AND_ABOVE", "HIGH_AND_ABOVE"], var.model_armor_config.rai_filters.HATE_SPEECH),
-      contains(["LOW_AND_ABOVE", "MEDIUM_AND_ABOVE", "HIGH_AND_ABOVE"], var.model_armor_config.rai_filters.DANGEROUS),
-      contains(["LOW_AND_ABOVE", "MEDIUM_AND_ABOVE", "HIGH_AND_ABOVE"], var.model_armor_config.rai_filters.HARASSMENT),
-      contains(["LOW_AND_ABOVE", "MEDIUM_AND_ABOVE", "HIGH_AND_ABOVE"], var.model_armor_config.rai_filters.SEXUALLY_EXPLICIT),
+      contains(["LOW_AND_ABOVE", "MEDIUM_AND_ABOVE", "HIGH"], var.model_armor_template_config.pi_and_jailbreak.confidence_level),
+      contains(["LOW_AND_ABOVE", "MEDIUM_AND_ABOVE", "HIGH"], var.model_armor_template_config.rai_filters.HATE_SPEECH),
+      contains(["LOW_AND_ABOVE", "MEDIUM_AND_ABOVE", "HIGH"], var.model_armor_template_config.rai_filters.DANGEROUS),
+      contains(["LOW_AND_ABOVE", "MEDIUM_AND_ABOVE", "HIGH"], var.model_armor_template_config.rai_filters.HARASSMENT),
+      contains(["LOW_AND_ABOVE", "MEDIUM_AND_ABOVE", "HIGH"], var.model_armor_template_config.rai_filters.SEXUALLY_EXPLICIT),
     ])
-    error_message = "The confidence_level must be 'LOW_AND_ABOVE', 'MEDIUM_AND_ABOVE', or 'HIGH_AND_ABOVE'."
+    error_message = "The confidence_level must be 'LOW_AND_ABOVE', 'MEDIUM_AND_ABOVE', or 'HIGH'."
+  }
+}
+
+variable "model_armor_floorsetting_config" {
+  description = "The default model armor configuration for Vertex AI in your project."
+  type = object({
+    enabled          = optional(bool, true)
+    enforcement_type = optional(string, "INSPECT_AND_BLOCK")
+    logging          = optional(bool, true)
+
+    # Sensitive Data Protection (DLP)
+    sdp = optional(object({
+      enabled = optional(string, "ENABLED")
+    }), {})
+
+    # Malicious URI Filter
+    malicious_uri = optional(object({
+      enabled = optional(string, "ENABLED")
+    }), {})
+
+    # PI and Jailbreak
+    pi_and_jailbreak = optional(object({
+      enabled          = optional(string, "ENABLED")
+      confidence_level = optional(string, "HIGH")
+    }), {})
+
+    # Responsible AI (RAI) filters
+    rai_filters = optional(object({
+      HATE_SPEECH       = optional(string, "HIGH")
+      DANGEROUS         = optional(string, "HIGH")
+      HARASSMENT        = optional(string, "HIGH")
+      SEXUALLY_EXPLICIT = optional(string, "HIGH")
+    }), {})
+  })
+  nullable = false
+  default  = {}
+
+  validation {
+    condition     = contains(["INSPECT_ONLY", "INSPECT_AND_BLOCK"], var.model_armor_floorsetting_config.enforcement_type)
+    error_message = "The enforcement_type must be either 'INSPECT_ONLY' or 'INSPECT_AND_BLOCK'."
+  }
+
+  validation {
+    condition = alltrue([
+      contains(["ENABLED", "DISABLED"], var.model_armor_floorsetting_config.sdp.enabled),
+      contains(["ENABLED", "DISABLED"], var.model_armor_floorsetting_config.malicious_uri.enabled),
+      contains(["ENABLED", "DISABLED"], var.model_armor_floorsetting_config.pi_and_jailbreak.enabled)
+    ])
+    error_message = "The 'enabled' field for sdp, malicious_uri, and pi_and_jailbreak must be either 'ENABLED' or 'DISABLED'."
+  }
+
+  validation {
+    condition = alltrue([
+      contains(["LOW_AND_ABOVE", "MEDIUM_AND_ABOVE", "HIGH"], var.model_armor_floorsetting_config.pi_and_jailbreak.confidence_level),
+      contains(["LOW_AND_ABOVE", "MEDIUM_AND_ABOVE", "HIGH"], var.model_armor_floorsetting_config.rai_filters.HATE_SPEECH),
+      contains(["LOW_AND_ABOVE", "MEDIUM_AND_ABOVE", "HIGH"], var.model_armor_floorsetting_config.rai_filters.DANGEROUS),
+      contains(["LOW_AND_ABOVE", "MEDIUM_AND_ABOVE", "HIGH"], var.model_armor_floorsetting_config.rai_filters.HARASSMENT),
+      contains(["LOW_AND_ABOVE", "MEDIUM_AND_ABOVE", "HIGH"], var.model_armor_floorsetting_config.rai_filters.SEXUALLY_EXPLICIT),
+    ])
+    error_message = "The confidence_level must be 'LOW_AND_ABOVE', 'MEDIUM_AND_ABOVE', or 'HIGH'."
   }
 }
 

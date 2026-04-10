@@ -32,7 +32,6 @@ services:
   - privateca.googleapis.com
   # Needed for Model Armor
   - modelarmor.googleapis.com
-  - networkservices.googleapis.com
 
 buckets:
   iac-state:
@@ -75,6 +74,7 @@ iam_by_principals:
     - roles/privateca.admin
     # Needed for Model Armor
     - roles/modelarmor.admin
+    - roles/modelarmor.floorSettingsAdmin
   $iam_principals:service_accounts/project/gf-srun-0:
     - roles/logging.logWriter
   $iam_principals:service_accounts/project/gf-srun-build-0:
