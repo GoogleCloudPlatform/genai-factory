@@ -11,6 +11,17 @@ Genai-factory is a collection of **end-to-end blueprints to deploy generative AI
 The repository is composed of multiple factories.
 Each factory is a folder. The only folders that are not factories are `.github`, `tests`, `tools`.
 
+### Creating a New Factory
+
+When scaffolding a new factory, adhere to these rules:
+
+- **Naming:** The factory folder name should describe the use case (e.g., `cloud-run-nl2sql-bq`), the main product used underneath (e.g., `cloud-run-*`), or a mix of both.
+- **Sub-folders:** Each factory must contain exactly two stage folders: `0-projects` and `1-apps`.
+- **0-projects Structure:** The `0-projects` folder structure is identical across all factories, with the exception of the templates inside `data/projects`, and occasionally `templates/terraform.auto.tfvars.tpl` or `outputs.tf` depending on the values passed to `1-apps`.
+- **1-apps Structure:** The `1-apps` stage must always include an architecture diagram named `diagram.png`. This diagram must be linked in the `README.md` of `1-apps`.
+- **Applications:** The `1-apps` stage may contain an `apps` subfolder for application code (e.g., Python) deployed on top of the infrastructure. Commands to deploy these apps must be returned to the user via Terraform outputs in `1-apps`.
+- **Documentation:** The factory root folder, the `0-projects` stage, and the `1-apps` stage must all have a `README.md` file. These READMEs follow a standard logical structure consistent across the repository; review existing factories (e.g., `cloud-run-single`) to derive and replicate this structure.
+
 Each factory (folder) splits in two stages (two Terraform modules / two sub-folders):
 
 - **0-projects**: meant to be executed by infrastructure teams to prepare the project where the application team will deploy the resources and delegate permissions to the application team).
@@ -119,7 +130,11 @@ Tests are extensively explained in the [CONTRIBUTING.md](./CONTRIBUTING.md) file
 
 In short:
 
-- Tests live in the tests folder.
+- Tests live in the `tests` folder at the root of the repository.
+- When a new factory is added, a corresponding test folder must be created. The folder name must match the factory name but use underscores instead of dashes (e.g., `cloud_run_single` for the `cloud-run-single` factory).
+- Inside the factory test folder, create subfolders for each stage: `0_projects` and `1_apps` (note the underscore).
+- Each stage folder needs a `tftest.yaml` defining the tests. The primary/default test should be named `simple`.
+- Each test defined in `tftest.yaml` requires two corresponding files: a `terraform.tfvars` input file (e.g., `simple.tfvars`) and an expected inventory YAML output file (e.g., `simple.yaml`).
 - They test that a terraform plan (inventory) is consistent and equal to the expected, given a terraform.tfvars in input.
 - They are implemented using pytest and the tftest library.
 
@@ -142,7 +157,7 @@ uv run tools/plan_summary.py cloud-run-single/0-projects \
 
 - **Branching:** Use `feature-name`.
 - **Commits:** Create atomic commits with clear messages.
-- **Docs:** Do NOT manually edit the variables/outputs tables in READMEs; use `tfdoc.py`.
+- **Docs:** Do NOT manually edit the variables/outputs tables in READMEs; use `uv run tools/tfdoc.py`.
 
 ## Architecture & Conventions
 
@@ -159,6 +174,11 @@ uv run tools/plan_summary.py cloud-run-single/0-projects \
   - **Ternary Operators & Functions:** Wrap complex ternary operators in parentheses and break lines to align `?` and `:`. Split function calls with many arguments across multiple lines.
   - **Locals Separation:** Use module-level locals for values referenced directly by resources/outputs. Use block-level "private" locals prefixed with an underscore (`_`) for intermediate transformations.
   - **Complex Transformations:** Move complex data transformations in `for` or `for_each` loops to `locals` to keep resource blocks clean.
+
+- **Dependencies & Fabric Modules:**
+  - We build factories using existing Cloud Foundation Fabric modules alongside plain Terraform resources.
+  - The version of Fabric modules must be kept consistent across all modules used in all factories (usually pinned to the latest tag, e.g., `v45.1.0`).
+  - An automated nightly GitHub workflow checks for new tags using `uv run tools/fetch_latest_tag.py`. If a new tag is found, it updates the references with `uv run tools/update_fabric_ref.py`, runs tests, and creates a PR if successful. These scripts can also be executed manually to update dependencies.
 
 ## Preferred Workflow
 
