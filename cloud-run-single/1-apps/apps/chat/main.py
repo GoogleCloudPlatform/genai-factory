@@ -38,8 +38,7 @@ logger.info(
     config.PROJECT_ID,
     config.REGION,
 )
-genai_client = genai.Client(vertexai=True,
-                            project=config.PROJECT_ID,
+genai_client = genai.Client(vertexai=True, project=config.PROJECT_ID,
                             location=config.REGION)
 logger.info("Google GenAI client initialized successfully.")
 logger.debug("Model armor template: %s", config.MODEL_ARMOR_TEMPLATE)
@@ -59,54 +58,53 @@ MODEL_CONFIG = types.GenerateContentConfig(
 
 @app.get("/")
 async def root():
-    """Basic health check / info endpoint."""
+  """Basic health check / info endpoint."""
 
-    return {
-        "message": "Vertex AI ADC Sample App is running.",
-        "project_id": config.PROJECT_ID,
-        "region": config.REGION,
-        "model_endpoint_id": config.MODEL_NAME,
-    }
+  return {
+      "message": "Vertex AI ADC Sample App is running.",
+      "project_id": config.PROJECT_ID,
+      "region": config.REGION,
+      "model_endpoint_id": config.MODEL_NAME,
+  }
 
 
 @app.post("/predict")
 async def predict_route(request: Prompt):
-    """Endpoint to make a prediction using Vertex AI."""
+  """Endpoint to make a prediction using Vertex AI."""
 
-    if MODEL_NAME is None or MODEL_CONFIG is None:
-        logger.error("Vertex AI model not initialized.")
-        raise HTTPException(
-            status_code=500,
-            detail="Internal server error: Model not initialized.")
+  if MODEL_NAME is None or MODEL_CONFIG is None:
+    logger.error("Vertex AI model not initialized.")
+    raise HTTPException(status_code=500,
+                        detail="Internal server error: Model not initialized.")
 
-    logger.debug("Received prediction request with prompt: '%s...'",
-                 request.prompt[:100])
+  logger.debug("Received prediction request with prompt: '%s...'",
+               request.prompt[:100])
 
-    try:
-        response = genai_client.models.generate_content(
-            model=MODEL_NAME,
-            contents=request.prompt,
-            config=MODEL_CONFIG,
-        )
+  try:
+    response = genai_client.models.generate_content(
+        model=MODEL_NAME,
+        contents=request.prompt,
+        config=MODEL_CONFIG,
+    )
 
-        # --- Process Response ---
-        prediction_text = response.text
-        if prediction_text:
-            logger.debug("Successfully received prediction from Vertex AI: %s",
-                         prediction_text[:100])
-        else:
-            prediction_text = "Prompt was blocked by Model Armor."
-            logger.warning(
-                "Vertex AI returned an empty response. It may have been blocked by Model Armor."
-            )
+    # --- Process Response ---
+    prediction_text = response.text
+    if prediction_text:
+      logger.debug("Successfully received prediction from Vertex AI: %s",
+                   prediction_text[:100])
+    else:
+      prediction_text = "Prompt was blocked by Model Armor."
+      logger.warning(
+          "Vertex AI returned an empty response. It may have been blocked by Model Armor."
+      )
 
-    except exceptions.GoogleAPIError as e:
-        logger.error("Vertex AI API call failed: %s", e, exc_info=True)
-        prediction_text = "Failed to get an answer, please try again."
+  except exceptions.GoogleAPIError as e:
+    logger.error("Vertex AI API call failed: %s", e, exc_info=True)
+    prediction_text = "Failed to get an answer, please try again."
 
-    return {"prompt": request.prompt, "prediction": prediction_text}
+  return {"prompt": request.prompt, "prediction": prediction_text}
 
 
 if __name__ == "__main__":
-    server_port = int(os.environ.get("PORT", 8080))
-    uvicorn.run("main:app", host="0.0.0.0", port=server_port, log_level="info")
+  server_port = int(os.environ.get("PORT", 8080))
+  uvicorn.run("main:app", host="0.0.0.0", port=server_port, log_level="info")

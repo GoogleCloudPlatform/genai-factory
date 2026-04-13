@@ -1,3 +1,4 @@
+---
 # Copyright 2026 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,33 +13,28 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: "Linting"
+name: Linting
 on:
   pull_request:
-    branches:
-      - master
+    branches: [master]
   push:
-    branches:
-      - master
+    branches: [master]
   schedule:
-    - cron: '0 3 * * *'
+    - cron: 0 3 * * *
   workflow_dispatch:
     inputs:
       terraform_version:
-        description: "Use Terraform 1.13.4"
+        description: Use Terraform 1.13.4
         required: true
         default: 1.13.4
         type: string
-
 env:
   DEFAULT_TERRAFORM_VERSION: ${{ inputs.terraform_version || '1.13.4' }}
-
 jobs:
   linting:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - name: Set up uv and python
         uses: astral-sh/setup-uv@v6
         with:
@@ -47,17 +43,14 @@ jobs:
           cache-dependency-glob: |
             ./pyproject.toml
             ./uv.lock
-
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: ${{ env.DEFAULT_TERRAFORM_VERSION }}
-
       - name: Setup TFLint
         uses: terraform-linters/setup-tflint@v4
         with:
           tflint_version: v0.54.0
-
       - name: Init TFLint
         run: |
           cp .tflint.hcl ~
@@ -65,43 +58,52 @@ jobs:
         env:
           # https://github.com/terraform-linters/tflint/blob/master/docs/user-guide/plugins.md#avoiding-rate-limiting
           GITHUB_TOKEN: ${{ github.token }}
-
       - name: Install dependencies
         run: |
           uv sync --group tools
-
       - name: Boilerplate
         id: boilerplate
         run: |
           uv run python tools/check_boilerplate.py $GITHUB_WORKSPACE \
             --exclude-file gecx-dialogflow/1-apps/templates/outputs.sh
-
       - name: Terraform Linting Check
         id: fmt
         run: |
-          terraform fmt -recursive -check -diff $GITHUB_WORKSPACE
-
+          terraform fmt \
+            -recursive \
+            -check \
+            -diff $GITHUB_WORKSPACE
       - name: TFLint
-        run: cd cloud-run-single && tflint --recursive -f compact
-
+        run: tflint --recursive -f compact
       - name: Check documentation
         id: documentation
         run: |
           uv run python tools/check_documentation.py . \
             --show-diffs \
             --no-show-summary
-
       - name: Check documentation links
         id: documentation-links
         run: |
           uv run python tools/check_links.py . \
             --no-show-summary \
             --exclude ./gecx-dialogflow/1-apps/data/ds-kb
-
       - name: Check python formatting
         id: yapf
         run: |
           uv run yapf . \
             --parallel \
             --diff \
-            --recursive 
+            --recursive \
+            --exclude '*/.venv/*'
+      - name: Check YAML files
+        id: yaml-lint
+        run: uv run yamllint -c .yamllint .
+      - name: Check for spelling mistakes
+        id: codespell
+        run: uv run codespell .
+      - name: Check empty line at end of files
+        id: eof-check
+        run: |-
+          uv run pre-commit run end-of-file-fixer \
+            --all-files \
+            --show-diff-on-failure

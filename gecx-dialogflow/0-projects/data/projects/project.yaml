@@ -53,8 +53,7 @@ service_accounts:
         member: $iam_principals:service_agents/_self_/cloudrun
         role: roles/iam.serviceAccountTokenCreator
     iam_sa_roles:
-      $service_account_ids:_self_/gecx-df-0:
-        - roles/iam.serviceAccountUser
+      $service_account_ids:_self_/gecx-df-0: [roles/iam.serviceAccountUser]
       $service_account_ids:_self_/gecx-df-build-0:
         - roles/iam.serviceAccountUser
   # Cloud Function SA (only used if Cloud Function is created)

@@ -48,7 +48,6 @@ service_accounts:
         - roles/iam.serviceAccountUser
   # Agent custom SAs
   gf-ae-0: {}
-
 # Grant roles
 iam_by_principals:
   # Service agent roles needed for Agent Engine PSC-I.

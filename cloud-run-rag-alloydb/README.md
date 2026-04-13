@@ -11,7 +11,7 @@ A Cloud Run job periodically ingests sample [movies data](./1-apps/data/top-100-
 The deployment includes:
 
 - An **ingestion subsystem**, made of a private **Cloud Run job** with direct egress access to the user VPC, that reads sample data from **BigQuery**, leverages the **Vertex Text Embeddings APIs** and stores results in **AlloyDB**
-	
+
 - **Databases**:
 	- A **BigQuery dataset**, where users store their data to augment the model
 	- A private **AlloyDB** instance where the ingestion job stores the text embeddings.

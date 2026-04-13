@@ -33,7 +33,7 @@ logging.basicConfig(
 
 def find_similar_document_ids(query_embedding: List[float],
                               num_neighbors: int) -> List[str]:
-    """
+  """
     Searches for documents with embeddings similar to the query_embedding
     using Vertex AI Vector Search and returns their IDs.
 
@@ -44,53 +44,51 @@ def find_similar_document_ids(query_embedding: List[float],
     Returns:
         A list of strings, where each string is the ID of a similar document.
     """
-    if not all([
-            config.VECTOR_SEARCH_INDEX_ENDPOINT_NAME,
-            config.VECTOR_SEARCH_DEPLOYED_INDEX_ID
-    ]):
-        logging.warning(
-            "Vector Search is not configured. Skipping document search.")
-        return []
+  if not all([
+      config.VECTOR_SEARCH_INDEX_ENDPOINT_NAME,
+      config.VECTOR_SEARCH_DEPLOYED_INDEX_ID
+  ]):
+    logging.warning(
+        "Vector Search is not configured. Skipping document search.")
+    return []
 
-    try:
-        logging.info("Initializing Vertex AI Platform client.")
-        aiplatform.init(project=config.PROJECT_ID, location=config.REGION)
+  try:
+    logging.info("Initializing Vertex AI Platform client.")
+    aiplatform.init(project=config.PROJECT_ID, location=config.REGION)
 
-        index_endpoint = aiplatform.MatchingEngineIndexEndpoint(
-            index_endpoint_name=config.VECTOR_SEARCH_INDEX_ENDPOINT_NAME)
+    index_endpoint = aiplatform.MatchingEngineIndexEndpoint(
+        index_endpoint_name=config.VECTOR_SEARCH_INDEX_ENDPOINT_NAME)
 
-        index_endpoint.private_service_connect_ip_address = config.VECTOR_SEARCH_ENDPOINT_IP_ADDRESS
-        logging.info(
-            f"Using private service connect with IP: {config.VECTOR_SEARCH_ENDPOINT_IP_ADDRESS}"
-        )
+    index_endpoint.private_service_connect_ip_address = config.VECTOR_SEARCH_ENDPOINT_IP_ADDRESS
+    logging.info(
+        f"Using private service connect with IP: {config.VECTOR_SEARCH_ENDPOINT_IP_ADDRESS}"
+    )
 
-        logging.info(
-            f"Querying Vector Search index for {num_neighbors} neighbors.")
+    logging.info(f"Querying Vector Search index for {num_neighbors} neighbors.")
 
-        # The match method expects a list of queries.
-        # We are sending a single query.
-        response = index_endpoint.match(
-            deployed_index_id=config.VECTOR_SEARCH_DEPLOYED_INDEX_ID,
-            queries=[query_embedding],
-            num_neighbors=num_neighbors)
+    # The match method expects a list of queries.
+    # We are sending a single query.
+    response = index_endpoint.match(
+        deployed_index_id=config.VECTOR_SEARCH_DEPLOYED_INDEX_ID,
+        queries=[query_embedding], num_neighbors=num_neighbors)
 
-        # The response is a list of lists of MatchNeighbor objects.
-        neighbors = response[0] if response else []
+    # The response is a list of lists of MatchNeighbor objects.
+    neighbors = response[0] if response else []
 
-        # Return only the IDs of the neighbors.
-        # The calling function will be responsible for looking up the content.
-        document_ids = [neighbor.id for neighbor in neighbors]
+    # Return only the IDs of the neighbors.
+    # The calling function will be responsible for looking up the content.
+    document_ids = [neighbor.id for neighbor in neighbors]
 
-        logging.info(
-            f"Retrieved {len(document_ids)} similar document IDs from Vector Search."
-        )
-        return document_ids
+    logging.info(
+        f"Retrieved {len(document_ids)} similar document IDs from Vector Search."
+    )
+    return document_ids
 
-    except exceptions.GoogleAPICallError as e:
-        logging.error(f"Vector Search API call failed: {e}", exc_info=True)
-        return []
-    except Exception as e:
-        logging.error(
-            f"An unexpected error occurred during Vector Search query: {e}",
-            exc_info=True)
-        return []
+  except exceptions.GoogleAPICallError as e:
+    logging.error(f"Vector Search API call failed: {e}", exc_info=True)
+    return []
+  except Exception as e:
+    logging.error(
+        f"An unexpected error occurred during Vector Search query: {e}",
+        exc_info=True)
+    return []

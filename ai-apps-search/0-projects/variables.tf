@@ -43,7 +43,8 @@ variable "project_config" {
 }
 
 variable "region" {
-  description = "The region where to create the buckets."
+  description = "The GCP region."
   type        = string
+  nullable    = false
   default     = "europe-west1"
 }

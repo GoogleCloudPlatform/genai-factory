@@ -10,7 +10,7 @@
         <step name="handle-welcome-event">
             <trigger>A `PROACTIVE_WELCOME` event is received.</trigger>
             <action>
-                If {internal__event_type} is "PROACTIVE_WELCOME" then 
+                If {internal__event_type} is "PROACTIVE_WELCOME" then
                 provide a warm greeting, introduce yourself as the conversational assistant for {ui__brand_name} and ask how you can help them today.
             </action>
         </step>

@@ -18,13 +18,13 @@ import pathlib
 import hcl2
 import pytest
 import yaml
-
 'Pytest configuration.'
 
 pytest_plugins = (
     'tests.fixtures',
     'tests.collectors',
 )
+
 
 @pytest.fixture()
 def tfvars_to_yaml(request):

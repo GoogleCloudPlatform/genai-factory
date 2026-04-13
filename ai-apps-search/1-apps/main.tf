@@ -18,7 +18,7 @@ module "ai-apps" {
   source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/ai-applications?ref=v54.3.0"
   name       = var.name
   project_id = var.project_config.id
-  location   = var.region_ai_applications
+  location   = var.region
   data_stores_configs = {
     ds = {
       content_config              = "PUBLIC_WEBSITE"

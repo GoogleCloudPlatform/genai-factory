@@ -20,11 +20,10 @@ from google.cloud import storage
 logger = logging.getLogger(__name__)
 
 
-def stream_gcs_jsonl_file(bucket_name: str,
-                          blob_name: str,
-                          project_id: Optional[str] = None
-                          ) -> Generator[Dict[str, Any], None, None]:
-    """
+def stream_gcs_jsonl_file(
+    bucket_name: str, blob_name: str,
+    project_id: Optional[str] = None) -> Generator[Dict[str, Any], None, None]:
+  """
     Streams a JSONL file from GCS and yields each line as a parsed JSON object.
     This is memory-efficient for large files.
 
@@ -36,22 +35,20 @@ def stream_gcs_jsonl_file(bucket_name: str,
     Yields:
         A dictionary parsed from a line in the JSONL file.
     """
-    try:
-        storage_client = storage.Client(project=project_id)
-        bucket = storage_client.bucket(bucket_name)
-        blob = bucket.blob(blob_name)
+  try:
+    storage_client = storage.Client(project=project_id)
+    bucket = storage_client.bucket(bucket_name)
+    blob = bucket.blob(blob_name)
 
-        logger.info(f"Streaming file gs://{bucket_name}/{blob_name}...")
-        with blob.open("rt", encoding="utf-8") as f:
-            for line in f:
-                if line.strip():
-                    try:
-                        yield json.loads(line)
-                    except json.JSONDecodeError:
-                        logger.warning(
-                            f"Skipping malformed JSON line: {line.strip()}")
-    except Exception as e:
-        logger.error(
-            f"Failed to stream file 'gs://{bucket_name}/{blob_name}'. Error: {e}"
-        )
-        raise
+    logger.info(f"Streaming file gs://{bucket_name}/{blob_name}...")
+    with blob.open("rt", encoding="utf-8") as f:
+      for line in f:
+        if line.strip():
+          try:
+            yield json.loads(line)
+          except json.JSONDecodeError:
+            logger.warning(f"Skipping malformed JSON line: {line.strip()}")
+  except Exception as e:
+    logger.error(
+        f"Failed to stream file 'gs://{bucket_name}/{blob_name}'. Error: {e}")
+    raise

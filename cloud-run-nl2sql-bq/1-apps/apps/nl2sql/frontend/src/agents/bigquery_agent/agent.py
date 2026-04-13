@@ -49,59 +49,56 @@ bigquery_toolset = BigQueryToolset(tool_filter=["execute_sql"],
 
 
 def get_root_agent() -> LlmAgent:
-    """Creates and returns the root agent."""
-    logger.info("Initializing the bigquery_agent...")
-    database_settings = get_database_settings()
-    logger.info(
-        "Successfully loaded database settings during agent initialization.")
+  """Creates and returns the root agent."""
+  logger.info("Initializing the bigquery_agent...")
+  database_settings = get_database_settings()
+  logger.info(
+      "Successfully loaded database settings during agent initialization.")
 
-    def load_database_settings_in_context(callback_context: CallbackContext):
-        """Load database settings into the callback context on first use."""
-        session_id = (callback_context.session.id
-                      if callback_context.session else "Unknown")
-        logger.info(
-            f"[Session: {session_id}] Executing before_agent_callback.")
+  def load_database_settings_in_context(callback_context: CallbackContext):
+    """Load database settings into the callback context on first use."""
+    session_id = (callback_context.session.id
+                  if callback_context.session else "Unknown")
+    logger.info(f"[Session: {session_id}] Executing before_agent_callback.")
 
-        if "database_settings" not in callback_context.state:
-            logger.info(
-                f"[Session: {session_id}] loading database_settings into context state."
-            )
-            callback_context.state["database_settings"] = database_settings
-        else:
-            logger.info(
-                f"[Session: {session_id}] database_settings already present in context state."
-            )
+    if "database_settings" not in callback_context.state:
+      logger.info(
+          f"[Session: {session_id}] loading database_settings into context state."
+      )
+      callback_context.state["database_settings"] = database_settings
+    else:
+      logger.info(
+          f"[Session: {session_id}] database_settings already present in context state."
+      )
 
-    return LlmAgent(
-        model=Gemini(
-            model=config.ROOT_AGENT_MODEL,
-            retry_options=types.HttpRetryOptions(
-                attempts=5,
-                http_status_codes=[
-                    429,  # Too Many Requests
-                    500,  # Internal Server Error
-                    503,  # Service Unavailable
-                    504,  # Gateway Timeout
-                ],
-                exp_base=2.0,
-                initial_delay=1.0,
-                max_delay=60.0,
-            ),
-        ),
-        name="bigquery_agent",
-        instruction=(
-            ROOT_AGENT_PROMPT.format(
-                bq_data_project_id=config.BQ_DATA_PROJECT_ID,
-                bq_dataset_id=config.BQ_DATASET_ID) +
-            get_dataset_definitions_for_instructions(database_settings)),
-        global_instruction=(
-            f"You are a BigQuery NL2SQL agent. Today's date: {date.today()}\n"
-        ),
-        tools=[bigquery_toolset],
-        before_agent_callback=load_database_settings_in_context,
-        generate_content_config=types.GenerateContentConfig(
-            temperature=0.01, http_options=types.HttpOptions(timeout=120000)),
-    )
+  return LlmAgent(
+      model=Gemini(
+          model=config.ROOT_AGENT_MODEL,
+          retry_options=types.HttpRetryOptions(
+              attempts=5,
+              http_status_codes=[
+                  429,  # Too Many Requests
+                  500,  # Internal Server Error
+                  503,  # Service Unavailable
+                  504,  # Gateway Timeout
+              ],
+              exp_base=2.0,
+              initial_delay=1.0,
+              max_delay=60.0,
+          ),
+      ),
+      name="bigquery_agent",
+      instruction=(
+          ROOT_AGENT_PROMPT.format(bq_data_project_id=config.BQ_DATA_PROJECT_ID,
+                                   bq_dataset_id=config.BQ_DATASET_ID) +
+          get_dataset_definitions_for_instructions(database_settings)),
+      global_instruction=(
+          f"You are a BigQuery NL2SQL agent. Today's date: {date.today()}\n"),
+      tools=[bigquery_toolset],
+      before_agent_callback=load_database_settings_in_context,
+      generate_content_config=types.GenerateContentConfig(
+          temperature=0.01, http_options=types.HttpOptions(timeout=120000)),
+  )
 
 
 # Initialize the root agent and the application

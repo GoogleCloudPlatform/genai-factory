@@ -49,16 +49,13 @@ service_accounts:
         - roles/iam.serviceAccountUser
       $service_account_ids:project/gf-nl2sql-bq-fe-build-0:
         - roles/iam.serviceAccountUser
-
   # Application SAs
   gf-nl2sql-bq-fe-0: {}
   gf-nl2sql-bq-fe-build-0: {}
 
-
 # Grant roles
 iam:
-  roles/privateca.certificateRequester:
-    - $service_agents:certificatemanager
+  roles/privateca.certificateRequester: [$service_agents:certificatemanager]
 iam_by_principals:
   $iam_principals:service_accounts/project/iac-rw:
     - roles/artifactregistry.admin
@@ -87,8 +84,6 @@ iam_by_principals:
   $iam_principals:service_accounts/project/gf-nl2sql-bq-fe-0:
     - roles/bigquery.user
     - roles/bigquery.dataViewer
-
-
 # Grant roles/aiplatform.user as additive,
 # as it is authoritatively granted by aiplatform APIs to default SA
 iam_bindings_additive:

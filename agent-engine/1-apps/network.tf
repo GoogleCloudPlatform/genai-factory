@@ -28,11 +28,6 @@ locals {
     ? cidrhost(var.networking_config.subnet.ip_cidr_range, 100)
     : var.networking_config.proxy_ip
   )
-  vpc_id = (
-    var.networking_config.create
-    ? module.vpc[0].id
-    : var.networking_config.vpc_id
-  )
   vpc_name = (
     var.networking_config.create
     ? module.vpc[0].name

@@ -33,7 +33,6 @@ buckets:
 service_accounts:
   # Automation SAs
   iac-rw:
-
 # Grant roles
 iam_by_principals:
   $iam_principals:service_accounts/project/iac-rw:

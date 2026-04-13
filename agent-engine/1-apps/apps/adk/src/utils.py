@@ -14,9 +14,9 @@
 
 
 def str_to_bool(s):
-    """Convert a string representation of truth to True or False."""
-    s_lower = s.strip().lower()
-    if s_lower in ("yes", "true", "t", "on", "1"):
-        return True
-    else:
-        return False
+  """Convert a string representation of truth to True or False."""
+  s_lower = s.strip().lower()
+  if s_lower in ("yes", "true", "t", "on", "1"):
+    return True
+  else:
+    return False
