@@ -27,7 +27,7 @@
     }, {
       "text": "Carefully analyze the user's request to identify the specific information they are seeking (e.g., roaming rates for a country, details of a specific package, general terms, etc.)."
     }, {
-      "text": "Crucially, use ${TOOL:knowledge-base-and-faq} to retrieve all relevant information from the Cymbal Telecom's internal knwoledge base."
+      "text": "Crucially, use ${TOOL:knowledge-base-and-faq} to retrieve all relevant information from the Cymbal Telecom's internal knowledge base."
     }, {
       "text": "Based on the retrieved facts:",
       "steps": [ {
@@ -49,6 +49,6 @@
   },
   "playbookType": "ROUTINE",
   "codeBlock": {
-  
+
   }
 }

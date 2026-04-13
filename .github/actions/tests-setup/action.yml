@@ -1,3 +1,4 @@
+---
 # Copyright 2026 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -37,20 +38,17 @@ runs:
         cache-dependency-glob: |
           ./pyproject.toml
           ./uv.lock
-
     - name: Set up Terraform
       uses: hashicorp/setup-terraform@v3
       if: ${{ inputs.TERRAFORM_FLAVOUR == 'terraform' }}
       with:
         terraform_version: ${{ inputs.TERRAFORM_VERSION }}
         terraform_wrapper: false
-
     - uses: opentofu/setup-opentofu@v1
       if: ${{ inputs.TERRAFORM_FLAVOUR == 'tofu' }}
       with:
         tofu_version: ${{ inputs.TERRAFORM_VERSION }}
         tofu_wrapper: false
-
     - name: Configure provider cache
       shell: bash
       run: |
@@ -62,14 +60,16 @@ runs:
     - name: Download lockfile
       uses: actions/download-artifact@v4
       with:
-        name: lockfile-${{ runner.os }}-${{ inputs.TERRAFORM_FLAVOUR  }}-${{ inputs.TERRAFORM_VERSION }}
+        name: lockfile-${{ runner.os }}-${{ inputs.TERRAFORM_FLAVOUR  }}-${{ inputs.TERRAFORM_VERSION
+          }}
         path: tools/lockfile
     - name: Download Terraform provider cache
       uses: actions/cache@v4
       with:
         path: ${{ env.TF_PLUGIN_CACHE_DIR }}
-        key: ${{ runner.os }}-${{ inputs.TERRAFORM_FLAVOUR  }}-${{ inputs.TERRAFORM_VERSION }}-${{ hashFiles('tools/lockfile/.terraform.lock.hcl') }}
+        key: ${{ runner.os }}-${{ inputs.TERRAFORM_FLAVOUR  }}-${{ inputs.TERRAFORM_VERSION
+          }}-${{ hashFiles('tools/lockfile/.terraform.lock.hcl') }}
     - name: Install Python Dependencies
       shell: bash
-      run: |
+      run: |-
         uv sync --group test

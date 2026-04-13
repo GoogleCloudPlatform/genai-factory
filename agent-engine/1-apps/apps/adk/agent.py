@@ -31,19 +31,18 @@ def get_exchange_rate(
     currency_to: str = "EUR",
     currency_date: str = "latest",
 ):
-    proxies = None
-    if getattr(config, 'ENABLE_PSC_I', True):
-        proxies = {
-            "http": f"http://{config.PROXY_ADDRESS}:{config.PROXY_PORT}",
-            "https": f"http://{config.PROXY_ADDRESS}:{config.PROXY_PORT}",
-        }
-    response = requests.get(f"https://api.frankfurter.app/{currency_date}",
-                            params={
-                                "from": currency_from,
-                                "to": currency_to
-                            },
-                            proxies=proxies)
-    return response.json()
+  proxies = None
+  if getattr(config, 'ENABLE_PSC_I', True):
+    proxies = {
+        "http": f"http://{config.PROXY_ADDRESS}:{config.PROXY_PORT}",
+        "https": f"http://{config.PROXY_ADDRESS}:{config.PROXY_PORT}",
+    }
+  response = requests.get(f"https://api.frankfurter.app/{currency_date}",
+                          params={
+                              "from": currency_from,
+                              "to": currency_to
+                          }, proxies=proxies)
+  return response.json()
 
 
 root_agent = LlmAgent(

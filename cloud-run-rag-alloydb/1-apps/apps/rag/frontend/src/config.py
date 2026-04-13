@@ -43,7 +43,7 @@ ALLOYDB_INSTANCE_URI = "projects/" + os.environ.get("PROJECT_ID") \
                         + "/locations/" + os.environ.get("REGION", "europe-west1") \
                         + "/clusters/alloydb/instances/" + DB_NAME
 if not DB_NAME or not DB_SA:
-    raise ValueError("No env variables configured for DB_NAME or DB_SA")
+  raise ValueError("No env variables configured for DB_NAME or DB_SA")
 
 # Retriever Configuration
 RETRIEVER_TOP_K = int(os.environ.get("RETRIEVER_TOP_K", 10))

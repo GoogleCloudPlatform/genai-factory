@@ -38,10 +38,9 @@ locals {
     }
   }
   tfvars = {
-    buckets          = local.buckets
-    prefix           = var.project_config.prefix
-    projects         = local.projects
-    service_accounts = local.service_accounts
+    buckets  = local.buckets
+    prefix   = var.project_config.prefix
+    projects = local.projects
   }
 }
 

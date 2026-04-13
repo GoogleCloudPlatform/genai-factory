@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Pytest plugin to discover tests specified in YAML files.
 
 This plugin uses the pytest_collect_file hook to collect all files
@@ -81,10 +80,9 @@ class TestFile(pytest.File):
         if isinstance(inventories, list) and len(inventories) > 1:
           name = f'{test_name}[{i}]'
         yield TestItem.from_parent(self, name=name, module=module,
-                                         inventory=[i],
-                                         tf_var_files=tf_var_files,
-                                         extra_files=extra_files,
-                                         extra_dirs=extra_dirs)
+                                   inventory=[i], tf_var_files=tf_var_files,
+                                   extra_files=extra_files,
+                                   extra_dirs=extra_dirs)
 
 
 class TestItem(pytest.Item):

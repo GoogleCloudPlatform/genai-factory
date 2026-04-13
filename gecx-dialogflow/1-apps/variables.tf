@@ -28,16 +28,6 @@ variable "bucket_name" {
   default     = null
 }
 
-# Only used when ILBs are created.
-# CA pools can't be recreated in the same project with the same name.
-# This can be handy during experimentation
-variable "ca_pool_name_suffix" {
-  description = "The name suffix of the CA pool used for app ILB certificates."
-  type        = string
-  nullable    = false
-  default     = "ca-pool-0"
-}
-
 variable "cloud_function_config" {
   description = "The configuration of an optional Cloud Function to reach via Service Directory."
   type = object({

@@ -377,6 +377,7 @@ values:
         image: gcr.io/cloud-sql-connectors/cloud-sql-proxy
         liveness_probe: []
         name: cloud-sql-proxy
+        readiness_probe: []
         source_code: []
         volume_mounts: []
         working_dir: null
@@ -390,6 +391,7 @@ values:
         name: frontend
         ports:
         - container_port: 8080
+        readiness_probe: []
         source_code: []
         volume_mounts: []
         working_dir: null
@@ -489,6 +491,7 @@ values:
     - activation_policy: ALWAYS
       active_directory_config: []
       advanced_machine_features: []
+      auto_upgrade_enabled: null
       availability_type: REGIONAL
       collation: null
       database_flags:
@@ -517,6 +520,7 @@ values:
           psc_auto_connections: []
           psc_enabled: true
         server_ca_pool: null
+        server_certificate_rotation_mode: null
       maintenance_window: []
       password_validation_policy: []
       pricing_plan: PER_USE
@@ -526,6 +530,7 @@ values:
       time_zone: null
     timeouts: null
   module.cloudsql.google_sql_user.users["gf-rrag-fe-0@prefix-gf-rrag-0.iam.gserviceaccount.com"]:
+    database_roles: null
     deletion_policy: null
     instance: gf-rrag-0
     name: gf-rrag-fe-0@prefix-gf-rrag-0.iam
@@ -537,6 +542,7 @@ values:
     timeouts: null
     type: CLOUD_IAM_SERVICE_ACCOUNT
   module.cloudsql.google_sql_user.users["gf-rrag-ing-0@prefix-gf-rrag-0.iam.gserviceaccount.com"]:
+    database_roles: null
     deletion_policy: null
     instance: gf-rrag-0
     name: gf-rrag-ing-0@prefix-gf-rrag-0.iam
@@ -1521,6 +1527,7 @@ values:
     purpose: REGIONAL_MANAGED_PROXY
     region: europe-west1
     reserved_internal_range: null
+    resolve_subnet_mask: null
     role: ACTIVE
     send_secondary_ip_range_if_empty: null
     timeouts: null
@@ -1618,4 +1625,3 @@ outputs:
     \ \\\n    --image=europe-west1-docker.pkg.dev/prefix-gf-rrag-0/gf-rrag-0/frontend\
     \ \\\n    --set-env-vars DB_NAME=gf-rrag-0,DB_SA=gf-rrag-fe-0@prefix-gf-rrag-0.iam,DB_TABLE=gf-rrag-0,PROJECT_ID=prefix-gf-rrag-0,REGION=europe-west1\n"
   ip_addresses: __missing__
-

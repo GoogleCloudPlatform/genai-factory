@@ -13,7 +13,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 '''Check that boilerplate is present in relevant files.
 
 This tools offers a simple way of ensuring that the required boilerplate header
@@ -24,7 +23,6 @@ The interface is purposefully simple and only supports passing one or more
 folder paths as arguments, as this tool is designed to be run in CI pipelines
 triggered by pull requests.
 '''
-
 
 import os
 import re
@@ -65,7 +63,8 @@ def check_files(root, files, errors, warnings, exclude_files=None):
 @click.command()
 @click.argument('paths', type=str, nargs=-1)
 @click.option('--scan-files', default=False, is_flag=True)
-@click.option('--exclude-file', multiple=True, type=click.Path(), help='Paths of files to exclude.')
+@click.option('--exclude-file', multiple=True, type=click.Path(),
+              help='Paths of files to exclude.')
 def main(paths, scan_files=False, exclude_file=None):
   "Cycle through files in paths and check for the Apache 2.0 boilerplate."
   errors, warnings = [], []

@@ -66,11 +66,11 @@
       "languageCode": "en",
       "documentProcessingMode": "CHUNKS",
       "aclConfig": {
-      
+
       },
       "engineType": "CHAT_ENGINE",
       "connectorConfig": {
-      
+
       },
       "createTime": {
         "seconds": 1748945375,

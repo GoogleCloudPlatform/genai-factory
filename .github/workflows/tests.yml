@@ -1,3 +1,4 @@
+---
 # Copyright 2026 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,32 +13,28 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: "Tests"
+name: Tests
 on:
   pull_request:
-    branches:
-      - master
+    branches: [master]
   push:
-    branches:
-      - master
+    branches: [master]
   workflow_dispatch:
     inputs:
       terraform_version:
-        description: "Use Terraform 1.13.4"
+        description: Use Terraform 1.13.4
         required: true
         default: 1.13.4
         type: string
-
 env:
-  GOOGLE_APPLICATION_CREDENTIALS: "/home/runner/credentials.json"
-  PYTEST_ADDOPTS: "--color=yes"
-  PYTHON_VERSION: "3.12"
-  TF_PLUGIN_CACHE_DIR: "/home/runner/.terraform.d/plugin-cache"
+  GOOGLE_APPLICATION_CREDENTIALS: /home/runner/credentials.json
+  PYTEST_ADDOPTS: --color=yes
+  PYTHON_VERSION: '3.12'
+  TF_PLUGIN_CACHE_DIR: /home/runner/.terraform.d/plugin-cache
   TFTEST_COPY: 1
   DEFAULT_TERRAFORM_FLAVOUR: terraform
   DEFAULT_TERRAFORM_VERSION: ${{ inputs.terraform_version || '1.13.4' }}
-  DEFAULT_TOFU_VERSION: "1.10.0"
-
+  DEFAULT_TOFU_VERSION: 1.10.0
 jobs:
   compute-matrix:
     runs-on: ubuntu-latest
@@ -48,33 +45,28 @@ jobs:
     steps:
       - name: dummy
         run: echo
-
   setup-tf-providers:
     runs-on: ubuntu-latest
-    needs:
-      - compute-matrix
+    needs: [compute-matrix]
     strategy:
       matrix:
         include:
           - flavour: terraform
-            version: "${{ needs.compute-matrix.outputs.DEFAULT_TERRAFORM_VERSION }}"
+            version: ${{ needs.compute-matrix.outputs.DEFAULT_TERRAFORM_VERSION }}
           - flavour: tofu
-            version: "${{ needs.compute-matrix.outputs.DEFAULT_TOFU_VERSION }}"
+            version: ${{ needs.compute-matrix.outputs.DEFAULT_TOFU_VERSION }}
     steps:
       - uses: actions/checkout@v4
-
       - uses: hashicorp/setup-terraform@v3
         if: ${{ matrix.flavour == 'terraform' }}
         with:
           terraform_version: ${{ matrix.version  }}
           terraform_wrapper: false
-
       - uses: opentofu/setup-opentofu@v1
         if: ${{ matrix.flavour == 'tofu' }}
         with:
           tofu_version: ${{ matrix.version }}
           tofu_wrapper: false
-
       - name: Build lockfile and fetch providers
         shell: bash
         run: |
@@ -85,40 +77,34 @@ jobs:
 
           # change terraform version to the one that is running
           sed -i 's/required_version = .*$/required_version = ">= ${{ matrix.version }}"/g' tools/lockfile/versions.tf
-
           cd tools/lockfile
           ${{ matrix.flavour }} init
-
       - name: Upload Terraform provider cache
         uses: actions/cache@v4
         with:
           path: ${{ env.TF_PLUGIN_CACHE_DIR }}
-          key: ${{ runner.os }}-${{ matrix.flavour }}-${{ matrix.version }}-${{ hashFiles('tools/lockfile/.terraform.lock.hcl') }}
-
+          key: ${{ runner.os }}-${{ matrix.flavour }}-${{ matrix.version }}-${{ hashFiles('tools/lockfile/.terraform.lock.hcl')
+            }}
       - name: Upload lockfile
         uses: actions/upload-artifact@v4
         with:
-          name: lockfile-${{ runner.os }}-${{ matrix.flavour }}-${{ matrix.version }}
+          name: lockfile-${{ runner.os }}-${{ matrix.flavour }}-${{ matrix.version
+            }}
           path: tools/lockfile/.terraform.lock.hcl
           overwrite: true
           include-hidden-files: true
-
   tests:
     runs-on: ubuntu-latest
-    needs:
-      - setup-tf-providers
-      - compute-matrix
+    needs: [setup-tf-providers, compute-matrix]
     strategy:
       matrix:
         include:
           - flavour: terraform
-            version: "${{ needs.compute-matrix.outputs.DEFAULT_TERRAFORM_VERSION }}"
+            version: ${{ needs.compute-matrix.outputs.DEFAULT_TERRAFORM_VERSION }}
           - flavour: tofu
-            version: "${{ needs.compute-matrix.outputs.DEFAULT_TOFU_VERSION }}"
-
+            version: ${{ needs.compute-matrix.outputs.DEFAULT_TOFU_VERSION }}
     steps:
       - uses: actions/checkout@v4
-
       - name: Call composite action tests-setup
         uses: ./.github/actions/tests-setup
         env:
@@ -127,19 +113,16 @@ jobs:
           PYTHON_VERSION: ${{ env.PYTHON_VERSION }}
           TERRAFORM_VERSION: ${{ matrix.version }}
           TERRAFORM_FLAVOUR: ${{ matrix.flavour }}
-
       - name: Run tests
         env:
           TERRAFORM: ${{ matrix.flavour }}
-        run: uv run pytest -vv ${{ matrix.flavour == 'terraform' && '-n4' || '-n4' }} --tb=line --junit-xml=test-results-raw.xml tests
-
+        run: uv run pytest -vv ${{ matrix.flavour == 'terraform' && '-n4' || '-n4' }}
+          --tb=line --junit-xml=test-results-raw.xml tests
       - name: Create report
         uses: ./.github/actions/gen-test-report
         if: always()
-
   dependabot:
-    needs:
-      - tests
+    needs: [tests]
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
@@ -149,7 +132,7 @@ jobs:
       - id: metadata
         uses: dependabot/fetch-metadata@v2
         with:
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          github-token: ${{ secrets.GITHUB_TOKEN }}
       - run: |
           gh pr review --approve "$PR_URL"
           gh pr merge --squash --auto "$PR_URL"
