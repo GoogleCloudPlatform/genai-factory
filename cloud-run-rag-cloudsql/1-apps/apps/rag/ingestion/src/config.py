@@ -44,7 +44,7 @@ DB_SA = os.environ.get("DB_SA")
 DB_TABLE = os.environ.get("DB_TABLE", "movie_embeddings")
 
 if not DB_NAME or not DB_SA:
-    raise ValueError("No env variables configure for DB_NAME or DB_SA")
+  raise ValueError("No env variables configure for DB_NAME or DB_SA")
 
 # Columns Configuration
 GENERATED_ID_COLUMN_NAME = os.environ.get("GENERATED_ID_COLUMN_NAME", "id")

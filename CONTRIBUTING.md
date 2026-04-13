@@ -53,6 +53,64 @@ uv add <dependency>
 ./tools/tfdoc.py cloud-run-single/0-projects
 ```
 
+### Run linting
+
+```shell
+# Terraform formatting
+terraform fmt \
+  -recursive \
+  -check \
+  -diff .
+
+# Terraform linting
+tflint \
+  --recursive \
+  -f compact
+
+# Terraform modules documentation
+uv run python tools/check_documentation.py . \
+  --show-diffs \
+  --no-show-summary
+
+# Python
+uv run yapf . \
+  --parallel \
+  --diff \
+  --recursive \
+  --exclude '*/.venv/*'
+
+# Yaml
+uv run yamllint -c .yamllint .
+
+# Spelling
+uv run codespell .
+
+# Valid links
+uv run python tools/check_links.py . \
+  --no-show-summary \
+  --exclude ./gecx-dialogflow/1-apps/data/ds-kb
+```
+
+If you receive warnings or errors you may use these commands for fixes:
+
+```shell
+# Terraform formatting
+terraform fmt \
+  -recursive .
+
+# Python
+yapf . \
+  --parallel \
+  --recursive \
+  -i
+
+# Yaml
+uv run yamlfix . \
+  --exclude "**/templates/**" \
+  --exclude "**/.terraform/**" \
+  --exclude "**/.venv/**"
+```
+
 ### Run tests
 
 ```shell

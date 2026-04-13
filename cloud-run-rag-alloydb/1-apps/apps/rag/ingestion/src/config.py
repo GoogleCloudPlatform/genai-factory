@@ -47,7 +47,7 @@ ALLOYDB_INSTANCE_URI = "projects/" + os.environ.get("PROJECT_ID") \
                         + "/locations/" + os.environ.get("REGION", "europe-west1") \
                         + "/clusters/alloydb/instances/" + DB_NAME
 if not DB_NAME or not DB_SA:
-    raise ValueError("No env variables configured for DB_NAME or DB_SA")
+  raise ValueError("No env variables configured for DB_NAME or DB_SA")
 
 # Columns Configuration
 GENERATED_ID_COLUMN_NAME = os.environ.get("GENERATED_ID_COLUMN_NAME", "id")

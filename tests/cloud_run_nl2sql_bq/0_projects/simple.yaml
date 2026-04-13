@@ -1,3 +1,4 @@
+---
 # Copyright 2026 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -11,145 +12,144 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 values:
   google_service_account_iam_member.me_sa_token_creator[0]:
     condition: []
     role: roles/iam.serviceAccountTokenCreator
     service_account_id: projects/your-prefix-gf-nl2sql-bq-0/serviceAccounts/iac-rw@your-prefix-gf-nl2sql-bq-0.iam.gserviceaccount.com
   local_file.providers:
-    content_base64: null
+    content_base64:
     directory_permission: '0777'
     file_permission: '0644'
     filename: ../1-apps/providers.tf
-    sensitive_content: null
-    source: null
+    sensitive_content:
+    source:
   local_file.tfvars:
-    content_base64: null
+    content_base64:
     directory_permission: '0777'
     file_permission: '0644'
     filename: ../1-apps/terraform.auto.tfvars
-    sensitive_content: null
-    source: null
+    sensitive_content:
+    source:
   module.projects.module.buckets["project/iac-state"].google_storage_bucket.bucket[0]:
     autoclass: []
     cors: []
     custom_placement_config: []
-    default_event_based_hold: null
+    default_event_based_hold:
     effective_labels:
       goog-terraform-provisioned: 'true'
-    enable_object_retention: null
+    enable_object_retention:
     encryption: []
     force_destroy: false
     hierarchical_namespace: []
     ip_filter: []
-    labels: null
+    labels:
     lifecycle_rule: []
     location: EUROPE-WEST1
     logging: []
     name: your-prefix-gf-nl2sql-bq-0-iac-state
     project: your-prefix-gf-nl2sql-bq-0
-    requester_pays: null
+    requester_pays:
     retention_policy: []
     storage_class: STANDARD
     terraform_labels:
       goog-terraform-provisioned: 'true'
-    timeouts: null
+    timeouts:
     uniform_bucket_level_access: true
     versioning:
-    - enabled: false
+      - enabled: false
   ? module.projects.module.buckets["project/iac-state"].google_storage_bucket_iam_binding.authoritative["roles/storage.objectAdmin"]
   : bucket: your-prefix-gf-nl2sql-bq-0-iac-state
     condition: []
     members:
-    - serviceAccount:iac-rw@your-prefix-gf-nl2sql-bq-0.iam.gserviceaccount.com
+      - serviceAccount:iac-rw@your-prefix-gf-nl2sql-bq-0.iam.gserviceaccount.com
     role: roles/storage.objectAdmin
-    timeouts: null
+    timeouts:
   ? module.projects.module.buckets["project/iac-state"].google_storage_bucket_iam_binding.authoritative["roles/storage.objectViewer"]
   : bucket: your-prefix-gf-nl2sql-bq-0-iac-state
     condition: []
     members:
-    - serviceAccount:iac-rw@your-prefix-gf-nl2sql-bq-0.iam.gserviceaccount.com
+      - serviceAccount:iac-rw@your-prefix-gf-nl2sql-bq-0.iam.gserviceaccount.com
     role: roles/storage.objectViewer
-    timeouts: null
+    timeouts:
   module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/artifactregistry.admin"]:
     condition: []
     members:
-    - serviceAccount:iac-rw@your-prefix-gf-nl2sql-bq-0.iam.gserviceaccount.com
+      - serviceAccount:iac-rw@your-prefix-gf-nl2sql-bq-0.iam.gserviceaccount.com
     project: your-prefix-gf-nl2sql-bq-0
     role: roles/artifactregistry.admin
   module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/artifactregistry.writer"]:
     condition: []
     members:
-    - serviceAccount:gf-nl2sql-bq-fe-build-0@your-prefix-gf-nl2sql-bq-0.iam.gserviceaccount.com
+      - serviceAccount:gf-nl2sql-bq-fe-build-0@your-prefix-gf-nl2sql-bq-0.iam.gserviceaccount.com
     project: your-prefix-gf-nl2sql-bq-0
     role: roles/artifactregistry.writer
   module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/bigquery.dataViewer"]:
     condition: []
     members:
-    - serviceAccount:gf-nl2sql-bq-fe-0@your-prefix-gf-nl2sql-bq-0.iam.gserviceaccount.com
+      - serviceAccount:gf-nl2sql-bq-fe-0@your-prefix-gf-nl2sql-bq-0.iam.gserviceaccount.com
     project: your-prefix-gf-nl2sql-bq-0
     role: roles/bigquery.dataViewer
   module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/bigquery.user"]:
     condition: []
     members:
-    - serviceAccount:gf-nl2sql-bq-fe-0@your-prefix-gf-nl2sql-bq-0.iam.gserviceaccount.com
-    - serviceAccount:iac-rw@your-prefix-gf-nl2sql-bq-0.iam.gserviceaccount.com
+      - serviceAccount:gf-nl2sql-bq-fe-0@your-prefix-gf-nl2sql-bq-0.iam.gserviceaccount.com
+      - serviceAccount:iac-rw@your-prefix-gf-nl2sql-bq-0.iam.gserviceaccount.com
     project: your-prefix-gf-nl2sql-bq-0
     role: roles/bigquery.user
   module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/certificatemanager.owner"]:
     condition: []
     members:
-    - serviceAccount:iac-rw@your-prefix-gf-nl2sql-bq-0.iam.gserviceaccount.com
+      - serviceAccount:iac-rw@your-prefix-gf-nl2sql-bq-0.iam.gserviceaccount.com
     project: your-prefix-gf-nl2sql-bq-0
     role: roles/certificatemanager.owner
   module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/cloudbuild.builds.editor"]:
     condition: []
     members:
-    - serviceAccount:gf-nl2sql-bq-fe-build-0@your-prefix-gf-nl2sql-bq-0.iam.gserviceaccount.com
-    - serviceAccount:iac-rw@your-prefix-gf-nl2sql-bq-0.iam.gserviceaccount.com
+      - serviceAccount:gf-nl2sql-bq-fe-build-0@your-prefix-gf-nl2sql-bq-0.iam.gserviceaccount.com
+      - serviceAccount:iac-rw@your-prefix-gf-nl2sql-bq-0.iam.gserviceaccount.com
     project: your-prefix-gf-nl2sql-bq-0
     role: roles/cloudbuild.builds.editor
   module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/cloudscheduler.admin"]:
     condition: []
     members:
-    - serviceAccount:iac-rw@your-prefix-gf-nl2sql-bq-0.iam.gserviceaccount.com
+      - serviceAccount:iac-rw@your-prefix-gf-nl2sql-bq-0.iam.gserviceaccount.com
     project: your-prefix-gf-nl2sql-bq-0
     role: roles/cloudscheduler.admin
   module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/compute.loadBalancerAdmin"]:
     condition: []
     members:
-    - serviceAccount:iac-rw@your-prefix-gf-nl2sql-bq-0.iam.gserviceaccount.com
+      - serviceAccount:iac-rw@your-prefix-gf-nl2sql-bq-0.iam.gserviceaccount.com
     project: your-prefix-gf-nl2sql-bq-0
     role: roles/compute.loadBalancerAdmin
   module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/compute.networkAdmin"]:
     condition: []
     members:
-    - serviceAccount:iac-rw@your-prefix-gf-nl2sql-bq-0.iam.gserviceaccount.com
+      - serviceAccount:iac-rw@your-prefix-gf-nl2sql-bq-0.iam.gserviceaccount.com
     project: your-prefix-gf-nl2sql-bq-0
     role: roles/compute.networkAdmin
   module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/compute.securityAdmin"]:
     condition: []
     members:
-    - serviceAccount:iac-rw@your-prefix-gf-nl2sql-bq-0.iam.gserviceaccount.com
+      - serviceAccount:iac-rw@your-prefix-gf-nl2sql-bq-0.iam.gserviceaccount.com
     project: your-prefix-gf-nl2sql-bq-0
     role: roles/compute.securityAdmin
   module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/dns.admin"]:
     condition: []
     members:
-    - serviceAccount:iac-rw@your-prefix-gf-nl2sql-bq-0.iam.gserviceaccount.com
+      - serviceAccount:iac-rw@your-prefix-gf-nl2sql-bq-0.iam.gserviceaccount.com
     project: your-prefix-gf-nl2sql-bq-0
     role: roles/dns.admin
   module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/logging.logWriter"]:
     condition: []
     members:
-    - serviceAccount:gf-nl2sql-bq-fe-build-0@your-prefix-gf-nl2sql-bq-0.iam.gserviceaccount.com
+      - serviceAccount:gf-nl2sql-bq-fe-build-0@your-prefix-gf-nl2sql-bq-0.iam.gserviceaccount.com
     project: your-prefix-gf-nl2sql-bq-0
     role: roles/logging.logWriter
   module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/privateca.admin"]:
     condition: []
     members:
-    - serviceAccount:iac-rw@your-prefix-gf-nl2sql-bq-0.iam.gserviceaccount.com
+      - serviceAccount:iac-rw@your-prefix-gf-nl2sql-bq-0.iam.gserviceaccount.com
     project: your-prefix-gf-nl2sql-bq-0
     role: roles/privateca.admin
   ? module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/privateca.certificateRequester"]
@@ -159,29 +159,29 @@ values:
   module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/run.admin"]:
     condition: []
     members:
-    - serviceAccount:gf-nl2sql-bq-fe-build-0@your-prefix-gf-nl2sql-bq-0.iam.gserviceaccount.com
-    - serviceAccount:iac-rw@your-prefix-gf-nl2sql-bq-0.iam.gserviceaccount.com
+      - serviceAccount:gf-nl2sql-bq-fe-build-0@your-prefix-gf-nl2sql-bq-0.iam.gserviceaccount.com
+      - serviceAccount:iac-rw@your-prefix-gf-nl2sql-bq-0.iam.gserviceaccount.com
     project: your-prefix-gf-nl2sql-bq-0
     role: roles/run.admin
   module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/storage.admin"]:
     condition: []
     members:
-    - serviceAccount:gf-nl2sql-bq-fe-build-0@your-prefix-gf-nl2sql-bq-0.iam.gserviceaccount.com
-    - serviceAccount:iac-rw@your-prefix-gf-nl2sql-bq-0.iam.gserviceaccount.com
+      - serviceAccount:gf-nl2sql-bq-fe-build-0@your-prefix-gf-nl2sql-bq-0.iam.gserviceaccount.com
+      - serviceAccount:iac-rw@your-prefix-gf-nl2sql-bq-0.iam.gserviceaccount.com
     project: your-prefix-gf-nl2sql-bq-0
     role: roles/storage.admin
   module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/storage.objectCreator"]:
     condition: []
     members:
-    - serviceAccount:gf-nl2sql-bq-fe-build-0@your-prefix-gf-nl2sql-bq-0.iam.gserviceaccount.com
-    - serviceAccount:iac-rw@your-prefix-gf-nl2sql-bq-0.iam.gserviceaccount.com
+      - serviceAccount:gf-nl2sql-bq-fe-build-0@your-prefix-gf-nl2sql-bq-0.iam.gserviceaccount.com
+      - serviceAccount:iac-rw@your-prefix-gf-nl2sql-bq-0.iam.gserviceaccount.com
     project: your-prefix-gf-nl2sql-bq-0
     role: roles/storage.objectCreator
   module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/storage.objectViewer"]:
     condition: []
     members:
-    - serviceAccount:gf-nl2sql-bq-fe-build-0@your-prefix-gf-nl2sql-bq-0.iam.gserviceaccount.com
-    - serviceAccount:iac-rw@your-prefix-gf-nl2sql-bq-0.iam.gserviceaccount.com
+      - serviceAccount:gf-nl2sql-bq-fe-build-0@your-prefix-gf-nl2sql-bq-0.iam.gserviceaccount.com
+      - serviceAccount:iac-rw@your-prefix-gf-nl2sql-bq-0.iam.gserviceaccount.com
     project: your-prefix-gf-nl2sql-bq-0
     role: roles/storage.objectViewer
   module.projects.module.projects-iam["project"].google_project_iam_member.bindings["run_fe_ai_user"]:
@@ -197,15 +197,15 @@ values:
     deletion_policy: DELETE
     effective_labels:
       goog-terraform-provisioned: 'true'
-    folder_id: null
-    labels: null
+    folder_id:
+    labels:
     name: your-prefix-gf-nl2sql-bq-0
     org_id: '1122334455'
     project_id: your-prefix-gf-nl2sql-bq-0
-    tags: null
+    tags:
     terraform_labels:
       goog-terraform-provisioned: 'true'
-    timeouts: null
+    timeouts:
   module.projects.module.projects["project"].google_project_iam_member.service_agents["aiplatform"]:
     condition: []
     project: your-prefix-gf-nl2sql-bq-0
@@ -311,125 +311,125 @@ values:
     disable_on_destroy: false
     project: your-prefix-gf-nl2sql-bq-0
     service: aiplatform.googleapis.com
-    timeouts: null
+    timeouts:
   module.projects.module.projects["project"].google_project_service.project_services["artifactregistry.googleapis.com"]:
     disable_dependent_services: false
     disable_on_destroy: false
     project: your-prefix-gf-nl2sql-bq-0
     service: artifactregistry.googleapis.com
-    timeouts: null
+    timeouts:
   module.projects.module.projects["project"].google_project_service.project_services["bigquery.googleapis.com"]:
     disable_dependent_services: false
     disable_on_destroy: false
     project: your-prefix-gf-nl2sql-bq-0
     service: bigquery.googleapis.com
-    timeouts: null
+    timeouts:
   module.projects.module.projects["project"].google_project_service.project_services["certificatemanager.googleapis.com"]:
     disable_dependent_services: false
     disable_on_destroy: false
     project: your-prefix-gf-nl2sql-bq-0
     service: certificatemanager.googleapis.com
-    timeouts: null
+    timeouts:
   module.projects.module.projects["project"].google_project_service.project_services["cloudbuild.googleapis.com"]:
     disable_dependent_services: false
     disable_on_destroy: false
     project: your-prefix-gf-nl2sql-bq-0
     service: cloudbuild.googleapis.com
-    timeouts: null
+    timeouts:
   module.projects.module.projects["project"].google_project_service.project_services["cloudresourcemanager.googleapis.com"]:
     disable_dependent_services: false
     disable_on_destroy: false
     project: your-prefix-gf-nl2sql-bq-0
     service: cloudresourcemanager.googleapis.com
-    timeouts: null
+    timeouts:
   module.projects.module.projects["project"].google_project_service.project_services["cloudscheduler.googleapis.com"]:
     disable_dependent_services: false
     disable_on_destroy: false
     project: your-prefix-gf-nl2sql-bq-0
     service: cloudscheduler.googleapis.com
-    timeouts: null
+    timeouts:
   module.projects.module.projects["project"].google_project_service.project_services["compute.googleapis.com"]:
     disable_dependent_services: false
     disable_on_destroy: false
     project: your-prefix-gf-nl2sql-bq-0
     service: compute.googleapis.com
-    timeouts: null
+    timeouts:
   module.projects.module.projects["project"].google_project_service.project_services["dns.googleapis.com"]:
     disable_dependent_services: false
     disable_on_destroy: false
     project: your-prefix-gf-nl2sql-bq-0
     service: dns.googleapis.com
-    timeouts: null
+    timeouts:
   module.projects.module.projects["project"].google_project_service.project_services["privateca.googleapis.com"]:
     disable_dependent_services: false
     disable_on_destroy: false
     project: your-prefix-gf-nl2sql-bq-0
     service: privateca.googleapis.com
-    timeouts: null
+    timeouts:
   module.projects.module.projects["project"].google_project_service.project_services["run.googleapis.com"]:
     disable_dependent_services: false
     disable_on_destroy: false
     project: your-prefix-gf-nl2sql-bq-0
     service: run.googleapis.com
-    timeouts: null
+    timeouts:
   module.projects.module.projects["project"].google_project_service_identity.default["aiplatform.googleapis.com"]:
     project: your-prefix-gf-nl2sql-bq-0
     service: aiplatform.googleapis.com
-    timeouts: null
+    timeouts:
   module.projects.module.projects["project"].google_project_service_identity.default["artifactregistry.googleapis.com"]:
     project: your-prefix-gf-nl2sql-bq-0
     service: artifactregistry.googleapis.com
-    timeouts: null
+    timeouts:
   module.projects.module.projects["project"].google_project_service_identity.default["certificatemanager.googleapis.com"]:
     project: your-prefix-gf-nl2sql-bq-0
     service: certificatemanager.googleapis.com
-    timeouts: null
+    timeouts:
   module.projects.module.projects["project"].google_project_service_identity.default["cloudscheduler.googleapis.com"]:
     project: your-prefix-gf-nl2sql-bq-0
     service: cloudscheduler.googleapis.com
-    timeouts: null
+    timeouts:
   module.projects.module.projects["project"].google_project_service_identity.default["dns.googleapis.com"]:
     project: your-prefix-gf-nl2sql-bq-0
     service: dns.googleapis.com
-    timeouts: null
+    timeouts:
   module.projects.module.projects["project"].google_project_service_identity.default["privateca.googleapis.com"]:
     project: your-prefix-gf-nl2sql-bq-0
     service: privateca.googleapis.com
-    timeouts: null
+    timeouts:
   module.projects.module.projects["project"].google_project_service_identity.default["run.googleapis.com"]:
     project: your-prefix-gf-nl2sql-bq-0
     service: run.googleapis.com
-    timeouts: null
+    timeouts:
   module.projects.module.service-accounts["project/gf-nl2sql-bq-fe-0"].google_service_account.service_account[0]:
     account_id: gf-nl2sql-bq-fe-0
-    create_ignore_already_exists: null
-    description: null
+    create_ignore_already_exists:
+    description:
     disabled: false
     display_name: Terraform-managed.
     email: gf-nl2sql-bq-fe-0@your-prefix-gf-nl2sql-bq-0.iam.gserviceaccount.com
     member: serviceAccount:gf-nl2sql-bq-fe-0@your-prefix-gf-nl2sql-bq-0.iam.gserviceaccount.com
     project: your-prefix-gf-nl2sql-bq-0
-    timeouts: null
+    timeouts:
   module.projects.module.service-accounts["project/gf-nl2sql-bq-fe-build-0"].google_service_account.service_account[0]:
     account_id: gf-nl2sql-bq-fe-build-0
-    create_ignore_already_exists: null
-    description: null
+    create_ignore_already_exists:
+    description:
     disabled: false
     display_name: Terraform-managed.
     email: gf-nl2sql-bq-fe-build-0@your-prefix-gf-nl2sql-bq-0.iam.gserviceaccount.com
     member: serviceAccount:gf-nl2sql-bq-fe-build-0@your-prefix-gf-nl2sql-bq-0.iam.gserviceaccount.com
     project: your-prefix-gf-nl2sql-bq-0
-    timeouts: null
+    timeouts:
   module.projects.module.service-accounts["project/iac-rw"].google_service_account.service_account[0]:
     account_id: iac-rw
-    create_ignore_already_exists: null
-    description: null
+    create_ignore_already_exists:
+    description:
     disabled: false
     display_name: Terraform-managed.
     email: iac-rw@your-prefix-gf-nl2sql-bq-0.iam.gserviceaccount.com
     member: serviceAccount:iac-rw@your-prefix-gf-nl2sql-bq-0.iam.gserviceaccount.com
     project: your-prefix-gf-nl2sql-bq-0
-    timeouts: null
+    timeouts:
   ? module.projects.module.service_accounts-iam["project/iac-rw"].google_service_account_iam_member.additive["$service_account_ids:project/gf-nl2sql-bq-fe-0-roles/iam.serviceAccountUser"]
   : condition: []
     role: roles/iam.serviceAccountUser
@@ -439,14 +439,13 @@ values:
     role: roles/iam.serviceAccountUser
     service_account_id: projects/your-prefix-gf-nl2sql-bq-0/serviceAccounts/gf-nl2sql-bq-fe-build-0@your-prefix-gf-nl2sql-bq-0.iam.gserviceaccount.com
   module.projects.terraform_data.defaults_preconditions:
-    input: null
-    output: null
-    triggers_replace: null
+    input:
+    output:
+    triggers_replace:
   module.projects.terraform_data.project-preconditions:
-    input: null
-    output: null
-    triggers_replace: null
-
+    input:
+    output:
+    triggers_replace:
 counts:
   google_bigquery_default_service_account: 1
   google_project: 1
@@ -462,7 +461,6 @@ counts:
   modules: 8
   resources: 77
   terraform_data: 2
-
 outputs:
   buckets:
     project/iac-state: your-prefix-gf-nl2sql-bq-0-iac-state
@@ -480,4 +478,3 @@ outputs:
       email: iac-rw@your-prefix-gf-nl2sql-bq-0.iam.gserviceaccount.com
       iam_email: serviceAccount:iac-rw@your-prefix-gf-nl2sql-bq-0.iam.gserviceaccount.com
       id: projects/your-prefix-gf-nl2sql-bq-0/serviceAccounts/iac-rw@your-prefix-gf-nl2sql-bq-0.iam.gserviceaccount.com
-

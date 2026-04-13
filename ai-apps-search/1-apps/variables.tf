@@ -51,10 +51,3 @@ variable "region" {
   nullable    = false
   default     = "europe-west1"
 }
-
-variable "region_ai_applications" {
-  type        = string
-  description = "The GCP region where to deploy the data store and the engine."
-  nullable    = false
-  default     = "global"
-}

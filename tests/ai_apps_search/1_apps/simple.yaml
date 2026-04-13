@@ -1,3 +1,4 @@
+---
 # Copyright 2026 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -11,7 +12,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 values:
   module.ai-apps.google_discovery_engine_data_store.default["ds"]:
     content_config: PUBLIC_WEBSITE
@@ -20,46 +20,41 @@ values:
     display_name: gf-ai-apps-srch-0-ds
     document_processing_config: []
     industry_vertical: GENERIC
-    kms_key_name: null
+    kms_key_name:
     location: global
     project: prefix-gf-ai-apps-srch-0
     skip_default_schema_creation: false
-    solution_types:
-    - SOLUTION_TYPE_SEARCH
-    timeouts: null
+    solution_types: [SOLUTION_TYPE_SEARCH]
+    timeouts:
   module.ai-apps.google_discovery_engine_search_engine.default[0]:
-    app_type: null
+    app_type:
     collection_id: default_collection
     common_config: []
-    data_store_ids:
-    - gf-ai-apps-srch-0-ds
-    disable_analytics: null
+    data_store_ids: [gf-ai-apps-srch-0-ds]
+    disable_analytics:
     display_name: gf-ai-apps-srch-0
     engine_id: gf-ai-apps-srch-0
     industry_vertical: GENERIC
-    kms_key_name: null
+    kms_key_name:
     location: global
     project: prefix-gf-ai-apps-srch-0
     search_engine_config:
-    - search_add_ons: []
-      search_tier: SEARCH_TIER_ENTERPRISE
-    timeouts: null
+      - search_add_ons: []
+        search_tier: SEARCH_TIER_ENTERPRISE
+    timeouts:
   module.ai-apps.google_discovery_engine_target_site.default["ds-fabric-docs"]:
     data_store_id: gf-ai-apps-srch-0-ds
     exact_match: false
     location: global
     project: prefix-gf-ai-apps-srch-0
     provided_uri_pattern: github.com/GoogleCloudPlatform/cloud-foundation-fabric/*
-    timeouts: null
+    timeouts:
     type: INCLUDE
-
 counts:
   google_discovery_engine_data_store: 1
   google_discovery_engine_search_engine: 1
   google_discovery_engine_target_site: 1
   modules: 1
   resources: 3
-
 outputs:
   commands: __missing__
-

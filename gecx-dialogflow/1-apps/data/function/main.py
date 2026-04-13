@@ -18,7 +18,7 @@ from flask import jsonify
 
 @functions_framework.http
 def main(request):
-    """HTTP Cloud Function for Dialogflow CX Webhook fulfillment.
+  """HTTP Cloud Function for Dialogflow CX Webhook fulfillment.
     
     Args:
         request (flask.Request): The incoming HTTP request object from Dialogflow.
@@ -28,24 +28,24 @@ def main(request):
         along with an HTTP 200 status code.
     """
 
-    # Parse the incoming JSON request from Dialogflow
-    req = request.get_json(silent=True)
+  # Parse the incoming JSON request from Dialogflow
+  req = request.get_json(silent=True)
 
-    # Log the incoming request to the Cloud Console for debugging purposes
-    print(f"Received request: {req}")
+  # Log the incoming request to the Cloud Console for debugging purposes
+  print(f"Received request: {req}")
 
-    # Construct the fulfillment response
-    res = {
-        "fulfillment_response": {
-            "messages": [{
-                "text": {
-                    "text": [
-                        'Hello! Just letting you know this message was generated from the webhook code.'
-                    ]
-                }
-            }]
-        }
-    }
+  # Construct the fulfillment response
+  res = {
+      "fulfillment_response": {
+          "messages": [{
+              "text": {
+                  "text": [
+                      'Hello! Just letting you know this message was generated from the webhook code.'
+                  ]
+              }
+          }]
+      }
+  }
 
-    # Return the dictionary as a JSON response with a 200 OK status
-    return jsonify(res), 200
+  # Return the dictionary as a JSON response with a 200 OK status
+  return jsonify(res), 200

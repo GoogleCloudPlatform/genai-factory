@@ -48,7 +48,6 @@ uv run scripts/agentutil.py pull_agent {AGENT_REMOTE} data/agents/{AGENT_VARIANT
 | [name](variables.tf#L37) | The name of the resources. | <code>string</code> |  | <code>&#34;gf-gecx-as-0&#34;</code> |
 | [region](variables.tf#L59) | The GCP region where to deploy the resources. | <code>string</code> |  | <code>&#34;europe-west1&#34;</code> |
 | [region_ai_applications](variables.tf#L66) | The GCP region where to deploy the data store and CX Agent Studio App. | <code>string</code> |  | <code>&#34;eu&#34;</code> |
-| [service_accounts](variables.tf#L79) | The pre-created service accounts used by the factory. | <code title="map&#40;object&#40;&#123;&#10;  email     &#61; string&#10;  iam_email &#61; string&#10;  id        &#61; string&#10;&#125;&#41;&#41;">map&#40;object&#40;&#123;&#8230;&#125;&#41;&#41;</code> |  | <code>&#123;&#125;</code> |
 
 ## Outputs
 

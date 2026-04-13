@@ -75,13 +75,3 @@ variable "region_ai_applications" {
     error_message = "region_ai_applications should be set either to eu or us."
   }
 }
-
-variable "service_accounts" {
-  description = "The pre-created service accounts used by the factory."
-  type = map(object({
-    email     = string
-    iam_email = string
-    id        = string
-  }))
-  default = {}
-}

@@ -13,9 +13,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 name: gf-rrag-search-0
-
 # Enable APIs
 services:
   # Needed both for ILB and ELB
@@ -30,7 +28,6 @@ services:
   # Needed for ILB only
   - certificatemanager.googleapis.com
   - privateca.googleapis.com
-
 buckets:
   iac-state:
     description: Terraform state bucket
@@ -39,17 +36,14 @@ buckets:
         - $iam_principals:service_accounts/project/iac-rw
       roles/storage.objectViewer:
         - $iam_principals:service_accounts/project/iac-rw
-
 service_accounts:
   # Automation SAs
   iac-rw:
     iam_sa_roles:
-      $service_account_ids:project/gf-rrag-fe-0:
-        - roles/iam.serviceAccountUser
+      $service_account_ids:project/gf-rrag-fe-0: [roles/iam.serviceAccountUser]
       $service_account_ids:project/gf-rrag-fe-build-0:
         - roles/iam.serviceAccountUser
-      $service_account_ids:project/gf-rrag-ing-0:
-        - roles/iam.serviceAccountUser
+      $service_account_ids:project/gf-rrag-ing-0: [roles/iam.serviceAccountUser]
       $service_account_ids:project/gf-rrag-ing-build-0:
         - roles/iam.serviceAccountUser
       $service_account_ids:project/gf-rrag-ing-sched-0:
@@ -60,11 +54,9 @@ service_accounts:
   gf-rrag-ing-0: {}
   gf-rrag-ing-build-0: {}
   gf-rrag-ing-sched-0: {}
-
 # Grant roles
 iam:
-  roles/privateca.certificateRequester:
-    - $service_agents:certificatemanager
+  roles/privateca.certificateRequester: [$service_agents:certificatemanager]
 iam_by_principals:
   $iam_principals:service_accounts/project/iac-rw:
     - roles/artifactregistry.admin
@@ -98,7 +90,6 @@ iam_by_principals:
     - roles/run.admin
     - roles/storage.admin
     - roles/storage.objectUser
-
 # Grant roles/aiplatform.user as additive,
 # as it is authoritatively granted by aiplatform APIs to default SA
 iam_bindings_additive:

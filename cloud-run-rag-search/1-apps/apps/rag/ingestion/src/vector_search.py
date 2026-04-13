@@ -25,7 +25,7 @@ def upsert_datapoints_to_index(
     index_name: str,
     datapoints: List[Dict[str, Any]],
 ) -> None:
-    """
+  """
     Upserts a list of datapoints into a Vertex AI Vector Search index.
     This method is suitable for streaming-enabled indexes.
 
@@ -36,30 +36,28 @@ def upsert_datapoints_to_index(
         datapoints (List[Dict[str, Any]]): A list of datapoint dictionaries.
             Each dict must have 'datapoint_id' and 'feature_vector'.
     """
-    if not datapoints:
-        logger.warning("No datapoints provided to upsert.")
-        return
+  if not datapoints:
+    logger.warning("No datapoints provided to upsert.")
+    return
+
+  logger.info(
+      f"Sending {len(datapoints)} datapoints to be upserted into index '{index_name}'."
+  )
+  try:
+    # Initialize the MatchingEngineIndex object
+    index = MatchingEngineIndex(index_name=index_name, project=project,
+                                location=location)
+
+    # Call the method for streaming updates
+    index.upsert_datapoints(datapoints=datapoints)
 
     logger.info(
-        f"Sending {len(datapoints)} datapoints to be upserted into index '{index_name}'."
+        f"Successfully sent {len(datapoints)} datapoints to index '{index_name}'."
     )
-    try:
-        # Initialize the MatchingEngineIndex object
-        index = MatchingEngineIndex(index_name=index_name,
-                                    project=project,
-                                    location=location)
 
-        # Call the method for streaming updates
-        index.upsert_datapoints(datapoints=datapoints)
-
-        logger.info(
-            f"Successfully sent {len(datapoints)} datapoints to index '{index_name}'."
-        )
-
-    except Exception as e:
-        logger.error(
-            f"Failed to upsert to Vector Search index '{index_name}'. Error: {e}"
-        )
-        # Depending on the desired behavior, you might want to retry or handle this error.
-        # For a batch job, raising the exception will cause the job to fail.
-        raise
+  except Exception as e:
+    logger.error(
+        f"Failed to upsert to Vector Search index '{index_name}'. Error: {e}")
+    # Depending on the desired behavior, you might want to retry or handle this error.
+    # For a batch job, raising the exception will cause the job to fail.
+    raise

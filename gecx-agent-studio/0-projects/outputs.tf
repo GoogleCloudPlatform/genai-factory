@@ -30,18 +30,10 @@ locals {
     bucket          = local.buckets["project/iac-state"]
     service_account = local.service_accounts["project/iac-rw"].email
   }
-  service_accounts = {
-    for k, v in module.projects.service_accounts : k => {
-      email     = v.email
-      iam_email = v.iam_email
-      id        = v.id
-    }
-  }
   tfvars = {
-    buckets          = local.buckets
-    prefix           = var.project_config.prefix
-    projects         = local.projects
-    service_accounts = local.service_accounts
+    buckets  = local.buckets
+    prefix   = var.project_config.prefix
+    projects = local.projects
   }
 }
 

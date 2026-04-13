@@ -30,4 +30,4 @@ app = get_fast_api_app(
 )
 
 if __name__ == "__main__":
-    uvicorn.run(app, host=config.INTERNAL_HOST, port=config.INTERNAL_PORT)
+  uvicorn.run(app, host=config.INTERNAL_HOST, port=config.INTERNAL_PORT)

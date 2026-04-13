@@ -41,9 +41,3 @@ variable "project_config" {
     error_message = "Parent must be of the form folders/folder_id or organizations/organization_id."
   }
 }
-
-variable "region" {
-  description = "The region where to create the buckets."
-  type        = string
-  default     = "europe-west1"
-}

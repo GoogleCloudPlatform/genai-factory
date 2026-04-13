@@ -59,33 +59,33 @@ AGENT_BACKUP_FOLDER = AGENTUTIL_FOLDER / "agent_backups"
 
 
 class DataStoreType(Enum):
-    """Enumeration for Dialogflow Data Store types."""
-    STRUCTURED = 'STRUCTURED'
-    UNSTRUCTURED = 'UNSTRUCTURED'
-    PUBLIC_WEB = 'PUBLIC_WEB'
+  """Enumeration for Dialogflow Data Store types."""
+  STRUCTURED = 'STRUCTURED'
+  UNSTRUCTURED = 'UNSTRUCTURED'
+  PUBLIC_WEB = 'PUBLIC_WEB'
 
 
 # --- Helper Functions ---
 
 
 def _ensure_agentutil_dirs() -> None:
-    """Ensures that the utility and backup directories exist."""
-    AGENTUTIL_FOLDER.mkdir(exist_ok=True)
-    AGENT_BACKUP_FOLDER.mkdir(exist_ok=True)
+  """Ensures that the utility and backup directories exist."""
+  AGENTUTIL_FOLDER.mkdir(exist_ok=True)
+  AGENT_BACKUP_FOLDER.mkdir(exist_ok=True)
 
 
 def _get_dialogflow_client(agent_name: str) -> dialogflow.AgentsClient:
-    """Creates a region-specific Dialogflow CX client."""
-    try:
-        location_id = agent_name.split('/')[3]
-        client_options = {
-            "api_endpoint": f"{location_id}-dialogflow.googleapis.com"
-        }
-        return dialogflow.AgentsClient(client_options=client_options)
-    except IndexError:
-        raise ValueError(
-            "Invalid agent_name format. Expected: "
-            "projects/<PROJECT>/locations/<LOCATION>/agents/<AGENT-ID>")
+  """Creates a region-specific Dialogflow CX client."""
+  try:
+    location_id = agent_name.split('/')[3]
+    client_options = {
+        "api_endpoint": f"{location_id}-dialogflow.googleapis.com"
+    }
+    return dialogflow.AgentsClient(client_options=client_options)
+  except IndexError:
+    raise ValueError(
+        "Invalid agent_name format. Expected: "
+        "projects/<PROJECT>/locations/<LOCATION>/agents/<AGENT-ID>")
 
 
 # --- CLI Command Group ---
@@ -93,9 +93,9 @@ def _get_dialogflow_client(agent_name: str) -> dialogflow.AgentsClient:
 
 @click.group()
 def main():
-    """A CLI for managing Conversational Agents."""
-    _ensure_agentutil_dirs()
-    pass
+  """A CLI for managing Conversational Agents."""
+  _ensure_agentutil_dirs()
+  pass
 
 
 # --- CLI Commands ---
@@ -105,13 +105,10 @@ def main():
 @click.argument("agent_name")
 @click.argument("target_dir", type=click.Path())
 @click.option(
-    "--environment",
-    "-e",
-    default=None,
-    help="Environment to export. If not specified, the draft flow is exported."
-)
+    "--environment", "-e", default=None,
+    help="Environment to export. If not specified, the draft flow is exported.")
 def pull_agent(agent_name: str, target_dir: str, environment: Optional[str]):
-    """
+  """
     Exports a Dialogflow CX agent to a local directory.
 
     AGENT_NAME: Fully qualified name of the agent to export.
@@ -122,72 +119,66 @@ def pull_agent(agent_name: str, target_dir: str, environment: Optional[str]):
     Example:
         agentutil pull-agent projects/my-proj/locations/us-central1/agents/my-agent-id ./my-exported-agent
     """
-    target_path = Path(target_dir)
-    agent_name = agent_name.rstrip('/')
-    env_path = f"{agent_name}/environments/{environment}" if environment else None
+  target_path = Path(target_dir)
+  agent_name = agent_name.rstrip('/')
+  env_path = f"{agent_name}/environments/{environment}" if environment else None
 
-    try:
-        client = _get_dialogflow_client(agent_name)
-        click.echo(f"Exporting agent: {click.style(agent_name, bold=True)}...")
+  try:
+    client = _get_dialogflow_client(agent_name)
+    click.echo(f"Exporting agent: {click.style(agent_name, bold=True)}...")
 
-        request = dialogflow.ExportAgentRequest(
-            name=agent_name,
-            data_format=dialogflow.ExportAgentRequest.DataFormat.JSON_PACKAGE,
-            environment=env_path,
-        )
-        operation = client.export_agent(request=request)
-        response: dialogflow.ExportAgentResponse = operation.result()
+    request = dialogflow.ExportAgentRequest(
+        name=agent_name,
+        data_format=dialogflow.ExportAgentRequest.DataFormat.JSON_PACKAGE,
+        environment=env_path,
+    )
+    operation = client.export_agent(request=request)
+    response: dialogflow.ExportAgentResponse = operation.result()
 
-        if response.agent_content:
-            if target_path.exists():
-                backup_dir = AGENT_BACKUP_FOLDER / target_path.name
-                if backup_dir.exists():
-                    shutil.rmtree(backup_dir)
-                shutil.copytree(target_path, backup_dir)
-                click.echo(
-                    f"Created backup of existing agent in: {backup_dir}")
-                shutil.rmtree(target_path)
+    if response.agent_content:
+      if target_path.exists():
+        backup_dir = AGENT_BACKUP_FOLDER / target_path.name
+        if backup_dir.exists():
+          shutil.rmtree(backup_dir)
+        shutil.copytree(target_path, backup_dir)
+        click.echo(f"Created backup of existing agent in: {backup_dir}")
+        shutil.rmtree(target_path)
 
-            target_path.mkdir(parents=True, exist_ok=True)
+      target_path.mkdir(parents=True, exist_ok=True)
 
-            with zipfile.ZipFile(io.BytesIO(response.agent_content),
-                                 'r') as zip_ref:
-                zip_ref.extractall(target_path)
+      with zipfile.ZipFile(io.BytesIO(response.agent_content), 'r') as zip_ref:
+        zip_ref.extractall(target_path)
 
-            click.secho(f"✅ Agent pulled successfully to: {target_path}",
-                        fg="green")
+      click.secho(f"✅ Agent pulled successfully to: {target_path}", fg="green")
 
-        elif response.agent_uri:
-            click.echo("Agent exported to Google Cloud Storage.")
-            click.secho(f"GCS URI: {response.agent_uri}", fg="yellow")
-            click.echo("Please download it from GCS manually.")
+    elif response.agent_uri:
+      click.echo("Agent exported to Google Cloud Storage.")
+      click.secho(f"GCS URI: {response.agent_uri}", fg="yellow")
+      click.echo("Please download it from GCS manually.")
 
-        else:
-            click.secho("Export failed: No agent content or URI was returned.",
-                        fg="red")
+    else:
+      click.secho("Export failed: No agent content or URI was returned.",
+                  fg="red")
 
-    except gcp_exceptions.NotFound as e:
-        click.secho(f"Error: Agent or environment not found. Details: {e}",
-                    fg="red")
-    except Exception as e:
-        click.secho(f"An unexpected error occurred during export: {e}",
-                    fg="red")
+  except gcp_exceptions.NotFound as e:
+    click.secho(f"Error: Agent or environment not found. Details: {e}",
+                fg="red")
+  except Exception as e:
+    click.secho(f"An unexpected error occurred during export: {e}", fg="red")
 
 
 @main.command()
-@click.argument("target_agent_dir",
-                type=click.Path(exists=True,
-                                file_okay=False,
-                                dir_okay=True,
-                                readable=True))
+@click.argument(
+    "target_agent_dir", type=click.Path(exists=True, file_okay=False,
+                                        dir_okay=True, readable=True))
 @click.argument("tool_name")
-@click.argument("data_store_type",
-                type=click.Choice([t.value for t in DataStoreType],
-                                  case_sensitive=False))
+@click.argument(
+    "data_store_type", type=click.Choice([t.value for t in DataStoreType],
+                                         case_sensitive=False))
 @click.argument("data_store_id")
 def replace_data_store(target_agent_dir: str, tool_name: str,
                        data_store_type: str, data_store_id: str):
-    """
+  """
     Replaces a data store reference in a specified tool.
 
     This command modifies the agent files in-place.
@@ -195,60 +186,55 @@ def replace_data_store(target_agent_dir: str, tool_name: str,
     Example:
         agentutil replace-data-store ./my-exported-agent my_tool_name UNSTRUCTURED projects/.../dataStores/new-id
     """
-    agent_path = Path(target_agent_dir)
-    tool_file = agent_path / "tools" / tool_name / f"{tool_name}.json"
+  agent_path = Path(target_agent_dir)
+  tool_file = agent_path / "tools" / tool_name / f"{tool_name}.json"
 
-    if not tool_file.exists():
-        click.secho(f"Error: Tool file not found at {tool_file}", fg="red")
-        return
+  if not tool_file.exists():
+    click.secho(f"Error: Tool file not found at {tool_file}", fg="red")
+    return
 
-    try:
-        with tool_file.open('r') as f:
-            spec = json.load(f)
+  try:
+    with tool_file.open('r') as f:
+      spec = json.load(f)
 
-        connections = spec.get("dataStoreSpec",
-                               {}).get("dataStoreConnections", [])
-        if not connections:
-            raise ValueError(
-                f"Tool '{tool_name}' has no data store connections.")
+    connections = spec.get("dataStoreSpec", {}).get("dataStoreConnections", [])
+    if not connections:
+      raise ValueError(f"Tool '{tool_name}' has no data store connections.")
 
-        found_and_replaced = False
-        for conn in connections:
-            if conn.get('dataStoreType') == data_store_type.upper():
-                conn['dataStore'] = data_store_id
-                found_and_replaced = True
-                break
+    found_and_replaced = False
+    for conn in connections:
+      if conn.get('dataStoreType') == data_store_type.upper():
+        conn['dataStore'] = data_store_id
+        found_and_replaced = True
+        break
 
-        if not found_and_replaced:
-            raise ValueError(
-                f"Could not find a connection of type '{data_store_type}'.")
+    if not found_and_replaced:
+      raise ValueError(
+          f"Could not find a connection of type '{data_store_type}'.")
 
-        with tool_file.open('w') as f:
-            json.dump(spec, f, indent=4)
+    with tool_file.open('w') as f:
+      json.dump(spec, f, indent=4)
 
-        click.secho(
-            f"✅ Successfully replaced '{data_store_type}' data store in tool '{tool_name}' with '{data_store_id}'.",
-            fg="green")
+    click.secho(
+        f"✅ Successfully replaced '{data_store_type}' data store in tool '{tool_name}' with '{data_store_id}'.",
+        fg="green")
 
-    except (ValueError, KeyError, json.JSONDecodeError) as e:
-        click.secho(f"Error processing tool file: {e}", fg="red")
+  except (ValueError, KeyError, json.JSONDecodeError) as e:
+    click.secho(f"Error processing tool file: {e}", fg="red")
 
 
 @main.command()
-@click.argument("source_dir",
-                type=click.Path(exists=True,
-                                file_okay=False,
-                                dir_okay=True,
-                                readable=True))
-@click.argument("dest_dir",
-                type=click.Path(file_okay=False, dir_okay=True, writable=True))
+@click.argument(
+    "source_dir", type=click.Path(exists=True, file_okay=False, dir_okay=True,
+                                  readable=True))
+@click.argument("dest_dir", type=click.Path(file_okay=False, dir_okay=True,
+                                            writable=True))
 @click.argument("gcs_path")
-@click.option("--upload",
-              is_flag=True,
+@click.option("--upload", is_flag=True,
               help="If set, uploads generated files to GCS.")
 def process_documents(source_dir: str, dest_dir: str, gcs_path: str,
                       upload: bool):
-    """
+  """
     Preprocesses Markdown files for Data Store ingestion.
 
     Converts .md files to .html, extracts titles, generates a JSONL manifest,
@@ -259,113 +245,104 @@ def process_documents(source_dir: str, dest_dir: str, gcs_path: str,
     Example:
         agentutil process-documents ./docs ./processed gs://my-bucket/my-docs/ --upload
     """
-    source_path = Path(source_dir)
-    dest_path = Path(dest_dir)
-    dest_path.mkdir(parents=True, exist_ok=True)
-    click.echo(f"Source: {source_path}, Destination: {dest_path}")
+  source_path = Path(source_dir)
+  dest_path = Path(dest_dir)
+  dest_path.mkdir(parents=True, exist_ok=True)
+  click.echo(f"Source: {source_path}, Destination: {dest_path}")
 
-    try:
-        parsed_gcs_uri = urlparse(gcs_path)
-        if parsed_gcs_uri.scheme != "gs":
-            raise ValueError("GCS path must start with 'gs://'.")
-        gcs_bucket_name = parsed_gcs_uri.netloc
-        gcs_blob_prefix = parsed_gcs_uri.path.lstrip('/')
-        if gcs_blob_prefix and not gcs_blob_prefix.endswith('/'):
-            gcs_blob_prefix += '/'
+  try:
+    parsed_gcs_uri = urlparse(gcs_path)
+    if parsed_gcs_uri.scheme != "gs":
+      raise ValueError("GCS path must start with 'gs://'.")
+    gcs_bucket_name = parsed_gcs_uri.netloc
+    gcs_blob_prefix = parsed_gcs_uri.path.lstrip('/')
+    if gcs_blob_prefix and not gcs_blob_prefix.endswith('/'):
+      gcs_blob_prefix += '/'
 
-        jsonl_entries = []
-        files_to_upload = []
-        markdown_files = list(source_path.glob("*.md"))
+    jsonl_entries = []
+    files_to_upload = []
+    markdown_files = list(source_path.glob("*.md"))
 
-        if not markdown_files:
-            click.secho(
-                "Warning: No Markdown (.md) files found in source directory.",
-                fg="yellow")
-            return
+    if not markdown_files:
+      click.secho("Warning: No Markdown (.md) files found in source directory.",
+                  fg="yellow")
+      return
 
-        click.echo(
-            f"Found {len(markdown_files)} Markdown files. Processing...")
-        with click.progressbar(markdown_files,
-                               label="Converting files") as bar:
-            for md_file in bar:
-                base_name = md_file.stem
-                html_file = dest_path / f"{base_name}.html"
+    click.echo(f"Found {len(markdown_files)} Markdown files. Processing...")
+    with click.progressbar(markdown_files, label="Converting files") as bar:
+      for md_file in bar:
+        base_name = md_file.stem
+        html_file = dest_path / f"{base_name}.html"
 
-                md_content = md_file.read_text(encoding="utf-8")
+        md_content = md_file.read_text(encoding="utf-8")
 
-                # Extract title from first H1, or use filename
-                title = base_name
-                for line in md_content.splitlines():
-                    if line.strip().startswith("# "):
-                        title = line.strip()[2:].strip()
-                        break
+        # Extract title from first H1, or use filename
+        title = base_name
+        for line in md_content.splitlines():
+          if line.strip().startswith("# "):
+            title = line.strip()[2:].strip()
+            break
 
-                html_content = markdown.markdown(md_content)
-                html_file.write_text(html_content, encoding="utf-8")
-                files_to_upload.append(html_file)
+        html_content = markdown.markdown(md_content)
+        html_file.write_text(html_content, encoding="utf-8")
+        files_to_upload.append(html_file)
 
-                gcs_document_uri = f"gs://{gcs_bucket_name}/{gcs_blob_prefix}{html_file.name}"
-                jsonl_entries.append({
-                    "id": base_name,
-                    "structData": {
-                        "title": title
-                    },
-                    "content": {
-                        "mimeType": "text/html",
-                        "uri": gcs_document_uri
-                    }
-                })
+        gcs_document_uri = f"gs://{gcs_bucket_name}/{gcs_blob_prefix}{html_file.name}"
+        jsonl_entries.append({
+            "id": base_name,
+            "structData": {
+                "title": title
+            },
+            "content": {
+                "mimeType": "text/html",
+                "uri": gcs_document_uri
+            }
+        })
 
-        jsonl_path = dest_path / "documents.jsonl"
-        with jsonl_path.open('w', encoding='utf-8') as f:
-            for entry in jsonl_entries:
-                f.write(json.dumps(entry) + '\n')
-        files_to_upload.append(jsonl_path)
-        click.echo(f"Generated JSONL manifest: {jsonl_path}")
+    jsonl_path = dest_path / "documents.jsonl"
+    with jsonl_path.open('w', encoding='utf-8') as f:
+      for entry in jsonl_entries:
+        f.write(json.dumps(entry) + '\n')
+    files_to_upload.append(jsonl_path)
+    click.echo(f"Generated JSONL manifest: {jsonl_path}")
 
-        if upload:
-            click.echo(
-                f"\nUploading {len(files_to_upload)} files to gs://{gcs_bucket_name}/{gcs_blob_prefix}..."
-            )
-            storage_client = storage.Client()
-            bucket = storage_client.bucket(gcs_bucket_name)
+    if upload:
+      click.echo(
+          f"\nUploading {len(files_to_upload)} files to gs://{gcs_bucket_name}/{gcs_blob_prefix}..."
+      )
+      storage_client = storage.Client()
+      bucket = storage_client.bucket(gcs_bucket_name)
 
-            with click.progressbar(files_to_upload,
-                                   label="Uploading files") as bar:
-                for local_file in bar:
-                    blob_name = gcs_blob_prefix + local_file.name
-                    blob = bucket.blob(blob_name)
-                    blob.upload_from_filename(str(local_file))
+      with click.progressbar(files_to_upload, label="Uploading files") as bar:
+        for local_file in bar:
+          blob_name = gcs_blob_prefix + local_file.name
+          blob = bucket.blob(blob_name)
+          blob.upload_from_filename(str(local_file))
 
-        click.secho("\n✅ Preprocessing complete.", fg="green")
+    click.secho("\n✅ Preprocessing complete.", fg="green")
 
-    except Exception as e:
-        click.secho(f"\nAn error occurred: {e}", fg="red")
+  except Exception as e:
+    click.secho(f"\nAn error occurred: {e}", fg="red")
 
 
 @main.command()
-@click.argument("target_agent_dir",
-                type=click.Path(exists=True,
-                                file_okay=False,
-                                dir_okay=True,
-                                writable=True))
+@click.argument(
+    "target_agent_dir", type=click.Path(exists=True, file_okay=False,
+                                        dir_okay=True, writable=True))
 @click.argument("display_name")
 @click.argument("uri")
 @click.option(
     "--service-directory",
     help="The Service Directory service name (e.g., projects/.../services/...)."
 )
-@click.option("--allowed-ca-certs",
-              multiple=True,
+@click.option("--allowed-ca-certs", multiple=True,
               help="Allowed CA certificates for Service Directory.")
-@click.option("--timeout",
-              type=int,
-              default=5,
+@click.option("--timeout", type=int, default=5,
               help="Timeout in seconds. Default is 5.")
 def create_webhook(target_agent_dir: str, display_name: str, uri: str,
                    service_directory: Optional[str], allowed_ca_certs: tuple,
                    timeout: int):
-    """
+  """
     Creates a new webhook configuration file in the agent directory.
 
     TARGET_AGENT_DIR: Local directory of the exported agent.
@@ -375,50 +352,46 @@ def create_webhook(target_agent_dir: str, display_name: str, uri: str,
     Example:
         agentutil create-webhook ./my-agent my-webhook https://...
     """
-    agent_path = Path(target_agent_dir)
-    webhooks_dir = agent_path / "webhooks"
-    webhooks_dir.mkdir(parents=True, exist_ok=True)
+  agent_path = Path(target_agent_dir)
+  webhooks_dir = agent_path / "webhooks"
+  webhooks_dir.mkdir(parents=True, exist_ok=True)
 
-    webhook_id = str(uuid.uuid4())
+  webhook_id = str(uuid.uuid4())
 
-    webhook_data = {
-        "name": webhook_id,
-        "displayName": display_name,
-        "timeout": {
-            "seconds": timeout
-        }
-    }
+  webhook_data = {
+      "name": webhook_id,
+      "displayName": display_name,
+      "timeout": {
+          "seconds": timeout
+      }
+  }
 
-    if service_directory:
-        sd_config = {
-            "service": service_directory,
-            "genericWebService": {
-                "uri": uri,
-                "webhookType": "STANDARD"
-            }
-        }
-        if allowed_ca_certs:
-            sd_config["genericWebService"]["allowedCaCerts"] = list(
-                allowed_ca_certs)
-        webhook_data["serviceDirectory"] = sd_config
-    else:
-        webhook_data["genericWebService"] = {
+  if service_directory:
+    sd_config = {
+        "service": service_directory,
+        "genericWebService": {
             "uri": uri,
             "webhookType": "STANDARD"
         }
+    }
+    if allowed_ca_certs:
+      sd_config["genericWebService"]["allowedCaCerts"] = list(allowed_ca_certs)
+    webhook_data["serviceDirectory"] = sd_config
+  else:
+    webhook_data["genericWebService"] = {"uri": uri, "webhookType": "STANDARD"}
 
-    webhook_file = webhooks_dir / f"{display_name}.json"
+  webhook_file = webhooks_dir / f"{display_name}.json"
 
-    try:
-        with webhook_file.open('w', encoding='utf-8') as f:
-            json.dump(webhook_data, f, indent=2)
+  try:
+    with webhook_file.open('w', encoding='utf-8') as f:
+      json.dump(webhook_data, f, indent=2)
 
-        click.secho(
-            f"✅ Successfully created webhook '{display_name}' at {webhook_file}",
-            fg="green")
-    except Exception as e:
-        click.secho(f"Error creating webhook file: {e}", fg="red")
+    click.secho(
+        f"✅ Successfully created webhook '{display_name}' at {webhook_file}",
+        fg="green")
+  except Exception as e:
+    click.secho(f"Error creating webhook file: {e}", fg="red")
 
 
 if __name__ == "__main__":
-    main()
+  main()

@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# tflint-ignore: terraform_unused_declarations
 data "archive_file" "bundle" {}
 resource "azuread_user" "default" {}
 resource "azurerm_resource_group" "default" {}

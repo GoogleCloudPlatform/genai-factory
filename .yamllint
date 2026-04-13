@@ -1,0 +1,33 @@
+---
+
+yaml-files:
+- '*.yaml'
+- '*.yml'
+- '.yamllint'
+
+## exclude
+ignore: |
+  .github/workflows/tests-integration.yml
+  .github/workflows/tests.yml
+  **/.terraform/
+  **/tests/
+  **/.venv/
+
+extends: default
+
+rules:
+  indentation:
+    indent-sequences: consistent
+  line-length:
+    max: 120
+    level: warning
+  braces: disable
+  document-start: disable
+  empty-lines:
+    max: 2
+    max-start: 0
+    max-end: 1
+  comments-indentation: disable
+  # This allows Github workflows to be parsed correctly
+  truthy:
+    allowed-values: ['true', 'false', 'on']
