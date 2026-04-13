@@ -13,7 +13,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 '''Recursively check freshness of tfdoc's generated tables in README files.
 
 This tool recursively checks that the embedded variables and outputs tables in
@@ -29,8 +28,8 @@ import pathlib
 import click
 import tfdoc
 
-
 BASEDIR = pathlib.Path(__file__).resolve().parents[1]
+
 
 class State(enum.IntEnum):
   SKIP = enum.auto()

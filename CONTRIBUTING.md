@@ -55,75 +55,61 @@ uv add <dependency>
 
 ### Run linting
 
-```shell
-# Terraform formatting
-terraform fmt \
-  -recursive \
-  -check \
-  -diff .
+Linting is run as part automatically in your development workflow as a pre-commit hook.
 
-# Terraform linting
-tflint \
-  --recursive \
-  -f compact
-
-# Terraform modules documentation
-uv run python tools/check_documentation.py . \
-  --show-diffs \
-  --no-show-summary
-
-# Python
-uv run yapf . \
-  --parallel \
-  --diff \
-  --recursive \
-  --exclude '*/.venv/*'
-
-# Yaml
-uv run yamllint -c .yamllint .
-
-# Spelling
-uv run codespell .
-
-# Valid links
-uv run python tools/check_links.py . \
-  --no-show-summary \
-  --exclude ./gecx-dialogflow/1-apps/data/ds-kb
-```
-
-If you receive warnings or errors you may use these commands for fixes:
+You can anyway trigger all the checks manually, by using:
 
 ```shell
-# Terraform formatting
-terraform fmt \
-  -recursive .
-
-# Python
-yapf . \
-  --parallel \
-  --recursive \
-  -i
-
-# Yaml
-uv run yamlfix . \
-  --exclude "**/templates/**" \
-  --exclude "**/.terraform/**" \
-  --exclude "**/.venv/**"
+uv run pre-commit run --all-files
 ```
+
+The checks control format and linting for Terraform, Python and Yaml.
+They also check for copyright headers to be presents at the top of each file, misspelled words, missing empty lines at the end of files, broken links, and more.
+
+For a full list of tests, look at the [.pre-commit-config.yaml config file](.pre-commit-config.yaml) or at the [Github linting.yml workflow file](./.github/workflows/linting.yml).
 
 ### Run tests
+
+We run Terraform tests by leveraging pytest and the [tftest framework](https://pypi.org/project/tftest/).
+
+These Terraform tests verify for each stage in each factory that, given a set of `terraform.tfvars` in input, we get a plan with the expected outputs (meaning, expected number of modules and resources to be created, expected arguments and variables, expected outputs). We call these expected output files inventories.
+
+Run tests by using these commands:
 
 ```shell
 # Run all tests
 uv run pytest tests
 
-# Run tests for one cloud-run-single/0-projects
+# Run tests for one factory stage. For example, cloud-run-single/0-projects
 uv run pytest tests/cloud_run_single/0-projects
 ```
 
+### Tests structure
+
+Tests are defined in the `tests` folder, in the root of this repository.
+
+Each factory has a dedicated test folder under `test` that needs to be named as the factory.
+If the factory name includes dashes (`-`), these need to be substituted with underscores (`_`).
+For example, the `agent-engine` factory has a corresponding `agent_engine` test folder.
+
+Each factory test folder includes a subfolder for each stage: `0_projects` and `1_apps`.
+Inside these folders there must be always a `tftest.yaml` file that declares the tests. For example:
+
+```yaml
+module: agent-engine/1-apps
+tests:
+  simple:
+  a2a:
+```
+
+Each test needs two files, called as the test:
+
+- A terraform.tfvars file
+- An inventory yaml file
+
 ### Generate the inventory for a factory module
 
-Run the command below and remove from the output file the element `.values.google_service_account_iam_member.me_sa_token_creator[0].member`:
+To generate the inventory (expected output) file for a test, given an input tfvars file, run:
 
 ```shell
 # Generate the inventory for cloud-run-single/0-projects
@@ -132,15 +118,21 @@ uv run tools/plan_summary.py cloud-run-single/0-projects \
   > tests/cloud_run_single/0_projects/simple.yaml
 ```
 
-## Add a new factory
+After you generated the inventory file, remember to:
 
-- Start copying an existing factory. [cloud-run-single](cloud-run-single/README.md) is a typical choice. Modify it as needed.
+- Add the copyright at the top of the file. You can copy it from any other yaml file in this repository.
+- Remove the following line, if you are generating the inventory for a `0_projects` stage: `.values.google_service_account_iam_member.me_sa_token_creator[0].member`:
+
+## Add new factories
+
+To add a new factory, follow these steps:
+
+- Start by copying an existing factory. [cloud-run-single](cloud-run-single/README.md) is a typical choice. Modify it as needed.
 - Update the uv `pyproject.toml` to your needs.
-  - Please check the [official documentation](https://docs.astral.sh/uv/getting-started/installation/#standalone-installer) on how to install `uv`. UV github actions are being used for the ci pipeline to run tests and tools.
+  - Please check the [official documentation](https://docs.astral.sh/uv/getting-started/installation/#standalone-installer) on how to install `uv`.
   - Use the commands from the [section above](#manage-python-app-dependencies-with-uv)
   - You can learn how to use `uv` [here](https://docs.astral.sh/uv/#highlights).
   - Refer to [Dockerfiles](./cloud-run-single/1-apps/apps/chat/Dockerfile) from other applications in this repository to learn how to use `uv` with Docker.
-- Create a corresponding test in the tests folder. 
-  - Follow the example of other factories. For example, [this](tests/cloud_run_single/0_projects/tftest.yaml) is the test definition for 0-projects of the cloud-run-single factory.
-  - Start creating an empty inventory with `values:` only. Then run the `tools/plan_summary.py` command (example [above](#generate-the-inventory-for-a-factory-module)) and update the inventory file with the output returned.
+- Create corresponding tests in the `tests` folder. 
+  - Follow the example of other factories. For example, [this](tests/cloud_run_single/0_projects/tftest.yaml) is the test definition for 0-projects of the `cloud-run-single` factory. Refer to the test section for more details.
 - Update the list of factories in the [main README.md](README.md).

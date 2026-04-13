@@ -28,7 +28,6 @@ import re
 import click
 import marko
 
-
 BASEDIR = pathlib.Path(__file__).resolve().parents[1]
 DOC = collections.namedtuple('DOC', 'path relpath links')
 LINK = collections.namedtuple('LINK', 'dest valid')
@@ -106,8 +105,10 @@ def check_docs(dir_name, external=False, exclude_dirs=None):
               help='Whether to test external links.')
 @click.option('--show-summary/--no-show-summary', default=True)
 @click.option('--scan-files', default=False, is_flag=True)
-@click.option('--exclude', '-x', multiple=True,
-              help='Exclude one or more directories from the check. Can be specified multiple times.')
+@click.option(
+    '--exclude', '-x', multiple=True, help=
+    'Exclude one or more directories from the check. Can be specified multiple times.'
+)
 def main(dirs, external, show_summary, scan_files, exclude):
   'Checks links in Markdown files contained in dirs.'
   errors = []
