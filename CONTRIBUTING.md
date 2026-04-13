@@ -55,16 +55,21 @@ uv add <dependency>
 
 ### Run linting
 
-Linting is run as part automatically in your development workflow as a pre-commit hook.
+We created a pre-commit hook that quickly executes all checks automatically before every commit.
+You can install it by using:
 
-You can anyway trigger all the checks manually, by using:
+```shell
+uv run pre-commit install
+```
+
+You can also trigger all the checks manually, running:
 
 ```shell
 uv run pre-commit run --all-files
 ```
 
-The checks control format and linting for Terraform, Python and Yaml.
-They also check for copyright headers to be presents at the top of each file, misspelled words, missing empty lines at the end of files, broken links, and more.
+The checks control both format and linting for Terraform, Python and Yaml.
+They also check for the presence of copyright headers at the top of each file, misspelled words, missing empty lines at the end of files, broken links, and more.
 
 For a full list of tests, look at the [.pre-commit-config.yaml config file](.pre-commit-config.yaml) or at the [Github linting.yml workflow file](./.github/workflows/linting.yml).
 
