@@ -17,61 +17,72 @@
 exclude: ^(\.terraform/|\.venv/|templates/)
 
 repos:
-  # 1. End of File Fixer
+  # End of file empty line and removal of trailing spaces
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.6.0
     hooks:
       - id: end-of-file-fixer
+        name: "Adding empty lines at the EOF"
+      - id: trailing-whitespace
+        name: "Removing trailing spaces at the end of lines"
+        args: [--markdown-linebreak-ext=md]
 
-  # 2. Terraform Formatting & Linting
+  # Terraform Formatting & Linting
   - repo: https://github.com/antonbabenko/pre-commit-terraform
     rev: v1.96.1
     hooks:
       - id: terraform_fmt
+        name: "Formatting Terraform code"
       - id: terraform_tflint
+        name: "Linting Terraform code"
         args:
           - --args=--config=__GIT_WORKING_DIR__/.tflint.hcl
 
-  # 3. YAML Linting
+  # YAML Linting
   - repo: https://github.com/adrienverge/yamllint.git
     rev: v1.35.1
     hooks:
       - id: yamllint
+        name: "Linting yaml files"
         args: [-c, .yamllint]
 
-  # 4. Spelling Checks
+  # Spelling Checks
   - repo: https://github.com/codespell-project/codespell
     rev: v2.3.0
     hooks:
       - id: codespell
+        name: "Check words spelling"
 
-  # 5. YAPF (Python Formatting)
+  # YAPF (Python Formatting)
   - repo: https://github.com/google/yapf
     rev: v0.43.0
     hooks:
       - id: yapf
-        name: yapf
+        name: "Checking Python files formatting"
 
-  # 6. Custom Local Tools (Running via your uv environment)
+  # Custom Local Tools (Running via your uv environment)
   - repo: local
     hooks:
       - id: check-boilerplate
-        name: Check Boilerplate
-        entry: uv run python tools/check_boilerplate.py . --exclude-file gecx-dialogflow/1-apps/templates/outputs.sh
+        name: "Checking copyright boilerplate is present in all relevant files"
+        entry: |
+          uv run python tools/check_boilerplate.py . --exclude-file gecx-dialogflow/1-apps/templates/outputs.sh
         language: system
         pass_filenames: false
         always_run: true
 
       - id: check-documentation
-        name: Check documentation
-        entry: uv run python tools/check_documentation.py . --show-diffs --no-show-summary
+        name: "Checking documentation respects genai-factory standards"
+        entry: |
+          uv run python tools/check_documentation.py . --show-diffs --no-show-summary
         language: system
         pass_filenames: false
         always_run: true
 
       - id: check-links
-        name: Check documentation links
-        entry: uv run python tools/check_links.py . --no-show-summary --exclude ./gecx-dialogflow/1-apps/data/ds-kb
+        name: "Checking all links are valid"
+        entry: |
+          uv run python tools/check_links.py . --no-show-summary --exclude ./gecx-dialogflow/1-apps/data/ds-kb
         language: system
         pass_filenames: false
         always_run: true

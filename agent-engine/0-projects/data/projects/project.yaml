@@ -13,7 +13,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 name: gf-ae-0
+
 # Enable APIs
 services:
   - aiplatform.googleapis.com
@@ -28,6 +30,7 @@ services:
   # Needed for SWP if you set network_config.create in 1-apps
   - networksecurity.googleapis.com
   - networkservices.googleapis.com
+
 buckets:
   iac-state:
     description: Terraform state bucket
@@ -36,6 +39,7 @@ buckets:
         - $iam_principals:service_accounts/project/iac-rw
       roles/storage.objectViewer:
         - $iam_principals:service_accounts/project/iac-rw
+
 service_accounts:
   # Automation SAs
   iac-rw:

@@ -67,7 +67,7 @@
   "languageCode": "en",
   "knowledgeConnectorSettings": {
     "mainLlmConfig": {
-    
+
     }
   },
   "llmModelSettings": {
@@ -80,7 +80,7 @@
   },
   "playbookSettings": {
     "memoryRetentionSettings": {
-    
+
     }
   }
 }

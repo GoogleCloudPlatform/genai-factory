@@ -19,10 +19,10 @@ from flask import jsonify
 @functions_framework.http
 def main(request):
   """HTTP Cloud Function for Dialogflow CX Webhook fulfillment.
-    
+
     Args:
         request (flask.Request): The incoming HTTP request object from Dialogflow.
-        
+
     Returns:
         A JSON response formatted specifically for Dialogflow CX fulfillment,
         along with an HTTP 200 status code.

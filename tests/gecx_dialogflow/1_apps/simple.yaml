@@ -1,4 +1,3 @@
----
 # Copyright 2026 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,140 +11,143 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 values:
   module.build-bucket.google_storage_bucket.bucket[0]:
     autoclass: []
     cors: []
     custom_placement_config: []
-    default_event_based_hold:
+    default_event_based_hold: null
     effective_labels:
       goog-terraform-provisioned: 'true'
-    enable_object_retention:
+    enable_object_retention: null
     encryption: []
     force_destroy: false
     hierarchical_namespace: []
     ip_filter: []
-    labels:
+    labels: null
     lifecycle_rule: []
     location: EUROPE-WEST1
     logging: []
     name: prefix-gf-gecx-df-0-build
     project: prefix-gf-ai-apps-df-0
-    requester_pays:
+    requester_pays: null
     retention_policy: []
     storage_class: STANDARD
     terraform_labels:
       goog-terraform-provisioned: 'true'
-    timeouts:
+    timeouts: null
     uniform_bucket_level_access: true
     versioning:
-      - enabled: true
+    - enabled: true
   module.cloud_function.google_cloud_run_service_iam_binding.invoker[0]:
     condition: []
     location: europe-west1
     members:
-      - serviceAccount:service-123456789012@gcp-sa-dialogflow.iam.gserviceaccount.com
+    - serviceAccount:service-123456789012@gcp-sa-dialogflow.iam.gserviceaccount.com
     project: prefix-gf-ai-apps-df-0
     role: roles/run.invoker
     service: gf-gecx-df-0
   module.cloud_function.google_cloudfunctions2_function.function:
     build_config:
-      - entry_point: main
-        on_deploy_update_policy: []
-        runtime: python310
-        service_account: projects/prefix-gf-gecx-df-0/serviceAccounts/gecx-df-0@prefix-gf-gecx-df-0.iam.gserviceaccount.com
-        source:
-          - repo_source: []
-            storage_source:
-              - bucket: prefix-gf-gecx-df-0
-                object: bundle-8aaed0189b461082b4a164e4586ef7df.zip
-        worker_pool:
+    - entry_point: main
+      on_deploy_update_policy: []
+      runtime: python310
+      service_account: projects/prefix-gf-gecx-df-0/serviceAccounts/gecx-df-0@prefix-gf-gecx-df-0.iam.gserviceaccount.com
+      source:
+      - repo_source: []
+        storage_source:
+        - bucket: prefix-gf-gecx-df-0
+          object: bundle-8aaed0189b461082b4a164e4586ef7df.zip
+      worker_pool: null
     description: Terraform managed.
     effective_labels:
       goog-terraform-provisioned: 'true'
     event_trigger: []
-    kms_key_name:
-    labels:
+    kms_key_name: null
+    labels: null
     location: europe-west1
     name: gf-gecx-df-0
     project: prefix-gf-ai-apps-df-0
     service_config:
-      - all_traffic_on_latest_revision: true
-        available_cpu: '0.166'
-        available_memory: 256M
-        binary_authorization_policy:
-        direct_vpc_egress: VPC_EGRESS_ALL_TRAFFIC
-        direct_vpc_network_interface:
-          - tags: []
-        environment_variables:
-          LOG_EXECUTION_ID: 'true'
-        ingress_settings: ALLOW_INTERNAL_ONLY
-        max_instance_count: 1
-        min_instance_count: 0
-        secret_environment_variables: []
-        secret_volumes: []
-        service_account_email: gecx-df-0@prefix-gf-gecx-df-0.iam.gserviceaccount.com
-        timeout_seconds: 180
-        vpc_connector:
-        vpc_connector_egress_settings:
+    - all_traffic_on_latest_revision: true
+      available_cpu: '0.166'
+      available_memory: 256M
+      binary_authorization_policy: null
+      direct_vpc_egress: VPC_EGRESS_ALL_TRAFFIC
+      direct_vpc_network_interface:
+      - tags: []
+      environment_variables:
+        LOG_EXECUTION_ID: 'true'
+      ingress_settings: ALLOW_INTERNAL_ONLY
+      max_instance_count: 1
+      min_instance_count: 0
+      secret_environment_variables: []
+      secret_volumes: []
+      service_account_email: gecx-df-0@prefix-gf-gecx-df-0.iam.gserviceaccount.com
+      timeout_seconds: 180
+      vpc_connector: null
+      vpc_connector_egress_settings: null
     terraform_labels:
       goog-terraform-provisioned: 'true'
-    timeouts:
+    timeouts: null
   module.cloud_function.google_storage_bucket_object.bundle[0]:
     bucket: prefix-gf-gecx-df-0
-    cache_control:
-    content_disposition:
-    content_encoding:
-    content_language:
+    cache_control: null
+    content_disposition: null
+    content_encoding: null
+    content_language: null
     contexts: []
     customer_encryption: []
-    deletion_policy:
-    detect_md5hash:
-    event_based_hold:
-    force_empty_content_type:
-    metadata:
+    deletion_policy: null
+    detect_md5hash: null
+    event_based_hold: null
+    force_empty_content_type: null
+    metadata: null
     name: bundle-8aaed0189b461082b4a164e4586ef7df.zip
     retention: []
     source: /tmp/bundle-prefix-gf-ai-apps-df-0-gf-gecx-df-0.zip
     source_md5hash: 8aaed0189b461082b4a164e4586ef7df
-    temporary_hold:
-    timeouts:
+    temporary_hold: null
+    timeouts: null
   module.dialogflow.google_dialogflow_cx_agent.default[0]:
     answer_feedback_settings: []
-    avatar_uri:
+    avatar_uri: null
     client_certificate_settings: []
     default_language_code: en
     delete_chat_engine_on_destroy: false
     description: Terraform managed.
     display_name: gf-gecx-df-0
-    enable_multi_language_training:
-    enable_spell_correction:
-    enable_stackdriver_logging:
+    enable_multi_language_training: null
+    enable_spell_correction: null
+    enable_stackdriver_logging: null
     git_integration_settings: []
     location: europe-west1
-    locked:
+    locked: null
     personalization_settings: []
     project: prefix-gf-ai-apps-df-0
-    security_settings:
+    security_settings: null
     speech_to_text_settings: []
-    start_playbook:
-    supported_language_codes:
+    start_playbook: null
+    supported_language_codes: null
     text_to_speech_settings: []
     time_zone: America/Los_Angeles
-    timeouts:
+    timeouts: null
   module.dialogflow.google_discovery_engine_chat_engine.default[0]:
     chat_engine_config:
-      - agent_creation_config: []
-        allow_cross_region: true
+    - agent_creation_config: []
+      allow_cross_region: true
     collection_id: default_collection
     common_config: []
-    data_store_ids: [gf-gecx-df-0-faq, gf-gecx-df-0-kb]
+    data_store_ids:
+    - gf-gecx-df-0-faq
+    - gf-gecx-df-0-kb
     display_name: gf-gecx-df-0
     engine_id: gf-gecx-df-0
     industry_vertical: GENERIC
     location: eu
     project: prefix-gf-ai-apps-df-0
-    timeouts:
+    timeouts: null
   module.dialogflow.google_discovery_engine_data_store.default["faq"]:
     content_config: NO_CONTENT
     create_advanced_site_search: false
@@ -153,766 +155,818 @@ values:
     display_name: gf-gecx-df-0-faq
     document_processing_config: []
     industry_vertical: GENERIC
-    kms_key_name:
+    kms_key_name: null
     location: eu
     project: prefix-gf-ai-apps-df-0
     skip_default_schema_creation: false
-    solution_types: [SOLUTION_TYPE_CHAT]
-    timeouts:
+    solution_types:
+    - SOLUTION_TYPE_CHAT
+    timeouts: null
   module.dialogflow.google_discovery_engine_data_store.default["kb"]:
     content_config: CONTENT_REQUIRED
     create_advanced_site_search: false
     data_store_id: gf-gecx-df-0-kb
     display_name: gf-gecx-df-0-kb
     document_processing_config:
-      - chunking_config:
-          - layout_based_chunking_config:
-              - chunk_size: 500
-                include_ancestor_headings: true
-        default_parsing_config:
-          - digital_parsing_config: []
-            layout_parsing_config:
-              - enable_image_annotation:
-                enable_table_annotation:
-                exclude_html_classes:
-                exclude_html_elements:
-                exclude_html_ids:
-                structured_content_types:
-            ocr_parsing_config: []
-        parsing_config_overrides: []
+    - chunking_config:
+      - layout_based_chunking_config:
+        - chunk_size: 500
+          include_ancestor_headings: true
+      default_parsing_config:
+      - digital_parsing_config: []
+        layout_parsing_config:
+        - enable_image_annotation: null
+          enable_table_annotation: null
+          exclude_html_classes: null
+          exclude_html_elements: null
+          exclude_html_ids: null
+          structured_content_types: null
+        ocr_parsing_config: []
+      parsing_config_overrides: []
     industry_vertical: GENERIC
-    kms_key_name:
+    kms_key_name: null
     location: eu
     project: prefix-gf-ai-apps-df-0
     skip_default_schema_creation: true
-    solution_types: [SOLUTION_TYPE_CHAT]
-    timeouts:
+    solution_types:
+    - SOLUTION_TYPE_CHAT
+    timeouts: null
   module.dialogflow.google_discovery_engine_schema.default["kb"]:
     data_store_id: gf-gecx-df-0-kb
     json_schema: '{"$schema":"https://json-schema.org/draft/2020-12/schema","properties":{"description":{"keyPropertyMapping":"description","retrievable":true,"type":"string"},"title":{"keyPropertyMapping":"title","retrievable":true,"type":"string"},"url":{"dynamicFacetable":false,"indexable":false,"retrievable":true,"searchable":false,"type":"string"}},"type":"object"}'
     location: eu
     project: prefix-gf-ai-apps-df-0
     schema_id: gf-gecx-df-0-kb
-    timeouts:
+    timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy.default[0]:
     description: Terraform managed.
     gke_clusters: []
     networks:
-      - {}
+    - {}
     project: prefix-gf-ai-apps-df-0
     response_policy_name: googleapis
-    timeouts:
+    timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["accounts"]:
-    behavior:
+    behavior: null
     dns_name: accounts.google.com.
     local_data:
-      - local_datas:
-          - name: accounts.google.com.
-            rrdatas: [private.googleapis.com.]
-            ttl:
-            type: CNAME
+    - local_datas:
+      - name: accounts.google.com.
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
     project: prefix-gf-ai-apps-df-0
     response_policy: googleapis
     rule_name: accounts
-    timeouts:
+    timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["aiplatform-notebook-cloud-all"]:
-    behavior:
+    behavior: null
     dns_name: '*.aiplatform-notebook.cloud.google.com.'
     local_data:
-      - local_datas:
-          - name: '*.aiplatform-notebook.cloud.google.com.'
-            rrdatas: [private.googleapis.com.]
-            ttl:
-            type: CNAME
+    - local_datas:
+      - name: '*.aiplatform-notebook.cloud.google.com.'
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
     project: prefix-gf-ai-apps-df-0
     response_policy: googleapis
     rule_name: aiplatform-notebook-cloud-all
-    timeouts:
+    timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["aiplatform-notebook-gu-all"]:
-    behavior:
+    behavior: null
     dns_name: '*.aiplatform-notebook.googleusercontent.com.'
     local_data:
-      - local_datas:
-          - name: '*.aiplatform-notebook.googleusercontent.com.'
-            rrdatas: [private.googleapis.com.]
-            ttl:
-            type: CNAME
+    - local_datas:
+      - name: '*.aiplatform-notebook.googleusercontent.com.'
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
     project: prefix-gf-ai-apps-df-0
     response_policy: googleapis
     rule_name: aiplatform-notebook-gu-all
-    timeouts:
+    timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["backupdr-cloud"]:
-    behavior:
+    behavior: null
     dns_name: backupdr.cloud.google.com.
     local_data:
-      - local_datas:
-          - name: backupdr.cloud.google.com.
-            rrdatas: [private.googleapis.com.]
-            ttl:
-            type: CNAME
+    - local_datas:
+      - name: backupdr.cloud.google.com.
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
     project: prefix-gf-ai-apps-df-0
     response_policy: googleapis
     rule_name: backupdr-cloud
-    timeouts:
+    timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["backupdr-cloud-all"]:
-    behavior:
+    behavior: null
     dns_name: '*.backupdr.cloud.google.com.'
     local_data:
-      - local_datas:
-          - name: '*.backupdr.cloud.google.com.'
-            rrdatas: [private.googleapis.com.]
-            ttl:
-            type: CNAME
+    - local_datas:
+      - name: '*.backupdr.cloud.google.com.'
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
     project: prefix-gf-ai-apps-df-0
     response_policy: googleapis
     rule_name: backupdr-cloud-all
-    timeouts:
+    timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["backupdr-gu"]:
-    behavior:
+    behavior: null
     dns_name: backupdr.googleusercontent.google.com.
     local_data:
-      - local_datas:
-          - name: backupdr.googleusercontent.google.com.
-            rrdatas: [private.googleapis.com.]
-            ttl:
-            type: CNAME
+    - local_datas:
+      - name: backupdr.googleusercontent.google.com.
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
     project: prefix-gf-ai-apps-df-0
     response_policy: googleapis
     rule_name: backupdr-gu
-    timeouts:
+    timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["backupdr-gu-all"]:
-    behavior:
+    behavior: null
     dns_name: '*.backupdr.googleusercontent.google.com.'
     local_data:
-      - local_datas:
-          - name: '*.backupdr.googleusercontent.google.com.'
-            rrdatas: [private.googleapis.com.]
-            ttl:
-            type: CNAME
+    - local_datas:
+      - name: '*.backupdr.googleusercontent.google.com.'
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
     project: prefix-gf-ai-apps-df-0
     response_policy: googleapis
     rule_name: backupdr-gu-all
-    timeouts:
+    timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["cloudfunctions"]:
-    behavior:
+    behavior: null
     dns_name: '*.cloudfunctions.net.'
     local_data:
-      - local_datas:
-          - name: '*.cloudfunctions.net.'
-            rrdatas: [private.googleapis.com.]
-            ttl:
-            type: CNAME
+    - local_datas:
+      - name: '*.cloudfunctions.net.'
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
     project: prefix-gf-ai-apps-df-0
     response_policy: googleapis
     rule_name: cloudfunctions
-    timeouts:
+    timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["cloudproxy"]:
-    behavior:
+    behavior: null
     dns_name: '*.cloudproxy.app.'
     local_data:
-      - local_datas:
-          - name: '*.cloudproxy.app.'
-            rrdatas: [private.googleapis.com.]
-            ttl:
-            type: CNAME
+    - local_datas:
+      - name: '*.cloudproxy.app.'
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
     project: prefix-gf-ai-apps-df-0
     response_policy: googleapis
     rule_name: cloudproxy
-    timeouts:
+    timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["composer-cloud-all"]:
-    behavior:
+    behavior: null
     dns_name: '*.composer.cloud.google.com.'
     local_data:
-      - local_datas:
-          - name: '*.composer.cloud.google.com.'
-            rrdatas: [private.googleapis.com.]
-            ttl:
-            type: CNAME
+    - local_datas:
+      - name: '*.composer.cloud.google.com.'
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
     project: prefix-gf-ai-apps-df-0
     response_policy: googleapis
     rule_name: composer-cloud-all
-    timeouts:
+    timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["composer-gu-all"]:
-    behavior:
+    behavior: null
     dns_name: '*.composer.googleusercontent.com.'
     local_data:
-      - local_datas:
-          - name: '*.composer.googleusercontent.com.'
-            rrdatas: [private.googleapis.com.]
-            ttl:
-            type: CNAME
+    - local_datas:
+      - name: '*.composer.googleusercontent.com.'
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
     project: prefix-gf-ai-apps-df-0
     response_policy: googleapis
     rule_name: composer-gu-all
-    timeouts:
+    timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["datafusion-all"]:
-    behavior:
+    behavior: null
     dns_name: '*.datafusion.cloud.google.com.'
     local_data:
-      - local_datas:
-          - name: '*.datafusion.cloud.google.com.'
-            rrdatas: [private.googleapis.com.]
-            ttl:
-            type: CNAME
+    - local_datas:
+      - name: '*.datafusion.cloud.google.com.'
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
     project: prefix-gf-ai-apps-df-0
     response_policy: googleapis
     rule_name: datafusion-all
-    timeouts:
+    timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["datafusion-gu-all"]:
-    behavior:
+    behavior: null
     dns_name: '*.datafusion.googleusercontent.com.'
     local_data:
-      - local_datas:
-          - name: '*.datafusion.googleusercontent.com.'
-            rrdatas: [private.googleapis.com.]
-            ttl:
-            type: CNAME
+    - local_datas:
+      - name: '*.datafusion.googleusercontent.com.'
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
     project: prefix-gf-ai-apps-df-0
     response_policy: googleapis
     rule_name: datafusion-gu-all
-    timeouts:
+    timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["dataproc"]:
-    behavior:
+    behavior: null
     dns_name: dataproc.cloud.google.com.
     local_data:
-      - local_datas:
-          - name: dataproc.cloud.google.com.
-            rrdatas: [private.googleapis.com.]
-            ttl:
-            type: CNAME
+    - local_datas:
+      - name: dataproc.cloud.google.com.
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
     project: prefix-gf-ai-apps-df-0
     response_policy: googleapis
     rule_name: dataproc
-    timeouts:
+    timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["dataproc-all"]:
-    behavior:
+    behavior: null
     dns_name: '*.dataproc.cloud.google.com.'
     local_data:
-      - local_datas:
-          - name: '*.dataproc.cloud.google.com.'
-            rrdatas: [private.googleapis.com.]
-            ttl:
-            type: CNAME
+    - local_datas:
+      - name: '*.dataproc.cloud.google.com.'
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
     project: prefix-gf-ai-apps-df-0
     response_policy: googleapis
     rule_name: dataproc-all
-    timeouts:
+    timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["dataproc-gu"]:
-    behavior:
+    behavior: null
     dns_name: dataproc.googleusercontent.com.
     local_data:
-      - local_datas:
-          - name: dataproc.googleusercontent.com.
-            rrdatas: [private.googleapis.com.]
-            ttl:
-            type: CNAME
+    - local_datas:
+      - name: dataproc.googleusercontent.com.
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
     project: prefix-gf-ai-apps-df-0
     response_policy: googleapis
     rule_name: dataproc-gu
-    timeouts:
+    timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["dataproc-gu-all"]:
-    behavior:
+    behavior: null
     dns_name: '*.dataproc.googleusercontent.com.'
     local_data:
-      - local_datas:
-          - name: '*.dataproc.googleusercontent.com.'
-            rrdatas: [private.googleapis.com.]
-            ttl:
-            type: CNAME
+    - local_datas:
+      - name: '*.dataproc.googleusercontent.com.'
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
     project: prefix-gf-ai-apps-df-0
     response_policy: googleapis
     rule_name: dataproc-gu-all
-    timeouts:
+    timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["dl"]:
-    behavior:
+    behavior: null
     dns_name: dl.google.com.
     local_data:
-      - local_datas:
-          - name: dl.google.com.
-            rrdatas: [private.googleapis.com.]
-            ttl:
-            type: CNAME
+    - local_datas:
+      - name: dl.google.com.
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
     project: prefix-gf-ai-apps-df-0
     response_policy: googleapis
     rule_name: dl
-    timeouts:
+    timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["gcr"]:
-    behavior:
+    behavior: null
     dns_name: gcr.io.
     local_data:
-      - local_datas:
-          - name: gcr.io.
-            rrdatas: [private.googleapis.com.]
-            ttl:
-            type: CNAME
+    - local_datas:
+      - name: gcr.io.
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
     project: prefix-gf-ai-apps-df-0
     response_policy: googleapis
     rule_name: gcr
-    timeouts:
+    timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["gcr-all"]:
-    behavior:
+    behavior: null
     dns_name: '*.gcr.io.'
     local_data:
-      - local_datas:
-          - name: '*.gcr.io.'
-            rrdatas: [private.googleapis.com.]
-            ttl:
-            type: CNAME
+    - local_datas:
+      - name: '*.gcr.io.'
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
     project: prefix-gf-ai-apps-df-0
     response_policy: googleapis
     rule_name: gcr-all
-    timeouts:
+    timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["gke-all"]:
-    behavior:
+    behavior: null
     dns_name: '*.gke.goog.'
     local_data:
-      - local_datas:
-          - name: '*.gke.goog.'
-            rrdatas: [private.googleapis.com.]
-            ttl:
-            type: CNAME
+    - local_datas:
+      - name: '*.gke.goog.'
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
     project: prefix-gf-ai-apps-df-0
     response_policy: googleapis
     rule_name: gke-all
-    timeouts:
+    timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["googleapis-all"]:
-    behavior:
+    behavior: null
     dns_name: '*.googleapis.com.'
     local_data:
-      - local_datas:
-          - name: '*.googleapis.com.'
-            rrdatas: [private.googleapis.com.]
-            ttl:
-            type: CNAME
+    - local_datas:
+      - name: '*.googleapis.com.'
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
     project: prefix-gf-ai-apps-df-0
     response_policy: googleapis
     rule_name: googleapis-all
-    timeouts:
+    timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["googleapis-private"]:
-    behavior:
+    behavior: null
     dns_name: private.googleapis.com.
     local_data:
-      - local_datas:
-          - name: private.googleapis.com.
-            rrdatas: [199.36.153.8, 199.36.153.9, 199.36.153.10, 199.36.153.11]
-            ttl:
-            type: A
-          - name: private.googleapis.com.
-            rrdatas: ['2600:2d00:2:2000::']
-            ttl:
-            type: AAAA
+    - local_datas:
+      - name: private.googleapis.com.
+        rrdatas:
+        - 199.36.153.8
+        - 199.36.153.9
+        - 199.36.153.10
+        - 199.36.153.11
+        ttl: null
+        type: A
+      - name: private.googleapis.com.
+        rrdatas:
+        - '2600:2d00:2:2000::'
+        ttl: null
+        type: AAAA
     project: prefix-gf-ai-apps-df-0
     response_policy: googleapis
     rule_name: googleapis-private
-    timeouts:
+    timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["googleapis-restricted"]:
-    behavior:
+    behavior: null
     dns_name: restricted.googleapis.com.
     local_data:
-      - local_datas:
-          - name: restricted.googleapis.com.
-            rrdatas: [199.36.153.4, 199.36.153.5, 199.36.153.6, 199.36.153.7]
-            ttl:
-            type: A
-          - name: restricted.googleapis.com.
-            rrdatas: ['2600:2d00:2:1000::']
-            ttl:
-            type: AAAA
+    - local_datas:
+      - name: restricted.googleapis.com.
+        rrdatas:
+        - 199.36.153.4
+        - 199.36.153.5
+        - 199.36.153.6
+        - 199.36.153.7
+        ttl: null
+        type: A
+      - name: restricted.googleapis.com.
+        rrdatas:
+        - '2600:2d00:2:1000::'
+        ttl: null
+        type: AAAA
     project: prefix-gf-ai-apps-df-0
     response_policy: googleapis
     rule_name: googleapis-restricted
-    timeouts:
+    timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["gstatic-all"]:
-    behavior:
+    behavior: null
     dns_name: '*.gstatic.com.'
     local_data:
-      - local_datas:
-          - name: '*.gstatic.com.'
-            rrdatas: [private.googleapis.com.]
-            ttl:
-            type: CNAME
+    - local_datas:
+      - name: '*.gstatic.com.'
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
     project: prefix-gf-ai-apps-df-0
     response_policy: googleapis
     rule_name: gstatic-all
-    timeouts:
+    timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["kernels-gu"]:
-    behavior:
+    behavior: null
     dns_name: kernels.googleusercontent.com.
     local_data:
-      - local_datas:
-          - name: kernels.googleusercontent.com.
-            rrdatas: [private.googleapis.com.]
-            ttl:
-            type: CNAME
+    - local_datas:
+      - name: kernels.googleusercontent.com.
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
     project: prefix-gf-ai-apps-df-0
     response_policy: googleapis
     rule_name: kernels-gu
-    timeouts:
+    timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["kernels-gu-all"]:
-    behavior:
+    behavior: null
     dns_name: '*.kernels.googleusercontent.com.'
     local_data:
-      - local_datas:
-          - name: '*.kernels.googleusercontent.com.'
-            rrdatas: [private.googleapis.com.]
-            ttl:
-            type: CNAME
+    - local_datas:
+      - name: '*.kernels.googleusercontent.com.'
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
     project: prefix-gf-ai-apps-df-0
     response_policy: googleapis
     rule_name: kernels-gu-all
-    timeouts:
+    timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["ltsapis-all"]:
-    behavior:
+    behavior: null
     dns_name: '*.ltsapis.goog.'
     local_data:
-      - local_datas:
-          - name: '*.ltsapis.goog.'
-            rrdatas: [private.googleapis.com.]
-            ttl:
-            type: CNAME
+    - local_datas:
+      - name: '*.ltsapis.goog.'
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
     project: prefix-gf-ai-apps-df-0
     response_policy: googleapis
     rule_name: ltsapis-all
-    timeouts:
+    timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["notebooks-all"]:
-    behavior:
+    behavior: null
     dns_name: '*.notebooks.cloud.google.com.'
     local_data:
-      - local_datas:
-          - name: '*.notebooks.cloud.google.com.'
-            rrdatas: [private.googleapis.com.]
-            ttl:
-            type: CNAME
+    - local_datas:
+      - name: '*.notebooks.cloud.google.com.'
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
     project: prefix-gf-ai-apps-df-0
     response_policy: googleapis
     rule_name: notebooks-all
-    timeouts:
+    timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["notebooks-gu-all"]:
-    behavior:
+    behavior: null
     dns_name: '*.notebooks.googleusercontent.com.'
     local_data:
-      - local_datas:
-          - name: '*.notebooks.googleusercontent.com.'
-            rrdatas: [private.googleapis.com.]
-            ttl:
-            type: CNAME
+    - local_datas:
+      - name: '*.notebooks.googleusercontent.com.'
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
     project: prefix-gf-ai-apps-df-0
     response_policy: googleapis
     rule_name: notebooks-gu-all
-    timeouts:
+    timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["packages-cloud"]:
-    behavior:
+    behavior: null
     dns_name: packages.cloud.google.com.
     local_data:
-      - local_datas:
-          - name: packages.cloud.google.com.
-            rrdatas: [private.googleapis.com.]
-            ttl:
-            type: CNAME
+    - local_datas:
+      - name: packages.cloud.google.com.
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
     project: prefix-gf-ai-apps-df-0
     response_policy: googleapis
     rule_name: packages-cloud
-    timeouts:
+    timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["packages-cloud-all"]:
-    behavior:
+    behavior: null
     dns_name: '*.packages.cloud.google.com.'
     local_data:
-      - local_datas:
-          - name: '*.packages.cloud.google.com.'
-            rrdatas: [private.googleapis.com.]
-            ttl:
-            type: CNAME
+    - local_datas:
+      - name: '*.packages.cloud.google.com.'
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
     project: prefix-gf-ai-apps-df-0
     response_policy: googleapis
     rule_name: packages-cloud-all
-    timeouts:
+    timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["pkgdev"]:
-    behavior:
+    behavior: null
     dns_name: pkg.dev.
     local_data:
-      - local_datas:
-          - name: pkg.dev.
-            rrdatas: [private.googleapis.com.]
-            ttl:
-            type: CNAME
+    - local_datas:
+      - name: pkg.dev.
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
     project: prefix-gf-ai-apps-df-0
     response_policy: googleapis
     rule_name: pkgdev
-    timeouts:
+    timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["pkgdev-all"]:
-    behavior:
+    behavior: null
     dns_name: '*.pkg.dev.'
     local_data:
-      - local_datas:
-          - name: '*.pkg.dev.'
-            rrdatas: [private.googleapis.com.]
-            ttl:
-            type: CNAME
+    - local_datas:
+      - name: '*.pkg.dev.'
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
     project: prefix-gf-ai-apps-df-0
     response_policy: googleapis
     rule_name: pkgdev-all
-    timeouts:
+    timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["pkigoog"]:
-    behavior:
+    behavior: null
     dns_name: pki.goog.
     local_data:
-      - local_datas:
-          - name: pki.goog.
-            rrdatas: [private.googleapis.com.]
-            ttl:
-            type: CNAME
+    - local_datas:
+      - name: pki.goog.
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
     project: prefix-gf-ai-apps-df-0
     response_policy: googleapis
     rule_name: pkigoog
-    timeouts:
+    timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["pkigoog-all"]:
-    behavior:
+    behavior: null
     dns_name: '*.pki.goog.'
     local_data:
-      - local_datas:
-          - name: '*.pki.goog.'
-            rrdatas: [private.googleapis.com.]
-            ttl:
-            type: CNAME
+    - local_datas:
+      - name: '*.pki.goog.'
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
     project: prefix-gf-ai-apps-df-0
     response_policy: googleapis
     rule_name: pkigoog-all
-    timeouts:
+    timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["run-all"]:
-    behavior:
+    behavior: null
     dns_name: '*.run.app.'
     local_data:
-      - local_datas:
-          - name: '*.run.app.'
-            rrdatas: [private.googleapis.com.]
-            ttl:
-            type: CNAME
+    - local_datas:
+      - name: '*.run.app.'
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
     project: prefix-gf-ai-apps-df-0
     response_policy: googleapis
     rule_name: run-all
-    timeouts:
+    timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["source"]:
-    behavior:
+    behavior: null
     dns_name: source.developers.google.com.
     local_data:
-      - local_datas:
-          - name: source.developers.google.com.
-            rrdatas: [private.googleapis.com.]
-            ttl:
-            type: CNAME
+    - local_datas:
+      - name: source.developers.google.com.
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
     project: prefix-gf-ai-apps-df-0
     response_policy: googleapis
     rule_name: source
-    timeouts:
+    timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["storage"]:
-    behavior:
+    behavior: null
     dns_name: storage.cloud.google.com.
     local_data:
-      - local_datas:
-          - name: storage.cloud.google.com.
-            rrdatas: [private.googleapis.com.]
-            ttl:
-            type: CNAME
+    - local_datas:
+      - name: storage.cloud.google.com.
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
     project: prefix-gf-ai-apps-df-0
     response_policy: googleapis
     rule_name: storage
-    timeouts:
+    timeouts: null
   module.dns_service_directory[0].google_dns_managed_zone.dns_managed_zone[0]:
     cloud_logging_config:
-      - enable_logging: false
+    - enable_logging: false
     description: Terraform managed.
     dns_name: example.com.
     effective_labels:
       goog-terraform-provisioned: 'true'
     force_destroy: false
     forwarding_config: []
-    labels:
+    labels: null
     name: example-com
     peering_config: []
     project: prefix-gf-ai-apps-df-0
     reverse_lookup: false
     terraform_labels:
       goog-terraform-provisioned: 'true'
-    timeouts:
+    timeouts: null
     visibility: private
   module.ds-bucket.google_storage_bucket.bucket[0]:
     autoclass: []
     cors: []
     custom_placement_config: []
-    default_event_based_hold:
+    default_event_based_hold: null
     effective_labels:
       goog-terraform-provisioned: 'true'
-    enable_object_retention:
+    enable_object_retention: null
     encryption: []
     force_destroy: false
     hierarchical_namespace: []
     ip_filter: []
-    labels:
+    labels: null
     lifecycle_rule: []
     location: EUROPE-WEST1
     logging: []
     name: prefix-gf-gecx-df-0-ds
     project: prefix-gf-ai-apps-df-0
-    requester_pays:
+    requester_pays: null
     retention_policy: []
     storage_class: STANDARD
     terraform_labels:
       goog-terraform-provisioned: 'true'
-    timeouts:
+    timeouts: null
     uniform_bucket_level_access: true
     versioning:
-      - enabled: true
+    - enabled: true
   module.firewall-policy[0].google_compute_network_firewall_policy.net-global[0]:
-    description:
+    description: null
     name: gf-gecx-df-0
     project: prefix-gf-ai-apps-df-0
-    timeouts:
+    timeouts: null
   module.firewall-policy[0].google_compute_network_firewall_policy_association.net-global["vpc"]:
     firewall_policy: gf-gecx-df-0
     name: gf-gecx-df-0-vpc
     project: prefix-gf-ai-apps-df-0
-    timeouts:
+    timeouts: null
   module.firewall-policy[0].google_compute_network_firewall_policy_rule.net-global["ingress/allow-service-directory"]:
     action: allow
-    description:
+    description: null
     direction: INGRESS
     disabled: false
-    enable_logging:
+    enable_logging: null
     firewall_policy: gf-gecx-df-0
     match:
-      - dest_address_groups:
-        dest_fqdns:
-        dest_ip_ranges:
-        dest_region_codes:
-        dest_threat_intelligences:
-        layer4_configs:
-          - ip_protocol: tcp
-            ports: ['80', '443']
-        src_address_groups:
-        src_fqdns:
-        src_ip_ranges: [35.199.192.0/19]
-        src_networks:
-        src_region_codes:
-        src_secure_tags: []
-        src_threat_intelligences:
+    - dest_address_groups: null
+      dest_fqdns: null
+      dest_ip_ranges: null
+      dest_region_codes: null
+      dest_threat_intelligences: null
+      layer4_configs:
+      - ip_protocol: tcp
+        ports:
+        - '80'
+        - '443'
+      src_address_groups: null
+      src_fqdns: null
+      src_ip_ranges:
+      - 35.199.192.0/19
+      src_networks: null
+      src_region_codes: null
+      src_secure_tags: []
+      src_threat_intelligences: null
     priority: 1000
     project: prefix-gf-ai-apps-df-0
     rule_name: allow-service-directory
-    security_profile_group:
+    security_profile_group: null
     target_secure_tags: []
-    target_service_accounts:
-    timeouts:
-    tls_inspect:
+    target_service_accounts: null
+    timeouts: null
+    tls_inspect: null
   module.gcs_bucket.google_storage_bucket.bucket[0]:
     autoclass: []
     cors: []
     custom_placement_config: []
-    default_event_based_hold:
+    default_event_based_hold: null
     effective_labels:
       goog-terraform-provisioned: 'true'
-    enable_object_retention:
+    enable_object_retention: null
     encryption: []
     force_destroy: false
     hierarchical_namespace: []
     ip_filter: []
-    labels:
+    labels: null
     lifecycle_rule: []
     location: EUROPE-WEST1
     logging: []
     name: prefix-gf-gecx-df-0
     project: prefix-gf-ai-apps-df-0
     public_access_prevention: enforced
-    requester_pays:
+    requester_pays: null
     retention_policy: []
     storage_class: STANDARD
     terraform_labels:
       goog-terraform-provisioned: 'true'
-    timeouts:
+    timeouts: null
     uniform_bucket_level_access: true
     versioning:
-      - enabled: true
+    - enabled: true
   module.service_directory.google_service_directory_endpoint.default["onprem/onprem-ep-one"]:
-    address:
+    address: null
     endpoint_id: onprem-ep-one
-    metadata:
-    network:
-    port:
-    timeouts:
+    metadata: null
+    network: null
+    port: null
+    timeouts: null
   module.service_directory.google_service_directory_namespace.default:
     effective_labels:
       goog-terraform-provisioned: 'true'
-    labels:
+    labels: null
     location: europe-west1
     namespace_id: gf-gecx-df-0
     project: prefix-gf-ai-apps-df-0
     terraform_labels:
       goog-terraform-provisioned: 'true'
-    timeouts:
+    timeouts: null
   module.service_directory.google_service_directory_service.default["onprem"]:
-    metadata:
+    metadata: null
     service_id: onprem
-    timeouts:
+    timeouts: null
   module.vpc[0].google_compute_network.network[0]:
     auto_create_subnetworks: false
     delete_bgp_always_compare_med: false
     delete_default_routes_on_create: false
     description: Terraform-managed.
-    enable_ula_internal_ipv6:
+    enable_ula_internal_ipv6: null
     name: net-0
     network_firewall_policy_enforcement_order: AFTER_CLASSIC_FIREWALL
-    network_profile:
+    network_profile: null
     params: []
     project: prefix-gf-ai-apps-df-0
     routing_mode: GLOBAL
-    timeouts:
+    timeouts: null
   module.vpc[0].google_compute_route.gateway["directpath-googleapis"]:
     description: Terraform-managed.
     dest_range: 34.126.0.0/18
     name: net-0-directpath-googleapis
     network: net-0
     next_hop_gateway: default-internet-gateway
-    next_hop_ilb:
-    next_hop_instance:
-    next_hop_vpn_tunnel:
+    next_hop_ilb: null
+    next_hop_instance: null
+    next_hop_vpn_tunnel: null
     params: []
     priority: 1000
     project: prefix-gf-ai-apps-df-0
-    tags:
-    timeouts:
+    tags: null
+    timeouts: null
   module.vpc[0].google_compute_route.gateway["private-googleapis"]:
     description: Terraform-managed.
     dest_range: 199.36.153.8/30
     name: net-0-private-googleapis
     network: net-0
     next_hop_gateway: default-internet-gateway
-    next_hop_ilb:
-    next_hop_instance:
-    next_hop_vpn_tunnel:
+    next_hop_ilb: null
+    next_hop_instance: null
+    next_hop_vpn_tunnel: null
     params: []
     priority: 1000
     project: prefix-gf-ai-apps-df-0
-    tags:
-    timeouts:
+    tags: null
+    timeouts: null
   module.vpc[0].google_compute_route.gateway["restricted-googleapis"]:
     description: Terraform-managed.
     dest_range: 199.36.153.4/30
     name: net-0-restricted-googleapis
     network: net-0
     next_hop_gateway: default-internet-gateway
-    next_hop_ilb:
-    next_hop_instance:
-    next_hop_vpn_tunnel:
+    next_hop_ilb: null
+    next_hop_instance: null
+    next_hop_vpn_tunnel: null
     params: []
     priority: 1000
     project: prefix-gf-ai-apps-df-0
-    tags:
-    timeouts:
+    tags: null
+    timeouts: null
   module.vpc[0].google_compute_subnetwork.proxy_only["europe-west1/proxy-only-sub-0"]:
     description: Terraform-managed proxy-only subnet for Regional HTTPS, Internal
       HTTPS or Cross-Regional HTTPS Internal LB.
     ip_cidr_range: 10.20.0.0/24
-    ip_collection:
-    ipv6_access_type:
+    ip_collection: null
+    ipv6_access_type: null
     log_config: []
     name: proxy-only-sub-0
     network: net-0
@@ -920,16 +974,16 @@ values:
     project: prefix-gf-ai-apps-df-0
     purpose: REGIONAL_MANAGED_PROXY
     region: europe-west1
-    reserved_internal_range:
-    resolve_subnet_mask:
+    reserved_internal_range: null
+    resolve_subnet_mask: null
     role: ACTIVE
-    send_secondary_ip_range_if_empty:
-    timeouts:
+    send_secondary_ip_range_if_empty: null
+    timeouts: null
   module.vpc[0].google_compute_subnetwork.subnetwork["europe-west1/sub-0"]:
     description: Terraform-managed.
     ip_cidr_range: 10.0.0.0/24
-    ip_collection:
-    ipv6_access_type:
+    ip_collection: null
+    ipv6_access_type: null
     log_config: []
     name: sub-0
     network: net-0
@@ -937,11 +991,12 @@ values:
     private_ip_google_access: true
     project: prefix-gf-ai-apps-df-0
     region: europe-west1
-    reserved_internal_range:
-    resolve_subnet_mask:
-    role:
+    reserved_internal_range: null
+    resolve_subnet_mask: null
+    role: null
     send_secondary_ip_range_if_empty: true
-    timeouts:
+    timeouts: null
+
 counts:
   google_cloud_run_service_iam_binding: 1
   google_cloudfunctions2_function: 1
@@ -965,5 +1020,6 @@ counts:
   google_storage_bucket_object: 1
   modules: 10
   resources: 64
+
 outputs:
   commands: __missing__

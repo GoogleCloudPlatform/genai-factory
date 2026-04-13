@@ -13,7 +13,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 name: gf-gecx-df-0
+
 # Enable APIs
 services:
   - dialogflow.googleapis.com
@@ -33,6 +35,7 @@ services:
   # Only needed if you define private endpoints to be reached
   # via Service Directory
   - servicedirectory.googleapis.com
+
 buckets:
   iac-state:
     description: Terraform state bucket
@@ -41,6 +44,7 @@ buckets:
         - $iam_principals:service_accounts/_self_/iac-rw
       roles/storage.objectViewer:
         - $iam_principals:service_accounts/_self_/iac-rw
+
 service_accounts:
   # Automation SAs
   iac-rw:
@@ -57,6 +61,7 @@ service_accounts:
   # SA dedicated for the Cloud Function build
   # (only used if Cloud Function is created)
   gecx-df-build-0: {}
+
 # Grant roles
 iam_by_principals:
   $iam_principals:service_accounts/_self_/iac-rw:

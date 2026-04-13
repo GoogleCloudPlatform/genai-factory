@@ -121,7 +121,7 @@ async def list_firewall_rules(ctx: Context, project_id: str,
 @mcp.tool()
 async def list_networks(ctx: Context, project_id: str) -> str:
   """List VPC networks in a project.
-    
+
     Args:
         ctx: FastMCP Context.
         project_id: The Google Cloud Project ID.
@@ -233,7 +233,7 @@ async def create_firewall_rule(ctx: Context, project_id: str, name: str,
 async def delete_firewall_rule(ctx: Context, project_id: str,
                                firewall_rule: str) -> str:
   """Delete a firewall rule.
-    
+
     Args:
         ctx: FastMCP Context.
         project_id: Google Cloud Project ID.
@@ -262,7 +262,7 @@ async def update_firewall_rule(
     new_source_service_accounts: List[str] = None,
     new_target_service_accounts: List[str] = None) -> str:
   """Update an existing firewall rule (patch).
-    
+
     Args:
         ctx: FastMCP Context.
         project_id: Project ID.

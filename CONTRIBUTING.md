@@ -73,6 +73,32 @@ They also check for the presence of copyright headers at the top of each file, m
 
 For a full list of tests, look at the [.pre-commit-config.yaml config file](.pre-commit-config.yaml) or at the [Github linting.yml workflow file](./.github/workflows/linting.yml).
 
+These are some commands people often use to fix linting errors:
+
+```shell
+# Terraform formatting
+terraform fmt \
+  -recursive \
+  .
+
+# Python
+uv run yapf . \
+  --parallel \
+  --recursive \
+  --in-place \
+  --exclude '*/.venv/*'
+
+# Yaml
+uv run yamlfix . \
+  --exclude "**/templates/**" \
+  --exclude "**/.terraform/**" \
+  --exclude "**/.venv/**"
+
+# Spelling
+uv run codespell . \
+  --write-changes
+```
+
 ### Run tests
 
 We run Terraform tests by leveraging pytest and the [tftest framework](https://pypi.org/project/tftest/).
@@ -138,6 +164,6 @@ To add a new factory, follow these steps:
   - Use the commands from the [section above](#manage-python-app-dependencies-with-uv)
   - You can learn how to use `uv` [here](https://docs.astral.sh/uv/#highlights).
   - Refer to [Dockerfiles](./cloud-run-single/1-apps/apps/chat/Dockerfile) from other applications in this repository to learn how to use `uv` with Docker.
-- Create corresponding tests in the `tests` folder. 
+- Create corresponding tests in the `tests` folder.
   - Follow the example of other factories. For example, [this](tests/cloud_run_single/0_projects/tftest.yaml) is the test definition for 0-projects of the `cloud-run-single` factory. Refer to the test section for more details.
 - Update the list of factories in the [main README.md](README.md).

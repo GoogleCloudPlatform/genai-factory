@@ -103,7 +103,7 @@ jobs:
         run: uv run codespell .
       - name: Check empty line at end of files
         id: eof-check
-        run: |
+        run: |-
           uv run pre-commit run end-of-file-fixer \
             --all-files \
             --show-diff-on-failure

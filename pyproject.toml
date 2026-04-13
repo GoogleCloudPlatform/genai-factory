@@ -46,6 +46,8 @@ exclude = [
     "**/.terraform/**",
     "**/.venv/**"
 ]
+sequence_style = "keep_style"
+whitelines = 1
 
 [tool.yapfignore]
 ignore_patterns = [

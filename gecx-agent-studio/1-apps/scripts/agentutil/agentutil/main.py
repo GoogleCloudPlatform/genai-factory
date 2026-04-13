@@ -36,7 +36,7 @@ app.add_typer(documents_app, name="data-store",
 def replace_data_store_ces(target_agent_dir: str, tool_name: str,
                            data_store_id: str):
   """Replace a data store reference in a tool.
-    
+
     Args:
         target_agent_dir: Path to local agent directory.
         tool_name: Name of the tool.
@@ -49,7 +49,7 @@ def replace_data_store_ces(target_agent_dir: str, tool_name: str,
 @ces_agent_app.command()
 def replace_sa_auth(target_agent_dir: str, tool_name: str, sa_email: str):
   """Replace Service Account authentication for a tool.
-    
+
     Args:
         target_agent_dir: Path to local agent directory.
         tool_name: Name of the tool.
@@ -62,7 +62,7 @@ def replace_sa_auth(target_agent_dir: str, tool_name: str, sa_email: str):
 @ces_agent_app.command()
 def push(target_dir: str, agent_id: str, bucket: str):
   """Push local agent to remote CES agent.
-    
+
     Args:
         target_dir: Path to local agent directory.
         agent_id: Remote Agent ID (resource name).
@@ -75,7 +75,7 @@ def push(target_dir: str, agent_id: str, bucket: str):
 @ces_agent_app.command()
 def pull(agent_id: str, target_dir: str, bucket: str, environment: str = None):
   """Pull remote CES agent to local directory.
-    
+
     Args:
         agent_id: Remote Agent ID (resource name).
         target_dir: Local directory path.
