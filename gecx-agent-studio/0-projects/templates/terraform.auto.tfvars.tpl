@@ -19,5 +19,3 @@ project_config = {
   id     = "${projects.project.id}"
   number = "${projects.project.number}"
 }
-%{ endfor ~}
-}

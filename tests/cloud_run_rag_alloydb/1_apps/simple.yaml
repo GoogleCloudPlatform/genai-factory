@@ -208,6 +208,8 @@ values:
     psc_config:
     - psc_enabled: true
     restore_backup_source: []
+    restore_backupdr_backup_source: []
+    restore_backupdr_pitr_source: []
     restore_continuous_backup_source: []
     secondary_config: []
     skip_await_major_version_upgrade: true
@@ -456,6 +458,7 @@ values:
         image: gcr.io/alloydb-connectors/alloydb-auth-proxy
         liveness_probe: []
         name: alloydb-proxy
+        readiness_probe: []
         source_code: []
         volume_mounts: []
         working_dir: null
@@ -469,6 +472,7 @@ values:
         name: frontend
         ports:
         - container_port: 8080
+        readiness_probe: []
         source_code: []
         volume_mounts: []
         working_dir: null
@@ -1518,6 +1522,7 @@ values:
     purpose: REGIONAL_MANAGED_PROXY
     region: europe-west1
     reserved_internal_range: null
+    resolve_subnet_mask: null
     role: ACTIVE
     send_secondary_ip_range_if_empty: null
     timeouts: null

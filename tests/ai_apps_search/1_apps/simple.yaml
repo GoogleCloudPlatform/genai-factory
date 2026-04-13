@@ -21,7 +21,7 @@ values:
     document_processing_config: []
     industry_vertical: GENERIC
     kms_key_name: null
-    location: global
+    location: europe-west1
     project: prefix-gf-ai-apps-srch-0
     skip_default_schema_creation: false
     solution_types:
@@ -38,7 +38,7 @@ values:
     engine_id: gf-ai-apps-srch-0
     industry_vertical: GENERIC
     kms_key_name: null
-    location: global
+    location: europe-west1
     project: prefix-gf-ai-apps-srch-0
     search_engine_config:
     - search_add_ons: []
@@ -47,7 +47,7 @@ values:
   module.ai-apps.google_discovery_engine_target_site.default["ds-fabric-docs"]:
     data_store_id: gf-ai-apps-srch-0-ds
     exact_match: false
-    location: global
+    location: europe-west1
     project: prefix-gf-ai-apps-srch-0
     provided_uri_pattern: github.com/GoogleCloudPlatform/cloud-foundation-fabric/*
     timeouts: null

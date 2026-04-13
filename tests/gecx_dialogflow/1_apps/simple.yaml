@@ -58,7 +58,7 @@ values:
       - repo_source: []
         storage_source:
         - bucket: prefix-gf-gecx-df-0
-          object: bundle-8aaed0189b461082b4a164e4586ef7df.zip
+          object: bundle-f8b906bfa04284ea676ad910f350bd70.zip
       worker_pool: null
     description: Terraform managed.
     effective_labels:
@@ -104,10 +104,10 @@ values:
     event_based_hold: null
     force_empty_content_type: null
     metadata: null
-    name: bundle-8aaed0189b461082b4a164e4586ef7df.zip
+    name: bundle-f8b906bfa04284ea676ad910f350bd70.zip
     retention: []
     source: /tmp/bundle-prefix-gf-ai-apps-df-0-gf-gecx-df-0.zip
-    source_md5hash: 8aaed0189b461082b4a164e4586ef7df
+    source_md5hash: f8b906bfa04284ea676ad910f350bd70
     temporary_hold: null
     timeouts: null
   module.dialogflow.google_dialogflow_cx_agent.default[0]:
