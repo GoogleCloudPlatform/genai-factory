@@ -22,7 +22,7 @@ When scaffolding a new factory, adhere to these rules:
 - **Applications:** The `1-apps` stage may contain an `apps` subfolder for application code (e.g., Python) deployed on top of the infrastructure. Commands to deploy these apps must be returned to the user via Terraform outputs in `1-apps`.
 - **Documentation:** The factory root folder, the `0-projects` stage, and the `1-apps` stage must all have a `README.md` file. These READMEs follow a standard logical structure consistent across the repository; review existing factories (e.g., `cloud-run-single`) to derive and replicate this structure.
 
-Each factory (folder) splits in two stages (two Terraform modules / two sub-folders):
+Each factory (folder) is split into two stages (which correspond to two Terraform modules and two sub-folders):
 
 - **0-projects**: meant to be executed by infrastructure teams to prepare the project where the application team will deploy the resources and delegate permissions to the application team).
 - **1-apps**: used by the application team to deploy the resources in the project created at the step before, with the identity created at the step before, that has been granted the roles needed at the step before.
@@ -30,26 +30,32 @@ Each factory (folder) splits in two stages (two Terraform modules / two sub-fold
 ### 0-projects
 
 - It creates the project(s).
-- It creates the service accounts used a) by the application team to run terraform in the next stage b) by the application itself, if needed (i.e. cloud run service account, cloud build service account).
-- It created the GCS buckets to store the Terraform state while applying the next stage.
+- It creates the service accounts used:
+  - by the application team to run terraform in the next stage.
+  - by the application itself, if needed (i.e., cloud run service account, cloud build service account).
+- It creates the GCS buckets to store the Terraform state while applying the next stage.
 - It enables APIs needed for the specific use case.
 - It grants IAM roles to the service accounts created and to the service agents.
 
-The stage contains in the folder `./data/projects` one or more `.yaml` files.
-Each file contains the definition of a project to be created (and some other resources/roles that related to it).
+The stage contains one or more `.yaml` files within the `./data/projects` folder.
+Each file contains the definition of a project to be created (and some other resources/roles that relate to it).
 
-The stage asks users a minimum set of values for some mandatory variables, declared in a `variables.tf` file.
-For example, this includes (but is not limited to) a) the parent (either a folder or the organization id) under which the project(s) should be created b) the region where to deploy the regional resources.
+The stage asks users for a minimum set of values for some mandatory variables, declared in a `variables.tf` file.
+For example, this includes (but is not limited to):
+- The parent (either a folder or the organization id) under which the project(s) should be created.
+- The region where regional resources will be deployed.
 
 There are multiple ways users can prepare their projects:
 
-- By running this stage, if users don't have their own project factory. The stage uses underneath Fabric FAST application templates and calls the [Cloud Foundation Fabric - Project Factory module](https://github.com/GoogleCloudPlatform/cloud-foundation-fabric/tree/master/modules/project-factory).
-- If users run their own [FAST stage project factory](https://github.com/GoogleCloudPlatform/cloud-foundation-fabric/tree/master/fast/stages/2-project-factory), by copying the yaml files from the `./data/projects` folder.
-- If users have their own custom way of creating projects, by leveraging information contained in the yaml files in the `./data/projects` folder.
+- By running this stage, if users don't have their own project factory. The stage uses Fabric FAST application templates underneath and calls the [Cloud Foundation Fabric - Project Factory module](https://github.com/GoogleCloudPlatform/cloud-foundation-fabric/tree/master/modules/project-factory).
+- If users run their own [FAST stage project factory](https://github.com/GoogleCloudPlatform/cloud-foundation-fabric/tree/master/fast/stages/2-project-factory), they can do so by copying the yaml files from the `./data/projects` folder.
+- If users have a custom project creation process, they can leverage the information contained within the `.yaml` files in the `./data/projects` folder.
 
-If users run this stage, it also creates automatically two files in the `1-apps` stage:
+If users run this stage, it automatically creates two files in the `1-apps` stage:
 
-- A **providers.tf** file that tells the stage (Terraform module) a) what service account to impersonate to run Terraform b) what GCS bucket to use to store the Terraform state and what service account to impersonate while writing the Terraform state file.
+- A **providers.tf** file that tells the stage (Terraform module):
+  - Which service account to impersonate to run Terraform.
+  - Which GCS bucket to use to store the Terraform state and which service account to impersonate while writing the Terraform state file.
 - A **terraform.auto.tfvars** file that provides the `1-apps` module some information to run (matching some of the variables declared in the `1-apps` module). For example, this includes (but is not limited to): the project id and number, the service accounts that applications (i.e. Cloud Run) should use, and more.
 
 ### 1-apps
@@ -64,8 +70,8 @@ If users create project(s) using the `0-projects` stage from genai-factory, some
 If users create project(s) outside genai-factory (instead of using `0-projects`), it's their responsibility to prepare the `providers.tf` and `terraform.auto.tfvars` files.
 Values for other variables are specific to the stage itself and need to be added through a separate `terraform.tfvars` file (either created by the user or by automation tools running this stage).
 
-Once users run `terraform apply`, the stage prints in output a set of commands (usually `gcloud` or `curl`) to deploy a set of AI applications on top of the infrastructure deployed. While this repository does not focus on AI application development, but rather on AI infrastructure development, we still show some examples, so that users a) can test end-to-end the infrastructure deployed b) they can leverage some basic but still enough comprehensive templates that they can easily customize.
-The commands to deploy the applications have nothing to do with Terraform as they are usually owned by an application team, who deploys their application stack separately, usually in through their own CI/CD platform. These commands are meant to be run on the same machine of who deployed the platform in case of tests, or copied and pasted (and modified/extended) to any other tool, in case of production environments.
+Once users run `terraform apply`, the stage prints a set of output commands (usually `gcloud` or `curl`) to deploy sample AI applications on top of the deployed infrastructure. This repository focuses on AI infrastructure rather than AI application development. However, we provide examples so users can test the deployed infrastructure end-to-end. These examples also serve as comprehensive base templates that users can easily customize.
+The commands to deploy the applications are independent of Terraform, as they are typically owned by an application team who deploys their stack separately, usually through their own CI/CD platform. These commands are meant to be run on the same machine used to deploy the platform during testing, or adapted for use in deployment tools for production environments.
 
 ## Development Workflow
 
@@ -74,7 +80,7 @@ All instructions to develop and run tests in this repository are contained in th
 ### Prerequisites
 
 - *[Terraform](https://developer.hashicorp.com/terraform/install)** (or OpenTofu)
-- **[Python](https://www.python.org/)**
+- **[Python](https://www.python.org/)** (3.13+)
 - **[uv](https://docs.astral.sh/uv/getting-started/installation/)**
 - **[gcloud](https://docs.cloud.google.com/sdk/docs/install-sdk)**
 - **Dependencies:**
@@ -95,7 +101,6 @@ uv run pre-commit run --all-files
 
 These are some common commands you can use to fix formatting and linting issues:
 
-```shell
 ```shell
 # Terraform formatting
 terraform fmt \
@@ -120,7 +125,7 @@ uv run codespell . \
   --write-changes
 ```
 
-**Common gotcha — unsorted variables (`[SV]` error):** `check_documentation.py` requires variables in `variables.tf` to be in strict alphabetical order. When adding a new variable, insert it at the correct alphabetical position, not at the top of the file.
+> **Note:** **Common gotcha — unsorted variables (`[SV]` error):** `check_documentation.py` requires variables in `variables.tf` to be in strict alphabetical order. When adding a new variable, insert it at the correct alphabetical position, not at the top of the file.
 
 ### Testing
 
@@ -155,7 +160,7 @@ uv run tools/plan_summary.py cloud-run-single/0-projects \
 
 ### Contributing
 
-- **Branching:** Use `feature-name`.
+- **Branching:** Use `feat/<name-of-feature>` for features and `bug/<name-of-bug>` for bugs.
 - **Commits:** Create atomic commits with clear messages.
 - **Docs:** Do NOT manually edit the variables/outputs tables in READMEs; use `uv run tools/tfdoc.py`.
 
