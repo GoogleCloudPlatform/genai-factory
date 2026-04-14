@@ -9,7 +9,7 @@ requires-python = ">=3.12"
 dependencies = [
     "fastapi[standard]>=0.115.12",
     "google-cloud-logging>=3.12.1",
-    "google-adk>=1.19.0",
+    "google-adk>=1.28.1",
     "a2a-sdk>=0.3.11",
 ]
 
