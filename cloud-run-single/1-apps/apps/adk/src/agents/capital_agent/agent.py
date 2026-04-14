@@ -56,5 +56,4 @@ Use your knowledge to determine the capital and estimate the population. Do not 
     output_key="result",
     # Model Armor inspection of the prompt and LLM reply
     before_model_callback=model_armor.sanitize_request,
-    after_model_callback=model_armor.sanitize_response
-)
+    after_model_callback=model_armor.sanitize_response)

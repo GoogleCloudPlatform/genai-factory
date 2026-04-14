@@ -25,10 +25,10 @@ import google.cloud.logging
 
 # Configure logging
 if os.environ.get("K_SERVICE"):
-    client = google.cloud.logging.Client()
-    client.setup_logging(log_level=logging.INFO)
-else: # if running locally, configure logging to print to console
-    logging.basicConfig(level=logging.INFO)
+  client = google.cloud.logging.Client()
+  client.setup_logging(log_level=logging.INFO)
+else:  # if running locally, configure logging to print to console
+  logging.basicConfig(level=logging.INFO)
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
