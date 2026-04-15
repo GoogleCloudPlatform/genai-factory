@@ -14,7 +14,7 @@
 
 module "cas" {
   count      = var.lbs_config.internal.enable ? 1 : 0
-  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/certificate-authority-service?ref=v54.3.0"
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/certificate-authority-service?ref=v55.0.0"
   project_id = var.project_config.id
   location   = var.region
   ca_pool_config = {

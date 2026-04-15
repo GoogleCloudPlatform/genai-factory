@@ -13,7 +13,7 @@
 # limitations under the License.
 
 module "service_directory" {
-  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/service-directory?ref=v54.3.0"
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/service-directory?ref=v55.0.0"
   project_id = var.project_config.id
   location   = var.regions.resources
   name       = coalesce(var.service_directory_configs.namespace_name, var.name)
@@ -32,7 +32,7 @@ module "dns_service_directory" {
     try(var.service_directory_configs.cloud_dns_domain, null) == null
     ? 0 : 1
   )
-  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/dns?ref=v54.3.0"
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/dns?ref=v55.0.0"
   project_id = var.project_config.id
   name       = replace(var.service_directory_configs.cloud_dns_domain, ".", "-")
   zone_config = {
