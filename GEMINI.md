@@ -1,5 +1,9 @@
 # GenAI Factory
 
+## Audience
+
+This document provides foundational instructions, context, and conventions intended for AI assistants (e.g., Gemini CLI) operating within this repository.
+
 Genai-factory is a collection of **end-to-end blueprints to deploy generative AI infrastructures** in GCP, following security best-practices.
 
 - Embraces IaC best practices. Infrastructure is implemented in [Terraform](https://developer.hashicorp.com/terraform), leveraging [Terraform resources](https://registry.terraform.io/providers/hashicorp/google/latest/docs) and [Cloud Foundations Fabric modules](https://github.com/GoogleCloudPlatform/cloud-foundation-fabric).
