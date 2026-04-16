@@ -38,16 +38,17 @@ buckets:
     description: Terraform state bucket
     iam:
       roles/storage.objectAdmin:
-        - $iam_principals:service_accounts/project/iac-rw
+        - $iam_principals:service_accounts/_self_/iac-rw
       roles/storage.objectViewer:
-        - $iam_principals:service_accounts/project/iac-rw
+        - $iam_principals:service_accounts/_self_/iac-rw
 
 service_accounts:
   # Automation SAs
   iac-rw:
     iam_sa_roles:
-      $service_account_ids:project/gf-srun-0: [roles/iam.serviceAccountUser]
-      $service_account_ids:project/gf-srun-build-0:
+      $service_account_ids:service/gf-srun-0:
+        - roles/iam.serviceAccountUser
+      $service_account_ids:service/gf-srun-build-0:
         - roles/iam.serviceAccountUser
   # Application SAs
   gf-srun-0: {}
@@ -55,9 +56,10 @@ service_accounts:
 
 # Grant roles
 iam:
-  roles/privateca.certificateRequester: [$service_agents:certificatemanager]
+  roles/privateca.certificateRequester:
+    - $service_agents:certificatemanager
 iam_by_principals:
-  $iam_principals:service_accounts/project/iac-rw:
+  $iam_principals:service_accounts/_self_/iac-rw:
     - roles/artifactregistry.admin
     - roles/cloudbuild.builds.editor
     - roles/compute.loadBalancerAdmin
@@ -73,9 +75,9 @@ iam_by_principals:
     # Needed for Model Armor
     - roles/modelarmor.admin
     - roles/modelarmor.floorSettingsAdmin
-  $iam_principals:service_accounts/project/gf-srun-0:
+  $iam_principals:service_accounts/_self_/gf-srun-0:
     - roles/logging.logWriter
-  $iam_principals:service_accounts/project/gf-srun-build-0:
+  $iam_principals:service_accounts/_self_/gf-srun-build-0:
     - roles/artifactregistry.writer
     - roles/cloudbuild.builds.editor
     - roles/iam.serviceAccountUser
@@ -84,11 +86,11 @@ iam_by_principals:
     - roles/storage.admin
     - roles/storage.objectUser
   # Vertex AI SA is the one calling model armor via genai SDK
-  $iam_principals:service_agents/project/aiplatform:
+  $iam_principals:service_agents/_self_/aiplatform:
     - roles/modelarmor.user
 # Grant roles/aiplatform.user as additive,
 # as it is authoritatively granted by aiplatform APIs to default SA
 iam_bindings_additive:
   run_ai_user:
-    member: $iam_principals:service_accounts/project/gf-srun-0
+    member: $iam_principals:service_accounts/_self_/gf-srun-0
     role: roles/aiplatform.user
