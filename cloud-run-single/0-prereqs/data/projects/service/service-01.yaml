@@ -46,9 +46,9 @@ service_accounts:
   # Automation SAs
   iac-rw:
     iam_sa_roles:
-      $service_account_ids:service/gf-srun-0:
+      $service_account_ids:service-01/gf-srun-0:
         - roles/iam.serviceAccountUser
-      $service_account_ids:service/gf-srun-build-0:
+      $service_account_ids:service-01/gf-srun-build-0:
         - roles/iam.serviceAccountUser
   # Application SAs
   gf-srun-0: {}
