@@ -12,6 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+locals {
+  iam_principals = {
+    for k, v in var.service_accounts
+    : k => v.email
+  }
+}
+
 module "cloud_run" {
   source              = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/cloud-run-v2?ref=v55.1.0"
   type                = "SERVICE"
@@ -21,9 +28,14 @@ module "cloud_run" {
   containers          = var.cloud_run_configs.containers
   deletion_protection = var.enable_deletion_protection
   managed_revision    = false
+  context = {
+    iam_principals = local.iam_principals
+    networks       = var.vpc_self_links
+    subnets        = var.subnet_self_links
+  }
   service_account_config = {
     create = false
-    email  = var.service_accounts["service/gf-srun-0"].email
+    email  = var.service_account_emails["service/gf-srun-0"]
   }
   iam = {
     "roles/run.invoker" = var.cloud_run_configs.service_invokers
@@ -33,8 +45,8 @@ module "cloud_run" {
     node_selector                 = var.cloud_run_configs.node_selector
     vpc_access = {
       egress  = var.cloud_run_configs.vpc_access_egress
-      network = var.networking_config.vpc_id
-      subnet  = var.networking_config.subnet_id
+      network = var.networking_config.vpc
+      subnet  = var.networking_config.subnet
       tags    = var.cloud_run_configs.vpc_access_tags
     }
   }

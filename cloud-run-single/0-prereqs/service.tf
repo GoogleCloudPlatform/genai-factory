@@ -12,9 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-module "projects" {
-  source = "../../../cloud-foundation-fabric/modules/project-factory"
-  # source = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/project-factory?ref=v53.0.0"
+module "project_service" {
+  source = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/project-factory?ref=v55.0.0"
   data_defaults = {
     billing_account = var.project_config.billing_account_id
     parent          = var.project_config.parent

@@ -43,6 +43,13 @@ variable "cloud_run_configs" {
   default  = {}
 }
 
+variable "enable_deletion_protection" {
+  description = "Whether deletion protection should be enabled."
+  type        = bool
+  nullable    = false
+  default     = true
+}
+
 variable "lbs_config" {
   description = "The load balancers configuration."
   type = object({
@@ -197,17 +204,30 @@ variable "name" {
   default     = "gf-srun-0"
 }
 
-variable "networking_configs" {
-  description = "The keys of the networking resources used for lookups in variables from stage 0."
+variable "networking_config" {
+  description = "The networking configuration. These must be either the ids of the resources or the keys of the map vpc_self_links."
   type = object({
-    host_project = string
-    subnet       = string
-    vpc          = string
+    subnet            = string
+    subnet_proxy_only = string
+    vpc               = string
   })
-  default = {
-    host_project = "prod-spoke-0"
-    subnet       = "prod-default"
-    subnet_proxy = "prod-proxy"
-    vpc          = "prod-spoke-0"
-  }
+  nullable = false
+}
+
+variable "project_id" {
+  description = "The id of the project where to create the resources."
+  type        = string
+}
+
+variable "region" {
+  type        = string
+  description = "The GCP region where to deploy the resources."
+  nullable    = false
+  default     = "europe-west1"
+}
+
+variable "service_account_emails" {
+  description = "The pre-created service accounts. Each is the email or the key of the map var.service_accounts."
+  type        = map(string)
+  nullable    = false
 }
