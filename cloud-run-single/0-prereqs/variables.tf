@@ -20,7 +20,7 @@ variable "enable_deletion_protection" {
 }
 
 variable "enable_iac_sa_impersonation" {
-  description = "Whether the user running this module should be granted serviceAccountTokenCreator on the automation service account."
+  description = "Whether the user running this module should be granted serviceAccountTokenCreator on the IaC service account."
   type        = bool
   default     = true
 }

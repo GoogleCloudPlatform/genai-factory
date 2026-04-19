@@ -12,51 +12,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-variable "enable_deletion_protection" {
-  description = "Whether deletion protection should be enabled."
-  type        = bool
-  nullable    = false
-  default     = true
-}
-
-variable "host_project_ids" {
-  # tfdoc:variable:source 2-networking
-  description = "Host project for the shared VPC."
-  type        = map(string)
-  nullable    = false
-  default     = {}
-}
-
-variable "project_id" {
-  description = "The id of the project where to create the resources."
-  type        = string
-}
-
-variable "project_number" {
-  description = "The number of the project where to create the resources."
-  type        = string
-}
-
-variable "region" {
-  type        = string
-  description = "The GCP region where to deploy the resources."
-  nullable    = false
-  default     = "europe-west1"
-}
+# These values are automatically filled when using the FAST framework.
+# Ignore if not used.
 
 variable "service_accounts" {
-  description = "The pre-created service accounts."
+  # tfdoc:variable:source 2-project-factory
+  description = "The service accounts created for this stage."
   type = map(object({
     email     = string
     iam_email = string
     id        = string
   }))
   nullable = false
+  default  = {}
 }
 
 variable "subnet_self_links" {
   # tfdoc:variable:source 2-networking
-  description = "Shared VPC subnet IDs."
+  description = "Shared VPCs subnet IDs."
   type        = map(map(string))
   nullable    = false
   default     = {}

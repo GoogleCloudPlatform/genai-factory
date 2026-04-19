@@ -80,12 +80,12 @@ output "ip_addresses" {
   value = {
     external = (
       var.lbs_config.external.enable
-      ? module.lb_external[0].address[""]
+      ? local.address_ext_glb
       : null
     )
     internal = (
       var.lbs_config.internal.enable
-      ? module.lb_internal[0].address
+      ? local.address_ilb
       : null
     )
   }
