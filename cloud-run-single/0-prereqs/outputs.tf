@@ -18,7 +18,7 @@ locals {
   buckets = merge({
     for k, v in try(module.project_host[0].storage_buckets, {}) : k => v
     }, {
-    for k, v in module.projects.storage_buckets : k => v
+    for k, v in module.project-service.storage_buckets : k => v
   })
   networking_config = (
     var.networking_config.create
@@ -33,16 +33,16 @@ locals {
       number = v.number
     }
     }, {
-    for k, v in module.projects.projects : k => {
+    for k, v in module.project-service.projects : k => {
       id     = v.project_id
       number = v.number
     }
   })
   providers = {
-    project_id      = local.projects.service.id
-    project_number  = local.projects.service.number
-    bucket          = local.buckets["service/iac-state"]
-    service_account = local.service_accounts["service/iac-rw"].email
+    project_id      = local.projects["service-01"].id
+    project_number  = local.projects["service-01"].number
+    bucket          = local.buckets["service-01/iac-state"]
+    service_account = local.service_accounts["service-01/iac-rw"].email
   }
   service_accounts = merge({
     for k, v in try(module.project_host[0].service_accounts, {}) : k => {
@@ -51,7 +51,7 @@ locals {
       id        = v.id
     }
     }, {
-    for k, v in module.projects.service_accounts : k => {
+    for k, v in module.project-service.service_accounts : k => {
       email     = v.email
       iam_email = v.iam_email
       id        = v.id

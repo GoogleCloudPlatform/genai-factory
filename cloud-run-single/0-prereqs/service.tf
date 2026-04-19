@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-module "project_service" {
+module "project-service" {
   source = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/project-factory?ref=v55.0.0"
   data_defaults = {
     billing_account = var.project_config.billing_account_id
