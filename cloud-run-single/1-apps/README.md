@@ -1,13 +1,22 @@
-# Cloud Run - Single / Platform Deployment
+# Cloud Run - Single / Platform and Apps Deployment
 
-This stage is part of `Cloud Run - Single` factory.
-It is responsible for deploying resources inside the project you created in [0-projects](../0-prereqs) or in an existing project.
+This stage is part of the `Cloud Run - Single` factory.
+
+It performs the following tasks:
+
+- Deploys a Cloud Run service (supporting single or multiple containers).
+- Configures networking and VPC Access for Cloud Run.
+- Optionally creates External and/or Internal Load Balancers with custom domains.
+- Optionally sets up Certificate Manager for your Internal Load Balancers.
+- Optionally configures Model Armor.
+
+It is responsible for deploying resources inside the service project you created in the [0-prereqs](../0-prereqs) stage or in an existing project.
 
 ![Architecture Diagram](../diagram.png)
 
 ## Deploy the stage
 
-This assumes you have created a project leveraging the [0-projects](../0-prereqs) stage.
+If you created your projects through [0-prereqs](../0-prereqs), you should already see in this folder a `providers.tf` and a `terraform.auto.tfvars` file.
 
 ```shell
 cp terraform.tfvars.sample terraform.tfvars # Customize
@@ -19,7 +28,7 @@ terraform apply
 
 ## Query the applications
 
-Once the applications have been deployed, learn sample commands to test them:
+Once you deploy the applications, use these sample commands to test them:
 
 - [Chat](./apps/chat/README.md)
 - [ADK](./apps/adk/README.md)
@@ -27,9 +36,15 @@ Once the applications have been deployed, learn sample commands to test them:
 - [Gemma3](./apps/gemma/README.md)
 - [MCP server](./apps/mcp-server/README.md)
 
-## I have not used 0-projects
+## Manage prerequisites independently
 
-The [0-projects](../0-prereqs) stage generates the necessary Terraform input files for this stage. If you're not using the [0-projects stage](../0-prereqs), you'll need to manually add the required variables to your `terraform.tfvars` file, as defined in [variables.tf](./variables.tf).
+The [0-prereqs](../0-prereqs) stage generates the necessary Terraform input files for this stage. If you manage prerequisites independently (without the [0-prereqs stage](../0-prereqs)), you'll need to manually add the required variables to your `terraform.tfvars` file, as defined in [variables.tf](./variables.tf), and provide the `providers.tf` file.
+
+### Working with Fabric FAST
+
+This stage is fully compatible with the latest version of [Fabric FAST](https://github.com/GoogleCloudPlatform/cloud-foundation-fabric/tree/master/fast).
+You can create your host project and network resources by using your networking stage, and your service project by using your own project factory.
+Once you have completed these operations, create your `providers.tf` file and make sure you drop your `auto.tfvars.json` files from your FAST stages inside this folder. Finally, create your `terraform.tfvars` file referencing the keys of the maps of values imported from FAST, by using [contexts](https://github.com/GoogleCloudPlatform/cloud-foundation-fabric/blob/master/CONTRIBUTING.md#context-based-interpolation).
 <!-- BEGIN TFDOC -->
 ## Variables
 
