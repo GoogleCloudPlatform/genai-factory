@@ -1,5 +1,3 @@
----
-
 # Copyright 2026 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,6 +13,10 @@
 # limitations under the License.
 
 values:
+  google_service_account_iam_member.me_sa_token_creator[0]:
+    condition: []
+    role: roles/iam.serviceAccountTokenCreator
+    service_account_id: projects/your-prefix-gf-srun-0/serviceAccounts/iac-rw@your-prefix-gf-srun-0.iam.gserviceaccount.com
   local_file.providers:
     content_base64: null
     directory_permission: '0777'
@@ -211,6 +213,10 @@ values:
     condition: []
     project: your-prefix-gf-srun-0
     role: roles/aiplatform.serviceAgent
+  module.projects.module.projects["project"].google_project_iam_member.service_agents["aiplatform-pie"]:
+    condition: []
+    project: your-prefix-gf-srun-0
+    role: roles/aiplatform.serviceAgent
   module.projects.module.projects["project"].google_project_iam_member.service_agents["aiplatform-re"]:
     condition: []
     project: your-prefix-gf-srun-0
@@ -287,6 +293,10 @@ values:
     condition: []
     project: your-prefix-gf-srun-0
     role: roles/aiplatform.ragServiceAgent
+  module.projects.module.projects["project"].google_project_iam_member.service_agents["vertex-sandbox"]:
+    condition: []
+    project: your-prefix-gf-srun-0
+    role: roles/aiplatform.agentSandboxServiceAgent
   module.projects.module.projects["project"].google_project_iam_member.service_agents["vertex-shtune"]:
     condition: []
     project: your-prefix-gf-srun-0
@@ -443,7 +453,7 @@ values:
 counts:
   google_project: 1
   google_project_iam_binding: 18
-  google_project_iam_member: 26
+  google_project_iam_member: 28
   google_project_service: 11
   google_project_service_identity: 7
   google_service_account: 3
@@ -452,7 +462,7 @@ counts:
   google_storage_bucket_iam_binding: 2
   local_file: 2
   modules: 8
-  resources: 76
+  resources: 78
   terraform_data: 2
 
 outputs:
