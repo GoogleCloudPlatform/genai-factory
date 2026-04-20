@@ -66,8 +66,7 @@ module "address-ext-glb" {
     var.lbs_configs.external.ip_address == null
     ? 1 : 0
   )
-  source = "../../../cloud-foundation-fabric/modules/net-address"
-  # source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-address?ref=v55.0.0"
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-address?ref=v55.1.0"
   project_id = var.project_id
   global_addresses = {
     ext-glb-01 = {
@@ -77,9 +76,8 @@ module "address-ext-glb" {
 }
 
 module "lb_ext_glb_redirect" {
-  count  = var.lbs_configs.external.enable ? 1 : 0
-  source = "../../../cloud-foundation-fabric/modules/net-lb-app-ext"
-  # source              = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-lb-app-ext?ref=v55.0.0"
+  count               = var.lbs_configs.external.enable ? 1 : 0
+  source              = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-lb-app-ext?ref=v55.1.0"
   project_id          = var.project_id
   name                = "${var.name}-external-redirect"
   use_classic_version = false
@@ -97,9 +95,8 @@ module "lb_ext_glb_redirect" {
 }
 
 module "lb_ext_glb" {
-  count  = var.lbs_configs.external.enable ? 1 : 0
-  source = "../../../cloud-foundation-fabric/modules/net-lb-app-ext"
-  # source              = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-lb-app-ext?ref=v55.0.0"
+  count               = var.lbs_configs.external.enable ? 1 : 0
+  source              = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-lb-app-ext?ref=v55.1.0"
   project_id          = var.project_id
   name                = "${var.name}-ext-glb-01"
   use_classic_version = false

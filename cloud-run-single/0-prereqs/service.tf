@@ -13,7 +13,7 @@
 # limitations under the License.
 
 module "project-service" {
-  source = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/project-factory?ref=v55.0.0"
+  source = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/project-factory?ref=v55.1.0"
   data_defaults = {
     billing_account = var.project_config.billing_account_id
     parent          = var.project_config.parent
