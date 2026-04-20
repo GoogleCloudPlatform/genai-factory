@@ -22,8 +22,8 @@ variable "ca_pool_name_suffix" {
   default     = "ca-pool-0"
 }
 
-variable "cloud_run_configs" {
-  description = "The Cloud Run configurations."
+variable "cloud_run_config" {
+  description = "The Cloud Run configuration."
   type = object({
     containers = optional(map(any), {
       ai = {
