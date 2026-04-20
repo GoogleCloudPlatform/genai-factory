@@ -23,8 +23,8 @@ locals {
   networking_config = (
     var.networking_config.create
     ? {
-      subnet_id = module.vpc[0].subnet_ids["${var.region}/${var.networking_config.subnet.name}"]
-      vpc_id    = module.vpc[0].id
+      subnet = module.vpc[0].subnet_ids["${var.region}/${var.networking_config.subnet.name}"]
+      vpc    = module.vpc[0].id
     } : null
   )
   projects = merge({
@@ -58,11 +58,17 @@ locals {
     }
   })
   tfvars = {
-    networking_config = merge(local.networking_config, { create = var.networking_config.create })
-    prefix            = var.project_config.prefix
-    projects          = local.projects
+    networking_config = local.networking_config
+    prefix            = var.prefix
+    project_id        = local.projects["service-01"].id
+    project_number    = local.projects["service-01"].number
     region            = var.region
-    service_accounts  = local.service_accounts
+    service_account_emails = {
+      for k, v in module.project-service.service_accounts : k => v.email
+    }
+    service_account_ids = {
+      for k, v in module.project-service.service_accounts : k => v.id
+    }
   }
 }
 

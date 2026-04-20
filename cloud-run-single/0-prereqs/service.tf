@@ -17,7 +17,7 @@ module "project-service" {
   data_defaults = {
     billing_account = var.project_config.billing_account_id
     parent          = var.project_config.parent
-    prefix          = var.project_config.prefix
+    prefix          = var.prefix
     bucket = {
       force_destroy = !var.enable_deletion_protection
     }

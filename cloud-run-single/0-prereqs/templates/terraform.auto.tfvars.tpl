@@ -14,34 +14,29 @@
  * limitations under the License.
  */
 
-%{ if networking_config.create }
-networking_config = {
-  subnet_id = "${networking_config.subnet_id}"
-  vpc_id    = "${networking_config.vpc_id}"
-}
-%{ else }
+%{ if networking_config.vpc == null || networking_config.subnet == null }
 networking_config = {}
-%{ endif }
+%{ else }
+networking_config = {
+  subnet = "${networking_config.subnet}"
+  vpc    = "${networking_config.vpc}"
+}%{ endif }
 
-prefix = ${prefix}
+prefix = "${prefix}"
 
-projects = {
-%{ for k,v in projects ~}
-  "${k}" = {
-    id     = "${v.id}"
-    number = "${v.number}"
-  }
-%{ endfor ~}
-}
+project_id = "${project_id}"
+number     = "${project_number}"
 
 region = "${region}"
 
-service_accounts = {
-%{ for k,v in service_accounts ~}
-  "${k}" = {
-    email     = "${v.email}"
-    iam_email = "${v.iam_email}"
-    id        = "${v.id}"
-  }
+service_account_emails = {
+%{ for k,v in service_account_emails ~}
+  "${k}" = "${v}"
+%{ endfor ~}
+}
+
+service_account_ids = {
+%{ for k,v in service_account_ids ~}
+  "${k}" = "${v}"
 %{ endfor ~}
 }

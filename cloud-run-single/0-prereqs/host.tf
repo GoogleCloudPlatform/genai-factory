@@ -18,7 +18,7 @@ module "project_host" {
   data_defaults = {
     billing_account = var.project_config.billing_account_id
     parent          = var.project_config.parent
-    prefix          = var.project_config.prefix
+    prefix          = var.prefix
     bucket = {
       force_destroy = !var.enable_deletion_protection
     }
@@ -31,6 +31,21 @@ module "project_host" {
     paths = {
       projects = "projects/host"
     }
+  }
+  # Make the project_host module aware
+  # of the service accounts and service agents created
+  # through the project_service module
+  context = {
+    iam_principals = merge(
+      {
+        for k, v in module.project-service.service_account_iam_emails
+        : "service_accounts/${k}" => v
+      },
+      {
+        for k, v in module.project-service.service_agents
+        : "service_agents/${k}" => v.iam_email
+      }
+    )
   }
 }
 

@@ -43,12 +43,17 @@ variable "networking_config" {
   default  = {}
 }
 
+variable "prefix" {
+  description = "The name prefix to use for resources with a globally unique name."
+  type        = string
+  nullable    = false
+}
+
 variable "project_config" {
   description = "The project configuration."
   type = object({
     billing_account_id = optional(string)
     parent             = optional(string)
-    prefix             = optional(string)
   })
   nullable = false
   validation {

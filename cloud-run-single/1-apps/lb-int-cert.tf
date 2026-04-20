@@ -30,7 +30,7 @@ module "cas" {
       ignore_active_certificates_on_deletion = !var.enable_deletion_protection
       key_spec_algorithm                     = "RSA_PKCS1_4096_SHA256"
       subject = {
-        common_name  = var.lbs_config.internal.domain
+        common_name  = var.lbs_configs.internal.domain
         organization = var.name
       }
       key_usage = {
