@@ -55,7 +55,7 @@ output "commands" {
     --repository-format docker \
     --impersonate-service-account=${local.service_account_emails["service-01/iac-rw"]}
 
-  # Update chat to adk, adk-a2a, gemma or mcp-server
+  # Update "chat" to adk, adk-a2a, gemma or mcp-server
   # if you want to deploy another app instead
   gcloud builds submit ./apps/chat \
     --project ${var.project_id} \
@@ -66,7 +66,7 @@ output "commands" {
     --quiet \
     --impersonate-service-account=${local.service_account_emails["service-01/iac-rw"]}
 
-  # Run the following command to deploy a sample adk or chat Service
+  # Run the following command to deploy a sample adk or chat service
 
   gcloud run deploy ${var.name} \
     --impersonate-service-account=${local.service_account_emails["service-01/iac-rw"]} \

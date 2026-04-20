@@ -42,15 +42,17 @@ buckets:
         - $iam_principals:service_accounts/_self_/iac-rw
 
 service_accounts:
-  # Automation SAs
+  # Terraform SA used by the app/platform team
+  # to create resources inside the project
   iac-rw:
     iam_sa_roles:
       $service_account_ids:service-01/crun-0:
         - roles/iam.serviceAccountUser
       $service_account_ids:service-01/crun-build-0:
         - roles/iam.serviceAccountUser
-  # Application SAs
+  # Cloud Run customer service account
   crun-0: {}
+  # Cloud Build custom service account
   crun-build-0: {}
 
 # Grant roles
@@ -59,11 +61,16 @@ iam:
     - $service_agents:certificatemanager
 iam_by_principals:
   $iam_principals:service_accounts/_self_/iac-rw:
-    - roles/artifactregistry.admin
     - roles/cloudbuild.builds.editor
     - roles/compute.loadBalancerAdmin
     - roles/run.admin
+    # Used to create artifact registry (via gcloud commands)
+    - roles/artifactregistry.admin
+    # Used by Cloud Build to consume quota project
+    - roles/serviceusage.serviceUsageConsumer
+    # Used by Cloud Build to create bucket where to upload build files
     - roles/storage.admin
+    # Used by Cloud Build to write/read build files
     - roles/storage.objectUser
     # Needed for ILB only
     - roles/certificatemanager.owner
