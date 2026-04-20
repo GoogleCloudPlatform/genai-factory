@@ -13,15 +13,15 @@
 # limitations under the License.
 
 locals {
-  address_ilb = coalesce(
-    var.lbs_config.internal.ip_address,
+  address_ilb = try(coalesce(
+    var.lbs_configs.internal.ip_address,
     module.address-ilb[0].internal_addresses["ilb-01"]
-  )
+  ), null)
 }
 
 # Cloud Armor security policy
 resource "google_compute_region_security_policy" "security_policy_internal" {
-  count   = var.lbs_config.internal.enable ? 1 : 0
+  count   = var.lbs_configs.internal.enable ? 1 : 0
   name    = "${var.name}-internal"
   project = var.project_id
   region  = var.region
@@ -29,7 +29,7 @@ resource "google_compute_region_security_policy" "security_policy_internal" {
 
   dynamic "rules" {
     for_each = (
-      try(length(var.lbs_config.internal.allowed_ip_ranges), 0) > 0 ? [""] : []
+      try(length(var.lbs_configs.internal.allowed_ip_ranges), 0) > 0 ? [""] : []
     )
 
     content {
@@ -41,7 +41,7 @@ resource "google_compute_region_security_policy" "security_policy_internal" {
         versioned_expr = "SRC_IPS_V1"
 
         config {
-          src_ip_ranges = var.lbs_config.internal.allowed_ip_ranges
+          src_ip_ranges = var.lbs_configs.internal.allowed_ip_ranges
         }
       }
     }
@@ -64,11 +64,12 @@ resource "google_compute_region_security_policy" "security_policy_internal" {
 
 module "address-ilb" {
   count = (
-    var.lbs_config.internal.enable &&
-    var.lbs_config.internal.ip_address == null
+    var.lbs_configs.internal.enable &&
+    var.lbs_configs.internal.ip_address == null
     ? 1 : 0
   )
-  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-address?ref=v55.0.0"
+  source = "../../../cloud-foundation-fabric/modules/net-address"
+  # source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-address?ref=v55.0.0"
   project_id = var.project_id
   internal_addresses = {
     ilb-01 = {
@@ -83,8 +84,9 @@ module "address-ilb" {
 }
 
 module "lb_internal_redirect" {
-  count                = var.lbs_config.internal.enable ? 1 : 0
-  source               = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-lb-app-int?ref=v55.0.0"
+  count  = var.lbs_configs.internal.enable ? 1 : 0
+  source = "../../../cloud-foundation-fabric/modules/net-lb-app-int"
+  # source               = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-lb-app-int?ref=v55.0.0"
   name                 = "${var.name}-internal-redirect"
   project_id           = var.project_id
   region               = var.region
@@ -109,8 +111,9 @@ module "lb_internal_redirect" {
 }
 
 module "lb_internal" {
-  count                = var.lbs_config.internal.enable ? 1 : 0
-  source               = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-lb-app-int?ref=v55.0.0"
+  count  = var.lbs_configs.internal.enable ? 1 : 0
+  source = "../../../cloud-foundation-fabric/modules/net-lb-app-int"
+  # source               = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-lb-app-int?ref=v55.0.0"
   name                 = "${var.name}-internal"
   project_id           = var.project_id
   region               = var.region
@@ -154,18 +157,18 @@ module "lb_internal" {
 
 # DNS Zone for internal resolution
 module "lb_internal_dns" {
-  count      = var.lbs_config.internal.enable ? 1 : 0
+  count      = var.lbs_configs.internal.enable ? 1 : 0
   source     = "github.com/terraform-google-modules/cloud-foundation-fabric//modules/dns"
   project_id = var.project_id
   name       = var.name
   zone_config = {
-    domain = "${var.lbs_config.internal.domain}."
+    domain = "${var.lbs_configs.internal.domain}."
     private = {
       client_networks = [var.networking_config.vpc]
     }
   }
   recordsets = {
-    ("A ${var.lbs_config.internal.domain}") = {
+    ("A ${var.lbs_configs.internal.domain}") = {
       records = [module.lb_internal[0].address]
       ttl     = 300
     }
@@ -177,14 +180,14 @@ module "lb_internal_dns" {
 
 # LB certificate
 module "certificate_manager" {
-  count      = var.lbs_config.internal.enable ? 1 : 0
+  count      = var.lbs_configs.internal.enable ? 1 : 0
   source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/certificate-manager?ref=v55.0.0"
   project_id = var.project_id
   certificates = {
     (var.name) = {
       location = var.region
       managed = {
-        domains         = [var.lbs_config.internal.domain]
+        domains         = [var.lbs_configs.internal.domain]
         issuance_config = var.name
       }
     }

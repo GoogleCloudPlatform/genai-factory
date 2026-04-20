@@ -13,21 +13,21 @@
 # limitations under the License.
 
 locals {
-  address_ext_glb = coalesce(
-    var.lbs_config.external.ip_address,
-    module.address-ext-glb[0].global_addresses["ext-glb-01"]
-  )
+  address_ext_glb = try(coalesce(
+    var.lbs_configs.external.ip_address,
+    module.address-ext-glb[0].global_addresses["gf-srun-0-ext-glb-01"].address
+  ), null)
 }
 
 # Cloud Armor security policy
 resource "google_compute_security_policy" "security_policy_external" {
-  count   = var.lbs_config.external.enable ? 1 : 0
+  count   = var.lbs_configs.external.enable ? 1 : 0
   name    = "${var.name}-external"
   project = var.project_id
 
   dynamic "rule" {
     for_each = (
-      try(length(var.lbs_config.external.allowed_ip_ranges), 0) > 0 ? [""] : []
+      try(length(var.lbs_configs.external.allowed_ip_ranges), 0) > 0 ? [""] : []
     )
 
     content {
@@ -39,7 +39,7 @@ resource "google_compute_security_policy" "security_policy_external" {
         versioned_expr = "SRC_IPS_V1"
 
         config {
-          src_ip_ranges = var.lbs_config.external.allowed_ip_ranges
+          src_ip_ranges = var.lbs_configs.external.allowed_ip_ranges
         }
       }
     }
@@ -62,11 +62,12 @@ resource "google_compute_security_policy" "security_policy_external" {
 
 module "address-ext-glb" {
   count = (
-    var.lbs_config.external.enable &&
-    var.lbs_config.external.ip_address == null
+    var.lbs_configs.external.enable &&
+    var.lbs_configs.external.ip_address == null
     ? 1 : 0
   )
-  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-address?ref=v55.0.0"
+  source = "../../../cloud-foundation-fabric/modules/net-address"
+  # source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-address?ref=v55.0.0"
   project_id = var.project_id
   global_addresses = {
     ext-glb-01 = {
@@ -76,8 +77,9 @@ module "address-ext-glb" {
 }
 
 module "lb_ext_glb_redirect" {
-  count               = var.lbs_config.external.enable ? 1 : 0
-  source              = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-lb-app-ext?ref=v55.0.0"
+  count  = var.lbs_configs.external.enable ? 1 : 0
+  source = "../../../cloud-foundation-fabric/modules/net-lb-app-ext"
+  # source              = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-lb-app-ext?ref=v55.0.0"
   project_id          = var.project_id
   name                = "${var.name}-external-redirect"
   use_classic_version = false
@@ -95,9 +97,10 @@ module "lb_ext_glb_redirect" {
 }
 
 module "lb_ext_glb" {
-  count               = var.lbs_config.external.enable ? 1 : 0
-  source              = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-lb-app-ext?ref=v55.0.0"
-  project_id          = var.project_.id
+  count  = var.lbs_configs.external.enable ? 1 : 0
+  source = "../../../cloud-foundation-fabric/modules/net-lb-app-ext"
+  # source              = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-lb-app-ext?ref=v55.0.0"
+  project_id          = var.project_id
   name                = "${var.name}-ext-glb-01"
   use_classic_version = false
   protocol            = "HTTPS"
@@ -128,7 +131,7 @@ module "lb_ext_glb" {
   ssl_certificates = {
     managed_configs = {
       default = {
-        domains = [var.lbs_config.external.domain]
+        domains = [var.lbs_configs.external.domain]
       }
     }
   }

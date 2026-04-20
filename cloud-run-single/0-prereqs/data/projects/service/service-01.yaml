@@ -24,7 +24,6 @@ services:
   - cloudbuild.googleapis.com
   - cloudresourcemanager.googleapis.com
   - compute.googleapis.com
-  - dns.googleapis.com
   - run.googleapis.com
   - serviceusage.googleapis.com
   # Needed for ILB only
@@ -46,13 +45,13 @@ service_accounts:
   # Automation SAs
   iac-rw:
     iam_sa_roles:
-      $service_account_ids:service-01/gf-srun-0:
+      $service_account_ids:service-01/crun-0:
         - roles/iam.serviceAccountUser
-      $service_account_ids:service-01/gf-srun-build-0:
+      $service_account_ids:service-01/crun-build-0:
         - roles/iam.serviceAccountUser
   # Application SAs
-  gf-srun-0: {}
-  gf-srun-build-0: {}
+  crun-0: {}
+  crun-build-0: {}
 
 # Grant roles
 iam:
@@ -63,21 +62,20 @@ iam_by_principals:
     - roles/artifactregistry.admin
     - roles/cloudbuild.builds.editor
     - roles/compute.loadBalancerAdmin
-    - roles/compute.networkAdmin
-    - roles/compute.securityAdmin
-    - roles/dns.admin
     - roles/run.admin
     - roles/storage.admin
     - roles/storage.objectUser
     # Needed for ILB only
     - roles/certificatemanager.owner
     - roles/privateca.admin
+    # Needed for Cloud Armor
+    - roles/compute.securityAdmin
     # Needed for Model Armor
     - roles/modelarmor.admin
     - roles/modelarmor.floorSettingsAdmin
-  $iam_principals:service_accounts/_self_/gf-srun-0:
+  $iam_principals:service_accounts/_self_/crun-0:
     - roles/logging.logWriter
-  $iam_principals:service_accounts/_self_/gf-srun-build-0:
+  $iam_principals:service_accounts/_self_/crun-build-0:
     - roles/artifactregistry.writer
     - roles/cloudbuild.builds.editor
     - roles/iam.serviceAccountUser
@@ -92,5 +90,5 @@ iam_by_principals:
 # as it is authoritatively granted by aiplatform APIs to default SA
 iam_bindings_additive:
   run_ai_user:
-    member: $iam_principals:service_accounts/_self_/gf-srun-0
+    member: $iam_principals:service_accounts/_self_/crun-0
     role: roles/aiplatform.user

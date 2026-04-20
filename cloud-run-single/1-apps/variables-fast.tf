@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# These values are automatically filled when using the FAST framework.
+# These variables are automatically populated when using the FAST framework.
 # Ignore if not used.
 
 variable "service_accounts" {
@@ -30,7 +30,7 @@ variable "service_accounts" {
 variable "subnet_self_links" {
   # tfdoc:variable:source 2-networking
   description = "Shared VPCs subnet IDs."
-  type        = map(map(string))
+  type        = map(string)
   nullable    = false
   default     = {}
 }

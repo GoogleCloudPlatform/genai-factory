@@ -22,20 +22,15 @@ locals {
 module "cloud_run" {
   source              = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/cloud-run-v2?ref=v55.1.0"
   type                = "SERVICE"
-  project_id          = var.projects.service.id
+  project_id          = var.project_id
   name                = var.name
   region              = var.region
   containers          = var.cloud_run_configs.containers
   deletion_protection = var.enable_deletion_protection
   managed_revision    = false
-  context = {
-    iam_principals = local.iam_principals
-    networks       = var.vpc_self_links
-    subnets        = var.subnet_self_links
-  }
   service_account_config = {
     create = false
-    email  = var.service_account_emails["service/gf-srun-0"]
+    email  = var.service_account_emails["service-01/crun-0"]
   }
   iam = {
     "roles/run.invoker" = var.cloud_run_configs.service_invokers
@@ -57,5 +52,10 @@ module "cloud_run" {
       max_instance_count = var.cloud_run_configs.max_instance_count
       min_instance_count = var.cloud_run_configs.min_instance_count
     }
+  }
+  context = {
+    iam_principals = local.iam_principals
+    networks       = var.vpc_self_links
+    subnets        = var.subnet_self_links
   }
 }
