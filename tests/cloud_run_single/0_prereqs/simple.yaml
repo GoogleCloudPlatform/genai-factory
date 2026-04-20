@@ -1,0 +1,1240 @@
+---
+
+# Copyright 2026 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+values:
+  google_service_account_iam_member.me_sa_token_creator[0]:
+    condition: []
+    role: roles/iam.serviceAccountTokenCreator
+    service_account_id: projects/your-prefix-gf-srun-0/serviceAccounts/iac-rw@your-prefix-gf-srun-0.iam.gserviceaccount.com
+  local_file.providers:
+    content_base64: null
+    directory_permission: '0777'
+    file_permission: '0644'
+    filename: ../1-apps/providers.tf
+    sensitive_content: null
+    source: null
+  local_file.tfvars:
+    content_base64: null
+    directory_permission: '0777'
+    file_permission: '0644'
+    filename: ../1-apps/terraform.auto.tfvars
+    sensitive_content: null
+    source: null
+  module.dns_policy_googleapis[0].google_dns_response_policy.default[0]:
+    description: Terraform managed.
+    gke_clusters: []
+    networks:
+    - {}
+    project: your-prefix-gf-srun-hp-0
+    response_policy_name: googleapis
+    timeouts: null
+  module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["accounts"]:
+    behavior: null
+    dns_name: accounts.google.com.
+    local_data:
+    - local_datas:
+      - name: accounts.google.com.
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
+    project: your-prefix-gf-srun-hp-0
+    response_policy: googleapis
+    rule_name: accounts
+    timeouts: null
+  module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["aiplatform-notebook-cloud-all"]:
+    behavior: null
+    dns_name: '*.aiplatform-notebook.cloud.google.com.'
+    local_data:
+    - local_datas:
+      - name: '*.aiplatform-notebook.cloud.google.com.'
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
+    project: your-prefix-gf-srun-hp-0
+    response_policy: googleapis
+    rule_name: aiplatform-notebook-cloud-all
+    timeouts: null
+  module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["aiplatform-notebook-gu-all"]:
+    behavior: null
+    dns_name: '*.aiplatform-notebook.googleusercontent.com.'
+    local_data:
+    - local_datas:
+      - name: '*.aiplatform-notebook.googleusercontent.com.'
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
+    project: your-prefix-gf-srun-hp-0
+    response_policy: googleapis
+    rule_name: aiplatform-notebook-gu-all
+    timeouts: null
+  module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["backupdr-cloud"]:
+    behavior: null
+    dns_name: backupdr.cloud.google.com.
+    local_data:
+    - local_datas:
+      - name: backupdr.cloud.google.com.
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
+    project: your-prefix-gf-srun-hp-0
+    response_policy: googleapis
+    rule_name: backupdr-cloud
+    timeouts: null
+  module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["backupdr-cloud-all"]:
+    behavior: null
+    dns_name: '*.backupdr.cloud.google.com.'
+    local_data:
+    - local_datas:
+      - name: '*.backupdr.cloud.google.com.'
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
+    project: your-prefix-gf-srun-hp-0
+    response_policy: googleapis
+    rule_name: backupdr-cloud-all
+    timeouts: null
+  module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["backupdr-gu"]:
+    behavior: null
+    dns_name: backupdr.googleusercontent.google.com.
+    local_data:
+    - local_datas:
+      - name: backupdr.googleusercontent.google.com.
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
+    project: your-prefix-gf-srun-hp-0
+    response_policy: googleapis
+    rule_name: backupdr-gu
+    timeouts: null
+  module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["backupdr-gu-all"]:
+    behavior: null
+    dns_name: '*.backupdr.googleusercontent.google.com.'
+    local_data:
+    - local_datas:
+      - name: '*.backupdr.googleusercontent.google.com.'
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
+    project: your-prefix-gf-srun-hp-0
+    response_policy: googleapis
+    rule_name: backupdr-gu-all
+    timeouts: null
+  module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["cloudfunctions"]:
+    behavior: null
+    dns_name: '*.cloudfunctions.net.'
+    local_data:
+    - local_datas:
+      - name: '*.cloudfunctions.net.'
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
+    project: your-prefix-gf-srun-hp-0
+    response_policy: googleapis
+    rule_name: cloudfunctions
+    timeouts: null
+  module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["cloudproxy"]:
+    behavior: null
+    dns_name: '*.cloudproxy.app.'
+    local_data:
+    - local_datas:
+      - name: '*.cloudproxy.app.'
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
+    project: your-prefix-gf-srun-hp-0
+    response_policy: googleapis
+    rule_name: cloudproxy
+    timeouts: null
+  module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["composer-cloud-all"]:
+    behavior: null
+    dns_name: '*.composer.cloud.google.com.'
+    local_data:
+    - local_datas:
+      - name: '*.composer.cloud.google.com.'
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
+    project: your-prefix-gf-srun-hp-0
+    response_policy: googleapis
+    rule_name: composer-cloud-all
+    timeouts: null
+  module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["composer-gu-all"]:
+    behavior: null
+    dns_name: '*.composer.googleusercontent.com.'
+    local_data:
+    - local_datas:
+      - name: '*.composer.googleusercontent.com.'
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
+    project: your-prefix-gf-srun-hp-0
+    response_policy: googleapis
+    rule_name: composer-gu-all
+    timeouts: null
+  module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["datafusion-all"]:
+    behavior: null
+    dns_name: '*.datafusion.cloud.google.com.'
+    local_data:
+    - local_datas:
+      - name: '*.datafusion.cloud.google.com.'
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
+    project: your-prefix-gf-srun-hp-0
+    response_policy: googleapis
+    rule_name: datafusion-all
+    timeouts: null
+  module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["datafusion-gu-all"]:
+    behavior: null
+    dns_name: '*.datafusion.googleusercontent.com.'
+    local_data:
+    - local_datas:
+      - name: '*.datafusion.googleusercontent.com.'
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
+    project: your-prefix-gf-srun-hp-0
+    response_policy: googleapis
+    rule_name: datafusion-gu-all
+    timeouts: null
+  module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["dataproc"]:
+    behavior: null
+    dns_name: dataproc.cloud.google.com.
+    local_data:
+    - local_datas:
+      - name: dataproc.cloud.google.com.
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
+    project: your-prefix-gf-srun-hp-0
+    response_policy: googleapis
+    rule_name: dataproc
+    timeouts: null
+  module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["dataproc-all"]:
+    behavior: null
+    dns_name: '*.dataproc.cloud.google.com.'
+    local_data:
+    - local_datas:
+      - name: '*.dataproc.cloud.google.com.'
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
+    project: your-prefix-gf-srun-hp-0
+    response_policy: googleapis
+    rule_name: dataproc-all
+    timeouts: null
+  module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["dataproc-gu"]:
+    behavior: null
+    dns_name: dataproc.googleusercontent.com.
+    local_data:
+    - local_datas:
+      - name: dataproc.googleusercontent.com.
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
+    project: your-prefix-gf-srun-hp-0
+    response_policy: googleapis
+    rule_name: dataproc-gu
+    timeouts: null
+  module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["dataproc-gu-all"]:
+    behavior: null
+    dns_name: '*.dataproc.googleusercontent.com.'
+    local_data:
+    - local_datas:
+      - name: '*.dataproc.googleusercontent.com.'
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
+    project: your-prefix-gf-srun-hp-0
+    response_policy: googleapis
+    rule_name: dataproc-gu-all
+    timeouts: null
+  module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["dl"]:
+    behavior: null
+    dns_name: dl.google.com.
+    local_data:
+    - local_datas:
+      - name: dl.google.com.
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
+    project: your-prefix-gf-srun-hp-0
+    response_policy: googleapis
+    rule_name: dl
+    timeouts: null
+  module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["gcr"]:
+    behavior: null
+    dns_name: gcr.io.
+    local_data:
+    - local_datas:
+      - name: gcr.io.
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
+    project: your-prefix-gf-srun-hp-0
+    response_policy: googleapis
+    rule_name: gcr
+    timeouts: null
+  module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["gcr-all"]:
+    behavior: null
+    dns_name: '*.gcr.io.'
+    local_data:
+    - local_datas:
+      - name: '*.gcr.io.'
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
+    project: your-prefix-gf-srun-hp-0
+    response_policy: googleapis
+    rule_name: gcr-all
+    timeouts: null
+  module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["gke-all"]:
+    behavior: null
+    dns_name: '*.gke.goog.'
+    local_data:
+    - local_datas:
+      - name: '*.gke.goog.'
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
+    project: your-prefix-gf-srun-hp-0
+    response_policy: googleapis
+    rule_name: gke-all
+    timeouts: null
+  module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["googleapis-all"]:
+    behavior: null
+    dns_name: '*.googleapis.com.'
+    local_data:
+    - local_datas:
+      - name: '*.googleapis.com.'
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
+    project: your-prefix-gf-srun-hp-0
+    response_policy: googleapis
+    rule_name: googleapis-all
+    timeouts: null
+  module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["googleapis-private"]:
+    behavior: null
+    dns_name: private.googleapis.com.
+    local_data:
+    - local_datas:
+      - name: private.googleapis.com.
+        rrdatas:
+        - 199.36.153.8
+        - 199.36.153.9
+        - 199.36.153.10
+        - 199.36.153.11
+        ttl: null
+        type: A
+      - name: private.googleapis.com.
+        rrdatas:
+        - '2600:2d00:2:2000::'
+        ttl: null
+        type: AAAA
+    project: your-prefix-gf-srun-hp-0
+    response_policy: googleapis
+    rule_name: googleapis-private
+    timeouts: null
+  module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["googleapis-restricted"]:
+    behavior: null
+    dns_name: restricted.googleapis.com.
+    local_data:
+    - local_datas:
+      - name: restricted.googleapis.com.
+        rrdatas:
+        - 199.36.153.4
+        - 199.36.153.5
+        - 199.36.153.6
+        - 199.36.153.7
+        ttl: null
+        type: A
+      - name: restricted.googleapis.com.
+        rrdatas:
+        - '2600:2d00:2:1000::'
+        ttl: null
+        type: AAAA
+    project: your-prefix-gf-srun-hp-0
+    response_policy: googleapis
+    rule_name: googleapis-restricted
+    timeouts: null
+  module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["gstatic-all"]:
+    behavior: null
+    dns_name: '*.gstatic.com.'
+    local_data:
+    - local_datas:
+      - name: '*.gstatic.com.'
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
+    project: your-prefix-gf-srun-hp-0
+    response_policy: googleapis
+    rule_name: gstatic-all
+    timeouts: null
+  module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["kernels-gu"]:
+    behavior: null
+    dns_name: kernels.googleusercontent.com.
+    local_data:
+    - local_datas:
+      - name: kernels.googleusercontent.com.
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
+    project: your-prefix-gf-srun-hp-0
+    response_policy: googleapis
+    rule_name: kernels-gu
+    timeouts: null
+  module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["kernels-gu-all"]:
+    behavior: null
+    dns_name: '*.kernels.googleusercontent.com.'
+    local_data:
+    - local_datas:
+      - name: '*.kernels.googleusercontent.com.'
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
+    project: your-prefix-gf-srun-hp-0
+    response_policy: googleapis
+    rule_name: kernels-gu-all
+    timeouts: null
+  module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["ltsapis-all"]:
+    behavior: null
+    dns_name: '*.ltsapis.goog.'
+    local_data:
+    - local_datas:
+      - name: '*.ltsapis.goog.'
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
+    project: your-prefix-gf-srun-hp-0
+    response_policy: googleapis
+    rule_name: ltsapis-all
+    timeouts: null
+  module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["notebooks-all"]:
+    behavior: null
+    dns_name: '*.notebooks.cloud.google.com.'
+    local_data:
+    - local_datas:
+      - name: '*.notebooks.cloud.google.com.'
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
+    project: your-prefix-gf-srun-hp-0
+    response_policy: googleapis
+    rule_name: notebooks-all
+    timeouts: null
+  module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["notebooks-gu-all"]:
+    behavior: null
+    dns_name: '*.notebooks.googleusercontent.com.'
+    local_data:
+    - local_datas:
+      - name: '*.notebooks.googleusercontent.com.'
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
+    project: your-prefix-gf-srun-hp-0
+    response_policy: googleapis
+    rule_name: notebooks-gu-all
+    timeouts: null
+  module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["packages-cloud"]:
+    behavior: null
+    dns_name: packages.cloud.google.com.
+    local_data:
+    - local_datas:
+      - name: packages.cloud.google.com.
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
+    project: your-prefix-gf-srun-hp-0
+    response_policy: googleapis
+    rule_name: packages-cloud
+    timeouts: null
+  module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["packages-cloud-all"]:
+    behavior: null
+    dns_name: '*.packages.cloud.google.com.'
+    local_data:
+    - local_datas:
+      - name: '*.packages.cloud.google.com.'
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
+    project: your-prefix-gf-srun-hp-0
+    response_policy: googleapis
+    rule_name: packages-cloud-all
+    timeouts: null
+  module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["pkgdev"]:
+    behavior: null
+    dns_name: pkg.dev.
+    local_data:
+    - local_datas:
+      - name: pkg.dev.
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
+    project: your-prefix-gf-srun-hp-0
+    response_policy: googleapis
+    rule_name: pkgdev
+    timeouts: null
+  module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["pkgdev-all"]:
+    behavior: null
+    dns_name: '*.pkg.dev.'
+    local_data:
+    - local_datas:
+      - name: '*.pkg.dev.'
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
+    project: your-prefix-gf-srun-hp-0
+    response_policy: googleapis
+    rule_name: pkgdev-all
+    timeouts: null
+  module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["pkigoog"]:
+    behavior: null
+    dns_name: pki.goog.
+    local_data:
+    - local_datas:
+      - name: pki.goog.
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
+    project: your-prefix-gf-srun-hp-0
+    response_policy: googleapis
+    rule_name: pkigoog
+    timeouts: null
+  module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["pkigoog-all"]:
+    behavior: null
+    dns_name: '*.pki.goog.'
+    local_data:
+    - local_datas:
+      - name: '*.pki.goog.'
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
+    project: your-prefix-gf-srun-hp-0
+    response_policy: googleapis
+    rule_name: pkigoog-all
+    timeouts: null
+  module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["run-all"]:
+    behavior: null
+    dns_name: '*.run.app.'
+    local_data:
+    - local_datas:
+      - name: '*.run.app.'
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
+    project: your-prefix-gf-srun-hp-0
+    response_policy: googleapis
+    rule_name: run-all
+    timeouts: null
+  module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["source"]:
+    behavior: null
+    dns_name: source.developers.google.com.
+    local_data:
+    - local_datas:
+      - name: source.developers.google.com.
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
+    project: your-prefix-gf-srun-hp-0
+    response_policy: googleapis
+    rule_name: source
+    timeouts: null
+  module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["storage"]:
+    behavior: null
+    dns_name: storage.cloud.google.com.
+    local_data:
+    - local_datas:
+      - name: storage.cloud.google.com.
+        rrdatas:
+        - private.googleapis.com.
+        ttl: null
+        type: CNAME
+    project: your-prefix-gf-srun-hp-0
+    response_policy: googleapis
+    rule_name: storage
+    timeouts: null
+  module.project-service.module.buckets["service-01/iac-state"].google_storage_bucket.bucket[0]:
+    autoclass: []
+    cors: []
+    custom_placement_config: []
+    default_event_based_hold: null
+    effective_labels:
+      goog-terraform-provisioned: 'true'
+    enable_object_retention: null
+    encryption: []
+    force_destroy: false
+    hierarchical_namespace: []
+    ip_filter: []
+    labels: null
+    lifecycle_rule: []
+    location: EUROPE-WEST1
+    logging: []
+    name: your-prefix-gf-srun-0-iac-state
+    project: your-prefix-gf-srun-0
+    requester_pays: null
+    retention_policy: []
+    storage_class: STANDARD
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
+    timeouts: null
+    uniform_bucket_level_access: true
+    versioning:
+    - enabled: false
+  ? module.project-service.module.buckets["service-01/iac-state"].google_storage_bucket_iam_binding.authoritative["roles/storage.objectAdmin"]
+  : bucket: your-prefix-gf-srun-0-iac-state
+    condition: []
+    members:
+    - serviceAccount:iac-rw@your-prefix-gf-srun-0.iam.gserviceaccount.com
+    role: roles/storage.objectAdmin
+    timeouts: null
+  ? module.project-service.module.buckets["service-01/iac-state"].google_storage_bucket_iam_binding.authoritative["roles/storage.objectViewer"]
+  : bucket: your-prefix-gf-srun-0-iac-state
+    condition: []
+    members:
+    - serviceAccount:iac-rw@your-prefix-gf-srun-0.iam.gserviceaccount.com
+    role: roles/storage.objectViewer
+    timeouts: null
+  ? module.project-service.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/artifactregistry.admin"]
+  : condition: []
+    members:
+    - serviceAccount:iac-rw@your-prefix-gf-srun-0.iam.gserviceaccount.com
+    project: your-prefix-gf-srun-0
+    role: roles/artifactregistry.admin
+  ? module.project-service.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/artifactregistry.writer"]
+  : condition: []
+    members:
+    - serviceAccount:crun-build-0@your-prefix-gf-srun-0.iam.gserviceaccount.com
+    project: your-prefix-gf-srun-0
+    role: roles/artifactregistry.writer
+  ? module.project-service.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/certificatemanager.owner"]
+  : condition: []
+    members:
+    - serviceAccount:iac-rw@your-prefix-gf-srun-0.iam.gserviceaccount.com
+    project: your-prefix-gf-srun-0
+    role: roles/certificatemanager.owner
+  ? module.project-service.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/cloudbuild.builds.editor"]
+  : condition: []
+    members:
+    - serviceAccount:crun-build-0@your-prefix-gf-srun-0.iam.gserviceaccount.com
+    - serviceAccount:iac-rw@your-prefix-gf-srun-0.iam.gserviceaccount.com
+    project: your-prefix-gf-srun-0
+    role: roles/cloudbuild.builds.editor
+  ? module.project-service.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/compute.loadBalancerAdmin"]
+  : condition: []
+    members:
+    - serviceAccount:iac-rw@your-prefix-gf-srun-0.iam.gserviceaccount.com
+    project: your-prefix-gf-srun-0
+    role: roles/compute.loadBalancerAdmin
+  ? module.project-service.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/compute.securityAdmin"]
+  : condition: []
+    members:
+    - serviceAccount:iac-rw@your-prefix-gf-srun-0.iam.gserviceaccount.com
+    project: your-prefix-gf-srun-0
+    role: roles/compute.securityAdmin
+  ? module.project-service.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/iam.serviceAccountUser"]
+  : condition: []
+    members:
+    - serviceAccount:crun-build-0@your-prefix-gf-srun-0.iam.gserviceaccount.com
+    project: your-prefix-gf-srun-0
+    role: roles/iam.serviceAccountUser
+  ? module.project-service.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/logging.logWriter"]
+  : condition: []
+    members:
+    - serviceAccount:crun-0@your-prefix-gf-srun-0.iam.gserviceaccount.com
+    - serviceAccount:crun-build-0@your-prefix-gf-srun-0.iam.gserviceaccount.com
+    project: your-prefix-gf-srun-0
+    role: roles/logging.logWriter
+  ? module.project-service.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/modelarmor.admin"]
+  : condition: []
+    members:
+    - serviceAccount:iac-rw@your-prefix-gf-srun-0.iam.gserviceaccount.com
+    project: your-prefix-gf-srun-0
+    role: roles/modelarmor.admin
+  ? module.project-service.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/modelarmor.floorSettingsAdmin"]
+  : condition: []
+    members:
+    - serviceAccount:iac-rw@your-prefix-gf-srun-0.iam.gserviceaccount.com
+    project: your-prefix-gf-srun-0
+    role: roles/modelarmor.floorSettingsAdmin
+  module.project-service.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/modelarmor.user"]:
+    condition: []
+    project: your-prefix-gf-srun-0
+    role: roles/modelarmor.user
+  module.project-service.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/privateca.admin"]:
+    condition: []
+    members:
+    - serviceAccount:iac-rw@your-prefix-gf-srun-0.iam.gserviceaccount.com
+    project: your-prefix-gf-srun-0
+    role: roles/privateca.admin
+  ? module.project-service.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/privateca.certificateRequester"]
+  : condition: []
+    project: your-prefix-gf-srun-0
+    role: roles/privateca.certificateRequester
+  module.project-service.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/run.admin"]:
+    condition: []
+    members:
+    - serviceAccount:crun-build-0@your-prefix-gf-srun-0.iam.gserviceaccount.com
+    - serviceAccount:iac-rw@your-prefix-gf-srun-0.iam.gserviceaccount.com
+    project: your-prefix-gf-srun-0
+    role: roles/run.admin
+  ? module.project-service.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/serviceusage.serviceUsageConsumer"]
+  : condition: []
+    members:
+    - serviceAccount:iac-rw@your-prefix-gf-srun-0.iam.gserviceaccount.com
+    project: your-prefix-gf-srun-0
+    role: roles/serviceusage.serviceUsageConsumer
+  module.project-service.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/storage.admin"]:
+    condition: []
+    members:
+    - serviceAccount:crun-build-0@your-prefix-gf-srun-0.iam.gserviceaccount.com
+    - serviceAccount:iac-rw@your-prefix-gf-srun-0.iam.gserviceaccount.com
+    project: your-prefix-gf-srun-0
+    role: roles/storage.admin
+  ? module.project-service.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/storage.objectUser"]
+  : condition: []
+    members:
+    - serviceAccount:crun-build-0@your-prefix-gf-srun-0.iam.gserviceaccount.com
+    - serviceAccount:iac-rw@your-prefix-gf-srun-0.iam.gserviceaccount.com
+    project: your-prefix-gf-srun-0
+    role: roles/storage.objectUser
+  module.project-service.module.projects-iam["service-01"].google_project_iam_member.bindings["run_ai_user"]:
+    condition: []
+    member: serviceAccount:crun-0@your-prefix-gf-srun-0.iam.gserviceaccount.com
+    project: your-prefix-gf-srun-0
+    role: roles/aiplatform.user
+  module.project-service.module.projects["service-01"].google_project.project[0]:
+    auto_create_network: false
+    billing_account: billing-acct-id
+    deletion_policy: DELETE
+    effective_labels:
+      goog-terraform-provisioned: 'true'
+    folder_id: null
+    labels: null
+    name: your-prefix-gf-srun-0
+    org_id: '1122334455'
+    project_id: your-prefix-gf-srun-0
+    tags: null
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
+    timeouts: null
+  module.project-service.module.projects["service-01"].google_project_iam_member.service_agents["aiplatform"]:
+    condition: []
+    project: your-prefix-gf-srun-0
+    role: roles/aiplatform.serviceAgent
+  module.project-service.module.projects["service-01"].google_project_iam_member.service_agents["aiplatform-cc"]:
+    condition: []
+    project: your-prefix-gf-srun-0
+    role: roles/aiplatform.customCodeServiceAgent
+  module.project-service.module.projects["service-01"].google_project_iam_member.service_agents["aiplatform-ft"]:
+    condition: []
+    project: your-prefix-gf-srun-0
+    role: roles/aiplatform.serviceAgent
+  module.project-service.module.projects["service-01"].google_project_iam_member.service_agents["aiplatform-pie"]:
+    condition: []
+    project: your-prefix-gf-srun-0
+    role: roles/aiplatform.serviceAgent
+  module.project-service.module.projects["service-01"].google_project_iam_member.service_agents["aiplatform-re"]:
+    condition: []
+    project: your-prefix-gf-srun-0
+    role: roles/aiplatform.reasoningEngineServiceAgent
+  module.project-service.module.projects["service-01"].google_project_iam_member.service_agents["aiplatform-vm"]:
+    condition: []
+    project: your-prefix-gf-srun-0
+    role: roles/aiplatform.notebookServiceAgent
+  module.project-service.module.projects["service-01"].google_project_iam_member.service_agents["artifactregistry"]:
+    condition: []
+    project: your-prefix-gf-srun-0
+    role: roles/artifactregistry.serviceAgent
+  module.project-service.module.projects["service-01"].google_project_iam_member.service_agents["certificatemanager"]:
+    condition: []
+    project: your-prefix-gf-srun-0
+    role: roles/certificatemanager.serviceAgent
+  module.project-service.module.projects["service-01"].google_project_iam_member.service_agents["cloudbuild"]:
+    condition: []
+    project: your-prefix-gf-srun-0
+    role: roles/cloudbuild.serviceAgent
+  module.project-service.module.projects["service-01"].google_project_iam_member.service_agents["cloudbuild-sa"]:
+    condition: []
+    project: your-prefix-gf-srun-0
+    role: roles/cloudbuild.builds.builder
+  module.project-service.module.projects["service-01"].google_project_iam_member.service_agents["compute-system"]:
+    condition: []
+    project: your-prefix-gf-srun-0
+    role: roles/compute.serviceAgent
+  module.project-service.module.projects["service-01"].google_project_iam_member.service_agents["modelarmor"]:
+    condition: []
+    project: your-prefix-gf-srun-0
+    role: roles/modelarmor.serviceAgent
+  module.project-service.module.projects["service-01"].google_project_iam_member.service_agents["serverless-robot-prod"]:
+    condition: []
+    project: your-prefix-gf-srun-0
+    role: roles/run.serviceAgent
+  module.project-service.module.projects["service-01"].google_project_iam_member.service_agents["vertex-bp"]:
+    condition: []
+    project: your-prefix-gf-srun-0
+    role: roles/aiplatform.batchPredictionServiceAgent
+  module.project-service.module.projects["service-01"].google_project_iam_member.service_agents["vertex-eval"]:
+    condition: []
+    project: your-prefix-gf-srun-0
+    role: roles/aiplatform.rapidevalServiceAgent
+  module.project-service.module.projects["service-01"].google_project_iam_member.service_agents["vertex-ex"]:
+    condition: []
+    project: your-prefix-gf-srun-0
+    role: roles/aiplatform.extensionServiceAgent
+  module.project-service.module.projects["service-01"].google_project_iam_member.service_agents["vertex-ex-cc"]:
+    condition: []
+    project: your-prefix-gf-srun-0
+    role: roles/aiplatform.extensionCustomCodeServiceAgent
+  module.project-service.module.projects["service-01"].google_project_iam_member.service_agents["vertex-mm"]:
+    condition: []
+    project: your-prefix-gf-srun-0
+    role: roles/aiplatform.modelMonitoringServiceAgent
+  module.project-service.module.projects["service-01"].google_project_iam_member.service_agents["vertex-moss-ft"]:
+    condition: []
+    project: your-prefix-gf-srun-0
+    role: roles/aiplatform.tuningServiceAgent
+  module.project-service.module.projects["service-01"].google_project_iam_member.service_agents["vertex-nb"]:
+    condition: []
+    project: your-prefix-gf-srun-0
+    role: roles/aiplatform.colabServiceAgent
+  module.project-service.module.projects["service-01"].google_project_iam_member.service_agents["vertex-op"]:
+    condition: []
+    project: your-prefix-gf-srun-0
+    role: roles/aiplatform.onlinePredictionServiceAgent
+  module.project-service.module.projects["service-01"].google_project_iam_member.service_agents["vertex-rag"]:
+    condition: []
+    project: your-prefix-gf-srun-0
+    role: roles/aiplatform.ragServiceAgent
+  module.project-service.module.projects["service-01"].google_project_iam_member.service_agents["vertex-sandbox"]:
+    condition: []
+    project: your-prefix-gf-srun-0
+    role: roles/aiplatform.agentSandboxServiceAgent
+  module.project-service.module.projects["service-01"].google_project_iam_member.service_agents["vertex-shtune"]:
+    condition: []
+    project: your-prefix-gf-srun-0
+    role: roles/aiplatform.user
+  module.project-service.module.projects["service-01"].google_project_iam_member.service_agents["vertex-telemetry"]:
+    condition: []
+    project: your-prefix-gf-srun-0
+    role: roles/aiplatform.telemetryServiceAgent
+  module.project-service.module.projects["service-01"].google_project_iam_member.service_agents["vertex-tune"]:
+    condition: []
+    project: your-prefix-gf-srun-0
+    role: roles/aiplatform.tuningServiceAgent
+  module.project-service.module.projects["service-01"].google_project_service.project_services["aiplatform.googleapis.com"]:
+    disable_dependent_services: false
+    disable_on_destroy: false
+    project: your-prefix-gf-srun-0
+    service: aiplatform.googleapis.com
+    timeouts: null
+  ? module.project-service.module.projects["service-01"].google_project_service.project_services["artifactregistry.googleapis.com"]
+  : disable_dependent_services: false
+    disable_on_destroy: false
+    project: your-prefix-gf-srun-0
+    service: artifactregistry.googleapis.com
+    timeouts: null
+  ? module.project-service.module.projects["service-01"].google_project_service.project_services["certificatemanager.googleapis.com"]
+  : disable_dependent_services: false
+    disable_on_destroy: false
+    project: your-prefix-gf-srun-0
+    service: certificatemanager.googleapis.com
+    timeouts: null
+  module.project-service.module.projects["service-01"].google_project_service.project_services["cloudbuild.googleapis.com"]:
+    disable_dependent_services: false
+    disable_on_destroy: false
+    project: your-prefix-gf-srun-0
+    service: cloudbuild.googleapis.com
+    timeouts: null
+  ? module.project-service.module.projects["service-01"].google_project_service.project_services["cloudresourcemanager.googleapis.com"]
+  : disable_dependent_services: false
+    disable_on_destroy: false
+    project: your-prefix-gf-srun-0
+    service: cloudresourcemanager.googleapis.com
+    timeouts: null
+  module.project-service.module.projects["service-01"].google_project_service.project_services["compute.googleapis.com"]:
+    disable_dependent_services: false
+    disable_on_destroy: false
+    project: your-prefix-gf-srun-0
+    service: compute.googleapis.com
+    timeouts: null
+  module.project-service.module.projects["service-01"].google_project_service.project_services["modelarmor.googleapis.com"]:
+    disable_dependent_services: false
+    disable_on_destroy: false
+    project: your-prefix-gf-srun-0
+    service: modelarmor.googleapis.com
+    timeouts: null
+  module.project-service.module.projects["service-01"].google_project_service.project_services["privateca.googleapis.com"]:
+    disable_dependent_services: false
+    disable_on_destroy: false
+    project: your-prefix-gf-srun-0
+    service: privateca.googleapis.com
+    timeouts: null
+  module.project-service.module.projects["service-01"].google_project_service.project_services["run.googleapis.com"]:
+    disable_dependent_services: false
+    disable_on_destroy: false
+    project: your-prefix-gf-srun-0
+    service: run.googleapis.com
+    timeouts: null
+  ? module.project-service.module.projects["service-01"].google_project_service.project_services["serviceusage.googleapis.com"]
+  : disable_dependent_services: false
+    disable_on_destroy: false
+    project: your-prefix-gf-srun-0
+    service: serviceusage.googleapis.com
+    timeouts: null
+  module.project-service.module.projects["service-01"].google_project_service_identity.default["aiplatform.googleapis.com"]:
+    project: your-prefix-gf-srun-0
+    service: aiplatform.googleapis.com
+    timeouts: null
+  ? module.project-service.module.projects["service-01"].google_project_service_identity.default["artifactregistry.googleapis.com"]
+  : project: your-prefix-gf-srun-0
+    service: artifactregistry.googleapis.com
+    timeouts: null
+  ? module.project-service.module.projects["service-01"].google_project_service_identity.default["certificatemanager.googleapis.com"]
+  : project: your-prefix-gf-srun-0
+    service: certificatemanager.googleapis.com
+    timeouts: null
+  module.project-service.module.projects["service-01"].google_project_service_identity.default["modelarmor.googleapis.com"]:
+    project: your-prefix-gf-srun-0
+    service: modelarmor.googleapis.com
+    timeouts: null
+  module.project-service.module.projects["service-01"].google_project_service_identity.default["privateca.googleapis.com"]:
+    project: your-prefix-gf-srun-0
+    service: privateca.googleapis.com
+    timeouts: null
+  module.project-service.module.projects["service-01"].google_project_service_identity.default["run.googleapis.com"]:
+    project: your-prefix-gf-srun-0
+    service: run.googleapis.com
+    timeouts: null
+  module.project-service.module.service-accounts["service-01/crun-0"].google_service_account.service_account[0]:
+    account_id: crun-0
+    create_ignore_already_exists: null
+    description: null
+    disabled: false
+    display_name: Terraform-managed.
+    email: crun-0@your-prefix-gf-srun-0.iam.gserviceaccount.com
+    member: serviceAccount:crun-0@your-prefix-gf-srun-0.iam.gserviceaccount.com
+    project: your-prefix-gf-srun-0
+    timeouts: null
+  module.project-service.module.service-accounts["service-01/crun-build-0"].google_service_account.service_account[0]:
+    account_id: crun-build-0
+    create_ignore_already_exists: null
+    description: null
+    disabled: false
+    display_name: Terraform-managed.
+    email: crun-build-0@your-prefix-gf-srun-0.iam.gserviceaccount.com
+    member: serviceAccount:crun-build-0@your-prefix-gf-srun-0.iam.gserviceaccount.com
+    project: your-prefix-gf-srun-0
+    timeouts: null
+  module.project-service.module.service-accounts["service-01/iac-rw"].google_service_account.service_account[0]:
+    account_id: iac-rw
+    create_ignore_already_exists: null
+    description: null
+    disabled: false
+    display_name: Terraform-managed.
+    email: iac-rw@your-prefix-gf-srun-0.iam.gserviceaccount.com
+    member: serviceAccount:iac-rw@your-prefix-gf-srun-0.iam.gserviceaccount.com
+    project: your-prefix-gf-srun-0
+    timeouts: null
+  ? module.project-service.module.service_accounts-iam["service-01/iac-rw"].google_service_account_iam_member.additive["$service_account_ids:service-01/crun-0-roles/iam.serviceAccountUser"]
+  : condition: []
+    role: roles/iam.serviceAccountUser
+    service_account_id: projects/your-prefix-gf-srun-0/serviceAccounts/crun-0@your-prefix-gf-srun-0.iam.gserviceaccount.com
+  ? module.project-service.module.service_accounts-iam["service-01/iac-rw"].google_service_account_iam_member.additive["$service_account_ids:service-01/crun-build-0-roles/iam.serviceAccountUser"]
+  : condition: []
+    role: roles/iam.serviceAccountUser
+    service_account_id: projects/your-prefix-gf-srun-0/serviceAccounts/crun-build-0@your-prefix-gf-srun-0.iam.gserviceaccount.com
+  module.project-service.terraform_data.defaults_preconditions:
+    input: null
+    output: null
+    triggers_replace: null
+  module.project-service.terraform_data.project-preconditions:
+    input: null
+    output: null
+    triggers_replace: null
+  module.project_host[0].module.projects-iam["host"].google_project_iam_binding.authoritative["roles/compute.networkAdmin"]:
+    condition: []
+    members:
+    - serviceAccount:iac-rw@your-prefix-gf-srun-0.iam.gserviceaccount.com
+    project: your-prefix-gf-srun-hp-0
+    role: roles/compute.networkAdmin
+  module.project_host[0].module.projects-iam["host"].google_project_iam_binding.authoritative["roles/compute.networkUser"]:
+    condition: []
+    project: your-prefix-gf-srun-hp-0
+    role: roles/compute.networkUser
+  module.project_host[0].module.projects-iam["host"].google_project_iam_binding.authoritative["roles/compute.securityAdmin"]:
+    condition: []
+    members:
+    - serviceAccount:iac-rw@your-prefix-gf-srun-0.iam.gserviceaccount.com
+    project: your-prefix-gf-srun-hp-0
+    role: roles/compute.securityAdmin
+  module.project_host[0].module.projects-iam["host"].google_project_iam_binding.authoritative["roles/dns.admin"]:
+    condition: []
+    members:
+    - serviceAccount:iac-rw@your-prefix-gf-srun-0.iam.gserviceaccount.com
+    project: your-prefix-gf-srun-hp-0
+    role: roles/dns.admin
+  ? module.project_host[0].module.projects-iam["host"].google_project_iam_binding.authoritative["roles/privateca.certificateRequester"]
+  : condition: []
+    project: your-prefix-gf-srun-hp-0
+    role: roles/privateca.certificateRequester
+  module.project_host[0].module.projects["host"].google_project.project[0]:
+    auto_create_network: false
+    billing_account: billing-acct-id
+    deletion_policy: DELETE
+    effective_labels:
+      goog-terraform-provisioned: 'true'
+    folder_id: null
+    labels: null
+    name: your-prefix-gf-srun-hp-0
+    org_id: '1122334455'
+    project_id: your-prefix-gf-srun-hp-0
+    tags: null
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
+    timeouts: null
+  module.project_host[0].module.projects["host"].google_project_iam_member.service_agents["certificatemanager"]:
+    condition: []
+    project: your-prefix-gf-srun-hp-0
+    role: roles/certificatemanager.serviceAgent
+  module.project_host[0].module.projects["host"].google_project_iam_member.service_agents["compute-system"]:
+    condition: []
+    project: your-prefix-gf-srun-hp-0
+    role: roles/compute.serviceAgent
+  module.project_host[0].module.projects["host"].google_project_iam_member.service_agents["dns"]:
+    condition: []
+    project: your-prefix-gf-srun-hp-0
+    role: roles/dns.serviceAgent
+  ? module.project_host[0].module.projects["host"].google_project_service.project_services["certificatemanager.googleapis.com"]
+  : disable_dependent_services: false
+    disable_on_destroy: false
+    project: your-prefix-gf-srun-hp-0
+    service: certificatemanager.googleapis.com
+    timeouts: null
+  module.project_host[0].module.projects["host"].google_project_service.project_services["compute.googleapis.com"]:
+    disable_dependent_services: false
+    disable_on_destroy: false
+    project: your-prefix-gf-srun-hp-0
+    service: compute.googleapis.com
+    timeouts: null
+  module.project_host[0].module.projects["host"].google_project_service.project_services["dns.googleapis.com"]:
+    disable_dependent_services: false
+    disable_on_destroy: false
+    project: your-prefix-gf-srun-hp-0
+    service: dns.googleapis.com
+    timeouts: null
+  module.project_host[0].module.projects["host"].google_project_service.project_services["privateca.googleapis.com"]:
+    disable_dependent_services: false
+    disable_on_destroy: false
+    project: your-prefix-gf-srun-hp-0
+    service: privateca.googleapis.com
+    timeouts: null
+  ? module.project_host[0].module.projects["host"].google_project_service_identity.default["certificatemanager.googleapis.com"]
+  : project: your-prefix-gf-srun-hp-0
+    service: certificatemanager.googleapis.com
+    timeouts: null
+  module.project_host[0].module.projects["host"].google_project_service_identity.default["dns.googleapis.com"]:
+    project: your-prefix-gf-srun-hp-0
+    service: dns.googleapis.com
+    timeouts: null
+  module.project_host[0].module.projects["host"].google_project_service_identity.default["privateca.googleapis.com"]:
+    project: your-prefix-gf-srun-hp-0
+    service: privateca.googleapis.com
+    timeouts: null
+  module.project_host[0].terraform_data.defaults_preconditions:
+    input: null
+    output: null
+    triggers_replace: null
+  module.project_host[0].terraform_data.project-preconditions:
+    input: null
+    output: null
+    triggers_replace: null
+  module.vpc[0].google_compute_network.network[0]:
+    auto_create_subnetworks: false
+    delete_bgp_always_compare_med: false
+    delete_default_routes_on_create: false
+    description: Terraform-managed.
+    enable_ula_internal_ipv6: null
+    name: net-0
+    network_firewall_policy_enforcement_order: AFTER_CLASSIC_FIREWALL
+    network_profile: null
+    params: []
+    project: your-prefix-gf-srun-hp-0
+    routing_mode: GLOBAL
+    timeouts: null
+  module.vpc[0].google_compute_route.gateway["directpath-googleapis"]:
+    description: Terraform-managed.
+    dest_range: 34.126.0.0/18
+    name: net-0-directpath-googleapis
+    network: net-0
+    next_hop_gateway: default-internet-gateway
+    next_hop_ilb: null
+    next_hop_instance: null
+    next_hop_vpn_tunnel: null
+    params: []
+    priority: 1000
+    project: your-prefix-gf-srun-hp-0
+    tags: null
+    timeouts: null
+  module.vpc[0].google_compute_route.gateway["private-googleapis"]:
+    description: Terraform-managed.
+    dest_range: 199.36.153.8/30
+    name: net-0-private-googleapis
+    network: net-0
+    next_hop_gateway: default-internet-gateway
+    next_hop_ilb: null
+    next_hop_instance: null
+    next_hop_vpn_tunnel: null
+    params: []
+    priority: 1000
+    project: your-prefix-gf-srun-hp-0
+    tags: null
+    timeouts: null
+  module.vpc[0].google_compute_route.gateway["restricted-googleapis"]:
+    description: Terraform-managed.
+    dest_range: 199.36.153.4/30
+    name: net-0-restricted-googleapis
+    network: net-0
+    next_hop_gateway: default-internet-gateway
+    next_hop_ilb: null
+    next_hop_instance: null
+    next_hop_vpn_tunnel: null
+    params: []
+    priority: 1000
+    project: your-prefix-gf-srun-hp-0
+    tags: null
+    timeouts: null
+  module.vpc[0].google_compute_shared_vpc_host_project.shared_vpc_host[0]:
+    project: your-prefix-gf-srun-hp-0
+    timeouts: null
+  module.vpc[0].google_compute_shared_vpc_service_project.service_projects["your-prefix-gf-srun-0"]:
+    deletion_policy: null
+    host_project: your-prefix-gf-srun-hp-0
+    service_project: your-prefix-gf-srun-0
+    timeouts: null
+  module.vpc[0].google_compute_subnetwork.proxy_only["europe-west1/proxy-only-sub-0"]:
+    description: Terraform-managed proxy-only subnet for Regional HTTPS, Internal
+      HTTPS or Cross-Regional HTTPS Internal LB.
+    ip_cidr_range: 10.20.0.0/24
+    ip_collection: null
+    ipv6_access_type: null
+    log_config: []
+    name: proxy-only-sub-0
+    network: net-0
+    params: []
+    project: your-prefix-gf-srun-hp-0
+    purpose: REGIONAL_MANAGED_PROXY
+    region: europe-west1
+    reserved_internal_range: null
+    resolve_subnet_mask: null
+    role: ACTIVE
+    send_secondary_ip_range_if_empty: null
+    timeouts: null
+  module.vpc[0].google_compute_subnetwork.subnetwork["europe-west1/sub-0"]:
+    description: Terraform-managed.
+    ip_cidr_range: 10.0.0.0/24
+    ip_collection: null
+    ipv6_access_type: null
+    log_config: []
+    name: sub-0
+    network: net-0
+    params: []
+    private_ip_google_access: true
+    project: your-prefix-gf-srun-hp-0
+    region: europe-west1
+    reserved_internal_range: null
+    resolve_subnet_mask: null
+    role: null
+    send_secondary_ip_range_if_empty: true
+    timeouts: null
+
+counts:
+  google_compute_network: 1
+  google_compute_route: 3
+  google_compute_shared_vpc_host_project: 1
+  google_compute_shared_vpc_service_project: 1
+  google_compute_subnetwork: 2
+  google_dns_response_policy: 1
+  google_dns_response_policy_rule: 39
+  google_project: 2
+  google_project_iam_binding: 22
+  google_project_iam_member: 30
+  google_project_service: 14
+  google_project_service_identity: 9
+  google_service_account: 3
+  google_service_account_iam_member: 3
+  google_storage_bucket: 1
+  google_storage_bucket_iam_binding: 2
+  local_file: 2
+  modules: 13
+  resources: 140
+  terraform_data: 4
+
+outputs:
+  buckets:
+    service-01/iac-state: your-prefix-gf-srun-0-iac-state
+  networking_config: __missing__
+  projects: __missing__
+  region: europe-west1
+  service_accounts:
+    service-01/crun-0:
+      email: crun-0@your-prefix-gf-srun-0.iam.gserviceaccount.com
+      iam_email: serviceAccount:crun-0@your-prefix-gf-srun-0.iam.gserviceaccount.com
+      id: projects/your-prefix-gf-srun-0/serviceAccounts/crun-0@your-prefix-gf-srun-0.iam.gserviceaccount.com
+    service-01/crun-build-0:
+      email: crun-build-0@your-prefix-gf-srun-0.iam.gserviceaccount.com
+      iam_email: serviceAccount:crun-build-0@your-prefix-gf-srun-0.iam.gserviceaccount.com
+      id: projects/your-prefix-gf-srun-0/serviceAccounts/crun-build-0@your-prefix-gf-srun-0.iam.gserviceaccount.com
+    service-01/iac-rw:
+      email: iac-rw@your-prefix-gf-srun-0.iam.gserviceaccount.com
+      iam_email: serviceAccount:iac-rw@your-prefix-gf-srun-0.iam.gserviceaccount.com
+      id: projects/your-prefix-gf-srun-0/serviceAccounts/iac-rw@your-prefix-gf-srun-0.iam.gserviceaccount.com

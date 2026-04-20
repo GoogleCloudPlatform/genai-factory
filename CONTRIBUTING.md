@@ -49,8 +49,8 @@ uv add <dependency>
 ### Generate tfdoc
 
 ```shell
-# Generate tfdoc for cloud-run-single/0-projects
-./tools/tfdoc.py cloud-run-single/0-projects
+# Generate tfdoc for cloud-run-single/0-prereqs
+./tools/tfdoc.py cloud-run-single/0-prereqs
 ```
 
 ### Run linting
@@ -111,8 +111,8 @@ Run tests by using these commands:
 # Run all tests
 uv run pytest tests
 
-# Run tests for one factory stage. For example, cloud-run-single/0-projects
-uv run pytest tests/cloud_run_single/0-projects
+# Run tests for one factory stage. For example, cloud-run-single/0-prereqs
+uv run pytest tests/cloud_run_single/0-prereqs
 ```
 
 ### Tests structure
@@ -123,7 +123,7 @@ Each factory has a dedicated test folder under `test` that needs to be named as 
 If the factory name includes dashes (`-`), these need to be substituted with underscores (`_`).
 For example, the `agent-engine` factory has a corresponding `agent_engine` test folder.
 
-Each factory test folder includes a subfolder for each stage: `0_projects` and `1_apps`.
+Each factory test folder includes a subfolder for each stage: `0_prereqs` and `1_apps`.
 Inside these folders there must be always a `tftest.yaml` file that declares the tests. For example:
 
 ```yaml
@@ -143,16 +143,16 @@ Each test needs two files, called as the test:
 To generate the inventory (expected output) file for a test, given an input tfvars file, run:
 
 ```shell
-# Generate the inventory for cloud-run-single/0-projects
-uv run tools/plan_summary.py cloud-run-single/0-projects \
-  tests/cloud_run_single/0_projects/simple.tfvars \
-  > tests/cloud_run_single/0_projects/simple.yaml
+# Generate the inventory for cloud-run-single/0-prereqs
+uv run tools/plan_summary.py cloud-run-single/0-prereqs \
+  tests/cloud_run_single/0_prereqs/simple.tfvars \
+  > tests/cloud_run_single/0_prereqs/simple.yaml
 ```
 
 After you generated the inventory file, remember to:
 
 - Add the copyright at the top of the file. You can copy it from any other yaml file in this repository.
-- Remove the following line, if you are generating the inventory for a `0_projects` stage: `.values.google_service_account_iam_member.me_sa_token_creator[0].member`:
+- Remove the following line, if you are generating the inventory for a `0_prereqs` stage: `.values.google_service_account_iam_member.me_sa_token_creator[0].member`:
 
 ## Add new factories
 
@@ -165,5 +165,5 @@ To add a new factory, follow these steps:
   - You can learn how to use `uv` [here](https://docs.astral.sh/uv/#highlights).
   - Refer to [Dockerfiles](./cloud-run-single/1-apps/apps/chat/Dockerfile) from other applications in this repository to learn how to use `uv` with Docker.
 - Create corresponding tests in the `tests` folder.
-  - Follow the example of other factories. For example, [this](tests/cloud_run_single/0_projects/tftest.yaml) is the test definition for 0-projects of the `cloud-run-single` factory. Refer to the test section for more details.
+  - Follow the example of other factories. For example, [this](tests/cloud_run_single/0_prereqs/tftest.yaml) is the test definition for 0-prereqs of the `cloud-run-single` factory. Refer to the test section for more details.
 - Update the list of factories in the [main README.md](README.md).

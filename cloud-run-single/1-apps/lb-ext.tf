@@ -66,8 +66,7 @@ module "address-ext-glb" {
     var.lbs_configs.external.ip_address == null
     ? 1 : 0
   )
-  source = "../../../cloud-foundation-fabric/modules/net-address"
-  # source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-address?ref=v55.0.0"
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-address?ref=v55.1.0"
   project_id = var.project_id
   global_addresses = {
     ext-glb-01 = {
@@ -98,7 +97,7 @@ module "lb_ext_glb_redirect" {
 module "lb_ext_glb" {
   count               = var.lbs_config.external.enable ? 1 : 0
   source              = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-lb-app-ext?ref=v55.3.0"
-  project_id          = var.project_.id
+  project_id          = var.project_id
   name                = "${var.name}-ext-glb-01"
   use_classic_version = false
   protocol            = "HTTPS"
