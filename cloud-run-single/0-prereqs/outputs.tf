@@ -25,7 +25,7 @@ locals {
     ? {
       subnet = module.vpc[0].subnet_ids["${var.region}/${var.networking_config.subnet.name}"]
       vpc    = module.vpc[0].id
-    } : null
+    } : {}
   )
   projects = merge({
     for k, v in try(module.project_host[0].projects, {}) : k => {

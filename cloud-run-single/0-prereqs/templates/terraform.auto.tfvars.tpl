@@ -14,13 +14,10 @@
  * limitations under the License.
  */
 
-%{ if networking_config.vpc == null || networking_config.subnet == null }
-networking_config = {}
-%{ else }
 networking_config = {
-  subnet = "${networking_config.subnet}"
-  vpc    = "${networking_config.vpc}"
-}%{ endif }
+  subnet = "${try(networking_config.subnet, "")}"
+  vpc    = "${try(networking_config.vpc, "")}"
+}
 
 prefix = "${prefix}"
 
