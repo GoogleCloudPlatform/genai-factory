@@ -19,6 +19,7 @@ name: gf-ae-0
 # Enable APIs
 services:
   - aiplatform.googleapis.com
+  - cloudbuild.googleapis.com
   - cloudresourcemanager.googleapis.com
   - compute.googleapis.com
   - logging.googleapis.com

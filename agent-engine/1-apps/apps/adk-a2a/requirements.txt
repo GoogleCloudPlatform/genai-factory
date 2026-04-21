@@ -1,3 +1,4 @@
-a2a-sdk>=0.3.4,
-cloudpickle==3.0,
-google-cloud-aiplatform[agent_engines, adk]
+a2a-sdk==0.3.4
+cloudpickle==3.0.0
+google-cloud-aiplatform[agent_engines]==1.133.0
+google-adk==1.21.0
