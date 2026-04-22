@@ -105,6 +105,10 @@ values:
     terraform_labels:
       goog-terraform-provisioned: 'true'
     timeouts: null
+  module.projects.module.projects["project"].google_project_iam_member.service_agents["ces"]:
+    condition: []
+    project: your-prefix-gf-gecx-as-0
+    role: roles/ces.serviceAgent
   module.projects.module.projects["project"].google_project_iam_member.service_agents["discoveryengine"]:
     condition: []
     project: your-prefix-gf-gecx-as-0
@@ -120,6 +124,10 @@ values:
     disable_on_destroy: false
     project: your-prefix-gf-gecx-as-0
     service: discoveryengine.googleapis.com
+    timeouts: null
+  module.projects.module.projects["project"].google_project_service_identity.default["ces.googleapis.com"]:
+    project: your-prefix-gf-gecx-as-0
+    service: ces.googleapis.com
     timeouts: null
   module.projects.module.projects["project"].google_project_service_identity.default["discoveryengine.googleapis.com"]:
     project: your-prefix-gf-gecx-as-0
@@ -147,16 +155,16 @@ values:
 counts:
   google_project: 1
   google_project_iam_binding: 3
-  google_project_iam_member: 1
+  google_project_iam_member: 2
   google_project_service: 2
-  google_project_service_identity: 1
+  google_project_service_identity: 2
   google_service_account: 1
   google_service_account_iam_member: 1
   google_storage_bucket: 1
   google_storage_bucket_iam_binding: 2
   local_file: 2
   modules: 5
-  resources: 17
+  resources: 19
   terraform_data: 2
 
 outputs:
