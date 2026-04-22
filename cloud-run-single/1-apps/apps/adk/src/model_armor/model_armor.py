@@ -111,7 +111,7 @@ async def sanitize_response(callback_context: CallbackContext,
   try:
     sanitize_request = modelarmor_v1.SanitizeUserPromptRequest(
         name=config.MODEL_ARMOR_TEMPLATE,
-        user_prompt_data=modelarmor_v1.DataItem(text=llm_response),
+        user_prompt_data=modelarmor_v1.DataItem(text=llm_response_text),
     )
 
     result = model_armor_client.sanitize_user_prompt(request=sanitize_request)
