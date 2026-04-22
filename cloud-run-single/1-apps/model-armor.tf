@@ -97,7 +97,13 @@ resource "google_model_armor_floorsetting" "floorsetting" {
 
   enable_floor_setting_enforcement = true
 
-  integrated_services = ["AI_PLATFORM"]
+  google_mcp_server_floor_setting {
+    inspect_only         = var.model_armor_floorsetting_config.google_mcp_server_floor_setting.inspect_only ? true : null
+    inspect_and_block    = var.model_armor_floorsetting_config.google_mcp_server_floor_setting.inspect_and_block ? true : null
+    enable_cloud_logging = var.model_armor_floorsetting_config.google_mcp_server_floor_setting.logging
+  }
+
+  integrated_services = ["AI_PLATFORM", "GOOGLE_MCP_SERVER"]
 
   ai_platform_floor_setting {
     inspect_only         = var.model_armor_floorsetting_config.enforcement_type == "INSPECT_ONLY" ? true : null
