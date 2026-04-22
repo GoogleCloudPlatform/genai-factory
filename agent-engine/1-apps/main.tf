@@ -13,16 +13,16 @@
 # limitations under the License.
 
 locals {
-  agent_files = fileset("./apps/${var.source_config.app_path}", "**")
+  agent_files = fileset(var.source_config.app_path, "**")
   tar_gz_file_name = "${sha1(join("", [
     for f in local.agent_files
-    : filesha1("./apps/${var.source_config.app_path}/${f}")
+    : filesha1("${var.source_config.app_path}/${f}")
   ]))}.tar.gz"
 }
 
 data "archive_file" "source" {
   type        = "tar.gz"
-  source_dir  = "./apps/${var.source_config.app_path}"
+  source_dir  = var.source_config.app_path
   output_path = "./${local.tar_gz_file_name}"
 }
 

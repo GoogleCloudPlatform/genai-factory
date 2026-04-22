@@ -19,6 +19,20 @@ terraform apply \
 # Follow the commands in the output.
 ```
 
+## Re-deploy or update the agent
+
+By default, this stage deploys the agent only once because we set `managed = false` in the agent module. This setting allows you to use Terraform to manage the infrastructure while deploying the agent's code through your own application pipelines.
+
+To trigger a deployment with Terraform while `managed = false`, delete the existing `tar.gz` agent file in `1-apps` and instruct Terraform to explicitly re-deploy the agent:
+
+```hcl
+terraform apply -replace module.agent.google_vertex_ai_reasoning_engine.unmanaged[0]
+```
+
+You can also deploy the agent by using the commands returned in the Terraform output.
+
+Alternatively, if you set `managed = true` to fully control the deployment via Terraform, Terraform re-creates the agent every time you modify the code and apply the changes. In this case, the automatic recreation occurs because the name of the source `tar.gz` archive is the hash of all files in the agent's source directory.
+
 ## Interact with the Agent
 
 Once you deployed, use the commands output by Terraform to update and test your agent.
@@ -40,7 +54,7 @@ The [0-projects](../0-projects) stage generates the necessary Terraform input fi
 | [proxy_policy_rules](variables.tf#L90) | The Secure Web Proxy policy rules. | <code title="map&#40;object&#40;&#123;&#10;  priority        &#61; number&#10;  session_matcher &#61; string&#10;  allow           &#61; optional&#40;bool, true&#41;&#10;&#125;&#41;&#41;">map&#40;object&#40;&#123;&#8230;&#125;&#41;&#41;</code> |  | <code title="&#123;&#10;  host-0 &#61; &#123;&#10;    priority        &#61; 1000&#10;    allow           &#61; true&#10;    session_matcher &#61; &#34;host&#40;&#41; &#61;&#61; &#39;api.frankfurter.dev&#39;&#34;&#10;  &#125;&#10;&#125;">&#123;&#8230;&#125;</code> |
 | [region](variables.tf#L105) | The GCP region where to deploy the resources. | <code>string</code> |  | <code>&#34;europe-west1&#34;</code> |
 | [service_accounts](variables.tf#L112) | The pre-created service accounts used by the blueprint. | <code title="map&#40;object&#40;&#123;&#10;  email     &#61; string&#10;  iam_email &#61; string&#10;  id        &#61; string&#10;&#125;&#41;&#41;">map&#40;object&#40;&#123;&#8230;&#125;&#41;&#41;</code> |  | <code>&#123;&#125;</code> |
-| [source_config](variables.tf#L122) | The source file configurations. | <code title="object&#40;&#123;&#10;  app_path          &#61; optional&#40;string, &#34;adk&#34;&#41;&#10;  entrypoint_module &#61; optional&#40;string, &#34;agent&#34;&#41;&#10;  entrypoint_object &#61; optional&#40;string, &#34;agent&#34;&#41;&#10;  requirements_path &#61; optional&#40;string, &#34;requirements.txt&#34;&#41;&#10;&#125;&#41;">object&#40;&#123;&#8230;&#125;&#41;</code> |  | <code>&#123;&#125;</code> |
+| [source_config](variables.tf#L122) | The source file configurations. | <code title="object&#40;&#123;&#10;  app_path          &#61; optional&#40;string, &#34;.&#47;apps&#47;adk&#34;&#41;&#10;  entrypoint_module &#61; optional&#40;string, &#34;agent&#34;&#41;&#10;  entrypoint_object &#61; optional&#40;string, &#34;agent&#34;&#41;&#10;  requirements_path &#61; optional&#40;string, &#34;requirements.txt&#34;&#41;&#10;&#125;&#41;">object&#40;&#123;&#8230;&#125;&#41;</code> |  | <code>&#123;&#125;</code> |
 
 ## Outputs
 

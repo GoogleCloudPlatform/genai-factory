@@ -122,7 +122,7 @@ variable "service_accounts" {
 variable "source_config" {
   description = "The source file configurations."
   type = object({
-    app_path          = optional(string, "adk")
+    app_path          = optional(string, "./apps/adk")
     entrypoint_module = optional(string, "agent")
     entrypoint_object = optional(string, "agent")
     # path of the requirements.txt file inside the tar.gz archive

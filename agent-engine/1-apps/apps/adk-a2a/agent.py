@@ -174,7 +174,7 @@ def get_exchange_rate(
         "https": f"http://{config.PROXY_ADDRESS}:{config.PROXY_PORT}",
     }
   try:
-    response = requests.get(f"https://api.frankfurter.app/{currency_date}",
+    response = requests.get(f"https://api.frankfurter.dev/v1/{currency_date}",
                             params={
                                 "from": currency_from,
                                 "to": currency_to

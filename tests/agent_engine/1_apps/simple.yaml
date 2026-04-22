@@ -27,12 +27,16 @@ values:
     deletion_policy: null
     description: Terraform managed.
     display_name: test-agent
+    effective_labels:
+      goog-terraform-provisioned: 'true'
     encryption_spec: []
+    labels: null
     project: test-project
     region: europe-west1
     spec:
     - agent_framework: google-adk
       class_methods: null
+      container_spec: []
       deployment_spec:
       - env:
         - name: ENABLE_PSC_I
@@ -62,17 +66,21 @@ values:
       service_account: agent@test-project.iam.gserviceaccount.com
       source_code_spec:
       - developer_connect_source: []
+        image_spec: []
         inline_source:
-        - source_archive: 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
+        - source_archive: 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
         python_spec:
         - entrypoint_module: agent
           entrypoint_object: agent
           requirements_file: requirements.txt
           version: '3.13'
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
     timeouts: null
   module.agent.time_sleep.wait_5_minutes:
     create_duration: 5m
     destroy_duration: null
+    id: '2026-04-21T08:57:15Z'
     triggers: null
   module.dns_policy_googleapis[0].google_dns_response_policy.default[0]:
     description: Terraform managed.
@@ -661,12 +669,13 @@ values:
     name: host-0
     priority: 1000
     project: test-project
-    session_matcher: host() == 'api.frankfurter.app'
+    session_matcher: host() == 'api.frankfurter.dev'
     timeouts: null
     tls_inspection_enabled: null
   module.secure-web-proxy[0].google_network_services_gateway.default:
     addresses:
     - 10.0.0.100
+    all_ports: null
     certificate_urls: []
     delete_swg_autogen_router_on_destroy: true
     description: Managed by Terraform.
