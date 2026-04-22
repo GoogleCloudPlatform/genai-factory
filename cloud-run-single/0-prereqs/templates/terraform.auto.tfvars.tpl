@@ -14,16 +14,26 @@
  * limitations under the License.
  */
 
-project_config = {
-  id     = "${projects.project.id}"
-  number = "${projects.project.number}"
+networking_config = {
+  subnet = "${try(networking_config.subnet, "")}"
+  vpc    = "${try(networking_config.vpc, "")}"
 }
-service_accounts = {
-%{ for k,v in service_accounts ~}
-  "${k}" = {
-    email     = "${v.email}"
-    iam_email = "${v.iam_email}"
-    id        = "${v.id}"
-  }
+
+prefix = "${prefix}"
+
+project_id = "${project_id}"
+number     = "${project_number}"
+
+region = "${region}"
+
+service_account_emails = {
+%{ for k,v in service_account_emails ~}
+  "${k}" = "${v}"
+%{ endfor ~}
+}
+
+service_account_ids = {
+%{ for k,v in service_account_ids ~}
+  "${k}" = "${v}"
 %{ endfor ~}
 }

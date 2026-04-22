@@ -14,11 +14,33 @@
 
 locals {
   _env_vars = [
-    "PROJECT_ID=${var.project_config.id}",
+    "PROJECT_ID=${var.project_id}",
     "REGION=${var.region}",
-    join("", [for m in google_model_armor_template.model_armor_template : "MODEL_ARMOR_TEMPLATE=${m.name}"])
+    try(
+      "MODEL_ARMOR_TEMPLATE=${google_model_armor_template.model_armor_template[0].name}",
+      null
+    )
   ]
+  # Extract service account emails and ids from var.service_accounts, if any
+  _service_account_emails = {
+    for k, v in var.service_accounts : k => v.email
+  }
+  _service_account_ids = {
+    for k, v in var.service_accounts : k => v.id
+  }
   env_vars = join(",", local._env_vars)
+  # if the emails provided by the user are keys of var.service_accounts
+  # return the corresponding value, otherwise keep the email
+  service_account_emails = {
+    for k, v in var.service_account_emails
+    : k => lookup(local._service_account_emails, v, v)
+  }
+  # if the ids provided by the user are keys of var.service_accounts
+  # return the corresponding value, otherwise keep the id
+  service_account_ids = {
+    for k, v in var.service_account_ids
+    : k => lookup(local._service_account_ids, v, v)
+  }
 }
 
 output "commands" {
@@ -28,36 +50,36 @@ output "commands" {
   # Alternatively, deploy the application through your CI/CD pipeline.
 
   gcloud artifacts repositories create ${var.name} \
-    --project=${var.project_config.id} \
+    --project=${var.project_id} \
     --location ${var.region} \
     --repository-format docker \
-    --impersonate-service-account=${var.service_accounts["project/iac-rw"].email}
+    --impersonate-service-account=${local.service_account_emails["service-01/iac-rw"]}
 
-  # Update chat to adk, adk-a2a, gemma or mcp-server
+  # Update "chat" to adk, adk-a2a, gemma or mcp-server
   # if you want to deploy another app instead
   gcloud builds submit ./apps/chat \
-    --project ${var.project_config.id} \
-    --tag ${var.region}-docker.pkg.dev/${var.project_config.id}/${var.name}/srun \
-    --service-account ${var.service_accounts["project/gf-srun-build-0"].id} \
+    --project ${var.project_id} \
+    --tag ${var.region}-docker.pkg.dev/${var.project_id}/${var.name}/srun \
+    --service-account ${local.service_account_ids["service-01/crun-build-0"]} \
     --default-buckets-behavior=REGIONAL_USER_OWNED_BUCKET \
     --region ${var.region} \
     --quiet \
-    --impersonate-service-account=${var.service_accounts["project/iac-rw"].email}
+    --impersonate-service-account=${local.service_account_emails["service-01/iac-rw"]}
 
-  # Run the following command to deploy a sample adk or chat Service
+  # Run the following command to deploy a sample adk or chat service
 
   gcloud run deploy ${var.name} \
-    --impersonate-service-account=${var.service_accounts["project/iac-rw"].email} \
-    --project ${var.project_config.id} \
+    --impersonate-service-account=${local.service_account_emails["service-01/iac-rw"]} \
+    --project ${var.project_id} \
     --region ${var.region} \
-    --image=${var.region}-docker.pkg.dev/${var.project_config.id}/${var.name}/srun \
+    --image=${var.region}-docker.pkg.dev/${var.project_id}/${var.name}/srun \
     --set-env-vars ${local.env_vars}
 
   # Run the following command to deploy a sample Gemma 3 on Ollama Service
 
    gcloud run deploy ${var.name} \
-    --impersonate-service-account=${var.service_accounts["project/iac-rw"].email} \
-    --project ${var.project_config.id} \
+    --impersonate-service-account=${local.service_account_emails["service-01/iac-rw"]} \
+    --project ${var.project_id} \
     --region ${var.region} \
     --image "us-docker.pkg.dev/cloudrun/container/gemma/gemma3-4b:latest" \
     --set-env-vars ${local.env_vars},OLLAMA_NUM_PARALLEL=4
@@ -65,10 +87,10 @@ output "commands" {
   # Run the following command to deploy an agent exposed with A2A
 
    gcloud run deploy ${var.name} \
-    --impersonate-service-account=${var.service_accounts["project/iac-rw"].email} \
-    --project ${var.project_config.id} \
+    --impersonate-service-account=${local.service_account_emails["service-01/iac-rw"]} \
+    --project ${var.project_id} \
     --region ${var.region} \
-    --image=${var.region}-docker.pkg.dev/${var.project_config.id}/${var.name}/srun \
+    --image=${var.region}-docker.pkg.dev/${var.project_id}/${var.name}/srun \
     --set-env-vars ${local.env_vars},A2A_URL=${module.cloud_run.service_uri}\
     --port=8003
 
@@ -79,13 +101,13 @@ output "ip_addresses" {
   description = "The load balancers IP addresses."
   value = {
     external = (
-      var.lbs_config.external.enable
-      ? module.lb_external[0].address[""]
+      var.lbs_configs.external.enable
+      ? local.address_ext_glb
       : null
     )
     internal = (
-      var.lbs_config.internal.enable
-      ? module.lb_internal[0].address
+      var.lbs_configs.internal.enable
+      ? local.address_ilb
       : null
     )
   }

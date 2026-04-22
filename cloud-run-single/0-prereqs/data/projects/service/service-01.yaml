@@ -24,7 +24,6 @@ services:
   - cloudbuild.googleapis.com
   - cloudresourcemanager.googleapis.com
   - compute.googleapis.com
-  - dns.googleapis.com
   - run.googleapis.com
   - serviceusage.googleapis.com
   # Needed for ILB only
@@ -38,44 +37,52 @@ buckets:
     description: Terraform state bucket
     iam:
       roles/storage.objectAdmin:
-        - $iam_principals:service_accounts/project/iac-rw
+        - $iam_principals:service_accounts/_self_/iac-rw
       roles/storage.objectViewer:
-        - $iam_principals:service_accounts/project/iac-rw
+        - $iam_principals:service_accounts/_self_/iac-rw
 
 service_accounts:
-  # Automation SAs
+  # Terraform SA used by the app/platform team
+  # to create resources inside the project
   iac-rw:
     iam_sa_roles:
-      $service_account_ids:project/gf-srun-0: [roles/iam.serviceAccountUser]
-      $service_account_ids:project/gf-srun-build-0:
+      $service_account_ids:service-01/crun-0:
         - roles/iam.serviceAccountUser
-  # Application SAs
-  gf-srun-0: {}
-  gf-srun-build-0: {}
+      $service_account_ids:service-01/crun-build-0:
+        - roles/iam.serviceAccountUser
+  # Cloud Run customer service account
+  crun-0: {}
+  # Cloud Build custom service account
+  crun-build-0: {}
 
 # Grant roles
 iam:
-  roles/privateca.certificateRequester: [$service_agents:certificatemanager]
+  roles/privateca.certificateRequester:
+    - $service_agents:certificatemanager
 iam_by_principals:
-  $iam_principals:service_accounts/project/iac-rw:
-    - roles/artifactregistry.admin
+  $iam_principals:service_accounts/_self_/iac-rw:
     - roles/cloudbuild.builds.editor
     - roles/compute.loadBalancerAdmin
-    - roles/compute.networkAdmin
-    - roles/compute.securityAdmin
-    - roles/dns.admin
     - roles/run.admin
+    # Used to create artifact registry (via gcloud commands)
+    - roles/artifactregistry.admin
+    # Used by Cloud Build to consume quota project
+    - roles/serviceusage.serviceUsageConsumer
+    # Used by Cloud Build to create bucket where to upload build files
     - roles/storage.admin
+    # Used by Cloud Build to write/read build files
     - roles/storage.objectUser
     # Needed for ILB only
     - roles/certificatemanager.owner
     - roles/privateca.admin
+    # Needed for Cloud Armor
+    - roles/compute.securityAdmin
     # Needed for Model Armor
     - roles/modelarmor.admin
     - roles/modelarmor.floorSettingsAdmin
-  $iam_principals:service_accounts/project/gf-srun-0:
+  $iam_principals:service_accounts/_self_/crun-0:
     - roles/logging.logWriter
-  $iam_principals:service_accounts/project/gf-srun-build-0:
+  $iam_principals:service_accounts/_self_/crun-build-0:
     - roles/artifactregistry.writer
     - roles/cloudbuild.builds.editor
     - roles/iam.serviceAccountUser
@@ -84,11 +91,11 @@ iam_by_principals:
     - roles/storage.admin
     - roles/storage.objectUser
   # Vertex AI SA is the one calling model armor via genai SDK
-  $iam_principals:service_agents/project/aiplatform:
+  $iam_principals:service_agents/_self_/aiplatform:
     - roles/modelarmor.user
 # Grant roles/aiplatform.user as additive,
 # as it is authoritatively granted by aiplatform APIs to default SA
 iam_bindings_additive:
   run_ai_user:
-    member: $iam_principals:service_accounts/project/gf-srun-0
+    member: $iam_principals:service_accounts/_self_/crun-0
     role: roles/aiplatform.user

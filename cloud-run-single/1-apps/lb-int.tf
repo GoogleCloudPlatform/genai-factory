@@ -12,17 +12,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+locals {
+  address_ilb = try(coalesce(
+    var.lbs_configs.internal.ip_address,
+    module.address-ilb[0].internal_addresses["ilb-01"]
+  ), null)
+}
+
 # Cloud Armor security policy
 resource "google_compute_region_security_policy" "security_policy_internal" {
-  count   = var.lbs_config.internal.enable ? 1 : 0
+  count   = var.lbs_configs.internal.enable ? 1 : 0
   name    = "${var.name}-internal"
-  project = var.project_config.id
+  project = var.project_id
   region  = var.region
   type    = "CLOUD_ARMOR"
 
   dynamic "rules" {
     for_each = (
-      try(length(var.lbs_config.internal.allowed_ip_ranges), 0) > 0 ? [""] : []
+      try(length(var.lbs_configs.internal.allowed_ip_ranges), 0) > 0 ? [""] : []
     )
 
     content {
@@ -34,7 +41,7 @@ resource "google_compute_region_security_policy" "security_policy_internal" {
         versioned_expr = "SRC_IPS_V1"
 
         config {
-          src_ip_ranges = var.lbs_config.internal.allowed_ip_ranges
+          src_ip_ranges = var.lbs_configs.internal.allowed_ip_ranges
         }
       }
     }
@@ -55,27 +62,34 @@ resource "google_compute_region_security_policy" "security_policy_internal" {
   }
 }
 
-resource "google_compute_address" "address_internal" {
-  count        = var.lbs_config.internal.enable ? 1 : 0
-  name         = "${var.name}-internal"
-  project      = var.project_config.id
-  address_type = "INTERNAL"
-  purpose      = "SHARED_LOADBALANCER_VIP"
-  subnetwork   = local.subnet_id
-  region       = var.region
+module "address-ilb" {
+  count = (
+    var.lbs_configs.internal.enable &&
+    var.lbs_configs.internal.ip_address == null
+    ? 1 : 0
+  )
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-address?ref=v55.1.0"
+  project_id = var.project_id
+  internal_addresses = {
+    ilb-01 = {
+      purpose    = "SHARED_LOADBALANCER_VIP"
+      region     = var.region
+      subnetwork = var.networking_config.subnet
+    }
+  }
+  context = {
+    subnets = var.subnet_self_links
+  }
 }
 
 module "lb_internal_redirect" {
-  count                = var.lbs_config.internal.enable ? 1 : 0
+  count                = var.lbs_configs.internal.enable ? 1 : 0
   source               = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-lb-app-int?ref=v55.1.0"
   name                 = "${var.name}-internal-redirect"
-  project_id           = var.project_config.id
+  project_id           = var.project_id
   region               = var.region
   health_check_configs = {}
-  address = coalesce(
-    var.lbs_config.internal.ip_address,
-    google_compute_address.address_internal[0].address
-  )
+  address              = local.address_ilb
   urlmap_config = {
     description = "HTTP to HTTPS redirect."
     default_url_redirect = {
@@ -85,23 +99,24 @@ module "lb_internal_redirect" {
     }
   }
   vpc_config = {
-    network    = local.vpc_id
-    subnetwork = local.subnet_id
+    network    = var.networking_config.vpc
+    subnetwork = var.networking_config.subnet
+  }
+  context = {
+    networks = var.vpc_self_links
+    subnets  = var.subnet_self_links
   }
 }
 
 module "lb_internal" {
-  count                = var.lbs_config.internal.enable ? 1 : 0
+  count                = var.lbs_configs.internal.enable ? 1 : 0
   source               = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-lb-app-int?ref=v55.1.0"
   name                 = "${var.name}-internal"
-  project_id           = var.project_config.id
+  project_id           = var.project_id
   region               = var.region
   protocol             = "HTTPS"
   health_check_configs = {}
-  address = coalesce(
-    var.lbs_config.internal.ip_address,
-    google_compute_address.address_internal[0].address
-  )
+  address              = local.address_ilb
   backend_service_configs = {
     default = {
       port_name = ""
@@ -128,41 +143,48 @@ module "lb_internal" {
     ]
   }
   vpc_config = {
-    network    = local.vpc_id
-    subnetwork = local.subnet_id
+    network    = var.networking_config.vpc
+    subnetwork = var.networking_config.subnet
+  }
+  context = {
+    networks = var.vpc_self_links
+    subnets  = var.subnet_self_links
   }
 }
 
 # DNS Zone for internal resolution
 module "lb_internal_dns" {
-  count      = var.lbs_config.internal.enable ? 1 : 0
-  source     = "github.com/terraform-google-modules/cloud-foundation-fabric//modules/dns"
-  project_id = var.project_config.id
+  count      = var.lbs_configs.internal.enable ? 1 : 0
+  source     = "github.com/terraform-google-modules/cloud-foundation-fabric//modules/dns?ref=v55.1.0"
+  project_id = var.project_id
   name       = var.name
   zone_config = {
-    domain = "${var.lbs_config.internal.domain}."
+    domain = "${var.lbs_configs.internal.domain}."
     private = {
-      client_networks = [local.vpc_id]
+      client_networks = [var.networking_config.vpc]
     }
   }
   recordsets = {
-    ("A ${var.lbs_config.internal.domain}") = {
+    ("A ${var.lbs_configs.internal.domain}") = {
       records = [module.lb_internal[0].address]
       ttl     = 300
     }
+  }
+  context = {
+    networks = var.vpc_self_links
   }
 }
 
 # LB certificate
 module "certificate_manager" {
-  count      = var.lbs_config.internal.enable ? 1 : 0
+  count      = var.lbs_configs.internal.enable ? 1 : 0
   source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/certificate-manager?ref=v55.1.0"
-  project_id = var.project_config.id
+  project_id = var.project_id
   certificates = {
     (var.name) = {
       location = var.region
       managed = {
-        domains         = [var.lbs_config.internal.domain]
+        domains         = [var.lbs_configs.internal.domain]
         issuance_config = var.name
       }
     }

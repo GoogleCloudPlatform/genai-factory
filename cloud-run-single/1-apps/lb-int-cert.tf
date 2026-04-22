@@ -13,9 +13,9 @@
 # limitations under the License.
 
 module "cas" {
-  count      = var.lbs_config.internal.enable ? 1 : 0
+  count      = var.lbs_configs.internal.enable ? 1 : 0
   source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/certificate-authority-service?ref=v55.1.0"
-  project_id = var.project_config.id
+  project_id = var.project_id
   location   = var.region
   ca_pool_config = {
     create_pool = {
@@ -30,7 +30,7 @@ module "cas" {
       ignore_active_certificates_on_deletion = !var.enable_deletion_protection
       key_spec_algorithm                     = "RSA_PKCS1_4096_SHA256"
       subject = {
-        common_name  = var.lbs_config.internal.domain
+        common_name  = var.lbs_configs.internal.domain
         organization = var.name
       }
       key_usage = {

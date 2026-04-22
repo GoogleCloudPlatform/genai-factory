@@ -16,14 +16,14 @@
 # CA pools can't be recreated in the same project with the same name.
 # This can be handy during experimentation
 variable "ca_pool_name_suffix" {
-  description = "The name suffix of the CA pool used for app ILB certificates."
+  description = "The name suffix of the CA pool used for app ILB certificates (if any)."
   type        = string
   nullable    = false
   default     = "ca-pool-0"
 }
 
-variable "cloud_run_configs" {
-  description = "The Cloud Run configurations."
+variable "cloud_run_config" {
+  description = "The Cloud Run configuration."
   type = object({
     containers = optional(map(any), {
       ai = {
@@ -44,14 +44,14 @@ variable "cloud_run_configs" {
 }
 
 variable "enable_deletion_protection" {
-  description = "Whether deletion protection should be enabled."
+  description = "Whether deletion protection is enabled."
   type        = bool
   nullable    = false
   default     = true
 }
 
-variable "lbs_config" {
-  description = "The load balancers configuration."
+variable "lbs_configs" {
+  description = "The load balancers configurations."
   type = object({
     external = optional(object({
       enable = optional(bool, true)
@@ -78,7 +78,7 @@ variable "lbs_config" {
 }
 
 variable "model_armor_floorsetting_config" {
-  description = "The default model armor configuration for Vertex AI in your project."
+  description = "The default model armor configuration for Vertex AI."
   type = object({
     enabled          = optional(bool, true)
     enforcement_type = optional(string, "INSPECT_AND_BLOCK")
@@ -138,7 +138,7 @@ variable "model_armor_floorsetting_config" {
 }
 
 variable "model_armor_template_config" {
-  description = "The model armor configuration for your application."
+  description = "The model armor configuration."
   type = object({
     enabled          = optional(bool, true)
     enforcement_type = optional(string, "INSPECT_AND_BLOCK")
@@ -198,52 +198,43 @@ variable "model_armor_template_config" {
 }
 
 variable "name" {
-  description = "The name of the resources. This is also the project suffix if a new project is created."
+  description = "The name of the resources."
   type        = string
   nullable    = false
   default     = "gf-srun-0"
 }
 
 variable "networking_config" {
-  description = "The networking configuration."
+  description = "The networking configuration. Each element is either the id of the resource or the key of the map var.vpc_self_links."
   type = object({
-    create = optional(bool, true)
-    vpc_id = optional(string, "net-0")
-    subnet = optional(object({
-      ip_cidr_range = optional(string, "10.0.0.0/24")
-      name          = optional(string, "sub-0")
-    }), {})
-    subnet_proxy_only = optional(object({
-      ip_cidr_range = optional(string, "10.20.0.0/24")
-      name          = optional(string, "proxy-only-sub-0")
-    }), {})
+    subnet = string
+    vpc    = string
   })
   nullable = false
-  default  = {}
 }
 
-variable "project_config" {
-  description = "The project where to create the resources."
-  type = object({
-    id     = string
-    number = string
-  })
-  nullable = false
+variable "project_id" {
+  description = "The id of the project where to create the resources."
+  type        = string
+  nullable    = false
 }
 
 variable "region" {
   type        = string
   description = "The GCP region where to deploy the resources."
   nullable    = false
-  default     = "europe-west1"
 }
 
-variable "service_accounts" {
-  description = "The pre-created service accounts used by the blueprint."
-  type = map(object({
-    email     = string
-    iam_email = string
-    id        = string
-  }))
-  default = {}
+# Expected keys: service-01/iac-rw, service-01/crun-0, service-01/crun-build-0
+variable "service_account_emails" {
+  description = "The service account emails. Each element is the email or the key of the map var.service_accounts."
+  type        = map(string)
+  nullable    = false
+}
+
+# Expected keys: service-01/iac-rw, service-01/crun-0, service-01/crun-build-0
+variable "service_account_ids" {
+  description = "The service account ids. Each element is the id or the key of the map var.service_accounts."
+  type        = map(string)
+  nullable    = false
 }
