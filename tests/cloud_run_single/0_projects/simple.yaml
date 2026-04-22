@@ -209,6 +209,10 @@ values:
     condition: []
     project: your-prefix-gf-srun-0
     role: roles/aiplatform.serviceAgent
+  module.projects.module.projects["project"].google_project_iam_member.service_agents["aiplatform-pie"]:
+    condition: []
+    project: your-prefix-gf-srun-0
+    role: roles/aiplatform.serviceAgent
   module.projects.module.projects["project"].google_project_iam_member.service_agents["aiplatform-re"]:
     condition: []
     project: your-prefix-gf-srun-0
@@ -289,6 +293,10 @@ values:
     condition: []
     project: your-prefix-gf-srun-0
     role: roles/aiplatform.ragServiceAgent
+  module.projects.module.projects["project"].google_project_iam_member.service_agents["vertex-sandbox"]:
+    condition: []
+    project: your-prefix-gf-srun-0
+    role: roles/aiplatform.agentSandboxServiceAgent
   module.projects.module.projects["project"].google_project_iam_member.service_agents["vertex-shtune"]:
     condition: []
     project: your-prefix-gf-srun-0
@@ -455,16 +463,26 @@ values:
 counts:
   google_project: 1
   google_project_iam_binding: 18
+<<<<<<< HEAD
   google_project_iam_member: 27
   google_project_service: 12
   google_project_service_identity: 8
+=======
+  google_project_iam_member: 28
+  google_project_service: 11
+  google_project_service_identity: 7
+>>>>>>> 889ff0ed6ad50c18e6b3e53177366843457a6eef
   google_service_account: 3
   google_service_account_iam_member: 3
   google_storage_bucket: 1
   google_storage_bucket_iam_binding: 2
   local_file: 2
   modules: 8
+<<<<<<< HEAD
   resources: 79
+=======
+  resources: 78
+>>>>>>> 889ff0ed6ad50c18e6b3e53177366843457a6eef
   terraform_data: 2
 
 outputs:

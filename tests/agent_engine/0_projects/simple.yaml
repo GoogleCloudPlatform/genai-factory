@@ -172,6 +172,10 @@ values:
     terraform_labels:
       goog-terraform-provisioned: 'true'
     timeouts: null
+  module.projects.module.projects["project"].google_project_iam_member.service_agents["agentgateway"]:
+    condition: []
+    project: test-gf-ae-0
+    role: roles/agentgateway.serviceAgent
   module.projects.module.projects["project"].google_project_iam_member.service_agents["aiplatform"]:
     condition: []
     project: test-gf-ae-0
@@ -181,6 +185,10 @@ values:
     project: test-gf-ae-0
     role: roles/aiplatform.customCodeServiceAgent
   module.projects.module.projects["project"].google_project_iam_member.service_agents["aiplatform-ft"]:
+    condition: []
+    project: test-gf-ae-0
+    role: roles/aiplatform.serviceAgent
+  module.projects.module.projects["project"].google_project_iam_member.service_agents["aiplatform-pie"]:
     condition: []
     project: test-gf-ae-0
     role: roles/aiplatform.serviceAgent
@@ -240,6 +248,10 @@ values:
     condition: []
     project: test-gf-ae-0
     role: roles/aiplatform.ragServiceAgent
+  module.projects.module.projects["project"].google_project_iam_member.service_agents["vertex-sandbox"]:
+    condition: []
+    project: test-gf-ae-0
+    role: roles/aiplatform.agentSandboxServiceAgent
   module.projects.module.projects["project"].google_project_iam_member.service_agents["vertex-shtune"]:
     condition: []
     project: test-gf-ae-0
@@ -365,7 +377,7 @@ counts:
   google_logging_project_settings: 1
   google_project: 1
   google_project_iam_binding: 14
-  google_project_iam_member: 20
+  google_project_iam_member: 23
   google_project_service: 10
   google_project_service_identity: 4
   google_service_account: 2
@@ -375,7 +387,7 @@ counts:
   google_storage_project_service_account: 1
   local_file: 2
   modules: 7
-  resources: 62
+  resources: 65
   terraform_data: 2
 
 outputs:
