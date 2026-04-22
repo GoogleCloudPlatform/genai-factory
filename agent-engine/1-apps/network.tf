@@ -74,13 +74,7 @@ module "secure-web-proxy" {
   gateway_config = {
     addresses = [local.proxy_ip]
   }
-  policy_rules = {
-    host-0 = {
-      priority        = 1000
-      allow           = true
-      session_matcher = "host() == 'api.frankfurter.app'"
-    }
-  }
+  policy_rules = var.proxy_policy_rules
 }
 
 resource "google_compute_network_attachment" "network_attachment" {

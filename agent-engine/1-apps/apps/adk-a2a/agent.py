@@ -48,8 +48,6 @@ vertexai.init(
     location=config.REGION,
 )
 
-vertexai.init(project="lptest002-ae-test", location="europe-west4")
-
 client = vertexai.Client(
     project=config.PROJECT_ID,
     location=config.REGION,

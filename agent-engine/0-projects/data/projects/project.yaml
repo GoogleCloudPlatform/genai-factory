@@ -72,5 +72,5 @@ iam_by_principals:
     - roles/storage.objectViewer
     # Only if you enable tracing capabilities on the agent
     - roles/cloudtrace.agent
-    # Because of b/441480710
-    - roles/viewer
+    # # Because of b/441480710
+    # - roles/viewer
