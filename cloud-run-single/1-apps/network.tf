@@ -49,3 +49,31 @@ module "dns_policy_googleapis" {
   }
   networks = { (var.name) = module.vpc[0].id }
 }
+
+# REP endpoint for Model Armor
+resource "google_network_connectivity_regional_endpoint" "model_armor_rep" {
+  name              = "model-armor-rep"
+  location          = var.region
+  target_google_api = "modelarmor.${var.region}.rep.googleapis.com"
+  access_type       = "GLOBAL"
+  network           = local.vpc_id
+  subnetwork        = local.subnet_id
+  project           = var.project_config.id
+}
+
+# Adding a specific DNS record for the Model Armor REP endpoint
+resource "google_dns_response_policy_rule" "model_armor_rule" {
+  count           = var.networking_config.create ? 1 : 0
+  project         = var.project_config.id
+  response_policy = module.dns_policy_googleapis[0].name
+  rule_name       = "modelarmor-rep"
+  dns_name        = "modelarmor.${var.region}.rep.googleapis.com."
+  local_data {
+    local_datas {
+      name    = "modelarmor.${var.region}.rep.googleapis.com."
+      type    = "A"
+      ttl     = 300
+      rrdatas = [google_network_connectivity_regional_endpoint.model_armor_rep.address]
+    }
+  }
+}

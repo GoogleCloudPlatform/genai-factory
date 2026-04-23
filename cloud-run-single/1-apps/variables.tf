@@ -84,6 +84,13 @@ variable "model_armor_floorsetting_config" {
     enforcement_type = optional(string, "INSPECT_AND_BLOCK")
     logging          = optional(bool, true)
 
+    # MCP inspection
+    google_mcp_server_floor_setting = optional(object({
+      inspect_only      = optional(bool, false)
+      inspect_and_block = optional(bool, true)
+      logging           = optional(bool, true)
+    }), {})
+
     # Sensitive Data Protection (DLP)
     sdp = optional(object({
       enabled = optional(string, "ENABLED")

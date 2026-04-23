@@ -13,10 +13,6 @@
 # limitations under the License.
 
 values:
-  google_service_account_iam_member.me_sa_token_creator[0]:
-    condition: []
-    role: roles/iam.serviceAccountTokenCreator
-    service_account_id: projects/your-prefix-gf-srun-0/serviceAccounts/iac-rw@your-prefix-gf-srun-0.iam.gserviceaccount.com
   local_file.providers:
     content_base64: null
     directory_permission: '0777'
@@ -253,6 +249,10 @@ values:
     condition: []
     project: your-prefix-gf-srun-0
     role: roles/modelarmor.serviceAgent
+  module.projects.module.projects["project"].google_project_iam_member.service_agents["networkconnectivity"]:
+    condition: []
+    project: your-prefix-gf-srun-0
+    role: roles/networkconnectivity.serviceAgent
   module.projects.module.projects["project"].google_project_iam_member.service_agents["serverless-robot-prod"]:
     condition: []
     project: your-prefix-gf-srun-0
@@ -357,6 +357,12 @@ values:
     project: your-prefix-gf-srun-0
     service: modelarmor.googleapis.com
     timeouts: null
+  module.projects.module.projects["project"].google_project_service.project_services["networkconnectivity.googleapis.com"]:
+    disable_dependent_services: false
+    disable_on_destroy: false
+    project: your-prefix-gf-srun-0
+    service: networkconnectivity.googleapis.com
+    timeouts: null
   module.projects.module.projects["project"].google_project_service.project_services["privateca.googleapis.com"]:
     disable_dependent_services: false
     disable_on_destroy: false
@@ -394,6 +400,10 @@ values:
   module.projects.module.projects["project"].google_project_service_identity.default["modelarmor.googleapis.com"]:
     project: your-prefix-gf-srun-0
     service: modelarmor.googleapis.com
+    timeouts: null
+  module.projects.module.projects["project"].google_project_service_identity.default["networkconnectivity.googleapis.com"]:
+    project: your-prefix-gf-srun-0
+    service: networkconnectivity.googleapis.com
     timeouts: null
   module.projects.module.projects["project"].google_project_service_identity.default["privateca.googleapis.com"]:
     project: your-prefix-gf-srun-0
@@ -453,16 +463,16 @@ values:
 counts:
   google_project: 1
   google_project_iam_binding: 18
-  google_project_iam_member: 28
-  google_project_service: 11
-  google_project_service_identity: 7
+  google_project_iam_member: 29
+  google_project_service: 12
+  google_project_service_identity: 8
   google_service_account: 3
   google_service_account_iam_member: 3
   google_storage_bucket: 1
   google_storage_bucket_iam_binding: 2
   local_file: 2
   modules: 8
-  resources: 78
+  resources: 81
   terraform_data: 2
 
 outputs:

@@ -11,6 +11,7 @@ dependencies = [
     "google-cloud-logging>=3.12.1",
     "google-adk>=1.28.1",
     "a2a-sdk>=0.3.11",
+    "google-cloud-modelarmor>=0.5.0",
 ]
 
 [dependency-groups]
@@ -51,3 +52,8 @@ follow_imports = "silent"
 ignore_missing_imports = true
 explicit_package_bases = true
 disable_error_code = ["misc", "no-untyped-call", "no-any-return"]
+
+[[tool.uv.index]]
+name = "pypi"
+url = "https://pypi.org/simple"
+default = true
