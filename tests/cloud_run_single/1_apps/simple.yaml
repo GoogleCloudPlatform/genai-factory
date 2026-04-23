@@ -122,25 +122,6 @@ values:
     terraform_labels:
       goog-terraform-provisioned: 'true'
     timeouts: null
-  google_dns_managed_zone.rep_zone:
-    description: Private DNS zone for Model Armor Regional Endpoint
-    dns_name: rep.googleapis.com.
-    effective_labels:
-      goog-terraform-provisioned: 'true'
-    force_destroy: false
-    forwarding_config: []
-    labels: null
-    name: rep-googleapis-com
-    peering_config: []
-    private_visibility_config:
-    - gke_clusters: []
-      networks:
-      - {}
-    project: your-project
-    terraform_labels:
-      goog-terraform-provisioned: 'true'
-    timeouts: null
-    visibility: private
   google_dns_response_policy_rule.model_armor_rule[0]:
     dns_name: modelarmor.europe-west1.rep.googleapis.com.
     local_data:
@@ -1417,7 +1398,7 @@ counts:
   google_compute_target_http_proxy: 1
   google_compute_target_https_proxy: 1
   google_compute_url_map: 2
-  google_dns_managed_zone: 2
+  google_dns_managed_zone: 1
   google_dns_record_set: 1
   google_dns_response_policy: 1
   google_dns_response_policy_rule: 40
@@ -1427,7 +1408,7 @@ counts:
   google_privateca_ca_pool: 1
   google_privateca_certificate_authority: 1
   modules: 10
-  resources: 80
+  resources: 79
 
 outputs:
   commands: __missing__

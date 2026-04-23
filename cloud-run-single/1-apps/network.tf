@@ -61,20 +61,6 @@ resource "google_network_connectivity_regional_endpoint" "model_armor_rep" {
   project           = var.project_config.id
 }
 
-resource "google_dns_managed_zone" "rep_zone" {
-  name        = "rep-googleapis-com"
-  dns_name    = "rep.googleapis.com."
-  description = "Private DNS zone for Model Armor Regional Endpoint"
-  visibility  = "private"
-  project     = var.project_config.id
-
-  private_visibility_config {
-    networks {
-      network_url = "https://www.googleapis.com/compute/v1/${local.vpc_id}"
-    }
-  }
-}
-
 # Adding a specific DNS record for the Model Armor REP endpoint
 resource "google_dns_response_policy_rule" "model_armor_rule" {
   count           = var.networking_config.create ? 1 : 0
