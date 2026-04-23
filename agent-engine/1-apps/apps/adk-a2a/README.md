@@ -25,7 +25,7 @@ This will create a task that you can retrieve with another API call.
 ## Get task
 
 ```shell
-curl -X GET https://$REGION-aiplatform.googleapis.com/v1beta1/$AGENT_ID/a2a/v1/tasks/0fbc9037-cbd3-46f9-9cf8-d3fab10e568f \
+curl -X GET https://$REGION-aiplatform.googleapis.com/v1beta1/$AGENT_ID/a2a/v1/tasks/YOUR_TASK_ID \
      -H "Authorization: Bearer $ACCESS_TOKEN" \
      -H "Content-Type: application/json"
 ```
