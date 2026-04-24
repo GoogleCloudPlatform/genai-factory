@@ -146,12 +146,6 @@ values:
     - serviceAccount:gf-ae-0@test-gf-ae-0.iam.gserviceaccount.com
     project: test-gf-ae-0
     role: roles/storage.objectViewer
-  module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/viewer"]:
-    condition: []
-    members:
-    - serviceAccount:gf-ae-0@test-gf-ae-0.iam.gserviceaccount.com
-    project: test-gf-ae-0
-    role: roles/viewer
   module.projects.module.projects["project"].data.google_logging_project_settings.logging_sa[0]:
     project: test-gf-ae-0
   module.projects.module.projects["project"].data.google_storage_project_service_account.gcs_sa[0]:
@@ -376,7 +370,7 @@ values:
 counts:
   google_logging_project_settings: 1
   google_project: 1
-  google_project_iam_binding: 14
+  google_project_iam_binding: 13
   google_project_iam_member: 23
   google_project_service: 10
   google_project_service_identity: 4
@@ -387,7 +381,7 @@ counts:
   google_storage_project_service_account: 1
   local_file: 2
   modules: 7
-  resources: 65
+  resources: 64
   terraform_data: 2
 
 outputs:

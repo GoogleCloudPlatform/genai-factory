@@ -87,6 +87,21 @@ variable "project_config" {
   nullable = false
 }
 
+variable "proxy_policy_rules" {
+  description = "The Secure Web Proxy policy rules."
+  type = map(object({
+    priority        = number
+    session_matcher = string
+    allow           = optional(bool, true)
+  }))
+  default = {
+    host-0 = {
+      priority        = 1000
+      allow           = true
+      session_matcher = "host() == 'api.frankfurter.dev'"
+    }
+  }
+}
 variable "region" {
   type        = string
   description = "The GCP region where to deploy the resources."
@@ -107,13 +122,11 @@ variable "service_accounts" {
 variable "source_config" {
   description = "The source file configurations."
   type = object({
-    app_path          = optional(string, "adk")
+    app_path          = optional(string, "./apps/adk")
     entrypoint_module = optional(string, "agent")
     entrypoint_object = optional(string, "agent")
     # path of the requirements.txt file inside the tar.gz archive
     requirements_path = optional(string, "requirements.txt")
-    # name of the generated tar.gz file
-    tar_gz_file_name = optional(string, "source.tar.gz")
   })
   nullable = false
   default  = {}
