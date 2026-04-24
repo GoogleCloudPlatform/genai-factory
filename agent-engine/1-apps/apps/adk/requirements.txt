@@ -13,6 +13,6 @@
 # limitations under the License.
 
 cloudpickle==3.0.0
-google-adk==1.22.0
+google-adk==1.28.1
 google-cloud-aiplatform[agent_engines]==1.133.0
 opentelemetry-instrumentation-google-genai==0.5b0

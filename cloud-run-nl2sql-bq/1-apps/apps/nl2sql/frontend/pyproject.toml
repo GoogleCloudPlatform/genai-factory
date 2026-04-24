@@ -5,7 +5,7 @@ description = "Frontend for NL2SQL application."
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "google-adk>=1.28.1",
+    "google-adk>=1.31.1",
     "google-cloud-logging>=3.12.1",
     "uvicorn>=0.41.0",
 ]
