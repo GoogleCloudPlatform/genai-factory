@@ -166,10 +166,6 @@ values:
     terraform_labels:
       goog-terraform-provisioned: 'true'
     timeouts: null
-  module.projects.module.projects["project"].google_project_iam_member.service_agents["agentgateway"]:
-    condition: []
-    project: test-gf-ae-0
-    role: roles/agentgateway.serviceAgent
   module.projects.module.projects["project"].google_project_iam_member.service_agents["aiplatform"]:
     condition: []
     project: test-gf-ae-0
@@ -341,7 +337,6 @@ values:
     disabled: false
     display_name: Terraform-managed.
     email: gf-ae-0@test-gf-ae-0.iam.gserviceaccount.com
-    member: serviceAccount:gf-ae-0@test-gf-ae-0.iam.gserviceaccount.com
     project: test-gf-ae-0
     timeouts: null
   module.projects.module.service-accounts["project/iac-rw"].google_service_account.service_account[0]:
@@ -351,7 +346,6 @@ values:
     disabled: false
     display_name: Terraform-managed.
     email: iac-rw@test-gf-ae-0.iam.gserviceaccount.com
-    member: serviceAccount:iac-rw@test-gf-ae-0.iam.gserviceaccount.com
     project: test-gf-ae-0
     timeouts: null
   ? module.projects.module.service_accounts-iam["project/iac-rw"].google_service_account_iam_member.additive["$service_account_ids:project/gf-ae-0-roles/iam.serviceAccountUser"]
@@ -371,7 +365,7 @@ counts:
   google_logging_project_settings: 1
   google_project: 1
   google_project_iam_binding: 13
-  google_project_iam_member: 23
+  google_project_iam_member: 22
   google_project_service: 10
   google_project_service_identity: 4
   google_service_account: 2
@@ -381,7 +375,7 @@ counts:
   google_storage_project_service_account: 1
   local_file: 2
   modules: 7
-  resources: 64
+  resources: 63
   terraform_data: 2
 
 outputs:

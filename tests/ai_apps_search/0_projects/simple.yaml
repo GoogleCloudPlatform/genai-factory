@@ -114,7 +114,6 @@ values:
     disabled: false
     display_name: Terraform-managed.
     email: iac-rw@your-prefix-gf-ai-apps-srch-0.iam.gserviceaccount.com
-    member: serviceAccount:iac-rw@your-prefix-gf-ai-apps-srch-0.iam.gserviceaccount.com
     project: your-prefix-gf-ai-apps-srch-0
     timeouts: null
   module.projects.terraform_data.defaults_preconditions:

@@ -785,6 +785,7 @@ values:
     role: null
     send_secondary_ip_range_if_empty: true
     timeouts: null
+
 counts:
   google_compute_network: 1
   google_compute_network_attachment: 1
@@ -799,6 +800,7 @@ counts:
   modules: 4
   resources: 52
   time_sleep: 1
+
 outputs:
   agent_id: __missing__
   commands: __missing__

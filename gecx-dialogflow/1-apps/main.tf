@@ -17,7 +17,7 @@ locals {
 }
 
 module "ds-bucket" {
-  source        = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/gcs?ref=v55.1.0"
+  source        = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/gcs?ref=v55.2.0"
   project_id    = var.project_config.id
   prefix        = var.project_config.prefix
   name          = "${local.bucket_name}-ds"
@@ -27,7 +27,7 @@ module "ds-bucket" {
 }
 
 module "build-bucket" {
-  source        = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/gcs?ref=v55.1.0"
+  source        = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/gcs?ref=v55.2.0"
   project_id    = var.project_config.id
   prefix        = var.project_config.prefix
   name          = "${local.bucket_name}-build"
@@ -39,7 +39,7 @@ module "build-bucket" {
 # See https://github.com/GoogleCloudPlatform/cloud-foundation-fabric/blob/master/modules/ai-applications/variables.tf
 # to learn how to customize this.
 module "dialogflow" {
-  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/ai-applications?ref=v55.1.0"
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/ai-applications?ref=v55.2.0"
   name       = var.name
   project_id = var.project_config.id
   location   = var.regions.agent

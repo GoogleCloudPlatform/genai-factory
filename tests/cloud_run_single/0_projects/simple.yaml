@@ -183,7 +183,6 @@ values:
     role: roles/storage.objectUser
   module.projects.module.projects-iam["project"].google_project_iam_member.bindings["run_ai_user"]:
     condition: []
-    member: serviceAccount:gf-srun-0@your-prefix-gf-srun-0.iam.gserviceaccount.com
     project: your-prefix-gf-srun-0
     role: roles/aiplatform.user
   module.projects.module.projects["project"].google_project.project[0]:
@@ -410,7 +409,6 @@ values:
     disabled: false
     display_name: Terraform-managed.
     email: gf-srun-0@your-prefix-gf-srun-0.iam.gserviceaccount.com
-    member: serviceAccount:gf-srun-0@your-prefix-gf-srun-0.iam.gserviceaccount.com
     project: your-prefix-gf-srun-0
     timeouts: null
   module.projects.module.service-accounts["project/gf-srun-build-0"].google_service_account.service_account[0]:
@@ -420,7 +418,6 @@ values:
     disabled: false
     display_name: Terraform-managed.
     email: gf-srun-build-0@your-prefix-gf-srun-0.iam.gserviceaccount.com
-    member: serviceAccount:gf-srun-build-0@your-prefix-gf-srun-0.iam.gserviceaccount.com
     project: your-prefix-gf-srun-0
     timeouts: null
   module.projects.module.service-accounts["project/iac-rw"].google_service_account.service_account[0]:
@@ -430,7 +427,6 @@ values:
     disabled: false
     display_name: Terraform-managed.
     email: iac-rw@your-prefix-gf-srun-0.iam.gserviceaccount.com
-    member: serviceAccount:iac-rw@your-prefix-gf-srun-0.iam.gserviceaccount.com
     project: your-prefix-gf-srun-0
     timeouts: null
   ? module.projects.module.service_accounts-iam["project/iac-rw"].google_service_account_iam_member.additive["$service_account_ids:project/gf-srun-0-roles/iam.serviceAccountUser"]
