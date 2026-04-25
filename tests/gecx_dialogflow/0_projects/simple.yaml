@@ -362,7 +362,6 @@ values:
     disabled: false
     display_name: Terraform-managed.
     email: gecx-df-0@your-prefix-gf-gecx-df-0.iam.gserviceaccount.com
-    member: serviceAccount:gecx-df-0@your-prefix-gf-gecx-df-0.iam.gserviceaccount.com
     project: your-prefix-gf-gecx-df-0
     timeouts: null
   module.projects.module.service-accounts["project/gecx-df-build-0"].google_service_account.service_account[0]:
@@ -372,7 +371,6 @@ values:
     disabled: false
     display_name: Terraform-managed.
     email: gecx-df-build-0@your-prefix-gf-gecx-df-0.iam.gserviceaccount.com
-    member: serviceAccount:gecx-df-build-0@your-prefix-gf-gecx-df-0.iam.gserviceaccount.com
     project: your-prefix-gf-gecx-df-0
     timeouts: null
   module.projects.module.service-accounts["project/iac-rw"].google_service_account.service_account[0]:
@@ -382,7 +380,6 @@ values:
     disabled: false
     display_name: Terraform-managed.
     email: iac-rw@your-prefix-gf-gecx-df-0.iam.gserviceaccount.com
-    member: serviceAccount:iac-rw@your-prefix-gf-gecx-df-0.iam.gserviceaccount.com
     project: your-prefix-gf-gecx-df-0
     timeouts: null
   ? module.projects.module.service_accounts-iam["project/iac-rw"].google_service_account_iam_member.additive["$service_account_ids:_self_/gecx-df-0-roles/iam.serviceAccountUser"]

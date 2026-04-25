@@ -27,11 +27,12 @@ data "archive_file" "source" {
 }
 
 module "agent" {
-  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/agent-engine?ref=v55.1.0"
-  name       = var.name
-  project_id = var.project_config.id
-  region     = var.region
-  managed    = false
+  source                     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/agent-engine?ref=v55.2.0"
+  name                       = var.name
+  project_id                 = var.project_config.id
+  region                     = var.region
+  managed                    = false
+  enable_deletion_protection = var.enable_deletion_protection
   agent_engine_config = {
     agent_framework = var.agent_engine_config.agent_framework
     class_methods = try(
@@ -60,11 +61,13 @@ module "agent" {
     deletion_protection = var.enable_deletion_protection
     name                = "${var.prefix}-${var.name}"
   }
-  deployment_files = {
-    source_config = {
-      source_path       = data.archive_file.source.output_path
-      entrypoint_module = var.source_config.entrypoint_module
-      entrypoint_object = var.source_config.entrypoint_object
+  deployment_config = {
+    source_files_config = {
+      source_path = data.archive_file.source.output_path
+      python_spec = {
+        entrypoint_module = var.source_config.entrypoint_module
+        entrypoint_object = var.source_config.entrypoint_object
+      }
     }
   }
   networking_config = {
