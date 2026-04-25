@@ -10,7 +10,7 @@ dependencies = [
     "fastapi[standard]>=0.115.12",
     "google-cloud-logging>=3.12.1",
     "google-cloud-modelarmor>=0.5.0",
-    "google_adk>=1.28.1",
+    "google_adk>=1.31.1",
 ]
 
 [dependency-groups]
