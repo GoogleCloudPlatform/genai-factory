@@ -100,11 +100,11 @@ async def sanitize_response(callback_context: CallbackContext,
     logger.warning(
         "MODEL_ARMOR_TEMPLATE environment variable not set. Skipping prompt inspection."
     )
-    return llm_response
+    return None
 
   llm_response_text = _extract_model_text(llm_response)
   if not llm_response_text:
-    return llm_response
+    return None
 
   logger.debug(f"Screening llm response")
 
