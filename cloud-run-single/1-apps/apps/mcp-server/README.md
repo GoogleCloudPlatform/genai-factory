@@ -11,11 +11,11 @@ Make sure you assign to the caller the `compute.securityAdmin` role or any equiv
 You can test this MCP server by using the client script included in this folder:
 
 ```shell
-export YOUR_DOMAIN=https://your-mcp-server-domain
+export MCP_ENDPOINT=https://your-mcp-server-domain
 export YOUR_PROJECT_ID=$(echo "var.project_config.id" | terraform -chdir=../.. console | tr -d '"')
 # List available tools
-uv run client.py $YOUR_DOMAIN/mcp list
+uv run client.py $MCP_ENDPOINT/mcp list
 
 # Call a tool
-uv run client.py $YOUR_DOMAIN/mcp call list_firewall_rules --arg project_id=$YOUR_PROJECT_ID
+uv run client.py $MCP_ENDPOINT/mcp call list_firewall_rules --arg project_id=$YOUR_PROJECT_ID
 ```
