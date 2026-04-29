@@ -44,7 +44,7 @@ async def sanitize_request(callback_context: CallbackContext,
     """
 
   if not config.MODEL_ARMOR_TEMPLATE:
-    logger.warning(
+    logger.info(
         "MODEL_ARMOR_TEMPLATE environment variable not set. Skipping prompt inspection."
     )
     return None
@@ -53,7 +53,7 @@ async def sanitize_request(callback_context: CallbackContext,
   if not user_text:
     return None
 
-  logger.info(f"Screening user prompt")
+  logger.debug(f"Screening user prompt")
 
   try:
     sanitize_request = modelarmor_v1.SanitizeUserPromptRequest(
@@ -76,7 +76,7 @@ async def sanitize_request(callback_context: CallbackContext,
               "role": "assistant"
           })
     else:
-      logger.info("Model Armor approved the user request")
+      logger.debug("Model Armor approved the user request")
       return None  # Return None to preserve the original request
 
   except Exception as e:
@@ -97,7 +97,7 @@ async def sanitize_response(callback_context: CallbackContext,
     """
 
   if not config.MODEL_ARMOR_TEMPLATE:
-    logger.warning(
+    logger.info(
         "MODEL_ARMOR_TEMPLATE environment variable not set. Skipping prompt inspection."
     )
     return llm_response
@@ -106,7 +106,7 @@ async def sanitize_response(callback_context: CallbackContext,
   if not llm_response_text:
     return llm_response
 
-  logger.info(f"Screening llm response")
+  logger.debug(f"Screening llm response")
 
   try:
     sanitize_request = modelarmor_v1.SanitizeUserPromptRequest(
@@ -129,7 +129,7 @@ async def sanitize_response(callback_context: CallbackContext,
               "role": "assistant"
           })
     else:
-      logger.info("Model Armor approved the LLM response")
+      logger.debug("Model Armor approved the LLM response")
       return None  # Return None to preserve the original response
 
   except Exception as e:
