@@ -130,7 +130,7 @@ async def sanitize_response(callback_context: CallbackContext,
           })
     else:
       logger.debug("Model Armor approved the LLM response")
-      return None  # Return None to preserve the original response
+      return None
 
   except Exception as e:
     logger.error(f"Error while calling Model Armor: {e}", exc_info=True)

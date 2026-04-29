@@ -40,7 +40,7 @@ async def sanitize_request(callback_context: CallbackContext,
         callback_context: The callback context containing information about the agent call.
         llm_request: The LLM request containing the prompt to inspect.
 
-    Returns: None if the request is approved, or a modified request if the request is blocked.
+    Returns: None if the request is approved (preserves the original prompt), or a modified request if the request is blocked.
     """
 
   if not config.MODEL_ARMOR_TEMPLATE:
@@ -77,7 +77,7 @@ async def sanitize_request(callback_context: CallbackContext,
           })
     else:
       logger.debug("Model Armor approved the user request")
-      return None  # Return None to preserve the original request
+      return None
 
   except Exception as e:
     logger.error(f"Error while calling Model Armor: {e}", exc_info=True)
@@ -93,7 +93,7 @@ async def sanitize_response(callback_context: CallbackContext,
         callback_context: The callback context containing information about the agent call.
         llm_response: The LLM response containing the response to inspect.
 
-    Returns: None if the response is approved, or a modified response if the response is blocked.
+    Returns: None if the response is approved (preserves the original response), or a modified response if the response is blocked.
     """
 
   if not config.MODEL_ARMOR_TEMPLATE:
@@ -130,7 +130,7 @@ async def sanitize_response(callback_context: CallbackContext,
           })
     else:
       logger.debug("Model Armor approved the LLM response")
-      return None  # Return None to preserve the original response
+      return None
 
   except Exception as e:
     logger.error(f"Error while calling Model Armor: {e}", exc_info=True)
