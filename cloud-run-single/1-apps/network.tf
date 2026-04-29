@@ -70,7 +70,7 @@ resource "google_dns_response_policy_rule" "model_armor_rule" {
   dns_name        = "modelarmor.${var.region}.rep.googleapis.com."
   local_data {
     local_datas {
-      name    = "modelarmor.${var.region}.rep.googleapis.com."
+      name    = "modelarmor.*.rep.googleapis.com."
       type    = "A"
       ttl     = 300
       rrdatas = [google_network_connectivity_regional_endpoint.model_armor_rep.address]
