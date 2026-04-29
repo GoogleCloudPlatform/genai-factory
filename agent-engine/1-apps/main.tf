@@ -84,3 +84,13 @@ module "agent" {
     email  = var.service_accounts["project/gf-ae-0"].email
   }
 }
+
+module "firestore" {
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/firestore?ref=v55.3.0"
+  project_id = var.project_config.id
+  database = {
+    name        = "(default)"
+    type        = "FIRESTORE_NATIVE"
+    location_id = var.region
+  }
+}

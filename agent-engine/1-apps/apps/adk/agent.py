@@ -19,6 +19,7 @@ from vertexai.agent_engines import AdkApp
 import requests
 
 from src import config
+from src.firestore_session_service import FirestoreSessionService
 
 vertexai.init(
     project=config.PROJECT_ID,
@@ -52,4 +53,6 @@ root_agent = LlmAgent(
     tools=[get_exchange_rate],
 )
 
-agent = AdkApp(agent=root_agent)
+agent = AdkApp(
+    agent=root_agent,
+    session_service=FirestoreSessionService(project_id=config.PROJECT_ID))

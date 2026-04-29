@@ -21,6 +21,8 @@ services:
   - aiplatform.googleapis.com
   - cloudresourcemanager.googleapis.com
   - compute.googleapis.com
+  # Used to leverage Firestore to store agent info (sessions, tasks)
+  - firestore.googleapis.com
   - logging.googleapis.com
   - monitoring.googleapis.com
   - serviceusage.googleapis.com
@@ -66,9 +68,13 @@ iam_by_principals:
     - roles/storage.admin
     - roles/storage.objectUser
     - roles/serviceusage.serviceUsageAdmin
+    # Next role used for Firestore
+    - roles/datastore.owner
   $iam_principals:service_accounts/project/gf-ae-0:
     - roles/aiplatform.user
     - roles/serviceusage.serviceUsageConsumer
     - roles/storage.objectViewer
     # Only if you enable tracing capabilities on the agent
     - roles/cloudtrace.agent
+    # Next role used for Firestore
+    - roles/datastore.user
