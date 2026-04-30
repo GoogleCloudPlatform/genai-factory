@@ -71,10 +71,15 @@ iam_by_principals:
     # Next role used for Firestore
     - roles/datastore.owner
   $iam_principals:service_accounts/project/gf-ae-0:
-    - roles/aiplatform.user
     - roles/serviceusage.serviceUsageConsumer
     - roles/storage.objectViewer
     # Only if you enable tracing capabilities on the agent
     - roles/cloudtrace.agent
     # Next role used for Firestore
     - roles/datastore.user
+# Grant roles/aiplatform.user as additive,
+# as it is authoritatively granted by aiplatform APIs to default SA
+iam_bindings_additive:
+  ae_sa_ai_user:
+    member: $iam_principals:service_accounts/project/gf-ae-0
+    role: roles/aiplatform.user

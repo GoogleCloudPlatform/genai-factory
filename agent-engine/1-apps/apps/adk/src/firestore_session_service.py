@@ -19,15 +19,28 @@ from typing import Any, Optional
 from google.cloud import firestore
 from google.adk.sessions import BaseSessionService, Session
 from google.adk.sessions.base_session_service import ListSessionsResponse
-from google.adk.sessions.session import GetSessionConfig
 from google.adk.events import Event
 
 
 class FirestoreSessionService(BaseSessionService):
 
   def __init__(self, project_id: str, collection_name: str = "adk_sessions"):
-    self.db = firestore.AsyncClient(project=project_id)
+    self.project_id = project_id
     self.collection_name = collection_name
+    self._db = None
+    self._loop = None
+
+  @property
+  def db(self):
+    import asyncio
+    try:
+      loop = asyncio.get_running_loop()
+    except RuntimeError:
+      loop = None
+    if self._db is None or self._loop != loop:
+      self._db = firestore.AsyncClient(project=self.project_id)
+      self._loop = loop
+    return self._db
 
   async def create_session(
       self,
@@ -57,7 +70,7 @@ class FirestoreSessionService(BaseSessionService):
       app_name: str,
       user_id: str,
       session_id: str,
-      config: Optional[GetSessionConfig] = None,
+      config: Optional[Any] = None,
   ) -> Optional[Session]:
     doc_ref = self.db.collection(self.collection_name).document(session_id)
     doc = await doc_ref.get()

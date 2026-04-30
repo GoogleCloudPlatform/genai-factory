@@ -53,6 +53,10 @@ root_agent = LlmAgent(
     tools=[get_exchange_rate],
 )
 
-agent = AdkApp(
-    agent=root_agent,
-    session_service=FirestoreSessionService(project_id=config.PROJECT_ID))
+
+def session_service_builder():
+  return FirestoreSessionService(project_id=config.PROJECT_ID)
+
+
+agent = AdkApp(agent=root_agent,
+               session_service_builder=session_service_builder)

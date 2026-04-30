@@ -21,8 +21,22 @@ from a2a.types import Task
 class FirestoreTaskStore(TaskStore):
 
   def __init__(self, project_id: str, collection_name: str = "tasks"):
-    self.db = firestore.AsyncClient(project=project_id)
+    self.project_id = project_id
     self.collection_name = collection_name
+    self._db = None
+    self._loop = None
+
+  @property
+  def db(self):
+    import asyncio
+    try:
+      loop = asyncio.get_running_loop()
+    except RuntimeError:
+      loop = None
+    if self._db is None or self._loop != loop:
+      self._db = firestore.AsyncClient(project=self.project_id)
+      self._loop = loop
+    return self._db
 
   async def save(self, task: Task,
                  context: ServerCallContext | None = None) -> None:

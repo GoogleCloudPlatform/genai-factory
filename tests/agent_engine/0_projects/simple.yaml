@@ -78,12 +78,6 @@ values:
     - serviceAccount:iac-rw@test-gf-ae-0.iam.gserviceaccount.com
     project: test-gf-ae-0
     role: roles/aiplatform.admin
-  module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/aiplatform.user"]:
-    condition: []
-    members:
-    - serviceAccount:gf-ae-0@test-gf-ae-0.iam.gserviceaccount.com
-    project: test-gf-ae-0
-    role: roles/aiplatform.user
   module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/artifactregistry.admin"]:
     condition: []
     members:
@@ -158,6 +152,11 @@ values:
     - serviceAccount:gf-ae-0@test-gf-ae-0.iam.gserviceaccount.com
     project: test-gf-ae-0
     role: roles/storage.objectViewer
+  module.projects.module.projects-iam["project"].google_project_iam_member.bindings["ae_sa_ai_user"]:
+    condition: []
+    member: serviceAccount:gf-ae-0@test-gf-ae-0.iam.gserviceaccount.com
+    project: test-gf-ae-0
+    role: roles/aiplatform.user
   module.projects.module.projects["project"].data.google_logging_project_settings.logging_sa[0]:
     project: test-gf-ae-0
   module.projects.module.projects["project"].data.google_storage_project_service_account.gcs_sa[0]:
@@ -392,8 +391,8 @@ values:
 counts:
   google_logging_project_settings: 1
   google_project: 1
-  google_project_iam_binding: 15
-  google_project_iam_member: 23
+  google_project_iam_binding: 14
+  google_project_iam_member: 24
   google_project_service: 11
   google_project_service_identity: 5
   google_service_account: 2
