@@ -24,10 +24,11 @@ output "commands" {
   # Substitute the app folder and other options as needed.
   # Alternatively, deploy the application through your CI/CD pipeline.
 
-  ACCESS_TOKEN=$(gcloud auth print-access-token --impersonate-service-account=${var.service_accounts["project/iac-rw"].email})
+  ACCESS_TOKEN=$(gcloud auth application-default print-access-token --impersonate-service-account=${var.service_accounts["project/iac-rw"].email})
 
-  cd apps/${var.source_config.app_path} && tar -czf ${local.tar_gz_file_name} * &&
-  cd ../../ && mv apps/${var.source_config.app_path}/${local.tar_gz_file_name} . &&
+  # Override var.source_config.app_path if you want to deploy a different application
+  cd ${var.source_config.app_path} && tar -czf ${local.tar_gz_file_name} * &&
+  cd ../../ && mv ${var.source_config.app_path}/${local.tar_gz_file_name} . &&
   TAR_GZ_BASE64=$(openssl base64 -in ${local.tar_gz_file_name}) &&
   curl -X PATCH "https://${var.region}-aiplatform.googleapis.com/v1/${module.agent.id}?updateMask=spec.sourceCodeSpec" \
     -H "Authorization: Bearer $ACCESS_TOKEN" \

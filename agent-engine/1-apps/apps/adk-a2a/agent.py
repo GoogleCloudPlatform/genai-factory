@@ -19,9 +19,9 @@ import requests
 import vertexai
 from google.adk import Runner
 from google.adk.agents import LlmAgent
-from google.adk.artifacts import InMemoryArtifactService
-from google.adk.memory.in_memory_memory_service import InMemoryMemoryService
-from google.adk.sessions import InMemorySessionService
+from src.firestore_artifact_service import FirestoreArtifactService
+from src.firestore_memory_service import FirestoreMemoryService
+from src.firestore_session_service import FirestoreSessionService
 from google.genai import types
 from vertexai import Client, agent_engines
 from vertexai.preview.reasoning_engines import A2aAgent
@@ -81,13 +81,15 @@ class CurrencyAgentExecutorWithRunner(AgentExecutor):
     self.runner = None
 
   def _init_adk(self):
+    # Initialize the ADK Runner
     if not self.runner:
       self.runner = Runner(
           app_name=self.agent.name,
           agent=self.agent,
-          artifact_service=InMemoryArtifactService(),
-          session_service=InMemorySessionService(),
-          memory_service=InMemoryMemoryService(),
+          artifact_service=FirestoreArtifactService(
+              project_id=config.PROJECT_ID),
+          session_service=FirestoreSessionService(project_id=config.PROJECT_ID),
+          memory_service=FirestoreMemoryService(project_id=config.PROJECT_ID),
       )
 
   async def cancel(self, context: RequestContext, event_queue: EventQueue):
@@ -185,6 +187,8 @@ def get_exchange_rate(
     return {"error": str(e)}
 
 
+from src.firestore_task_store import FirestoreTaskStore
+
 llm_agent = LlmAgent(
     model=config.MODEL_NAME, name='currency_exchange_agent',
     description='An agent that can provide currency exchange rates.',
@@ -194,6 +198,9 @@ llm_agent = LlmAgent(
     tools=[get_exchange_rate])
 
 agent = A2aAgent(
-    agent_card=agent_card, agent_executor_builder=lambda:
-    CurrencyAgentExecutorWithRunner(agent=llm_agent))
+    agent_card=agent_card,
+    agent_executor_builder=lambda: CurrencyAgentExecutorWithRunner(agent=
+                                                                   llm_agent),
+    task_store_builder=lambda: FirestoreTaskStore(project_id=config.PROJECT_ID),
+)
 agent.set_up()

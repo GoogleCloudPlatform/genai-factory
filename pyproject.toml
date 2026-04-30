@@ -60,3 +60,6 @@ ignore_patterns = [
 [[tool.uv.index]]
 url = "https://pypi.org/simple"
 default = true
+
+[tool.codespell]
+skip = "*.yaml,*.yml,**/.terraform/**,**/.venv/**"

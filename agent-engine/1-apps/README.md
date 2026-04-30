@@ -35,7 +35,7 @@ Alternatively, if you set `managed = true` to fully control the deployment via T
 
 ## Interact with the Agent
 
-Once you deployed, use the commands output by Terraform to update and test your agent.
+Once you deployed, use the commands output by Terraform to update and test your agents.
 
 ## I have not used 0-projects
 
