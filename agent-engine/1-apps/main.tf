@@ -27,7 +27,7 @@ data "archive_file" "source" {
   type        = "tar.gz"
   source_dir  = var.source_config.app_path
   output_path = "./${local.tar_gz_file_name}"
-  excludes    = ["__pycache__", ".venv", ".DS_Store"]
+  excludes    = ["__pycache__", "src/__pycache__", ".venv", ".DS_Store"]
 }
 
 module "agent" {
