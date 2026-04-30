@@ -19,9 +19,9 @@ import requests
 import vertexai
 from google.adk import Runner
 from google.adk.agents import LlmAgent
-from google.adk.artifacts import InMemoryArtifactService
-from google.adk.memory.in_memory_memory_service import InMemoryMemoryService
-from google.adk.sessions import InMemorySessionService
+from src.firestore_artifact_service import FirestoreArtifactService
+from src.firestore_memory_service import FirestoreMemoryService
+from src.firestore_session_service import FirestoreSessionService
 from google.genai import types
 from vertexai import Client, agent_engines
 from vertexai.preview.reasoning_engines import A2aAgent
@@ -81,13 +81,15 @@ class CurrencyAgentExecutorWithRunner(AgentExecutor):
     self.runner = None
 
   def _init_adk(self):
+    # Initialize the ADK Runner
     if not self.runner:
       self.runner = Runner(
           app_name=self.agent.name,
           agent=self.agent,
-          artifact_service=InMemoryArtifactService(),
-          session_service=InMemorySessionService(),
-          memory_service=InMemoryMemoryService(),
+          artifact_service=FirestoreArtifactService(
+              project_id=config.PROJECT_ID),
+          session_service=FirestoreSessionService(project_id=config.PROJECT_ID),
+          memory_service=FirestoreMemoryService(project_id=config.PROJECT_ID),
       )
 
   async def cancel(self, context: RequestContext, event_queue: EventQueue):

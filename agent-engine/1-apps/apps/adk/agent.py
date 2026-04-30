@@ -60,3 +60,4 @@ def session_service_builder():
 
 agent = AdkApp(agent=root_agent,
                session_service_builder=session_service_builder)
+a = 1

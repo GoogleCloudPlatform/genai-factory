@@ -14,10 +14,10 @@ curl -X GET https://$REGION-aiplatform.googleapis.com/v1beta1/$AGENT_ID/a2a/v1/c
 ## Query the agent
 
 ```shell
-curl -X POST https://$REGION-aiplatform.googleapis.com/v1beta1/$AGENT_ID/a2a/v1/message:send \
+TASK_ID=$(curl -X POST https://$REGION-aiplatform.googleapis.com/v1beta1/$AGENT_ID/a2a/v1/message:send \
      -H "Authorization: Bearer $ACCESS_TOKEN" \
      -H "Content-Type: application/json" \
-     -d '{ "message": { "content": [{"text": "What is the exchange rate from US dollars to SEK on 2025-04-03?"}], "message_id": "remote-agent-message-id", "role": "1" } }'
+     -d '{ "message": { "content": [{"text": "What is the exchange rate from US dollars to SEK on 2025-04-03?"}], "message_id": "remote-agent-message-id", "role": "1" } }' | jq -r '.task.id')
 ```
 
 This will create a task that you can retrieve with another API call.
@@ -25,7 +25,7 @@ This will create a task that you can retrieve with another API call.
 ## Get task
 
 ```shell
-curl -X GET https://$REGION-aiplatform.googleapis.com/v1beta1/$AGENT_ID/a2a/v1/tasks/YOUR_TASK_ID \
+curl -X GET https://$REGION-aiplatform.googleapis.com/v1beta1/$AGENT_ID/a2a/v1/tasks/$TASK_ID \
      -H "Authorization: Bearer $ACCESS_TOKEN" \
      -H "Content-Type: application/json"
 ```

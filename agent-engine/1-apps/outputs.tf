@@ -26,6 +26,7 @@ output "commands" {
 
   ACCESS_TOKEN=$(gcloud auth application-default print-access-token --impersonate-service-account=${var.service_accounts["project/iac-rw"].email})
 
+  # Override var.source_config.app_path if you want to deploy a different application
   cd ${var.source_config.app_path} && tar -czf ${local.tar_gz_file_name} * &&
   cd ../../ && mv ${var.source_config.app_path}/${local.tar_gz_file_name} . &&
   TAR_GZ_BASE64=$(openssl base64 -in ${local.tar_gz_file_name}) &&
