@@ -24,6 +24,7 @@ WORKDIR /app
 COPY . .
 
 # Install dependencies
+RUN uv lock
 RUN uv sync --locked
 
 RUN adduser --disabled-password --gecos "" factory && \
