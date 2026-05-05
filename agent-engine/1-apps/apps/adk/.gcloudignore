@@ -26,3 +26,7 @@ __pycache__/
 cloudbuild*.yaml
 *.md
 *.env
+
+# macOS
+._*
+.DS_Store

@@ -78,12 +78,6 @@ values:
     - serviceAccount:iac-rw@test-gf-ae-0.iam.gserviceaccount.com
     project: test-gf-ae-0
     role: roles/aiplatform.admin
-  module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/aiplatform.user"]:
-    condition: []
-    members:
-    - serviceAccount:gf-ae-0@test-gf-ae-0.iam.gserviceaccount.com
-    project: test-gf-ae-0
-    role: roles/aiplatform.user
   module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/artifactregistry.admin"]:
     condition: []
     members:
@@ -106,6 +100,18 @@ values:
     - serviceAccount:iac-rw@test-gf-ae-0.iam.gserviceaccount.com
     project: test-gf-ae-0
     role: roles/compute.securityAdmin
+  module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/datastore.owner"]:
+    condition: []
+    members:
+    - serviceAccount:iac-rw@test-gf-ae-0.iam.gserviceaccount.com
+    project: test-gf-ae-0
+    role: roles/datastore.owner
+  module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/datastore.user"]:
+    condition: []
+    members:
+    - serviceAccount:gf-ae-0@test-gf-ae-0.iam.gserviceaccount.com
+    project: test-gf-ae-0
+    role: roles/datastore.user
   module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/dns.admin"]:
     condition: []
     members:
@@ -146,12 +152,11 @@ values:
     - serviceAccount:gf-ae-0@test-gf-ae-0.iam.gserviceaccount.com
     project: test-gf-ae-0
     role: roles/storage.objectViewer
-  module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/viewer"]:
+  module.projects.module.projects-iam["project"].google_project_iam_member.bindings["ae_sa_ai_user"]:
     condition: []
-    members:
-    - serviceAccount:gf-ae-0@test-gf-ae-0.iam.gserviceaccount.com
+    member: serviceAccount:gf-ae-0@test-gf-ae-0.iam.gserviceaccount.com
     project: test-gf-ae-0
-    role: roles/viewer
+    role: roles/aiplatform.user
   module.projects.module.projects["project"].data.google_logging_project_settings.logging_sa[0]:
     project: test-gf-ae-0
   module.projects.module.projects["project"].data.google_storage_project_service_account.gcs_sa[0]:
@@ -172,10 +177,6 @@ values:
     terraform_labels:
       goog-terraform-provisioned: 'true'
     timeouts: null
-  module.projects.module.projects["project"].google_project_iam_member.service_agents["agentgateway"]:
-    condition: []
-    project: test-gf-ae-0
-    role: roles/agentgateway.serviceAgent
   module.projects.module.projects["project"].google_project_iam_member.service_agents["aiplatform"]:
     condition: []
     project: test-gf-ae-0
@@ -208,6 +209,10 @@ values:
     condition: []
     project: test-gf-ae-0
     role: roles/dns.serviceAgent
+  module.projects.module.projects["project"].google_project_iam_member.service_agents["firestore"]:
+    condition: []
+    project: test-gf-ae-0
+    role: roles/firestore.serviceAgent
   module.projects.module.projects["project"].google_project_iam_member.service_agents["monitoring-notification"]:
     condition: []
     project: test-gf-ae-0
@@ -288,6 +293,12 @@ values:
     project: test-gf-ae-0
     service: dns.googleapis.com
     timeouts: null
+  module.projects.module.projects["project"].google_project_service.project_services["firestore.googleapis.com"]:
+    disable_dependent_services: false
+    disable_on_destroy: false
+    project: test-gf-ae-0
+    service: firestore.googleapis.com
+    timeouts: null
   module.projects.module.projects["project"].google_project_service.project_services["logging.googleapis.com"]:
     disable_dependent_services: false
     disable_on_destroy: false
@@ -331,6 +342,10 @@ values:
   module.projects.module.projects["project"].google_project_service_identity.default["dns.googleapis.com"]:
     project: test-gf-ae-0
     service: dns.googleapis.com
+    timeouts: null
+  module.projects.module.projects["project"].google_project_service_identity.default["firestore.googleapis.com"]:
+    project: test-gf-ae-0
+    service: firestore.googleapis.com
     timeouts: null
   module.projects.module.projects["project"].google_project_service_identity.default["monitoring.googleapis.com"]:
     project: test-gf-ae-0
@@ -377,9 +392,9 @@ counts:
   google_logging_project_settings: 1
   google_project: 1
   google_project_iam_binding: 14
-  google_project_iam_member: 23
-  google_project_service: 10
-  google_project_service_identity: 4
+  google_project_iam_member: 24
+  google_project_service: 11
+  google_project_service_identity: 5
   google_service_account: 2
   google_service_account_iam_member: 2
   google_storage_bucket: 1
@@ -387,7 +402,7 @@ counts:
   google_storage_project_service_account: 1
   local_file: 2
   modules: 7
-  resources: 65
+  resources: 68
   terraform_data: 2
 
 outputs:

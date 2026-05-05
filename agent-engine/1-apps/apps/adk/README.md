@@ -2,9 +2,9 @@
 
 The application demonstrates the deployment of [Agent Development Kit (ADK)](https://google.github.io/adk-docs) agents on Agent Engine.
 
-## Test the agent
+## Query the agent
 
-You can test the agent using the following command.
+You can test the agent by using the following command.
 A session will be automatically created for you.
 
 ```shell

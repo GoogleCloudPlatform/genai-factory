@@ -19,6 +19,7 @@ from vertexai.agent_engines import AdkApp
 import requests
 
 from src import config
+from src.firestore_session_service import FirestoreSessionService
 
 vertexai.init(
     project=config.PROJECT_ID,
@@ -37,7 +38,7 @@ def get_exchange_rate(
         "http": f"http://{config.PROXY_ADDRESS}:{config.PROXY_PORT}",
         "https": f"http://{config.PROXY_ADDRESS}:{config.PROXY_PORT}",
     }
-  response = requests.get(f"https://api.frankfurter.app/{currency_date}",
+  response = requests.get(f"https://api.frankfurter.dev/v1/{currency_date}",
                           params={
                               "from": currency_from,
                               "to": currency_to
@@ -52,4 +53,11 @@ root_agent = LlmAgent(
     tools=[get_exchange_rate],
 )
 
-agent = AdkApp(agent=root_agent)
+
+def session_service_builder():
+  return FirestoreSessionService(project_id=config.PROJECT_ID)
+
+
+agent = AdkApp(agent=root_agent,
+               session_service_builder=session_service_builder)
+a = 1

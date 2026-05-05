@@ -14,6 +14,7 @@ The deployment includes:
 
 - The **agent**, that privately access resources in your VPC.
 - A custom **service account** used by your agent.
+- **Firestore** to store ADK sessions and A2A tasks.
 - Optionally, a VPC, the subnets you need and Secure Web Proxy (SWP), so that your agent can access the Internet through your VPC and via a proxy.
 
 ## Source code deployment
@@ -22,8 +23,15 @@ By default, the factory deploys your code by using *Agent Engine source based de
 This means the agent expects a *tar.gz package*, containing your agent definition and your *requirements.txt* file.
 This is the most recent way of deploying code in Agent Engine and we believe this is what most of users need to use.
 
-In case of need, the underlying Agent Engine module also supports the *serialized object deployment*.
-You can easily adapt this factory to work with it. You can find instructions directly on the [Cloud Foundation Fabric website](https://github.com/GoogleCloudPlatform/cloud-foundation-fabric/tree/master/modules/agent-engine#serialized-object-deployment).
+In case of need, the underlying Agent Engine module also supports other ways of deploying the code.
+You can find instructions directly on the [Cloud Foundation Fabric website](https://github.com/GoogleCloudPlatform/cloud-foundation-fabric/tree/master/modules/agent-engine#serialized-object-deployment).
+
+## Firestore as a memory store
+
+We use [Firestore](https://firebase.google.com/docs/firestore) as the default store for ADK sessions and A2A tasks.
+We need this to avoid eventual consistency issues when the containers scale out.
+Also, this is the tool that users most commonly use in production.
+You can swap it with your own database. In this case, you'll need to remove the Firestore instantiation from Terraform and update the applications code.
 
 ## Protect access to the agent by using VPC-SC
 
