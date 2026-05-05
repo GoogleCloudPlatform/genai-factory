@@ -126,7 +126,7 @@ values:
     dns_name: modelarmor.europe-west1.rep.googleapis.com.
     local_data:
     - local_datas:
-      - name: modelarmor.europe-west1.rep.googleapis.com.
+      - name: modelarmor.*.rep.googleapis.com.
         ttl: 300
         type: A
     project: your-project
