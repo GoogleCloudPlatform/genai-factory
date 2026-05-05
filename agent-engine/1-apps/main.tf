@@ -12,18 +12,31 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+locals {
+  agent_files = [
+    for f in fileset(var.source_config.app_path, "**") : f
+    if length(regexall("(?:^|/)(?:__pycache__|\\.venv|\\.DS_Store)(?:$|/)|\\.pyc$|\\.pyo$", f)) == 0
+  ]
+  tar_gz_file_name = "${sha1(join("", [
+    for f in local.agent_files
+    : filesha1("${var.source_config.app_path}/${f}")
+  ]))}.tar.gz"
+}
+
 data "archive_file" "source" {
   type        = "tar.gz"
-  source_dir  = "./apps/${var.source_config.app_path}"
-  output_path = "./${var.source_config.tar_gz_file_name}"
+  source_dir  = var.source_config.app_path
+  output_path = "./${local.tar_gz_file_name}"
+  excludes    = ["__pycache__", "src/__pycache__", ".venv", ".DS_Store"]
 }
 
 module "agent" {
-  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/agent-engine?ref=v55.1.0"
-  name       = var.name
-  project_id = var.project_config.id
-  region     = var.region
-  managed    = false
+  source                     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/agent-engine?ref=v55.3.0"
+  name                       = var.name
+  project_id                 = var.project_config.id
+  region                     = var.region
+  managed                    = false
+  enable_deletion_protection = var.enable_deletion_protection
   agent_engine_config = {
     agent_framework = var.agent_engine_config.agent_framework
     class_methods = try(
@@ -52,11 +65,13 @@ module "agent" {
     deletion_protection = var.enable_deletion_protection
     name                = "${var.prefix}-${var.name}"
   }
-  deployment_files = {
-    source_config = {
-      entrypoint_module = var.source_config.entrypoint_module
-      entrypoint_object = var.source_config.entrypoint_object
-      source_path       = data.archive_file.source.output_path
+  deployment_config = {
+    source_files_config = {
+      source_path = data.archive_file.source.output_path
+      python_spec = {
+        entrypoint_module = var.source_config.entrypoint_module
+        entrypoint_object = var.source_config.entrypoint_object
+      }
     }
   }
   networking_config = {
@@ -71,5 +86,15 @@ module "agent" {
   service_account_config = {
     create = false
     email  = var.service_accounts["project/gf-ae-0"].email
+  }
+}
+
+module "firestore" {
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/firestore?ref=v55.3.0"
+  project_id = var.project_config.id
+  database = {
+    name        = "(default)"
+    type        = "FIRESTORE_NATIVE"
+    location_id = var.region
   }
 }

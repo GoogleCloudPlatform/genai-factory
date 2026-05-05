@@ -28,6 +28,20 @@ except ImportError:
   sys.path.append(str(BASEDIR / 'tests'))
   import fixtures
 
+HEADER = """# Copyright 2026 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License."""
+
 
 @click.command()
 @click.option('--extra-files', default=[], multiple=True)
@@ -37,12 +51,21 @@ def main(module, tfvars, extra_files):
   module = BASEDIR / module
 
   summary = fixtures.plan_summary(module, Path(), tfvars, extra_files)
+
+  for k, v in summary.values.items():
+    if 'time_sleep.' in k and isinstance(v, dict) and 'id' in v:
+      del v['id']
+    if k.startswith('google_service_account_iam_member.me_sa_token_creator'
+                   ) and isinstance(v, dict) and 'member' in v:
+      del v['member']
+
+  print(f"{HEADER}\n")
   print(yaml.dump({'values': summary.values}))
   print(yaml.dump({'counts': summary.counts}))
   outputs = {
       k: v.get('value', '__missing__') for k, v in summary.outputs.items()
   }
-  print(yaml.dump({'outputs': outputs}))
+  print(yaml.dump({'outputs': outputs}), end='')
 
 
 if __name__ == '__main__':

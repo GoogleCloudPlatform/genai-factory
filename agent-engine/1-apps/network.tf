@@ -36,7 +36,7 @@ locals {
 }
 
 module "vpc" {
-  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-vpc?ref=v55.1.0"
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-vpc?ref=v55.3.0"
   count      = var.networking_config.create ? 1 : 0
   project_id = var.project_config.id
   name       = var.networking_config.vpc_id
@@ -50,7 +50,7 @@ module "vpc" {
 
 # DNS policies for Google APIs
 module "dns_policy_googleapis" {
-  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/dns-response-policy?ref=v55.1.0"
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/dns-response-policy?ref=v55.3.0"
   count      = var.networking_config.create ? 1 : 0
   project_id = var.project_config.id
   name       = "googleapis"
@@ -74,13 +74,7 @@ module "secure-web-proxy" {
   gateway_config = {
     addresses = [local.proxy_ip]
   }
-  policy_rules = {
-    host-0 = {
-      priority        = 1000
-      allow           = true
-      session_matcher = "host() == 'api.frankfurter.app'"
-    }
-  }
+  policy_rules = var.proxy_policy_rules
 }
 
 resource "google_compute_network_attachment" "network_attachment" {

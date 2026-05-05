@@ -34,7 +34,7 @@ env:
   TFTEST_COPY: 1
   DEFAULT_TERRAFORM_FLAVOUR: terraform
   DEFAULT_TERRAFORM_VERSION: ${{ inputs.terraform_version || '1.13.4' }}
-  DEFAULT_TOFU_VERSION: 1.10.0
+  DEFAULT_TOFU_VERSION: 1.11.0
 jobs:
   compute-matrix:
     runs-on: ubuntu-latest
