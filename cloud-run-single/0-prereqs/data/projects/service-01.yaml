@@ -34,6 +34,13 @@ services:
   # Needed for Regional API Endpoint
   - networkconnectivity.googleapis.com
 
+org_policies:
+  compute.restrictSharedVpcSubnetworks:
+    rules:
+      - allow:
+          values:
+            - projects/${projects["host"]}/regions/${networking-config["region"]}/subnetworks/${networking-config["subnet-name"]}
+
 buckets:
   iac-state:
     description: Terraform state bucket

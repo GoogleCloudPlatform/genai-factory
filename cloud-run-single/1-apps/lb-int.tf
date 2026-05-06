@@ -68,7 +68,7 @@ module "address-ilb" {
     var.lbs_configs.internal.ip_address == null
     ? 1 : 0
   )
-  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-address?ref=v55.1.0"
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-address?ref=v55.3.0"
   project_id = var.project_id
   internal_addresses = {
     ilb-01 = {
@@ -177,7 +177,7 @@ module "lb_internal_dns" {
 
 # LB certificate
 module "certificate_manager" {
-  count      = var.lbs_config.internal.enable ? 1 : 0
+  count      = var.lbs_configs.internal.enable ? 1 : 0
   source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/certificate-manager?ref=v55.3.0"
   project_id = var.project_id
   certificates = {

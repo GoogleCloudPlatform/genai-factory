@@ -12,7 +12,7 @@ It performs the following tasks:
 
 This stage leverages the Cloud Foundation Fabric [project-factory module](https://github.com/GoogleCloudPlatform/cloud-foundation-fabric/tree/master/modules/project-factory).
 
-The [host](data/projects/host/host.yaml) and [service](data/projects/service/service-01.yaml) YAML files contain the definition of these resources.
+The [host](data/projects/host.yaml) and [service](data/projects/service-01.yaml) YAML files contain the definition of these resources.
 
 ## Required roles
 
@@ -46,7 +46,7 @@ This factory integrates seamlessly with the latest version of [Fabric FAST](http
 
 Alternatively, use your own tooling to create these resources.
 
-In either case, extract the necessary configurations from the [host](data/projects/host/host.yaml) and [service](data/projects/service/service-01.yaml) project definition YAML files, create the resources and move to the [1-apps folder](../1-apps/README.md).
+In either case, extract the necessary configurations from the [host](data/projects/host.yaml) and [service](data/projects/service-01.yaml) project definition YAML files, create the resources and move to the [1-apps folder](../1-apps/README.md).
 
 ## Create the service project only
 

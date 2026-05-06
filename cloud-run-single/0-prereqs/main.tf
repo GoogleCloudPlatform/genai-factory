@@ -41,9 +41,42 @@ data "google_client_openid_userinfo" "me" {
   count = var.enable_iac_sa_impersonation ? 1 : 0
 }
 
+module "projects" {
+  source = "../../../cloud-foundation-fabric/modules/project-factory"
+  # source = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/project-factory?ref=v55.3.0"
+  data_defaults = {
+    billing_account = var.project_config.billing_account_id
+    parent          = var.project_config.parent
+    prefix          = var.prefix
+    bucket = {
+      force_destroy = !var.enable_deletion_protection
+    }
+    locations = {
+      storage = var.region
+    }
+  }
+  factories_config = {
+    basepath = "./data"
+    exclusions = {
+      projects = var.networking_config.create ? [] : ["host"]
+    }
+    paths = {
+      projects = "projects"
+    }
+  }
+  context = {
+    condition_vars = {
+      networking-config = {
+        region      = var.region
+        subnet-name = var.networking_config.subnet.name
+      }
+    }
+  }
+}
+
 resource "google_service_account_iam_member" "me_sa_token_creator" {
   count              = var.enable_iac_sa_impersonation ? 1 : 0
-  service_account_id = module.project-service.service_accounts["service-01/iac-rw"].id
+  service_account_id = module.projects.service_accounts["service-01/iac-rw"].id
   role               = "roles/iam.serviceAccountTokenCreator"
   member             = "user:${local.effective_user_identity}"
 }
