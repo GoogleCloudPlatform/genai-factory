@@ -18,7 +18,6 @@ from typing import List, Dict, Any, Optional
 from fastmcp import FastMCP, Context
 from google.cloud import compute_v1
 from google.oauth2.credentials import Credentials
-from google.api_core.exceptions import GoogleAPICallError
 
 # Initialize logging
 logging.basicConfig(level=logging.INFO)
@@ -97,6 +96,7 @@ async def list_firewall_rules(ctx: Context, project_id: str,
         project_id: The Google Cloud Project ID.
         filter: Optional filter string (e.g., "name = 'my-rule'").
     """
+
   logger.info(
       f"Listing firewall rules for project: {project_id}, filter: {filter}")
   try:
@@ -126,6 +126,7 @@ async def list_networks(ctx: Context, project_id: str) -> str:
         ctx: FastMCP Context.
         project_id: The Google Cloud Project ID.
     """
+
   logger.info(f"Listing networks for project: {project_id}")
   try:
     creds = _get_credentials(ctx)
@@ -144,7 +145,7 @@ async def list_networks(ctx: Context, project_id: str) -> str:
           "self_link":
               network.self_link,
           "subnetworks":
-              list(network.subnetworks) if network.subnetworks else []
+              list(network.subnetworks) if network.subnetworks else [],
       })
 
     return str(networks)
@@ -154,17 +155,22 @@ async def list_networks(ctx: Context, project_id: str) -> str:
 
 
 @mcp.tool()
-async def create_firewall_rule(ctx: Context, project_id: str, name: str,
-                               network: str = "global/networks/default",
-                               description: str = "", priority: int = 1000,
-                               direction: str = "INGRESS",
-                               source_ranges: List[str] = None,
-                               source_tags: List[str] = None,
-                               target_tags: List[str] = None,
-                               source_service_accounts: List[str] = None,
-                               target_service_accounts: List[str] = None,
-                               allow_tcp_ports: List[str] = None,
-                               deny_tcp_ports: List[str] = None) -> str:
+async def create_firewall_rule(
+    ctx: Context,
+    project_id: str,
+    name: str,
+    network: str = "global/networks/default",
+    description: str = "",
+    priority: int = 1000,
+    direction: str = "INGRESS",
+    source_ranges: List[str] = None,
+    source_tags: List[str] = None,
+    target_tags: List[str] = None,
+    source_service_accounts: List[str] = None,
+    target_service_accounts: List[str] = None,
+    allow_tcp_ports: List[str] = None,
+    deny_tcp_ports: List[str] = None,
+) -> str:
   """Create a new firewall rule.
 
     Args:
@@ -183,6 +189,7 @@ async def create_firewall_rule(ctx: Context, project_id: str, name: str,
         allow_tcp_ports: List of TCP ports to allow (e.g., ["80", "443"]).
         deny_tcp_ports: List of TCP ports to deny.
     """
+
   logger.info(f"Creating firewall rule {name} in {project_id}")
   try:
     creds = _get_credentials(ctx)
@@ -239,6 +246,7 @@ async def delete_firewall_rule(ctx: Context, project_id: str,
         project_id: Google Cloud Project ID.
         firewall_rule: Name of the firewall rule to delete.
     """
+
   logger.info(f"Deleting firewall rule {firewall_rule} in {project_id}")
   try:
     creds = _get_credentials(ctx)
@@ -256,11 +264,16 @@ async def delete_firewall_rule(ctx: Context, project_id: str,
 
 @mcp.tool()
 async def update_firewall_rule(
-    ctx: Context, project_id: str, firewall_rule: str, new_priority: int = None,
-    new_source_ranges: List[str] = None, new_source_tags: List[str] = None,
+    ctx: Context,
+    project_id: str,
+    firewall_rule: str,
+    new_priority: int = None,
+    new_source_ranges: List[str] = None,
+    new_source_tags: List[str] = None,
     new_target_tags: List[str] = None,
     new_source_service_accounts: List[str] = None,
-    new_target_service_accounts: List[str] = None) -> str:
+    new_target_service_accounts: List[str] = None,
+) -> str:
   """Update an existing firewall rule (patch).
 
     Args:
@@ -274,6 +287,7 @@ async def update_firewall_rule(
         new_source_service_accounts: New list of source service accounts.
         new_target_service_accounts: New list of target service accounts.
     """
+
   logger.info(f"Updating firewall rule {firewall_rule} in {project_id}")
   try:
     creds = _get_credentials(ctx)
@@ -310,6 +324,5 @@ async def update_firewall_rule(
 
 
 if __name__ == "__main__":
-  import sys
   port = int(os.getenv("PORT", 8080))
   mcp.run(transport="http", host="0.0.0.0", port=port)

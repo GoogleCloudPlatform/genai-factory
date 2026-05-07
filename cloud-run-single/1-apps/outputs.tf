@@ -44,7 +44,7 @@ output "commands" {
     --quiet \
     --impersonate-service-account=${var.service_accounts["project/iac-rw"].email}
 
-  # Run the following command to deploy a sample adk or chat Service
+  # Run the following command to deploy a sample adk or chat application or mcp server
 
   gcloud run deploy ${var.name} \
     --impersonate-service-account=${var.service_accounts["project/iac-rw"].email} \

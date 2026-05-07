@@ -32,6 +32,8 @@ services:
   - privateca.googleapis.com
   # Needed for Model Armor
   - modelarmor.googleapis.com
+  # Needed for Regional API Endpoint
+  - networkconnectivity.googleapis.com
 
 buckets:
   iac-state:
@@ -75,6 +77,8 @@ iam_by_principals:
     - roles/modelarmor.floorSettingsAdmin
   $iam_principals:service_accounts/project/gf-srun-0:
     - roles/logging.logWriter
+    # Required for Model Armor REST API integration (used in adk app)
+    - roles/modelarmor.user
   $iam_principals:service_accounts/project/gf-srun-build-0:
     - roles/artifactregistry.writer
     - roles/cloudbuild.builds.editor
@@ -83,7 +87,8 @@ iam_by_principals:
     - roles/run.admin
     - roles/storage.admin
     - roles/storage.objectUser
-  # Vertex AI SA is the one calling model armor via genai SDK
+  # Required for Model Armor in-line SDK integration (used in chat app)
+  # Vertex AI SA is the one calling model armor via genai SDK in this case
   $iam_principals:service_agents/project/aiplatform:
     - roles/modelarmor.user
 # Grant roles/aiplatform.user as additive,
