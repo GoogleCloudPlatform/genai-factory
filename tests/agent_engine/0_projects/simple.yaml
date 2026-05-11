@@ -12,6 +12,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# Copyright 2026 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 values:
   google_service_account_iam_member.me_sa_token_creator[0]:
     condition: []
@@ -355,6 +369,10 @@ values:
     project: test-gf-ae-0
     service: networksecurity.googleapis.com
     timeouts: null
+  ? module.projects.module.service-accounts-iam["project/iac-rw"].google_service_account_iam_member.additive["$service_account_ids:project/gf-ae-0-roles/iam.serviceAccountUser"]
+  : condition: []
+    role: roles/iam.serviceAccountUser
+    service_account_id: projects/test-gf-ae-0/serviceAccounts/gf-ae-0@test-gf-ae-0.iam.gserviceaccount.com
   module.projects.module.service-accounts["project/gf-ae-0"].google_service_account.service_account[0]:
     account_id: gf-ae-0
     create_ignore_already_exists: null
@@ -375,15 +393,11 @@ values:
     member: serviceAccount:iac-rw@test-gf-ae-0.iam.gserviceaccount.com
     project: test-gf-ae-0
     timeouts: null
-  ? module.projects.module.service_accounts-iam["project/iac-rw"].google_service_account_iam_member.additive["$service_account_ids:project/gf-ae-0-roles/iam.serviceAccountUser"]
-  : condition: []
-    role: roles/iam.serviceAccountUser
-    service_account_id: projects/test-gf-ae-0/serviceAccounts/gf-ae-0@test-gf-ae-0.iam.gserviceaccount.com
   module.projects.terraform_data.defaults_preconditions:
     input: null
     output: null
     triggers_replace: null
-  module.projects.terraform_data.project-preconditions:
+  module.projects.terraform_data.project_preconditions:
     input: null
     output: null
     triggers_replace: null
