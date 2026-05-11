@@ -58,6 +58,7 @@ module "agent" {
       GOOGLE_CLOUD_AGENT_ENGINE_ENABLE_TELEMETRY         = tostring(var.agent_engine_config.enable_adk_telemetry),
       OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT = tostring(var.agent_engine_config.enable_adk_msg_capture),
     }
+    identity_type = "SERVICE_ACCOUNT"
     max_instances = var.agent_engine_config.max_instances
     min_instances = var.agent_engine_config.min_instances
   }

@@ -61,14 +61,13 @@ values:
             target_network: net-0
             target_project: test-project
         secret_env: []
-      identity_type: null
+      identity_type: SERVICE_ACCOUNT
       package_spec: []
       service_account: agent@test-project.iam.gserviceaccount.com
       source_code_spec:
       - developer_connect_source: []
         image_spec: []
-        inline_source:
-        - source_archive: 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
+        inline_source: []
         python_spec:
         - entrypoint_module: agent
           entrypoint_object: agent
@@ -77,10 +76,6 @@ values:
     terraform_labels:
       goog-terraform-provisioned: 'true'
     timeouts: null
-  module.agent.time_sleep.wait_5_minutes:
-    create_duration: 5m
-    destroy_duration: null
-    triggers: null
   module.dns_policy_googleapis[0].google_dns_response_policy.default[0]:
     description: Terraform managed.
     gke_clusters: []
@@ -809,8 +804,7 @@ counts:
   google_network_services_gateway: 1
   google_vertex_ai_reasoning_engine: 1
   modules: 5
-  resources: 53
-  time_sleep: 1
+  resources: 52
 
 outputs:
   agent_id: __missing__
