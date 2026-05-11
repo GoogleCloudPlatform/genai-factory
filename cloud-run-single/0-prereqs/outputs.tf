@@ -23,8 +23,14 @@ locals {
   networking_config = (
     var.networking_config.create
     ? {
-      subnet = module.vpc[0].subnet_ids["${var.region}/${var.networking_config.subnet.name}"]
-      vpc    = module.vpc[0].id
+      subnet = coalesce(
+        try(module.vpc[0].subnet_ids["${var.region}/${var.networking_config.subnet.name}"], null),
+        "projects/${var.networking_config.host_project_id}/regions/${var.region}/subnetworks/${var.networking_config.subnet.name}"
+      )
+      vpc = coalesce(
+        try(module.vpc[0].id, null),
+        "projects/${var.networking_config.host_project_id}/global/networks/${var.networking_config.vpc_name}"
+      )
     } : {}
   )
   projects = merge({

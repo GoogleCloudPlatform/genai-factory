@@ -28,7 +28,8 @@ variable "enable_iac_sa_impersonation" {
 variable "networking_config" {
   description = "The networking configuration."
   type = object({
-    create = optional(bool, true)
+    create          = optional(bool, true)
+    host_project_id = optional(string)
     subnet = optional(object({
       ip_cidr_range = optional(string, "10.0.0.0/24")
       name          = optional(string, "sub-0")

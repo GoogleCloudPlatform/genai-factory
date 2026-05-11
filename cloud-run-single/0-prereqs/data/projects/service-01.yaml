@@ -39,7 +39,7 @@ org_policies:
     rules:
       - allow:
           values:
-            - projects/${projects["host"]}/regions/${networking-config["region"]}/subnetworks/${networking-config["subnet-name"]}
+            - projects/${try(projects["host"], networking_config["host_project_id"])}/regions/${networking_config["region"]}/subnetworks/${networking_config["subnet_name"]}
 
 buckets:
   iac-state:
