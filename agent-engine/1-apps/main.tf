@@ -31,7 +31,7 @@ data "archive_file" "source" {
 }
 
 module "agent" {
-  source                     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/agent-engine?ref=v55.3.0"
+  source                     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/agent-engine?ref=v55.4.0"
   name                       = var.name
   project_id                 = var.project_config.id
   region                     = var.region
@@ -58,6 +58,7 @@ module "agent" {
       GOOGLE_CLOUD_AGENT_ENGINE_ENABLE_TELEMETRY         = tostring(var.agent_engine_config.enable_adk_telemetry),
       OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT = tostring(var.agent_engine_config.enable_adk_msg_capture),
     }
+    identity_type = "SERVICE_ACCOUNT"
     max_instances = var.agent_engine_config.max_instances
     min_instances = var.agent_engine_config.min_instances
   }
@@ -90,7 +91,7 @@ module "agent" {
 }
 
 module "firestore" {
-  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/firestore?ref=v55.3.0"
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/firestore?ref=v55.4.0"
   project_id = var.project_config.id
   database = {
     name        = "(default)"
