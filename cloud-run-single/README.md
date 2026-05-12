@@ -1,12 +1,12 @@
 # Single Cloud Run
 
-The factory deploys a secure Cloud Run instance to run AI applications.
+The factory deploys a secure Cloud Run instance to run AI applications and agents.
 
 ![Architecture Diagram](./diagram.png)
 
 ## Applications
 
-After the [1-apps](1-apps/README.md) deployment finishes, the commands to deploy the applications will be displayed on your screen.
+After the [1-apps](1-apps/README.md) deployment finishes, the commands to deploy the applications will be displayed at screen.
 
 Cloud run single allows deploying these applications:
 
@@ -14,20 +14,21 @@ Cloud run single allows deploying these applications:
 - **ADK:** a sample, secure [Agent Development Kit (ADK) deployment](./1-apps/apps/adk/README.md).
 - **ADK with A2A:** a sample, secure [Agent Development Kit (ADK) deployment exposed with A2A](./1-apps/apps/adk-a2a/README.md).
 - **Gemma:** a sample deployment of Gemma 3 using Cloud Run GPUs.
-- **MCP Server:** a sample Model Context Protocol (MCP) server to manage GCP Firewall rules by impersonating the user calling the server.
+- **MCP Server:** a sample, custom Model Context Protocol (MCP) server to manage GCP Firewall rules by impersonating the user calling the server.
 
 ## Core Components
 
 The deployment includes:
 
-- An **exposure layer**, made of:
-  - **Global external application load balancer** (+ Cloud Armor IP allowlist security backend policy + HTTP to HTTPS redirect + managed certificates). This is created by default.
-  - **Internal application load balancer** (+ Cloud Armor IP allowlist security backend policy + HTTP to HTTPS redirect + managed certificates + CAS + Cloud DNS private zone). This is optional.
-
 - **Cloud Run** (with authentication and direct VPC egress)
 
-- By default, a **VPC**, a subnet, private Google APIs routes and DNS policies. Optionally, can use your existing VPCs.
-- By default, a **project** with all the necessary permissions. Optionally, can use your existing project.
+- An **exposure layer**, made of:
+  - A **Global external application load balancer** (+ Cloud Armor IP allowlist security backend policy + HTTP to HTTPS redirect + managed certificates). This is created by default.
+  - An **Internal application load balancer** (+ Cloud Armor IP allowlist security backend policy + HTTP to HTTPS redirect + managed certificates + CAS + Cloud DNS private zone). This is optional.
+
+- By default, a **host project**, a **shared VPC**, a subnet, private Google APIs routes and DNS policies. Optionally, you can use your own host project and shared VPCs.
+
+- A **service project** with all the necessary APIs, service accounts, permissions set.
 
 ## Apply the factory
 

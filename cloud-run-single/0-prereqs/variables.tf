@@ -29,7 +29,7 @@ variable "networking_config" {
   description = "The networking configuration."
   type = object({
     create          = optional(bool, true)
-    host_project_id = optional(string)
+    host_project_id = optional(string, "prj-host-0")
     subnet = optional(object({
       ip_cidr_range = optional(string, "10.0.0.0/24")
       name          = optional(string, "sub-0")

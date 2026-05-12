@@ -14,14 +14,15 @@
 
 # variables from 0-prereqs
 
-prefix     = "prefix"
-project_id = "your-project"
-number     = "123456789012"
-
 networking_config = {
   subnet = "projects/prefix-gf-srun-hp-0/regions/europe-west1/subnetworks/sub-0"
   vpc    = "projects/prefix-gf-srun-hp-0/global/networks/net-0"
 }
+
+prefix = "prefix"
+
+project_id = "your-project"
+number     = "123456789012"
 
 region = "europe-west1"
 
@@ -30,6 +31,7 @@ service_account_emails = {
   "service-01/crun-build-0" = "crun-build-0@prefix-gf-srun-0.iam.gserviceaccount.com"
   "service-01/iac-rw"       = "iac-rw@prefix-gf-srun-0.iam.gserviceaccount.com"
 }
+
 service_account_ids = {
   "service-01/crun-0"       = "projects/prefix-gf-srun-0/serviceAccounts/crun-0@prefix-gf-srun-0.iam.gserviceaccount.com"
   "service-01/crun-build-0" = "projects/prefix-gf-srun-0/serviceAccounts/crun-build-0@prefix-gf-srun-0.iam.gserviceaccount.com"
@@ -38,7 +40,7 @@ service_account_ids = {
 
 # variables from 1-apps
 
-lbs_config = {
+lbs_configs = {
   external = {
     domain = "your-domain.com"
   }

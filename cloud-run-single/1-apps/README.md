@@ -5,18 +5,18 @@ This stage is part of the `Cloud Run - Single` factory.
 It performs the following tasks:
 
 - Deploys a Cloud Run service (supporting single or multiple containers).
-- Configures networking and VPC Access for Cloud Run.
-- Optionally creates External and/or Internal Load Balancers with custom domains.
-- Optionally sets up Certificate Manager for your Internal Load Balancers.
-- Optionally configures Model Armor.
+- Configures direct VPC egress for Cloud Run.
+- Optionally, creates external and/or internal load balancers with custom domains.
+- Optionally, sets up Certificate Authority Service (CAS) and Certificate Manager to generate and store your Internal Load Balancers certificates.
+- Optionally, configures Model Armor.
 
-It is responsible for deploying resources inside the service project you created in the [0-prereqs](../0-prereqs) stage or in an existing project.
+It is responsible for deploying resources inside the service project you created in the [0-prereqs stage](../0-prereqs/README.md) or in an existing project.
 
 ![Architecture Diagram](../diagram.png)
 
 ## Deploy the stage
 
-If you created your projects through [0-prereqs](../0-prereqs), you should already see in this folder a `providers.tf` and a `terraform.auto.tfvars` file.
+If you created your project(s) through [0-prereqs](../0-prereqs/README.md), you should already see in this folder a `providers.tf` and a `terraform.auto.tfvars` file.
 
 ```shell
 cp terraform.tfvars.sample terraform.tfvars # Customize
@@ -38,13 +38,19 @@ Once you deploy the applications, use these sample commands to test them:
 
 ## Manage prerequisites independently
 
-The [0-prereqs](../0-prereqs) stage generates the necessary Terraform input files for this stage. If you manage prerequisites independently (without the [0-prereqs stage](../0-prereqs)), you'll need to manually add the required variables to your `terraform.tfvars` file, as defined in [variables.tf](./variables.tf), and provide the `providers.tf` file.
+The [0-prereqs stage](../0-prereqs/README.md) generates the necessary Terraform input files for this stage. If you manage prerequisites independently (without the [0-prereqs stage](../0-prereqs/README.md)), you'll need to manually set values for your variables in a `terraform.tfvars` file (by following what is defined in [variables.tf](./variables.tf)), and provide a `providers.tf` file.
+
+You can look at the template files ([1](../0-prereqs/templates/providers.tf.tpl), [2](../0-prereqs/templates/terraform.auto.tfvars.tpl)) and the [outputs.tf](../0-prereqs/outputs.tf) of the [0-prereqs](../0-prereqs/README.md) stage for more details about the structure of these files.
+
+Do not edit the `variables-fast.tf` file. It needs to reflect FAST standards and it is used for integrating with FAST only.
 
 ### Working with Fabric FAST
 
-This stage is fully compatible with the latest version of [Fabric FAST](https://github.com/GoogleCloudPlatform/cloud-foundation-fabric/tree/master/fast).
-You can create your host project and network resources by using your networking stage, and your service project by using your own project factory.
-Once you have completed these operations, create your `providers.tf` file and make sure you drop your `auto.tfvars.json` files from your FAST stages inside this folder. Finally, create your `terraform.tfvars` file referencing the keys of the maps of values imported from FAST, by using [contexts](https://github.com/GoogleCloudPlatform/cloud-foundation-fabric/blob/master/CONTRIBUTING.md#context-based-interpolation).
+This stage is fully compatible with the latest tagged version of [Fabric FAST](https://github.com/GoogleCloudPlatform/cloud-foundation-fabric/tree/master/fast).
+You can create your host project and network resources by using your FAST networking stage, and your service project by using your own FAST project factory.
+Once you have completed these operations, create your `providers.tf` file and make sure you drop your `auto.tfvars.json` files from FAST inside this folder. Finally, create your `terraform.tfvars` file and reference the keys of the maps imported from FAST.
+
+Do not edit the `variables-fast.tf` file, as it needs to reflect FAST standard variable names.
 <!-- BEGIN TFDOC -->
 ## Variables
 
@@ -53,8 +59,8 @@ Once you have completed these operations, create your `providers.tf` file and ma
 | [networking_config](variables.tf#L207) | The networking configuration. Each element is either the id of the resource or the key of the map var.vpc_self_links. | <code title="object&#40;&#123;&#10;  subnet &#61; string&#10;  vpc    &#61; string&#10;&#125;&#41;">object&#40;&#123;&#8230;&#125;&#41;</code> | ✓ |  |
 | [project_id](variables.tf#L216) | The id of the project where to create the resources. | <code>string</code> | ✓ |  |
 | [region](variables.tf#L222) | The GCP region where to deploy the resources. | <code>string</code> | ✓ |  |
-| [service_account_emails](variables.tf#L229) | The service account emails. Each element is the email or the key of the map var.service_accounts. | <code>map&#40;string&#41;</code> | ✓ |  |
-| [service_account_ids](variables.tf#L236) | The service account ids. Each element is the id or the key of the map var.service_accounts. | <code>map&#40;string&#41;</code> | ✓ |  |
+| [service_account_emails](variables.tf#L229) | The service account emails. Each element is the email of the service account or the key of the map var.service_accounts. | <code>map&#40;string&#41;</code> | ✓ |  |
+| [service_account_ids](variables.tf#L236) | The service account ids. Each element is the id of the service account or the key of the map var.service_accounts. | <code>map&#40;string&#41;</code> | ✓ |  |
 | [ca_pool_name_suffix](variables.tf#L18) | The name suffix of the CA pool used for app ILB certificates (if any). | <code>string</code> |  | <code>&#34;ca-pool-0&#34;</code> |
 | [cloud_run_config](variables.tf#L25) | The Cloud Run configuration. | <code title="object&#40;&#123;&#10;  containers &#61; optional&#40;map&#40;any&#41;, &#123;&#10;    ai &#61; &#123;&#10;      image &#61; &#34;us-docker.pkg.dev&#47;cloudrun&#47;container&#47;hello&#34;&#10;    &#125;&#10;  &#125;&#41;&#10;  gpu_zonal_redundancy_disabled &#61; optional&#40;bool, null&#41;&#10;  ingress                       &#61; optional&#40;string, &#34;INGRESS_TRAFFIC_INTERNAL_LOAD_BALANCER&#34;&#41;&#10;  max_instance_count            &#61; optional&#40;number, 3&#41;&#10;  min_instance_count            &#61; optional&#40;number, 1&#41;&#10;  node_selector                 &#61; optional&#40;map&#40;string&#41;, null&#41;&#10;  service_invokers              &#61; optional&#40;list&#40;string&#41;, &#91;&#93;&#41;&#10;  vpc_access_egress             &#61; optional&#40;string, &#34;ALL_TRAFFIC&#34;&#41;&#10;  vpc_access_tags               &#61; optional&#40;list&#40;string&#41;, &#91;&#93;&#41;&#10;&#125;&#41;">object&#40;&#123;&#8230;&#125;&#41;</code> |  | <code>&#123;&#125;</code> |
 | [enable_deletion_protection](variables.tf#L46) | Whether deletion protection is enabled. | <code>bool</code> |  | <code>true</code> |

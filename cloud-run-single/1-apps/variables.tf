@@ -84,13 +84,6 @@ variable "model_armor_floorsetting_config" {
     enforcement_type = optional(string, "INSPECT_AND_BLOCK")
     logging          = optional(bool, true)
 
-    # MCP inspection
-    google_mcp_server_floor_setting = optional(object({
-      inspect_only      = optional(bool, false)
-      inspect_and_block = optional(bool, true)
-      logging           = optional(bool, true)
-    }), {})
-
     # Sensitive Data Protection (DLP)
     sdp = optional(object({
       enabled = optional(string, "ENABLED")
@@ -232,16 +225,16 @@ variable "region" {
   nullable    = false
 }
 
-# Expected keys: service-01/iac-rw, service-01/crun-0, service-01/crun-build-0
+# Expected keys: service-01/crun-0, service-01/crun-build-0, service-01/iac-rw
 variable "service_account_emails" {
-  description = "The service account emails. Each element is the email or the key of the map var.service_accounts."
+  description = "The service account emails. Each element is the email of the service account or the key of the map var.service_accounts."
   type        = map(string)
   nullable    = false
 }
 
-# Expected keys: service-01/iac-rw, service-01/crun-0, service-01/crun-build-0
+# Expected keys: service-01/crun-0, service-01/crun-build-0, service-01/iac-rw
 variable "service_account_ids" {
-  description = "The service account ids. Each element is the id or the key of the map var.service_accounts."
+  description = "The service account ids. Each element is the id of the service account or the key of the map var.service_accounts."
   type        = map(string)
   nullable    = false
 }

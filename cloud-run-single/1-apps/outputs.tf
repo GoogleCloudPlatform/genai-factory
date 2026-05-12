@@ -66,7 +66,7 @@ output "commands" {
     --quiet \
     --impersonate-service-account=${local.service_account_emails["service-01/iac-rw"]}
 
-  # Run the following command to deploy a sample ADK agent or the chat application
+  # Run the following command to deploy a sample adk or chat service
 
   gcloud run deploy ${var.name} \
     --impersonate-service-account=${local.service_account_emails["service-01/iac-rw"]} \

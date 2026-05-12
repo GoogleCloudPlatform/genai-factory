@@ -20,19 +20,16 @@ locals {
     }, {
     for k, v in module.projects.storage_buckets : k => v
   })
-  networking_config = (
-    var.networking_config.create
-    ? {
-      subnet = coalesce(
-        try(module.vpc[0].subnet_ids["${var.region}/${var.networking_config.subnet.name}"], null),
-        "projects/${var.networking_config.host_project_id}/regions/${var.region}/subnetworks/${var.networking_config.subnet.name}"
-      )
-      vpc = coalesce(
-        try(module.vpc[0].id, null),
-        "projects/${var.networking_config.host_project_id}/global/networks/${var.networking_config.vpc_name}"
-      )
-    } : {}
-  )
+  networking_config = {
+    subnet = coalesce(
+      try(module.vpc[0].subnet_ids["${var.region}/${var.networking_config.subnet.name}"], null),
+      "projects/${var.networking_config.host_project_id}/regions/${var.region}/subnetworks/${var.networking_config.subnet.name}"
+    )
+    vpc = coalesce(
+      try(module.vpc[0].id, null),
+      "projects/${var.networking_config.host_project_id}/global/networks/${var.networking_config.vpc_name}"
+    )
+  }
   projects = merge({
     for k, v in try(module.projects.projects, {}) : k => {
       id     = v.project_id

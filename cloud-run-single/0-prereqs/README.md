@@ -4,7 +4,7 @@ This stage is part of the `Cloud Run - Single` factory.
 
 It performs the following tasks:
 
-- Sets up the GCP projects.
+- Sets up GCP projects.
 - Activates the required APIs.
 - Creates service accounts.
 - Grants required roles to identities (users, service agents, and service accounts).
@@ -54,7 +54,8 @@ You can create the service project only, and do not create the networking stack 
 
 ```hcl
 networking_config = {
-  create = false
+  create          = false
+  host_project_id = "my-host-project-id"
 }
 ```
 
@@ -69,16 +70,16 @@ Remember, in this case you will need to input your VPC and subnet ids manually i
 | [project_config](variables.tf#L53) | The project configuration. | <code title="object&#40;&#123;&#10;  billing_account_id &#61; optional&#40;string&#41;&#10;  parent             &#61; optional&#40;string&#41;&#10;&#125;&#41;">object&#40;&#123;&#8230;&#125;&#41;</code> | ✓ |  |
 | [enable_deletion_protection](variables.tf#L15) | Whether deletion protection should be enabled. | <code>bool</code> |  | <code>true</code> |
 | [enable_iac_sa_impersonation](variables.tf#L22) | Whether the user running this module should be granted serviceAccountTokenCreator on the IaC service account. | <code>bool</code> |  | <code>true</code> |
-| [networking_config](variables.tf#L28) | The networking configuration. | <code title="object&#40;&#123;&#10;  create          &#61; optional&#40;bool, true&#41;&#10;  host_project_id &#61; optional&#40;string&#41;&#10;  subnet &#61; optional&#40;object&#40;&#123;&#10;    ip_cidr_range &#61; optional&#40;string, &#34;10.0.0.0&#47;24&#34;&#41;&#10;    name          &#61; optional&#40;string, &#34;sub-0&#34;&#41;&#10;  &#125;&#41;, &#123;&#125;&#41;&#10;  subnet_proxy_only &#61; optional&#40;object&#40;&#123;&#10;    ip_cidr_range &#61; optional&#40;string, &#34;10.20.0.0&#47;24&#34;&#41;&#10;    name          &#61; optional&#40;string, &#34;proxy-only-sub-0&#34;&#41;&#10;  &#125;&#41;, &#123;&#125;&#41;&#10;  vpc_name &#61; optional&#40;string, &#34;net-0&#34;&#41;&#10;&#125;&#41;">object&#40;&#123;&#8230;&#125;&#41;</code> |  | <code>&#123;&#125;</code> |
+| [networking_config](variables.tf#L28) | The networking configuration. | <code title="object&#40;&#123;&#10;  create          &#61; optional&#40;bool, true&#41;&#10;  host_project_id &#61; optional&#40;string, &#34;prj-host-0&#34;&#41;&#10;  subnet &#61; optional&#40;object&#40;&#123;&#10;    ip_cidr_range &#61; optional&#40;string, &#34;10.0.0.0&#47;24&#34;&#41;&#10;    name          &#61; optional&#40;string, &#34;sub-0&#34;&#41;&#10;  &#125;&#41;, &#123;&#125;&#41;&#10;  subnet_proxy_only &#61; optional&#40;object&#40;&#123;&#10;    ip_cidr_range &#61; optional&#40;string, &#34;10.20.0.0&#47;24&#34;&#41;&#10;    name          &#61; optional&#40;string, &#34;proxy-only-sub-0&#34;&#41;&#10;  &#125;&#41;, &#123;&#125;&#41;&#10;  vpc_name &#61; optional&#40;string, &#34;net-0&#34;&#41;&#10;&#125;&#41;">object&#40;&#123;&#8230;&#125;&#41;</code> |  | <code>&#123;&#125;</code> |
 | [region](variables.tf#L69) | The GCP region where to deploy the resources. | <code>string</code> |  | <code>&#34;europe-west1&#34;</code> |
 
 ## Outputs
 
 | name | description | sensitive |
 |---|---|:---:|
-| [buckets](outputs.tf#L81) | Created buckets. |  |
-| [networking_config](outputs.tf#L86) | The networking configuration. |  |
-| [projects](outputs.tf#L91) | Created projects. |  |
-| [region](outputs.tf#L96) | The region where to create the resources. |  |
-| [service_accounts](outputs.tf#L101) | Created service accounts. |  |
+| [buckets](outputs.tf#L78) | Created buckets. |  |
+| [networking_config](outputs.tf#L83) | The networking configuration. |  |
+| [projects](outputs.tf#L88) | Created projects. |  |
+| [region](outputs.tf#L93) | The region where to create the resources. |  |
+| [service_accounts](outputs.tf#L98) | Created service accounts. |  |
 <!-- END TFDOC -->
