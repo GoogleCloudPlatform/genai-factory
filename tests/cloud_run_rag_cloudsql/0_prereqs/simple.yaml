@@ -763,6 +763,12 @@ values:
     - serviceAccount:iac-rw@your-prefix-gf-rrag-0.iam.gserviceaccount.com
     project: your-prefix-gf-rrag-0
     role: roles/compute.loadBalancerAdmin
+  module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/compute.networkAdmin"]:
+    condition: []
+    members:
+    - serviceAccount:iac-rw@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+    project: your-prefix-gf-rrag-0
+    role: roles/compute.networkAdmin
   module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/compute.securityAdmin"]:
     condition: []
     members:
@@ -800,6 +806,18 @@ values:
     - serviceAccount:iac-rw@your-prefix-gf-rrag-0.iam.gserviceaccount.com
     project: your-prefix-gf-rrag-0
     role: roles/run.admin
+  ? module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/servicedirectory.editor"]
+  : condition: []
+    members:
+    - serviceAccount:iac-rw@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+    project: your-prefix-gf-rrag-0
+    role: roles/servicedirectory.editor
+  ? module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/serviceusage.serviceUsageConsumer"]
+  : condition: []
+    members:
+    - serviceAccount:iac-rw@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+    project: your-prefix-gf-rrag-0
+    role: roles/serviceusage.serviceUsageConsumer
   module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/storage.admin"]:
     condition: []
     members:
@@ -1328,7 +1346,7 @@ counts:
   google_dns_response_policy_rule: 39
   google_org_policy_policy: 1
   google_project: 2
-  google_project_iam_binding: 26
+  google_project_iam_binding: 29
   google_project_iam_member: 33
   google_project_service: 16
   google_project_service_identity: 11
@@ -1338,7 +1356,7 @@ counts:
   google_storage_bucket_iam_binding: 2
   local_file: 2
   modules: 15
-  resources: 157
+  resources: 160
   terraform_data: 2
 
 outputs:
