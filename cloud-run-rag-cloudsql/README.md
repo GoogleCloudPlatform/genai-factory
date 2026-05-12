@@ -22,10 +22,10 @@ The deployment includes:
 	- **Internal application load balancer** (+ Cloud Armor IP allowlist security backend policy + HTTP to HTTPS redirect + managed certificates + CAS + Cloud DNS private zone). This is not created by default.
 	- A private **Cloud Run** frontend with direct egress access to the user VPC, that answers user queries in json format, based on the text embeddings contained in the Cloud SQL database.
 
-- By default, a **VPC**, a subnet, private Google APIs routes and DNS policies. Optionally, can use your existing VPCs.
-- By default, a **project** with all the necessary permissions. Optionally, can use your existing project.
+- By default, a **host project**, a **shared VPC**, a subnet, private Google APIs routes and DNS policies. Optionally, you can use your own host project and shared VPCs.
+- A **service project** with all the necessary APIs, service accounts, permissions set.
 
 ## Apply the factory
 
-- Enter the [0-projects](0-projects/README.md) folder and follow the instructions to setup your GCP project, service accounts and permissions
+- Enter the [0-prereqs](0-prereqs/README.md) folder and follow the instructions to setup your GCP project, service accounts and permissions
 - Go to the [1-apps](1-apps/README.md) folder and follow the instructions to deploy the components inside the project

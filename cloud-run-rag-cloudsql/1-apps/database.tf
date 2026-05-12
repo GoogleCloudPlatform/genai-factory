@@ -18,7 +18,7 @@ locals {
 
 module "bigquery-dataset" {
   source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/bigquery-dataset?ref=v55.4.0"
-  project_id = var.project_config.id
+  project_id = var.project_id
   id         = local.bigquery_id
   tables = {
     (local.bigquery_id) = {
@@ -30,20 +30,23 @@ module "bigquery-dataset" {
 
 module "dns_private_zone_cloudsql" {
   source        = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/dns?ref=v55.4.0"
-  project_id    = var.project_config.id
+  project_id    = var.project_id
   name          = "${var.name}-cloudsql"
   force_destroy = !var.enable_deletion_protection
   zone_config = {
     domain = module.cloudsql.dns_name
     private = {
-      client_networks = [local.vpc_id]
+      client_networks = [var.networking_config.vpc]
     }
   }
   recordsets = {}
+  context = {
+    networks = var.vpc_self_links
+  }
 }
 
 resource "google_dns_record_set" "cloudsql_dns_record_set" {
-  project      = var.project_config.id
+  project      = var.project_id
   managed_zone = module.dns_private_zone_cloudsql.name
   name         = module.cloudsql.dns_name
   type         = "A"
@@ -53,25 +56,25 @@ resource "google_dns_record_set" "cloudsql_dns_record_set" {
 
 resource "google_compute_address" "cloudsql_address" {
   name         = var.name
-  project      = var.project_config.id
+  project      = var.project_id
   address_type = "INTERNAL"
-  subnetwork   = local.subnet_id
+  subnetwork   = try(var.subnet_self_links[var.networking_config.subnet], var.networking_config.subnet)
   region       = var.region
 }
 
 resource "google_compute_forwarding_rule" "cloudsql_psc_endpoint" {
   name                  = var.name
-  project               = var.project_config.id
+  project               = var.project_id
   region                = var.region
   target                = module.cloudsql.psc_service_attachment_link
   load_balancing_scheme = ""
-  network               = local.vpc_id
+  network               = try(var.vpc_self_links[var.networking_config.vpc], var.networking_config.vpc)
   ip_address            = google_compute_address.cloudsql_address.id
 }
 
 module "cloudsql" {
   source                        = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/cloudsql-instance?ref=v55.4.0"
-  project_id                    = var.project_config.id
+  project_id                    = var.project_id
   gcp_deletion_protection       = var.enable_deletion_protection
   terraform_deletion_protection = var.enable_deletion_protection
   name                          = var.name
@@ -82,17 +85,17 @@ module "cloudsql" {
   flags                         = var.db_configs.flags
   network_config = {
     connectivity = {
-      psc_allowed_consumer_projects = [var.project_config.id]
+      psc_allowed_consumer_projects = [var.project_id]
     }
   }
   databases = [
     var.name
   ]
   users = {
-    (var.service_accounts["project/gf-rrag-fe-0"].email) = {
+    (var.service_account_emails["service-01/gf-rrag-fe-0"]) = {
       type = "CLOUD_IAM_SERVICE_ACCOUNT"
     }
-    (var.service_accounts["project/gf-rrag-ing-0"].email) = {
+    (var.service_account_emails["service-01/gf-rrag-ing-0"]) = {
       type = "CLOUD_IAM_SERVICE_ACCOUNT"
     }
   }
