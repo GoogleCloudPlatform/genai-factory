@@ -34,26 +34,27 @@ values:
     schedule: '*/30 * * * *'
     time_zone: Etc/UTC
     timeouts: null
-  google_compute_address.address_internal[0]:
+  module.address-ilb[0].google_compute_address.internal["ilb-01"]:
     address_type: INTERNAL
-    description: null
+    description: Terraform managed.
     effective_labels:
       goog-terraform-provisioned: 'true'
     ip_collection: null
     ip_version: null
     ipv6_endpoint_type: null
     labels: null
-    name: gf-rrag-0-internal
+    name: ilb-01
     network: null
     project: prefix-gf-rrag-0
     purpose: SHARED_LOADBALANCER_VIP
     region: europe-west1
+    subnetwork: projects/prj-host-0/regions/europe-west1/subnetworks/sub-0
     terraform_labels:
       goog-terraform-provisioned: 'true'
     timeouts: null
-  google_compute_address.psc_consumer_address:
+  module.psc_consumer_address.google_compute_address.internal["gf-rrag-0"]:
     address_type: INTERNAL
-    description: null
+    description: Terraform managed.
     effective_labels:
       goog-terraform-provisioned: 'true'
     ip_collection: null
@@ -63,7 +64,9 @@ values:
     name: gf-rrag-0
     network: null
     project: prefix-gf-rrag-0
+    purpose: null
     region: europe-west1
+    subnetwork: projects/prj-host-0/regions/europe-west1/subnetworks/sub-0
     terraform_labels:
       goog-terraform-provisioned: 'true'
     timeouts: null
@@ -86,14 +89,14 @@ values:
     service_label: null
     source_ip_ranges: null
     timeouts: null
-  google_compute_global_address.address_external[0]:
+  module.address-ext-glb[0].google_compute_global_address.global["ext-glb-01"]:
     address_type: null
-    description: null
+    description: Terraform managed.
     effective_labels:
       goog-terraform-provisioned: 'true'
     ip_version: null
     labels: null
-    name: gf-rrag-0-external
+    name: gf-rrag-0-ext-glb-01
     network: null
     project: prefix-gf-rrag-0
     purpose: null

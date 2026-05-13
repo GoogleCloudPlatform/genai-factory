@@ -13,6 +13,10 @@
 # limitations under the License.
 
 values:
+  google_service_account_iam_member.me_sa_token_creator[0]:
+    condition: []
+    role: roles/iam.serviceAccountTokenCreator
+    service_account_id: projects/your-prefix-gf-rrag-0/serviceAccounts/iac-rw@your-prefix-gf-rrag-0.iam.gserviceaccount.com
   local_file.providers:
     content_base64: null
     directory_permission: '0777'
@@ -1369,12 +1373,12 @@ counts:
   google_project_service: 17
   google_project_service_identity: 12
   google_service_account: 6
-  google_service_account_iam_member: 5
+  google_service_account_iam_member: 6
   google_storage_bucket: 1
   google_storage_bucket_iam_binding: 2
   local_file: 2
   modules: 15
-  resources: 163
+  resources: 164
   terraform_data: 2
 
 outputs:
