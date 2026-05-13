@@ -14,7 +14,7 @@
 
 module "cloud_run_frontend" {
   source              = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/cloud-run-v2?ref=v55.4.0"
-  project_id          = var.project_config.id
+  project_id          = var.project_id
   type                = "SERVICE"
   name                = "${var.name}-frontend"
   region              = var.region
@@ -22,7 +22,7 @@ module "cloud_run_frontend" {
   managed_revision    = false
   service_account_config = {
     create = false
-    email  = var.service_accounts["project/gf-rrag-fe-0"].email
+    email  = var.service_account_emails["service-01/gf-rrag-fe-0"]
   }
   containers = merge({
     alloydb-proxy = {
@@ -36,13 +36,16 @@ module "cloud_run_frontend" {
     } },
   var.cloud_run_configs.frontend.containers)
   iam = {
-    "roles/run.invoker" = var.cloud_run_configs.frontend.service_invokers
+    "roles/run.invoker" = concat(
+      ["serviceAccount:${var.service_account_emails["service-01/gf-rrag-ing-0"]}"],
+      var.cloud_run_configs.frontend.service_invokers
+    )
   }
   revision = {
     vpc_access = {
       egress  = var.cloud_run_configs.frontend.vpc_access_egress
-      network = local.vpc_id
-      subnet  = local.subnet_id
+      network = var.networking_config.vpc
+      subnet  = var.networking_config.subnet
       tags    = var.cloud_run_configs.frontend.vpc_access_tags
     }
   }
@@ -53,5 +56,10 @@ module "cloud_run_frontend" {
       max_instance_count = var.cloud_run_configs.frontend.max_instance_count
       min_instance_count = var.cloud_run_configs.frontend.min_instance_count
     }
+  }
+  context = {
+    iam_principals = local.iam_principals
+    networks       = var.vpc_self_links
+    subnets        = var.subnet_self_links
   }
 }
