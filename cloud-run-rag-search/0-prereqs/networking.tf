@@ -12,40 +12,31 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-locals {
-  subnet_id = (
-    var.networking_config.create
-    ? module.vpc[0].subnet_ids["${var.region}/${var.networking_config.subnet.name}"]
-    : var.networking_config.subnet.name
-  )
-  vpc_id = (
-    var.networking_config.create
-    ? module.vpc[0].id
-    : var.networking_config.vpc_id
-  )
-}
-
 module "vpc" {
-  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-vpc?ref=v55.4.0"
   count      = var.networking_config.create ? 1 : 0
-  project_id = var.project_config.id
-  name       = var.networking_config.vpc_id
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-vpc?ref=v55.4.0"
+  project_id = module.projects.projects["host"].project_id
+  name       = var.networking_config.vpc_name
   subnets = [
     merge(var.networking_config.subnet, { region = var.region })
   ]
   subnets_proxy_only = [
     merge(var.networking_config.subnet_proxy_only, { region = var.region })
   ]
+  shared_vpc_host = true
+  shared_vpc_service_projects = [
+    module.projects.project_ids["service-01"]
+  ]
 }
 
 # DNS policies for Google APIs
 module "dns_policy_googleapis" {
-  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/dns-response-policy?ref=v55.4.0"
   count      = var.networking_config.create ? 1 : 0
-  project_id = var.project_config.id
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/dns-response-policy?ref=v55.4.0"
+  project_id = module.projects.projects["host"].project_id
   name       = "googleapis"
   factories_config = {
     rules = "./data/dns-policy-rules.yaml"
   }
-  networks = { (var.name) = module.vpc[0].id }
+  networks = { vpc = module.vpc[0].id }
 }

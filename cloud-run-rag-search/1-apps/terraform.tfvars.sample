@@ -6,7 +6,7 @@
 # The domain must exist and point to your LB.
 # ------------------------------------------------------------------------------
 
-lbs_config = {
+lbs_configs = {
   external = {
     domain = "your-public-domain.com"
   }
@@ -26,7 +26,7 @@ lbs_config = {
 # ------------------------------------------------------------------------------
 # To expose Cloud Run directly to the Internet without a Load Balancer:
 # 1. Uncomment the cloud_run_configs block below
-# 2. Optionally, set lbs_config.external.enable = false
+# 2. Optionally, set lbs_configs.external.enable = false
 
 # cloud_run_configs = {
 #   ingress = "INGRESS_TRAFFIC_ALL"

@@ -1,3 +1,5 @@
+---
+
 # Copyright 2026 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,8 +14,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-project_config = {
-  billing_account_id = "billing-acct-id"
-  parent             = "organizations/1122334455"
-  prefix             = "your-prefix"
-}
+name: gf-rrag-src-hp-0
+
+# Enable APIs
+services:
+  - compute.googleapis.com
+  # To create response policies for Private Google APIs
+  - dns.googleapis.com
+
+# Grant roles
+iam_by_principals:
+  $iam_principals:service_accounts/service-01/iac-rw:
+    - roles/compute.networkAdmin
+    - roles/compute.securityAdmin
+    # To create response policies for Private Google APIs
+    - roles/dns.admin
+  # Grant to cloud run service agent for Cloud Run Direct Egress on shared vpc
+  $iam_principals:service_agents/service-01/run:
+    - roles/compute.networkUser

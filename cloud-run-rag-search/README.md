@@ -25,5 +25,5 @@ The deployment includes:
 
 ## Apply the factory
 
-- Enter the [0-projects](0-projects/README.md) folder and follow the instructions to setup your GCP project, service accounts and permissions
+- Enter the [0-prereqs](0-prereqs/README.md) folder and follow the instructions to setup your GCP project, service accounts and permissions
 - Go to the [1-apps](1-apps/README.md) folder and follow the instructions to deploy the components inside the project
