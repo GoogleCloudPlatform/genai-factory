@@ -62,10 +62,3 @@ resource "google_service_account_iam_member" "me_sa_token_creator" {
   role               = "roles/iam.serviceAccountTokenCreator"
   member             = "user:${local.effective_user_identity}"
 }
-
-resource "google_service_account_iam_member" "me_sa_user" {
-  count              = var.enable_iac_sa_impersonation ? 1 : 0
-  service_account_id = module.projects.service_accounts["service-01/iac-rw"].id
-  role               = "roles/iam.serviceAccountUser"
-  member             = "user:${local.effective_user_identity}"
-}
