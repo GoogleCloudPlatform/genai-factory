@@ -14,20 +14,32 @@
 
 name   = "test-agent"
 prefix = "test"
-project_config = {
-  id     = "test-project"
-  number = "123456789"
+
+project_id            = "test-project"
+number                = "123456789"
+region                = "europe-west1"
+network_attachment_id = "projects/test-project/regions/europe-west1/networkAttachments/test-attachment"
+proxy_ip              = "10.0.0.100"
+
+networking_config = {
+  subnet = "test-subnet"
+  vpc    = "test-vpc"
 }
-region = "europe-west1"
-service_accounts = {
-  "project/gf-ae-0" = {
-    email     = "agent@test-project.iam.gserviceaccount.com"
-    iam_email = "serviceAccount:agent@test-project.iam.gserviceaccount.com"
-    id        = "projects/test-project/serviceAccounts/agent@test-project.iam.gserviceaccount.com"
-  }
-  "project/iac-rw" = {
-    email     = "iac-rw@test-project.iam.gserviceaccount.com"
-    iam_email = "serviceAccount:iac-rw@test-project.iam.gserviceaccount.com"
-    id        = "projects/test-project/serviceAccounts/iac-rw@test-project.iam.gserviceaccount.com"
-  }
+
+subnet_self_links = {
+  "test-subnet" = "projects/test-project/regions/europe-west1/subnetworks/test-subnet"
+}
+
+vpc_self_links = {
+  "test-vpc" = "projects/test-project/global/networks/test-vpc"
+}
+
+service_account_emails = {
+  "service-01/gf-ae-01" = "agent@test-project.iam.gserviceaccount.com"
+  "service-01/iac-rw"   = "iac-rw@test-project.iam.gserviceaccount.com"
+}
+
+service_account_ids = {
+  "service-01/gf-ae-01" = "projects/test-project/serviceAccounts/agent@test-project.iam.gserviceaccount.com"
+  "service-01/iac-rw"   = "projects/test-project/serviceAccounts/iac-rw@test-project.iam.gserviceaccount.com"
 }

@@ -12,80 +12,62 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-locals {
-  network_attachment_id = (
-    var.networking_config.create
-    ? google_compute_network_attachment.network_attachment[0].id
-    : var.networking_config.network_attachment_id
-  )
-  subnet_id = (
-    var.networking_config.create
-    ? module.vpc[0].subnet_ids["${var.region}/${var.networking_config.subnet.name}"]
-    : var.networking_config.subnet.name
-  )
-  proxy_ip = (
-    var.networking_config.create
-    ? cidrhost(var.networking_config.subnet.ip_cidr_range, 100)
-    : var.networking_config.proxy_ip
-  )
-  vpc_name = (
-    var.networking_config.create
-    ? module.vpc[0].name
-    : element(split("/", var.networking_config.vpc_id), -1)
-  )
-}
-
 module "vpc" {
-  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-vpc?ref=v55.4.0"
   count      = var.networking_config.create ? 1 : 0
-  project_id = var.project_config.id
-  name       = var.networking_config.vpc_id
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-vpc?ref=v55.4.0"
+  project_id = module.projects.projects["host"].project_id
+  name       = var.networking_config.vpc_name
   subnets = [
     merge(var.networking_config.subnet, { region = var.region })
   ]
   subnets_proxy_only = [
     merge(var.networking_config.subnet_proxy_only, { region = var.region })
   ]
+  shared_vpc_host = true
+  shared_vpc_service_projects = [
+    module.projects.project_ids["service-01"]
+  ]
 }
 
 # DNS policies for Google APIs
 module "dns_policy_googleapis" {
-  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/dns-response-policy?ref=v55.4.0"
   count      = var.networking_config.create ? 1 : 0
-  project_id = var.project_config.id
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/dns-response-policy?ref=v55.4.0"
+  project_id = module.projects.projects["host"].project_id
   name       = "googleapis"
   factories_config = {
     rules = "./data/dns-policy-rules.yaml"
   }
-  networks = { (var.name) = module.vpc[0].id }
+  networks = { vpc = module.vpc[0].id }
 }
 
 # This is a minimal Secure Web Proxy (SWP) setup.
 # An explicit proxy is required for Agent Engines using PSC-I
 # to go to the Internet. You can substitute this with your favorite proxy.
 module "secure-web-proxy" {
-  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-swp"
-  count      = var.networking_config.create ? 1 : 0
-  project_id = var.project_config.id
-  region     = var.region
-  name       = var.name
-  network    = module.vpc[0].id
-  subnetwork = module.vpc[0].subnet_ids["${var.region}/${var.networking_config.subnet.name}"]
+  count        = var.networking_config.create ? 1 : 0
+  source       = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-swp?ref=v55.4.0"
+  project_id   = module.projects.projects["host"].project_id
+  region       = var.region
+  name         = "proxy-0"
+  network      = module.vpc[0].id
+  subnetwork   = module.vpc[0].subnet_ids["${var.region}/${var.networking_config.subnet.name}"]
+  policy_rules = var.networking_config.proxy_config.policy_rules
   gateway_config = {
-    addresses = [local.proxy_ip]
+    addresses = [var.networking_config.proxy_config.ip_address]
+    ports     = [var.networking_config.proxy_config.port]
   }
-  policy_rules = var.proxy_policy_rules
 }
 
 resource "google_compute_network_attachment" "network_attachment" {
   count                 = var.networking_config.create ? 1 : 0
-  name                  = var.name
-  project               = var.project_config.id
+  name                  = var.prefix
+  project               = module.projects.projects["host"].project_id
   region                = var.region
   description           = "Network attachment for Agent Engine PSC-I"
   connection_preference = "ACCEPT_MANUAL"
   subnetworks = [
-    local.subnet_id
+    module.vpc[0].subnet_ids["${var.region}/${var.networking_config.subnet.name}"]
   ]
 
   # Agent Engine SA automatically populates this when PSC-I is active.

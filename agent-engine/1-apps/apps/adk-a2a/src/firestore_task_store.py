@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from typing import Optional
+
 from google.cloud import firestore
 from a2a.server.tasks.task_store import TaskStore
 from a2a.server.context import ServerCallContext
@@ -20,9 +22,11 @@ from a2a.types import Task
 
 class FirestoreTaskStore(TaskStore):
 
-  def __init__(self, project_id: str, collection_name: str = "tasks"):
+  def __init__(self, project_id: str, collection_name: str = "tasks",
+               database: Optional[str] = None):
     self.project_id = project_id
     self.collection_name = collection_name
+    self.database = database
     self._db = None
     self._loop = None
 
@@ -34,7 +38,8 @@ class FirestoreTaskStore(TaskStore):
     except RuntimeError:
       loop = None
     if self._db is None or self._loop != loop:
-      self._db = firestore.AsyncClient(project=self.project_id)
+      self._db = firestore.AsyncClient(project=self.project_id,
+                                       database=self.database)
       self._loop = loop
     return self._db
 

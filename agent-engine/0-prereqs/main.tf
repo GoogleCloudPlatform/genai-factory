@@ -24,7 +24,7 @@ module "projects" {
   data_defaults = {
     billing_account = var.project_config.billing_account_id
     parent          = var.project_config.parent
-    prefix          = var.project_config.prefix
+    prefix          = var.prefix
     bucket = {
       force_destroy = !var.enable_deletion_protection
     }
@@ -34,6 +34,21 @@ module "projects" {
   }
   factories_config = {
     basepath = "./data"
+    exclusions = {
+      projects = var.networking_config.create ? [] : ["host"]
+    }
+    paths = {
+      projects = "projects"
+    }
+  }
+  context = {
+    condition_vars = {
+      networking_config = {
+        host_project_id = var.networking_config.host_project_id
+        region          = var.region
+        subnet_name     = var.networking_config.subnet.name
+      }
+    }
   }
 }
 
@@ -43,7 +58,7 @@ data "google_client_openid_userinfo" "me" {
 
 resource "google_service_account_iam_member" "me_sa_token_creator" {
   count              = var.enable_iac_sa_impersonation ? 1 : 0
-  service_account_id = module.projects.service_accounts["project/iac-rw"].id
+  service_account_id = module.projects.service_accounts["service-01/iac-rw"].id
   role               = "roles/iam.serviceAccountTokenCreator"
   member             = "user:${local.effective_user_identity}"
 }

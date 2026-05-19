@@ -1,11 +1,11 @@
 # Agent Engine / Agent Deployment
 
 This stage is part of `Agent Engine` factory.
-It is responsible for deploying agent engine and other useful infrastructure resources inside the project you created in [0-projects](../0-projects) or in an existing project.
+It is responsible for deploying agent engine and other useful infrastructure resources inside the project you created in [0-prereqs](../0-prereqs) or in an existing project.
 
 ## Deploy the stage
 
-This assumes you have created a project by leveraging the [0-projects](../0-projects) stage.
+This assumes you have created a project by leveraging the [0-prereqs](../0-prereqs) stage.
 
 ```shell
 cp terraform.tfvars.sample terraform.tfvars # Customize if needed
@@ -37,24 +37,29 @@ Alternatively, if you set `managed = true` to fully control the deployment via T
 
 Once you deployed, use the commands output by Terraform to update and test your agents.
 
-## I have not used 0-projects
+## I have not used 0-prereqs
 
-The [0-projects](../0-projects) stage generates the necessary Terraform input files for this stage. If you're not using the [0-projects stage](../0-projects), you'll need to manually add the required variables to your `terraform.tfvars` file, as defined in [variables.tf](./variables.tf).
+The [0-prereqs](../0-prereqs) stage generates the necessary Terraform input files for this stage. If you're not using the [0-prereqs stage](../0-prereqs), you'll need to manually add the required variables to your `terraform.tfvars` file, as defined in [variables.tf](./variables.tf).
 <!-- BEGIN TFDOC -->
 ## Variables
 
 | name | description | type | required | default |
 |---|---|:---:|:---:|:---:|
-| [prefix](variables.tf#L75) | The unique name prefix to be used for all global unique resources. | <code>string</code> | ✓ |  |
-| [project_config](variables.tf#L81) | The project where to create the resources. | <code title="object&#40;&#123;&#10;  id     &#61; string&#10;  number &#61; string&#10;&#125;&#41;">object&#40;&#123;&#8230;&#125;&#41;</code> | ✓ |  |
+| [networking_config](variables.tf#L62) | The networking configuration. Each element is either the id of the resource or the key of the map var.vpc_self_links. | <code title="object&#40;&#123;&#10;  subnet &#61; string&#10;  vpc    &#61; string&#10;&#125;&#41;">object&#40;&#123;&#8230;&#125;&#41;</code> | ✓ |  |
+| [number](variables.tf#L71) | The project number where to create the resources. | <code>string</code> | ✓ |  |
+| [prefix](variables.tf#L77) | The unique name prefix to be used for all global unique resources. | <code>string</code> | ✓ |  |
+| [project_id](variables.tf#L83) | The project ID where to create the resources. | <code>string</code> | ✓ |  |
+| [proxy_config](variables.tf#L89) | The proxy configuration. | <code title="object&#40;&#123;&#10;  ip_address &#61; string&#10;  port       &#61; number&#10;&#125;&#41;">object&#40;&#123;&#8230;&#125;&#41;</code> | ✓ |  |
+| [region](variables.tf#L98) | The GCP region where to deploy the resources. | <code>string</code> | ✓ |  |
+| [service_account_emails](variables.tf#L105) | The service account emails. Each element is the email of the service account or the key of the map var.service_accounts. | <code>map&#40;string&#41;</code> | ✓ |  |
 | [agent_engine_config](variables.tf#L15) | The agent configuration. | <code title="object&#40;&#123;&#10;  agent_framework        &#61; optional&#40;string, &#34;google-adk&#34;&#41;&#10;  class_methods          &#61; optional&#40;string&#41;&#10;  enable_adk_telemetry   &#61; optional&#40;bool, true&#41;&#10;  enable_adk_msg_capture &#61; optional&#40;bool, true&#41;&#10;  enable_psc_i           &#61; optional&#40;bool, true&#41;&#10;  max_instances          &#61; optional&#40;number, 5&#41;&#10;  min_instances          &#61; optional&#40;number, 1&#41;&#10;  python_version         &#61; optional&#40;string, &#34;3.13&#34;&#41;&#10;&#125;&#41;">object&#40;&#123;&#8230;&#125;&#41;</code> |  | <code>&#123;&#125;</code> |
-| [enable_deletion_protection](variables.tf#L31) | Whether deletion protection should be enabled. | <code>bool</code> |  | <code>true</code> |
-| [name](variables.tf#L38) | The name of the agent. | <code>string</code> |  | <code>&#34;agent-0&#34;</code> |
-| [networking_config](variables.tf#L45) | The networking configuration. | <code title="object&#40;&#123;&#10;  create &#61; optional&#40;bool, true&#41;&#10;  dns_peering_configs &#61; optional&#40;map&#40;object&#40;&#123;&#10;    target_network_name &#61; optional&#40;string&#41;&#10;    target_project_id   &#61; optional&#40;string&#41;&#10;    &#125;&#41;&#41;, &#123;&#10;    &#34;.&#34; &#61; &#123;&#125;&#10;  &#125;&#41;&#10;  network_attachment_id &#61; optional&#40;string&#41;&#10;  proxy_ip              &#61; optional&#40;string, &#34;10.0.0.100&#34;&#41;&#10;  proxy_port            &#61; optional&#40;string, &#34;443&#34;&#41;&#10;  subnet &#61; optional&#40;object&#40;&#123;&#10;    ip_cidr_range &#61; optional&#40;string, &#34;10.0.0.0&#47;24&#34;&#41;&#10;    name          &#61; optional&#40;string, &#34;sub-0&#34;&#41;&#10;  &#125;&#41;, &#123;&#125;&#41;&#10;  subnet_proxy_only &#61; optional&#40;object&#40;&#123;&#10;    ip_cidr_range &#61; optional&#40;string, &#34;10.20.0.0&#47;24&#34;&#41;&#10;    name          &#61; optional&#40;string, &#34;proxy-only-sub-0&#34;&#41;&#10;  &#125;&#41;, &#123;&#125;&#41;&#10;  vpc_id &#61; optional&#40;string, &#34;net-0&#34;&#41;&#10;&#125;&#41;">object&#40;&#123;&#8230;&#125;&#41;</code> |  | <code>&#123;&#125;</code> |
-| [proxy_policy_rules](variables.tf#L90) | The Secure Web Proxy policy rules. | <code title="map&#40;object&#40;&#123;&#10;  priority        &#61; number&#10;  session_matcher &#61; string&#10;  allow           &#61; optional&#40;bool, true&#41;&#10;&#125;&#41;&#41;">map&#40;object&#40;&#123;&#8230;&#125;&#41;&#41;</code> |  | <code title="&#123;&#10;  host-0 &#61; &#123;&#10;    priority        &#61; 1000&#10;    allow           &#61; true&#10;    session_matcher &#61; &#34;host&#40;&#41; &#61;&#61; &#39;api.frankfurter.dev&#39;&#34;&#10;  &#125;&#10;&#125;">&#123;&#8230;&#125;</code> |
-| [region](variables.tf#L105) | The GCP region where to deploy the resources. | <code>string</code> |  | <code>&#34;europe-west1&#34;</code> |
-| [service_accounts](variables.tf#L112) | The pre-created service accounts used by the blueprint. | <code title="map&#40;object&#40;&#123;&#10;  email     &#61; string&#10;  iam_email &#61; string&#10;  id        &#61; string&#10;&#125;&#41;&#41;">map&#40;object&#40;&#123;&#8230;&#125;&#41;&#41;</code> |  | <code>&#123;&#125;</code> |
-| [source_config](variables.tf#L122) | The source file configurations. | <code title="object&#40;&#123;&#10;  app_path          &#61; optional&#40;string, &#34;.&#47;apps&#47;adk&#34;&#41;&#10;  entrypoint_module &#61; optional&#40;string, &#34;agent&#34;&#41;&#10;  entrypoint_object &#61; optional&#40;string, &#34;agent&#34;&#41;&#10;  requirements_path &#61; optional&#40;string, &#34;requirements.txt&#34;&#41;&#10;&#125;&#41;">object&#40;&#123;&#8230;&#125;&#41;</code> |  | <code>&#123;&#125;</code> |
+| [dns_peering_configs](variables.tf#L31) | DNS peering configurations for the Agent Engine network. | <code title="map&#40;object&#40;&#123;&#10;  target_network_name &#61; optional&#40;string&#41;&#10;  target_project_id   &#61; optional&#40;string&#41;&#10;&#125;&#41;&#41;">map&#40;object&#40;&#123;&#8230;&#125;&#41;&#41;</code> |  | <code title="&#123;&#10;  &#34;.&#34; &#61; &#123;&#125;&#10;&#125;">&#123;&#8230;&#125;</code> |
+| [enable_deletion_protection](variables.tf#L42) | Whether deletion protection should be enabled. | <code>bool</code> |  | <code>true</code> |
+| [name](variables.tf#L49) | The name of the agent. | <code>string</code> |  | <code>&#34;agent-0&#34;</code> |
+| [network_attachment_id](variables.tf#L56) | The network attachment ID. | <code>string</code> |  | <code>null</code> |
+| [service_accounts](variables-fast.tf#L18) | The service accounts created for this stage. | <code title="map&#40;object&#40;&#123;&#10;  email     &#61; string&#10;  iam_email &#61; string&#10;  id        &#61; string&#10;&#125;&#41;&#41;">map&#40;object&#40;&#123;&#8230;&#125;&#41;&#41;</code> |  | <code>&#123;&#125;</code> |
+| [source_config](variables.tf#L111) | The source file configurations. | <code title="object&#40;&#123;&#10;  app_path          &#61; optional&#40;string, &#34;.&#47;apps&#47;adk&#34;&#41;&#10;  entrypoint_module &#61; optional&#40;string, &#34;agent&#34;&#41;&#10;  entrypoint_object &#61; optional&#40;string, &#34;agent&#34;&#41;&#10;  requirements_path &#61; optional&#40;string, &#34;requirements.txt&#34;&#41;&#10;&#125;&#41;">object&#40;&#123;&#8230;&#125;&#41;</code> |  | <code>&#123;&#125;</code> |
+| [vpc_self_links](variables-fast.tf#L30) | Shared VPC name => self link mappings. | <code>map&#40;string&#41;</code> |  | <code>&#123;&#125;</code> |
 
 ## Outputs
 
