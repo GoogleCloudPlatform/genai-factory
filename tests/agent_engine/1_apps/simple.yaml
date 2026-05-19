@@ -32,6 +32,8 @@ values:
       - env:
         - name: ENABLE_PSC_I
           value: 'true'
+        - name: FIRESTORE_DATABASE
+          value: test-agent
         - name: GOOGLE_CLOUD_AGENT_ENGINE_ENABLE_TELEMETRY
           value: 'true'
         - name: OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT
@@ -49,8 +51,8 @@ values:
         psc_interface_config:
         - dns_peering_configs:
           - domain: .
-            target_network: test-vpc
-            target_project: test-project
+            target_network: net-0
+            target_project: prefix-gf-srun-hp-0
           network_attachment: projects/test-project/regions/europe-west1/networkAttachments/test-attachment
         secret_env: []
       identity_type: SERVICE_ACCOUNT
@@ -72,7 +74,7 @@ values:
     cmek_config: []
     deletion_policy: ABANDON
     location_id: europe-west1
-    name: (default)
+    name: test-agent
     point_in_time_recovery_enablement: POINT_IN_TIME_RECOVERY_DISABLED
     project: test-project
     tags: null

@@ -17,7 +17,6 @@
 network_attachment_id = "${network_attachment_id}"
 
 networking_config = {
-  subnet = "${networking_config.subnet}"
   vpc    = "${networking_config.vpc}"
 }
 
