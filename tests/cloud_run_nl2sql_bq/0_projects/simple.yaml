@@ -12,20 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Copyright 2026 Google LLC
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 values:
   google_service_account_iam_member.me_sa_token_creator[0]:
     condition: []
@@ -50,6 +36,7 @@ values:
     cors: []
     custom_placement_config: []
     default_event_based_hold: null
+    deletion_policy: DELETE
     effective_labels:
       goog-terraform-provisioned: 'true'
     enable_object_retention: null
@@ -329,66 +316,77 @@ values:
     project: your-prefix-gf-nl2sql-bq-0
     role: roles/aiplatform.tuningServiceAgent
   module.projects.module.projects["project"].google_project_service.project_services["aiplatform.googleapis.com"]:
+    deletion_policy: DELETE
     disable_dependent_services: false
     disable_on_destroy: false
     project: your-prefix-gf-nl2sql-bq-0
     service: aiplatform.googleapis.com
     timeouts: null
   module.projects.module.projects["project"].google_project_service.project_services["artifactregistry.googleapis.com"]:
+    deletion_policy: DELETE
     disable_dependent_services: false
     disable_on_destroy: false
     project: your-prefix-gf-nl2sql-bq-0
     service: artifactregistry.googleapis.com
     timeouts: null
   module.projects.module.projects["project"].google_project_service.project_services["bigquery.googleapis.com"]:
+    deletion_policy: DELETE
     disable_dependent_services: false
     disable_on_destroy: false
     project: your-prefix-gf-nl2sql-bq-0
     service: bigquery.googleapis.com
     timeouts: null
   module.projects.module.projects["project"].google_project_service.project_services["certificatemanager.googleapis.com"]:
+    deletion_policy: DELETE
     disable_dependent_services: false
     disable_on_destroy: false
     project: your-prefix-gf-nl2sql-bq-0
     service: certificatemanager.googleapis.com
     timeouts: null
   module.projects.module.projects["project"].google_project_service.project_services["cloudbuild.googleapis.com"]:
+    deletion_policy: DELETE
     disable_dependent_services: false
     disable_on_destroy: false
     project: your-prefix-gf-nl2sql-bq-0
     service: cloudbuild.googleapis.com
     timeouts: null
   module.projects.module.projects["project"].google_project_service.project_services["cloudresourcemanager.googleapis.com"]:
+    deletion_policy: DELETE
     disable_dependent_services: false
     disable_on_destroy: false
     project: your-prefix-gf-nl2sql-bq-0
     service: cloudresourcemanager.googleapis.com
     timeouts: null
   module.projects.module.projects["project"].google_project_service.project_services["cloudscheduler.googleapis.com"]:
+    deletion_policy: DELETE
     disable_dependent_services: false
     disable_on_destroy: false
     project: your-prefix-gf-nl2sql-bq-0
     service: cloudscheduler.googleapis.com
     timeouts: null
   module.projects.module.projects["project"].google_project_service.project_services["compute.googleapis.com"]:
+    deletion_policy: DELETE
     disable_dependent_services: false
     disable_on_destroy: false
     project: your-prefix-gf-nl2sql-bq-0
     service: compute.googleapis.com
     timeouts: null
   module.projects.module.projects["project"].google_project_service.project_services["dns.googleapis.com"]:
+    deletion_policy: DELETE
     disable_dependent_services: false
     disable_on_destroy: false
     project: your-prefix-gf-nl2sql-bq-0
     service: dns.googleapis.com
     timeouts: null
   module.projects.module.projects["project"].google_project_service.project_services["privateca.googleapis.com"]:
+    deletion_policy: DELETE
     disable_dependent_services: false
     disable_on_destroy: false
     project: your-prefix-gf-nl2sql-bq-0
     service: privateca.googleapis.com
     timeouts: null
   module.projects.module.projects["project"].google_project_service.project_services["run.googleapis.com"]:
+    deletion_policy: DELETE
     disable_dependent_services: false
     disable_on_destroy: false
     project: your-prefix-gf-nl2sql-bq-0
@@ -433,6 +431,7 @@ values:
   module.projects.module.service-accounts["project/gf-nl2sql-bq-fe-0"].google_service_account.service_account[0]:
     account_id: gf-nl2sql-bq-fe-0
     create_ignore_already_exists: null
+    deletion_policy: DELETE
     description: null
     disabled: false
     display_name: Terraform-managed.
@@ -443,6 +442,7 @@ values:
   module.projects.module.service-accounts["project/gf-nl2sql-bq-fe-build-0"].google_service_account.service_account[0]:
     account_id: gf-nl2sql-bq-fe-build-0
     create_ignore_already_exists: null
+    deletion_policy: DELETE
     description: null
     disabled: false
     display_name: Terraform-managed.
@@ -453,6 +453,7 @@ values:
   module.projects.module.service-accounts["project/iac-rw"].google_service_account.service_account[0]:
     account_id: iac-rw
     create_ignore_already_exists: null
+    deletion_policy: DELETE
     description: null
     disabled: false
     display_name: Terraform-managed.
