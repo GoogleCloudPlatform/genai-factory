@@ -15,7 +15,7 @@
 values:
   module.agent.google_vertex_ai_reasoning_engine.unmanaged[0]:
     context_spec: []
-    deletion_policy: null
+    deletion_policy: DELETE
     description: Terraform managed.
     display_name: test-agent
     effective_labels:

@@ -652,22 +652,12 @@ values:
     condition: []
     project: your-prefix-gf-srun-hp-0
     role: roles/compute.networkUser
-  module.projects.module.projects-iam["host"].google_project_iam_binding.authoritative["roles/compute.securityAdmin"]:
-    condition: []
-    members:
-    - serviceAccount:iac-rw@your-prefix-gf-srun-0.iam.gserviceaccount.com
-    project: your-prefix-gf-srun-hp-0
-    role: roles/compute.securityAdmin
   module.projects.module.projects-iam["host"].google_project_iam_binding.authoritative["roles/dns.admin"]:
     condition: []
     members:
     - serviceAccount:iac-rw@your-prefix-gf-srun-0.iam.gserviceaccount.com
     project: your-prefix-gf-srun-hp-0
     role: roles/dns.admin
-  ? module.projects.module.projects-iam["host"].google_project_iam_binding.authoritative["roles/privateca.certificateRequester"]
-  : condition: []
-    project: your-prefix-gf-srun-hp-0
-    role: roles/privateca.certificateRequester
   module.projects.module.projects-iam["service-01"].google_org_policy_policy.default["compute.restrictSharedVpcSubnetworks"]:
     dry_run_spec: []
     name: projects/your-prefix-gf-srun-0/policies/compute.restrictSharedVpcSubnetworks
@@ -809,10 +799,6 @@ values:
     terraform_labels:
       goog-terraform-provisioned: 'true'
     timeouts: null
-  module.projects.module.projects["host"].google_project_iam_member.service_agents["certificatemanager"]:
-    condition: []
-    project: your-prefix-gf-srun-hp-0
-    role: roles/certificatemanager.serviceAgent
   module.projects.module.projects["host"].google_project_iam_member.service_agents["compute-system"]:
     condition: []
     project: your-prefix-gf-srun-hp-0
@@ -821,12 +807,6 @@ values:
     condition: []
     project: your-prefix-gf-srun-hp-0
     role: roles/dns.serviceAgent
-  module.projects.module.projects["host"].google_project_service.project_services["certificatemanager.googleapis.com"]:
-    disable_dependent_services: false
-    disable_on_destroy: false
-    project: your-prefix-gf-srun-hp-0
-    service: certificatemanager.googleapis.com
-    timeouts: null
   module.projects.module.projects["host"].google_project_service.project_services["compute.googleapis.com"]:
     disable_dependent_services: false
     disable_on_destroy: false
@@ -839,23 +819,9 @@ values:
     project: your-prefix-gf-srun-hp-0
     service: dns.googleapis.com
     timeouts: null
-  module.projects.module.projects["host"].google_project_service.project_services["privateca.googleapis.com"]:
-    disable_dependent_services: false
-    disable_on_destroy: false
-    project: your-prefix-gf-srun-hp-0
-    service: privateca.googleapis.com
-    timeouts: null
-  module.projects.module.projects["host"].google_project_service_identity.default["certificatemanager.googleapis.com"]:
-    project: your-prefix-gf-srun-hp-0
-    service: certificatemanager.googleapis.com
-    timeouts: null
   module.projects.module.projects["host"].google_project_service_identity.default["dns.googleapis.com"]:
     project: your-prefix-gf-srun-hp-0
     service: dns.googleapis.com
-    timeouts: null
-  module.projects.module.projects["host"].google_project_service_identity.default["privateca.googleapis.com"]:
-    project: your-prefix-gf-srun-hp-0
-    service: privateca.googleapis.com
     timeouts: null
   module.projects.module.projects["service-01"].google_project.project[0]:
     auto_create_network: false
@@ -1215,17 +1181,17 @@ counts:
   google_dns_response_policy_rule: 39
   google_org_policy_policy: 1
   google_project: 2
-  google_project_iam_binding: 22
-  google_project_iam_member: 30
-  google_project_service: 14
-  google_project_service_identity: 9
+  google_project_iam_binding: 20
+  google_project_iam_member: 29
+  google_project_service: 12
+  google_project_service_identity: 7
   google_service_account: 3
   google_service_account_iam_member: 3
   google_storage_bucket: 1
   google_storage_bucket_iam_binding: 2
   local_file: 2
   modules: 12
-  resources: 139
+  resources: 132
   terraform_data: 2
 
 outputs:

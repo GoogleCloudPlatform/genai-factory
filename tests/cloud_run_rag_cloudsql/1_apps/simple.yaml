@@ -549,7 +549,7 @@ values:
     timeouts: null
   module.cloudsql.google_sql_user.users["gf-rrag-fe-0@prefix-gf-rrag-0.iam.gserviceaccount.com"]:
     database_roles: null
-    deletion_policy: null
+    deletion_policy: DELETE
     instance: gf-rrag-0
     name: gf-rrag-fe-0@prefix-gf-rrag-0.iam
     password: null
@@ -561,7 +561,7 @@ values:
     type: CLOUD_IAM_SERVICE_ACCOUNT
   module.cloudsql.google_sql_user.users["gf-rrag-ing-0@prefix-gf-rrag-0.iam.gserviceaccount.com"]:
     database_roles: null
-    deletion_policy: null
+    deletion_policy: DELETE
     instance: gf-rrag-0
     name: gf-rrag-ing-0@prefix-gf-rrag-0.iam
     password: null
