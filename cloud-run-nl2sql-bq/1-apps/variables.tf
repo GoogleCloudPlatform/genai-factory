@@ -102,7 +102,7 @@ variable "name" {
   description = "The name of the resources. This is also the project suffix if a new project is created."
   type        = string
   nullable    = false
-  default     = "gf-nl2sql-bq-0"
+  default     = "nl2sql-0"
 }
 
 variable "networking_config" {
