@@ -16,7 +16,7 @@ values:
   google_service_account_iam_member.me_sa_token_creator[0]:
     condition: []
     role: roles/iam.serviceAccountTokenCreator
-    service_account_id: projects/your-prefix-gf-rrag-all-0/serviceAccounts/iac-rw@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
+    service_account_id: projects/your-prefix-gf-rrag-0/serviceAccounts/iac-rw@your-prefix-gf-rrag-0.iam.gserviceaccount.com
   local_file.providers:
     content_base64: null
     directory_permission: '0777'
@@ -36,7 +36,7 @@ values:
     gke_clusters: []
     networks:
     - {}
-    project: your-prefix-gf-rrag-all-hp-0
+    project: your-prefix-gf-rrag-hp-0
     response_policy_name: googleapis
     timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["accounts"]:
@@ -49,7 +49,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-prefix-gf-rrag-all-hp-0
+    project: your-prefix-gf-rrag-hp-0
     response_policy: googleapis
     rule_name: accounts
     timeouts: null
@@ -63,7 +63,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-prefix-gf-rrag-all-hp-0
+    project: your-prefix-gf-rrag-hp-0
     response_policy: googleapis
     rule_name: aiplatform-notebook-cloud-all
     timeouts: null
@@ -77,7 +77,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-prefix-gf-rrag-all-hp-0
+    project: your-prefix-gf-rrag-hp-0
     response_policy: googleapis
     rule_name: aiplatform-notebook-gu-all
     timeouts: null
@@ -91,7 +91,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-prefix-gf-rrag-all-hp-0
+    project: your-prefix-gf-rrag-hp-0
     response_policy: googleapis
     rule_name: backupdr-cloud
     timeouts: null
@@ -105,7 +105,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-prefix-gf-rrag-all-hp-0
+    project: your-prefix-gf-rrag-hp-0
     response_policy: googleapis
     rule_name: backupdr-cloud-all
     timeouts: null
@@ -119,7 +119,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-prefix-gf-rrag-all-hp-0
+    project: your-prefix-gf-rrag-hp-0
     response_policy: googleapis
     rule_name: backupdr-gu
     timeouts: null
@@ -133,7 +133,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-prefix-gf-rrag-all-hp-0
+    project: your-prefix-gf-rrag-hp-0
     response_policy: googleapis
     rule_name: backupdr-gu-all
     timeouts: null
@@ -147,7 +147,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-prefix-gf-rrag-all-hp-0
+    project: your-prefix-gf-rrag-hp-0
     response_policy: googleapis
     rule_name: cloudfunctions
     timeouts: null
@@ -161,7 +161,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-prefix-gf-rrag-all-hp-0
+    project: your-prefix-gf-rrag-hp-0
     response_policy: googleapis
     rule_name: cloudproxy
     timeouts: null
@@ -175,7 +175,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-prefix-gf-rrag-all-hp-0
+    project: your-prefix-gf-rrag-hp-0
     response_policy: googleapis
     rule_name: composer-cloud-all
     timeouts: null
@@ -189,7 +189,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-prefix-gf-rrag-all-hp-0
+    project: your-prefix-gf-rrag-hp-0
     response_policy: googleapis
     rule_name: composer-gu-all
     timeouts: null
@@ -203,7 +203,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-prefix-gf-rrag-all-hp-0
+    project: your-prefix-gf-rrag-hp-0
     response_policy: googleapis
     rule_name: datafusion-all
     timeouts: null
@@ -217,7 +217,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-prefix-gf-rrag-all-hp-0
+    project: your-prefix-gf-rrag-hp-0
     response_policy: googleapis
     rule_name: datafusion-gu-all
     timeouts: null
@@ -231,7 +231,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-prefix-gf-rrag-all-hp-0
+    project: your-prefix-gf-rrag-hp-0
     response_policy: googleapis
     rule_name: dataproc
     timeouts: null
@@ -245,7 +245,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-prefix-gf-rrag-all-hp-0
+    project: your-prefix-gf-rrag-hp-0
     response_policy: googleapis
     rule_name: dataproc-all
     timeouts: null
@@ -259,7 +259,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-prefix-gf-rrag-all-hp-0
+    project: your-prefix-gf-rrag-hp-0
     response_policy: googleapis
     rule_name: dataproc-gu
     timeouts: null
@@ -273,7 +273,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-prefix-gf-rrag-all-hp-0
+    project: your-prefix-gf-rrag-hp-0
     response_policy: googleapis
     rule_name: dataproc-gu-all
     timeouts: null
@@ -287,7 +287,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-prefix-gf-rrag-all-hp-0
+    project: your-prefix-gf-rrag-hp-0
     response_policy: googleapis
     rule_name: dl
     timeouts: null
@@ -301,7 +301,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-prefix-gf-rrag-all-hp-0
+    project: your-prefix-gf-rrag-hp-0
     response_policy: googleapis
     rule_name: gcr
     timeouts: null
@@ -315,7 +315,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-prefix-gf-rrag-all-hp-0
+    project: your-prefix-gf-rrag-hp-0
     response_policy: googleapis
     rule_name: gcr-all
     timeouts: null
@@ -329,7 +329,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-prefix-gf-rrag-all-hp-0
+    project: your-prefix-gf-rrag-hp-0
     response_policy: googleapis
     rule_name: gke-all
     timeouts: null
@@ -343,7 +343,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-prefix-gf-rrag-all-hp-0
+    project: your-prefix-gf-rrag-hp-0
     response_policy: googleapis
     rule_name: googleapis-all
     timeouts: null
@@ -365,7 +365,7 @@ values:
         - '2600:2d00:2:2000::'
         ttl: null
         type: AAAA
-    project: your-prefix-gf-rrag-all-hp-0
+    project: your-prefix-gf-rrag-hp-0
     response_policy: googleapis
     rule_name: googleapis-private
     timeouts: null
@@ -387,7 +387,7 @@ values:
         - '2600:2d00:2:1000::'
         ttl: null
         type: AAAA
-    project: your-prefix-gf-rrag-all-hp-0
+    project: your-prefix-gf-rrag-hp-0
     response_policy: googleapis
     rule_name: googleapis-restricted
     timeouts: null
@@ -401,7 +401,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-prefix-gf-rrag-all-hp-0
+    project: your-prefix-gf-rrag-hp-0
     response_policy: googleapis
     rule_name: gstatic-all
     timeouts: null
@@ -415,7 +415,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-prefix-gf-rrag-all-hp-0
+    project: your-prefix-gf-rrag-hp-0
     response_policy: googleapis
     rule_name: kernels-gu
     timeouts: null
@@ -429,7 +429,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-prefix-gf-rrag-all-hp-0
+    project: your-prefix-gf-rrag-hp-0
     response_policy: googleapis
     rule_name: kernels-gu-all
     timeouts: null
@@ -443,7 +443,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-prefix-gf-rrag-all-hp-0
+    project: your-prefix-gf-rrag-hp-0
     response_policy: googleapis
     rule_name: ltsapis-all
     timeouts: null
@@ -457,7 +457,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-prefix-gf-rrag-all-hp-0
+    project: your-prefix-gf-rrag-hp-0
     response_policy: googleapis
     rule_name: notebooks-all
     timeouts: null
@@ -471,7 +471,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-prefix-gf-rrag-all-hp-0
+    project: your-prefix-gf-rrag-hp-0
     response_policy: googleapis
     rule_name: notebooks-gu-all
     timeouts: null
@@ -485,7 +485,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-prefix-gf-rrag-all-hp-0
+    project: your-prefix-gf-rrag-hp-0
     response_policy: googleapis
     rule_name: packages-cloud
     timeouts: null
@@ -499,7 +499,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-prefix-gf-rrag-all-hp-0
+    project: your-prefix-gf-rrag-hp-0
     response_policy: googleapis
     rule_name: packages-cloud-all
     timeouts: null
@@ -513,7 +513,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-prefix-gf-rrag-all-hp-0
+    project: your-prefix-gf-rrag-hp-0
     response_policy: googleapis
     rule_name: pkgdev
     timeouts: null
@@ -527,7 +527,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-prefix-gf-rrag-all-hp-0
+    project: your-prefix-gf-rrag-hp-0
     response_policy: googleapis
     rule_name: pkgdev-all
     timeouts: null
@@ -541,7 +541,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-prefix-gf-rrag-all-hp-0
+    project: your-prefix-gf-rrag-hp-0
     response_policy: googleapis
     rule_name: pkigoog
     timeouts: null
@@ -555,7 +555,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-prefix-gf-rrag-all-hp-0
+    project: your-prefix-gf-rrag-hp-0
     response_policy: googleapis
     rule_name: pkigoog-all
     timeouts: null
@@ -569,7 +569,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-prefix-gf-rrag-all-hp-0
+    project: your-prefix-gf-rrag-hp-0
     response_policy: googleapis
     rule_name: run-all
     timeouts: null
@@ -583,7 +583,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-prefix-gf-rrag-all-hp-0
+    project: your-prefix-gf-rrag-hp-0
     response_policy: googleapis
     rule_name: source
     timeouts: null
@@ -597,7 +597,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: your-prefix-gf-rrag-all-hp-0
+    project: your-prefix-gf-rrag-hp-0
     response_policy: googleapis
     rule_name: storage
     timeouts: null
@@ -617,8 +617,8 @@ values:
     lifecycle_rule: []
     location: EUROPE-WEST1
     logging: []
-    name: your-prefix-gf-rrag-all-0-iac-state
-    project: your-prefix-gf-rrag-all-0
+    name: your-prefix-gf-rrag-0-iac-state
+    project: your-prefix-gf-rrag-0
     requester_pays: null
     retention_policy: []
     storage_class: STANDARD
@@ -629,39 +629,39 @@ values:
     versioning:
     - enabled: false
   ? module.projects.module.buckets["service-01/iac-state"].google_storage_bucket_iam_binding.authoritative["roles/storage.objectAdmin"]
-  : bucket: your-prefix-gf-rrag-all-0-iac-state
+  : bucket: your-prefix-gf-rrag-0-iac-state
     condition: []
     members:
-    - serviceAccount:iac-rw@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
+    - serviceAccount:iac-rw@your-prefix-gf-rrag-0.iam.gserviceaccount.com
     role: roles/storage.objectAdmin
     timeouts: null
   ? module.projects.module.buckets["service-01/iac-state"].google_storage_bucket_iam_binding.authoritative["roles/storage.objectViewer"]
-  : bucket: your-prefix-gf-rrag-all-0-iac-state
+  : bucket: your-prefix-gf-rrag-0-iac-state
     condition: []
     members:
-    - serviceAccount:iac-rw@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
+    - serviceAccount:iac-rw@your-prefix-gf-rrag-0.iam.gserviceaccount.com
     role: roles/storage.objectViewer
     timeouts: null
   module.projects.module.projects-iam["host"].google_project_iam_binding.authoritative["roles/compute.networkAdmin"]:
     condition: []
     members:
-    - serviceAccount:iac-rw@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
-    project: your-prefix-gf-rrag-all-hp-0
+    - serviceAccount:iac-rw@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+    project: your-prefix-gf-rrag-hp-0
     role: roles/compute.networkAdmin
   module.projects.module.projects-iam["host"].google_project_iam_binding.authoritative["roles/compute.networkUser"]:
     condition: []
-    project: your-prefix-gf-rrag-all-hp-0
+    project: your-prefix-gf-rrag-hp-0
     role: roles/compute.networkUser
   module.projects.module.projects-iam["host"].google_project_iam_binding.authoritative["roles/dns.admin"]:
     condition: []
     members:
-    - serviceAccount:iac-rw@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
-    project: your-prefix-gf-rrag-all-hp-0
+    - serviceAccount:iac-rw@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+    project: your-prefix-gf-rrag-hp-0
     role: roles/dns.admin
   module.projects.module.projects-iam["service-01"].google_org_policy_policy.default["compute.restrictSharedVpcSubnetworks"]:
     dry_run_spec: []
-    name: projects/your-prefix-gf-rrag-all-0/policies/compute.restrictSharedVpcSubnetworks
-    parent: projects/your-prefix-gf-rrag-all-0
+    name: projects/your-prefix-gf-rrag-0/policies/compute.restrictSharedVpcSubnetworks
+    parent: projects/your-prefix-gf-rrag-0
     spec:
     - inherit_from_parent: null
       reset: null
@@ -673,182 +673,174 @@ values:
         parameters: null
         values:
         - allowed_values:
-          - projects/your-prefix-gf-rrag-all-hp-0/regions/europe-west1/subnetworks/sub-0
+          - projects/your-prefix-gf-rrag-hp-0/regions/europe-west1/subnetworks/sub-0
           denied_values: null
     timeouts: null
-  module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/alloydb.admin"]:
-    condition: []
-    members:
-    - serviceAccount:iac-rw@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
-    project: your-prefix-gf-rrag-all-0
-    role: roles/alloydb.admin
-  module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/alloydb.client"]:
-    condition: []
-    members:
-    - serviceAccount:gf-rrag-fe-0@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
-    - serviceAccount:gf-rrag-ing-0@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
-    project: your-prefix-gf-rrag-all-0
-    role: roles/alloydb.client
-  module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/alloydb.databaseUser"]:
-    condition: []
-    members:
-    - serviceAccount:gf-rrag-fe-0@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
-    - serviceAccount:gf-rrag-ing-0@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
-    project: your-prefix-gf-rrag-all-0
-    role: roles/alloydb.databaseUser
   module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/artifactregistry.admin"]:
     condition: []
     members:
-    - serviceAccount:iac-rw@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
-    project: your-prefix-gf-rrag-all-0
+    - serviceAccount:iac-rw@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+    project: your-prefix-gf-rrag-0
     role: roles/artifactregistry.admin
   ? module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/artifactregistry.writer"]
   : condition: []
     members:
-    - serviceAccount:gf-rrag-fe-build-0@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
-    - serviceAccount:gf-rrag-ing-build-0@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
-    project: your-prefix-gf-rrag-all-0
+    - serviceAccount:gf-rrag-fe-build-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+    - serviceAccount:gf-rrag-ing-build-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+    project: your-prefix-gf-rrag-0
     role: roles/artifactregistry.writer
   module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/bigquery.dataViewer"]:
     condition: []
     members:
-    - serviceAccount:gf-rrag-ing-0@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
-    project: your-prefix-gf-rrag-all-0
+    - serviceAccount:gf-rrag-ing-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+    project: your-prefix-gf-rrag-0
     role: roles/bigquery.dataViewer
   module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/bigquery.jobUser"]:
     condition: []
     members:
-    - serviceAccount:gf-rrag-ing-0@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
-    project: your-prefix-gf-rrag-all-0
+    - serviceAccount:gf-rrag-ing-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+    project: your-prefix-gf-rrag-0
     role: roles/bigquery.jobUser
   module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/bigquery.user"]:
     condition: []
     members:
-    - serviceAccount:iac-rw@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
-    project: your-prefix-gf-rrag-all-0
+    - serviceAccount:iac-rw@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+    project: your-prefix-gf-rrag-0
     role: roles/bigquery.user
   ? module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/certificatemanager.owner"]
   : condition: []
     members:
-    - serviceAccount:iac-rw@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
-    project: your-prefix-gf-rrag-all-0
+    - serviceAccount:iac-rw@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+    project: your-prefix-gf-rrag-0
     role: roles/certificatemanager.owner
   ? module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/cloudbuild.builds.editor"]
   : condition: []
     members:
-    - serviceAccount:gf-rrag-fe-build-0@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
-    - serviceAccount:gf-rrag-ing-build-0@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
-    - serviceAccount:iac-rw@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
-    project: your-prefix-gf-rrag-all-0
+    - serviceAccount:gf-rrag-fe-build-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+    - serviceAccount:gf-rrag-ing-build-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+    - serviceAccount:iac-rw@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+    project: your-prefix-gf-rrag-0
     role: roles/cloudbuild.builds.editor
   module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/cloudscheduler.admin"]:
     condition: []
     members:
-    - serviceAccount:iac-rw@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
-    project: your-prefix-gf-rrag-all-0
+    - serviceAccount:iac-rw@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+    project: your-prefix-gf-rrag-0
     role: roles/cloudscheduler.admin
+  module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/cloudsql.admin"]:
+    condition: []
+    members:
+    - serviceAccount:iac-rw@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+    project: your-prefix-gf-rrag-0
+    role: roles/cloudsql.admin
+  module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/cloudsql.client"]:
+    condition: []
+    members:
+    - serviceAccount:gf-rrag-fe-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+    - serviceAccount:gf-rrag-ing-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+    project: your-prefix-gf-rrag-0
+    role: roles/cloudsql.client
+  module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/cloudsql.instanceUser"]:
+    condition: []
+    members:
+    - serviceAccount:gf-rrag-fe-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+    - serviceAccount:gf-rrag-ing-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+    project: your-prefix-gf-rrag-0
+    role: roles/cloudsql.instanceUser
   ? module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/compute.loadBalancerAdmin"]
   : condition: []
     members:
-    - serviceAccount:iac-rw@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
-    project: your-prefix-gf-rrag-all-0
+    - serviceAccount:iac-rw@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+    project: your-prefix-gf-rrag-0
     role: roles/compute.loadBalancerAdmin
   module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/compute.networkAdmin"]:
     condition: []
     members:
-    - serviceAccount:iac-rw@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
-    project: your-prefix-gf-rrag-all-0
+    - serviceAccount:iac-rw@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+    project: your-prefix-gf-rrag-0
     role: roles/compute.networkAdmin
   module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/compute.securityAdmin"]:
     condition: []
     members:
-    - serviceAccount:iac-rw@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
-    project: your-prefix-gf-rrag-all-0
+    - serviceAccount:iac-rw@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+    project: your-prefix-gf-rrag-0
     role: roles/compute.securityAdmin
   module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/dns.admin"]:
     condition: []
     members:
-    - serviceAccount:iac-rw@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
-    project: your-prefix-gf-rrag-all-0
+    - serviceAccount:iac-rw@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+    project: your-prefix-gf-rrag-0
     role: roles/dns.admin
   module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/logging.logWriter"]:
     condition: []
     members:
-    - serviceAccount:gf-rrag-fe-build-0@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
-    - serviceAccount:gf-rrag-ing-build-0@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
-    project: your-prefix-gf-rrag-all-0
+    - serviceAccount:gf-rrag-fe-build-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+    - serviceAccount:gf-rrag-ing-build-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+    project: your-prefix-gf-rrag-0
     role: roles/logging.logWriter
   module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/privateca.admin"]:
     condition: []
     members:
-    - serviceAccount:iac-rw@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
-    project: your-prefix-gf-rrag-all-0
+    - serviceAccount:iac-rw@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+    project: your-prefix-gf-rrag-0
     role: roles/privateca.admin
   ? module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/privateca.certificateRequester"]
   : condition: []
-    project: your-prefix-gf-rrag-all-0
+    project: your-prefix-gf-rrag-0
     role: roles/privateca.certificateRequester
   module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/run.admin"]:
     condition: []
     members:
-    - serviceAccount:gf-rrag-fe-build-0@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
-    - serviceAccount:gf-rrag-ing-build-0@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
-    - serviceAccount:iac-rw@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
-    project: your-prefix-gf-rrag-all-0
+    - serviceAccount:gf-rrag-fe-build-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+    - serviceAccount:gf-rrag-ing-build-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+    - serviceAccount:iac-rw@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+    project: your-prefix-gf-rrag-0
     role: roles/run.admin
-  module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/secretmanager.admin"]:
-    condition: []
-    members:
-    - serviceAccount:iac-rw@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
-    project: your-prefix-gf-rrag-all-0
-    role: roles/secretmanager.admin
   ? module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/servicedirectory.editor"]
   : condition: []
     members:
-    - serviceAccount:iac-rw@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
-    project: your-prefix-gf-rrag-all-0
+    - serviceAccount:iac-rw@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+    project: your-prefix-gf-rrag-0
     role: roles/servicedirectory.editor
   ? module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/serviceusage.serviceUsageConsumer"]
   : condition: []
     members:
-    - serviceAccount:gf-rrag-fe-0@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
-    - serviceAccount:gf-rrag-ing-0@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
-    - serviceAccount:iac-rw@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
-    project: your-prefix-gf-rrag-all-0
+    - serviceAccount:iac-rw@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+    project: your-prefix-gf-rrag-0
     role: roles/serviceusage.serviceUsageConsumer
   module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/storage.admin"]:
     condition: []
     members:
-    - serviceAccount:gf-rrag-fe-build-0@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
-    - serviceAccount:gf-rrag-ing-build-0@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
-    - serviceAccount:iac-rw@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
-    project: your-prefix-gf-rrag-all-0
+    - serviceAccount:gf-rrag-fe-build-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+    - serviceAccount:gf-rrag-ing-build-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+    - serviceAccount:iac-rw@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+    project: your-prefix-gf-rrag-0
     role: roles/storage.admin
   module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/storage.objectCreator"]:
     condition: []
     members:
-    - serviceAccount:gf-rrag-fe-build-0@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
-    - serviceAccount:gf-rrag-ing-build-0@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
-    - serviceAccount:iac-rw@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
-    project: your-prefix-gf-rrag-all-0
+    - serviceAccount:gf-rrag-fe-build-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+    - serviceAccount:gf-rrag-ing-build-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+    - serviceAccount:iac-rw@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+    project: your-prefix-gf-rrag-0
     role: roles/storage.objectCreator
   module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/storage.objectViewer"]:
     condition: []
     members:
-    - serviceAccount:gf-rrag-fe-build-0@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
-    - serviceAccount:gf-rrag-ing-build-0@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
-    - serviceAccount:iac-rw@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
-    project: your-prefix-gf-rrag-all-0
+    - serviceAccount:gf-rrag-fe-build-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+    - serviceAccount:gf-rrag-ing-build-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+    - serviceAccount:iac-rw@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+    project: your-prefix-gf-rrag-0
     role: roles/storage.objectViewer
   module.projects.module.projects-iam["service-01"].google_project_iam_member.bindings["run_fe_ai_user"]:
     condition: []
-    member: serviceAccount:gf-rrag-fe-0@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
-    project: your-prefix-gf-rrag-all-0
+    member: serviceAccount:gf-rrag-fe-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+    project: your-prefix-gf-rrag-0
     role: roles/aiplatform.user
   module.projects.module.projects-iam["service-01"].google_project_iam_member.bindings["run_ing_ai_user"]:
     condition: []
-    member: serviceAccount:gf-rrag-ing-0@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
-    project: your-prefix-gf-rrag-all-0
+    member: serviceAccount:gf-rrag-ing-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+    project: your-prefix-gf-rrag-0
     role: roles/aiplatform.user
   module.projects.module.projects["host"].google_project.project[0]:
     auto_create_network: false
@@ -858,39 +850,39 @@ values:
       goog-terraform-provisioned: 'true'
     folder_id: null
     labels: null
-    name: your-prefix-gf-rrag-all-hp-0
+    name: your-prefix-gf-rrag-hp-0
     org_id: '1122334455'
-    project_id: your-prefix-gf-rrag-all-hp-0
+    project_id: your-prefix-gf-rrag-hp-0
     tags: null
     terraform_labels:
       goog-terraform-provisioned: 'true'
     timeouts: null
   module.projects.module.projects["host"].google_project_iam_member.service_agents["compute-system"]:
     condition: []
-    project: your-prefix-gf-rrag-all-hp-0
+    project: your-prefix-gf-rrag-hp-0
     role: roles/compute.serviceAgent
   module.projects.module.projects["host"].google_project_iam_member.service_agents["dns"]:
     condition: []
-    project: your-prefix-gf-rrag-all-hp-0
+    project: your-prefix-gf-rrag-hp-0
     role: roles/dns.serviceAgent
   module.projects.module.projects["host"].google_project_service.project_services["compute.googleapis.com"]:
     disable_dependent_services: false
     disable_on_destroy: false
-    project: your-prefix-gf-rrag-all-hp-0
+    project: your-prefix-gf-rrag-hp-0
     service: compute.googleapis.com
     timeouts: null
   module.projects.module.projects["host"].google_project_service.project_services["dns.googleapis.com"]:
     disable_dependent_services: false
     disable_on_destroy: false
-    project: your-prefix-gf-rrag-all-hp-0
+    project: your-prefix-gf-rrag-hp-0
     service: dns.googleapis.com
     timeouts: null
   module.projects.module.projects["host"].google_project_service_identity.default["dns.googleapis.com"]:
-    project: your-prefix-gf-rrag-all-hp-0
+    project: your-prefix-gf-rrag-hp-0
     service: dns.googleapis.com
     timeouts: null
   module.projects.module.projects["service-01"].data.google_bigquery_default_service_account.bq_sa[0]:
-    project: your-prefix-gf-rrag-all-0
+    project: your-prefix-gf-rrag-0
   module.projects.module.projects["service-01"].google_project.project[0]:
     auto_create_network: false
     billing_account: billing-acct-id
@@ -899,272 +891,258 @@ values:
       goog-terraform-provisioned: 'true'
     folder_id: null
     labels: null
-    name: your-prefix-gf-rrag-all-0
+    name: your-prefix-gf-rrag-0
     org_id: '1122334455'
-    project_id: your-prefix-gf-rrag-all-0
+    project_id: your-prefix-gf-rrag-0
     tags: null
     terraform_labels:
       goog-terraform-provisioned: 'true'
     timeouts: null
   module.projects.module.projects["service-01"].google_project_iam_member.service_agents["aiplatform"]:
     condition: []
-    project: your-prefix-gf-rrag-all-0
+    project: your-prefix-gf-rrag-0
     role: roles/aiplatform.serviceAgent
   module.projects.module.projects["service-01"].google_project_iam_member.service_agents["aiplatform-cc"]:
     condition: []
-    project: your-prefix-gf-rrag-all-0
+    project: your-prefix-gf-rrag-0
     role: roles/aiplatform.customCodeServiceAgent
   module.projects.module.projects["service-01"].google_project_iam_member.service_agents["aiplatform-ft"]:
     condition: []
-    project: your-prefix-gf-rrag-all-0
+    project: your-prefix-gf-rrag-0
     role: roles/aiplatform.serviceAgent
   module.projects.module.projects["service-01"].google_project_iam_member.service_agents["aiplatform-pie"]:
     condition: []
-    project: your-prefix-gf-rrag-all-0
+    project: your-prefix-gf-rrag-0
     role: roles/aiplatform.serviceAgent
   module.projects.module.projects["service-01"].google_project_iam_member.service_agents["aiplatform-re"]:
     condition: []
-    project: your-prefix-gf-rrag-all-0
+    project: your-prefix-gf-rrag-0
     role: roles/aiplatform.reasoningEngineServiceAgent
   module.projects.module.projects["service-01"].google_project_iam_member.service_agents["aiplatform-vm"]:
     condition: []
-    project: your-prefix-gf-rrag-all-0
+    project: your-prefix-gf-rrag-0
     role: roles/aiplatform.notebookServiceAgent
-  module.projects.module.projects["service-01"].google_project_iam_member.service_agents["alloydb"]:
-    condition: []
-    project: your-prefix-gf-rrag-all-0
-    role: roles/alloydb.serviceAgent
   module.projects.module.projects["service-01"].google_project_iam_member.service_agents["artifactregistry"]:
     condition: []
-    project: your-prefix-gf-rrag-all-0
+    project: your-prefix-gf-rrag-0
     role: roles/artifactregistry.serviceAgent
   module.projects.module.projects["service-01"].google_project_iam_member.service_agents["certificatemanager"]:
     condition: []
-    project: your-prefix-gf-rrag-all-0
+    project: your-prefix-gf-rrag-0
     role: roles/certificatemanager.serviceAgent
+  module.projects.module.projects["service-01"].google_project_iam_member.service_agents["cloud-sql"]:
+    condition: []
+    project: your-prefix-gf-rrag-0
+    role: roles/cloudsql.serviceAgent
   module.projects.module.projects["service-01"].google_project_iam_member.service_agents["cloudbuild"]:
     condition: []
-    project: your-prefix-gf-rrag-all-0
+    project: your-prefix-gf-rrag-0
     role: roles/cloudbuild.serviceAgent
   module.projects.module.projects["service-01"].google_project_iam_member.service_agents["cloudbuild-sa"]:
     condition: []
-    project: your-prefix-gf-rrag-all-0
+    project: your-prefix-gf-rrag-0
     role: roles/cloudbuild.builds.builder
   module.projects.module.projects["service-01"].google_project_iam_member.service_agents["cloudscheduler"]:
     condition: []
-    project: your-prefix-gf-rrag-all-0
+    project: your-prefix-gf-rrag-0
     role: roles/cloudscheduler.serviceAgent
   module.projects.module.projects["service-01"].google_project_iam_member.service_agents["compute-system"]:
     condition: []
-    project: your-prefix-gf-rrag-all-0
+    project: your-prefix-gf-rrag-0
     role: roles/compute.serviceAgent
   module.projects.module.projects["service-01"].google_project_iam_member.service_agents["dns"]:
     condition: []
-    project: your-prefix-gf-rrag-all-0
+    project: your-prefix-gf-rrag-0
     role: roles/dns.serviceAgent
   module.projects.module.projects["service-01"].google_project_iam_member.service_agents["serverless-robot-prod"]:
     condition: []
-    project: your-prefix-gf-rrag-all-0
+    project: your-prefix-gf-rrag-0
     role: roles/run.serviceAgent
-  module.projects.module.projects["service-01"].google_project_iam_member.service_agents["service-networking"]:
-    condition: []
-    project: your-prefix-gf-rrag-all-0
-    role: roles/servicenetworking.serviceAgent
   module.projects.module.projects["service-01"].google_project_iam_member.service_agents["vertex-bp"]:
     condition: []
-    project: your-prefix-gf-rrag-all-0
+    project: your-prefix-gf-rrag-0
     role: roles/aiplatform.batchPredictionServiceAgent
   module.projects.module.projects["service-01"].google_project_iam_member.service_agents["vertex-eval"]:
     condition: []
-    project: your-prefix-gf-rrag-all-0
+    project: your-prefix-gf-rrag-0
     role: roles/aiplatform.rapidevalServiceAgent
   module.projects.module.projects["service-01"].google_project_iam_member.service_agents["vertex-ex"]:
     condition: []
-    project: your-prefix-gf-rrag-all-0
+    project: your-prefix-gf-rrag-0
     role: roles/aiplatform.extensionServiceAgent
   module.projects.module.projects["service-01"].google_project_iam_member.service_agents["vertex-ex-cc"]:
     condition: []
-    project: your-prefix-gf-rrag-all-0
+    project: your-prefix-gf-rrag-0
     role: roles/aiplatform.extensionCustomCodeServiceAgent
   module.projects.module.projects["service-01"].google_project_iam_member.service_agents["vertex-mm"]:
     condition: []
-    project: your-prefix-gf-rrag-all-0
+    project: your-prefix-gf-rrag-0
     role: roles/aiplatform.modelMonitoringServiceAgent
   module.projects.module.projects["service-01"].google_project_iam_member.service_agents["vertex-moss-ft"]:
     condition: []
-    project: your-prefix-gf-rrag-all-0
+    project: your-prefix-gf-rrag-0
     role: roles/aiplatform.tuningServiceAgent
   module.projects.module.projects["service-01"].google_project_iam_member.service_agents["vertex-nb"]:
     condition: []
-    project: your-prefix-gf-rrag-all-0
+    project: your-prefix-gf-rrag-0
     role: roles/aiplatform.colabServiceAgent
   module.projects.module.projects["service-01"].google_project_iam_member.service_agents["vertex-op"]:
     condition: []
-    project: your-prefix-gf-rrag-all-0
+    project: your-prefix-gf-rrag-0
     role: roles/aiplatform.onlinePredictionServiceAgent
   module.projects.module.projects["service-01"].google_project_iam_member.service_agents["vertex-rag"]:
     condition: []
-    project: your-prefix-gf-rrag-all-0
+    project: your-prefix-gf-rrag-0
     role: roles/aiplatform.ragServiceAgent
   module.projects.module.projects["service-01"].google_project_iam_member.service_agents["vertex-sandbox"]:
     condition: []
-    project: your-prefix-gf-rrag-all-0
+    project: your-prefix-gf-rrag-0
     role: roles/aiplatform.agentSandboxServiceAgent
   module.projects.module.projects["service-01"].google_project_iam_member.service_agents["vertex-shtune"]:
     condition: []
-    project: your-prefix-gf-rrag-all-0
+    project: your-prefix-gf-rrag-0
     role: roles/aiplatform.user
   module.projects.module.projects["service-01"].google_project_iam_member.service_agents["vertex-telemetry"]:
     condition: []
-    project: your-prefix-gf-rrag-all-0
+    project: your-prefix-gf-rrag-0
     role: roles/aiplatform.telemetryServiceAgent
   module.projects.module.projects["service-01"].google_project_iam_member.service_agents["vertex-tune"]:
     condition: []
-    project: your-prefix-gf-rrag-all-0
+    project: your-prefix-gf-rrag-0
     role: roles/aiplatform.tuningServiceAgent
   module.projects.module.projects["service-01"].google_project_service.project_services["aiplatform.googleapis.com"]:
     disable_dependent_services: false
     disable_on_destroy: false
-    project: your-prefix-gf-rrag-all-0
+    project: your-prefix-gf-rrag-0
     service: aiplatform.googleapis.com
-    timeouts: null
-  module.projects.module.projects["service-01"].google_project_service.project_services["alloydb.googleapis.com"]:
-    disable_dependent_services: false
-    disable_on_destroy: false
-    project: your-prefix-gf-rrag-all-0
-    service: alloydb.googleapis.com
     timeouts: null
   module.projects.module.projects["service-01"].google_project_service.project_services["artifactregistry.googleapis.com"]:
     disable_dependent_services: false
     disable_on_destroy: false
-    project: your-prefix-gf-rrag-all-0
+    project: your-prefix-gf-rrag-0
     service: artifactregistry.googleapis.com
     timeouts: null
   module.projects.module.projects["service-01"].google_project_service.project_services["bigquery.googleapis.com"]:
     disable_dependent_services: false
     disable_on_destroy: false
-    project: your-prefix-gf-rrag-all-0
+    project: your-prefix-gf-rrag-0
     service: bigquery.googleapis.com
     timeouts: null
   module.projects.module.projects["service-01"].google_project_service.project_services["certificatemanager.googleapis.com"]:
     disable_dependent_services: false
     disable_on_destroy: false
-    project: your-prefix-gf-rrag-all-0
+    project: your-prefix-gf-rrag-0
     service: certificatemanager.googleapis.com
     timeouts: null
   module.projects.module.projects["service-01"].google_project_service.project_services["cloudbuild.googleapis.com"]:
     disable_dependent_services: false
     disable_on_destroy: false
-    project: your-prefix-gf-rrag-all-0
+    project: your-prefix-gf-rrag-0
     service: cloudbuild.googleapis.com
     timeouts: null
   ? module.projects.module.projects["service-01"].google_project_service.project_services["cloudresourcemanager.googleapis.com"]
   : disable_dependent_services: false
     disable_on_destroy: false
-    project: your-prefix-gf-rrag-all-0
+    project: your-prefix-gf-rrag-0
     service: cloudresourcemanager.googleapis.com
     timeouts: null
   module.projects.module.projects["service-01"].google_project_service.project_services["cloudscheduler.googleapis.com"]:
     disable_dependent_services: false
     disable_on_destroy: false
-    project: your-prefix-gf-rrag-all-0
+    project: your-prefix-gf-rrag-0
     service: cloudscheduler.googleapis.com
     timeouts: null
   module.projects.module.projects["service-01"].google_project_service.project_services["compute.googleapis.com"]:
     disable_dependent_services: false
     disable_on_destroy: false
-    project: your-prefix-gf-rrag-all-0
+    project: your-prefix-gf-rrag-0
     service: compute.googleapis.com
     timeouts: null
   module.projects.module.projects["service-01"].google_project_service.project_services["dns.googleapis.com"]:
     disable_dependent_services: false
     disable_on_destroy: false
-    project: your-prefix-gf-rrag-all-0
+    project: your-prefix-gf-rrag-0
     service: dns.googleapis.com
     timeouts: null
   module.projects.module.projects["service-01"].google_project_service.project_services["privateca.googleapis.com"]:
     disable_dependent_services: false
     disable_on_destroy: false
-    project: your-prefix-gf-rrag-all-0
+    project: your-prefix-gf-rrag-0
     service: privateca.googleapis.com
     timeouts: null
   module.projects.module.projects["service-01"].google_project_service.project_services["run.googleapis.com"]:
     disable_dependent_services: false
     disable_on_destroy: false
-    project: your-prefix-gf-rrag-all-0
+    project: your-prefix-gf-rrag-0
     service: run.googleapis.com
     timeouts: null
-  module.projects.module.projects["service-01"].google_project_service.project_services["servicenetworking.googleapis.com"]:
+  module.projects.module.projects["service-01"].google_project_service.project_services["sqladmin.googleapis.com"]:
     disable_dependent_services: false
     disable_on_destroy: false
-    project: your-prefix-gf-rrag-all-0
-    service: servicenetworking.googleapis.com
+    project: your-prefix-gf-rrag-0
+    service: sqladmin.googleapis.com
     timeouts: null
   module.projects.module.projects["service-01"].google_project_service_identity.default["aiplatform.googleapis.com"]:
-    project: your-prefix-gf-rrag-all-0
+    project: your-prefix-gf-rrag-0
     service: aiplatform.googleapis.com
     timeouts: null
-  module.projects.module.projects["service-01"].google_project_service_identity.default["alloydb.googleapis.com"]:
-    project: your-prefix-gf-rrag-all-0
-    service: alloydb.googleapis.com
-    timeouts: null
   module.projects.module.projects["service-01"].google_project_service_identity.default["artifactregistry.googleapis.com"]:
-    project: your-prefix-gf-rrag-all-0
+    project: your-prefix-gf-rrag-0
     service: artifactregistry.googleapis.com
     timeouts: null
   module.projects.module.projects["service-01"].google_project_service_identity.default["certificatemanager.googleapis.com"]:
-    project: your-prefix-gf-rrag-all-0
+    project: your-prefix-gf-rrag-0
     service: certificatemanager.googleapis.com
     timeouts: null
   module.projects.module.projects["service-01"].google_project_service_identity.default["cloudscheduler.googleapis.com"]:
-    project: your-prefix-gf-rrag-all-0
+    project: your-prefix-gf-rrag-0
     service: cloudscheduler.googleapis.com
     timeouts: null
   module.projects.module.projects["service-01"].google_project_service_identity.default["dns.googleapis.com"]:
-    project: your-prefix-gf-rrag-all-0
+    project: your-prefix-gf-rrag-0
     service: dns.googleapis.com
     timeouts: null
   module.projects.module.projects["service-01"].google_project_service_identity.default["privateca.googleapis.com"]:
-    project: your-prefix-gf-rrag-all-0
+    project: your-prefix-gf-rrag-0
     service: privateca.googleapis.com
     timeouts: null
   module.projects.module.projects["service-01"].google_project_service_identity.default["run.googleapis.com"]:
-    project: your-prefix-gf-rrag-all-0
+    project: your-prefix-gf-rrag-0
     service: run.googleapis.com
     timeouts: null
-  module.projects.module.projects["service-01"].google_project_service_identity.default["servicenetworking.googleapis.com"]:
-    project: your-prefix-gf-rrag-all-0
-    service: servicenetworking.googleapis.com
+  module.projects.module.projects["service-01"].google_project_service_identity.default["sqladmin.googleapis.com"]:
+    project: your-prefix-gf-rrag-0
+    service: sqladmin.googleapis.com
     timeouts: null
   ? module.projects.module.service-accounts-iam["service-01/iac-rw"].google_service_account_iam_member.additive["$service_account_ids:service-01/gf-rrag-fe-0-roles/iam.serviceAccountUser"]
   : condition: []
     role: roles/iam.serviceAccountUser
-    service_account_id: projects/your-prefix-gf-rrag-all-0/serviceAccounts/gf-rrag-fe-0@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
+    service_account_id: projects/your-prefix-gf-rrag-0/serviceAccounts/gf-rrag-fe-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
   ? module.projects.module.service-accounts-iam["service-01/iac-rw"].google_service_account_iam_member.additive["$service_account_ids:service-01/gf-rrag-fe-build-0-roles/iam.serviceAccountUser"]
   : condition: []
     role: roles/iam.serviceAccountUser
-    service_account_id: projects/your-prefix-gf-rrag-all-0/serviceAccounts/gf-rrag-fe-build-0@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
+    service_account_id: projects/your-prefix-gf-rrag-0/serviceAccounts/gf-rrag-fe-build-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
   ? module.projects.module.service-accounts-iam["service-01/iac-rw"].google_service_account_iam_member.additive["$service_account_ids:service-01/gf-rrag-ing-0-roles/iam.serviceAccountUser"]
   : condition: []
     role: roles/iam.serviceAccountUser
-    service_account_id: projects/your-prefix-gf-rrag-all-0/serviceAccounts/gf-rrag-ing-0@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
+    service_account_id: projects/your-prefix-gf-rrag-0/serviceAccounts/gf-rrag-ing-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
   ? module.projects.module.service-accounts-iam["service-01/iac-rw"].google_service_account_iam_member.additive["$service_account_ids:service-01/gf-rrag-ing-build-0-roles/iam.serviceAccountUser"]
   : condition: []
     role: roles/iam.serviceAccountUser
-    service_account_id: projects/your-prefix-gf-rrag-all-0/serviceAccounts/gf-rrag-ing-build-0@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
+    service_account_id: projects/your-prefix-gf-rrag-0/serviceAccounts/gf-rrag-ing-build-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
   ? module.projects.module.service-accounts-iam["service-01/iac-rw"].google_service_account_iam_member.additive["$service_account_ids:service-01/gf-rrag-ing-sched-0-roles/iam.serviceAccountUser"]
   : condition: []
     role: roles/iam.serviceAccountUser
-    service_account_id: projects/your-prefix-gf-rrag-all-0/serviceAccounts/gf-rrag-ing-sched-0@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
+    service_account_id: projects/your-prefix-gf-rrag-0/serviceAccounts/gf-rrag-ing-sched-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
   module.projects.module.service-accounts["service-01/gf-rrag-fe-0"].google_service_account.service_account[0]:
     account_id: gf-rrag-fe-0
     create_ignore_already_exists: null
     description: null
     disabled: false
     display_name: Terraform-managed.
-    email: gf-rrag-fe-0@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
-    member: serviceAccount:gf-rrag-fe-0@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
-    project: your-prefix-gf-rrag-all-0
+    email: gf-rrag-fe-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+    member: serviceAccount:gf-rrag-fe-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+    project: your-prefix-gf-rrag-0
     timeouts: null
   module.projects.module.service-accounts["service-01/gf-rrag-fe-build-0"].google_service_account.service_account[0]:
     account_id: gf-rrag-fe-build-0
@@ -1172,9 +1150,9 @@ values:
     description: null
     disabled: false
     display_name: Terraform-managed.
-    email: gf-rrag-fe-build-0@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
-    member: serviceAccount:gf-rrag-fe-build-0@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
-    project: your-prefix-gf-rrag-all-0
+    email: gf-rrag-fe-build-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+    member: serviceAccount:gf-rrag-fe-build-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+    project: your-prefix-gf-rrag-0
     timeouts: null
   module.projects.module.service-accounts["service-01/gf-rrag-ing-0"].google_service_account.service_account[0]:
     account_id: gf-rrag-ing-0
@@ -1182,9 +1160,9 @@ values:
     description: null
     disabled: false
     display_name: Terraform-managed.
-    email: gf-rrag-ing-0@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
-    member: serviceAccount:gf-rrag-ing-0@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
-    project: your-prefix-gf-rrag-all-0
+    email: gf-rrag-ing-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+    member: serviceAccount:gf-rrag-ing-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+    project: your-prefix-gf-rrag-0
     timeouts: null
   module.projects.module.service-accounts["service-01/gf-rrag-ing-build-0"].google_service_account.service_account[0]:
     account_id: gf-rrag-ing-build-0
@@ -1192,9 +1170,9 @@ values:
     description: null
     disabled: false
     display_name: Terraform-managed.
-    email: gf-rrag-ing-build-0@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
-    member: serviceAccount:gf-rrag-ing-build-0@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
-    project: your-prefix-gf-rrag-all-0
+    email: gf-rrag-ing-build-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+    member: serviceAccount:gf-rrag-ing-build-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+    project: your-prefix-gf-rrag-0
     timeouts: null
   module.projects.module.service-accounts["service-01/gf-rrag-ing-sched-0"].google_service_account.service_account[0]:
     account_id: gf-rrag-ing-sched-0
@@ -1202,9 +1180,9 @@ values:
     description: null
     disabled: false
     display_name: Terraform-managed.
-    email: gf-rrag-ing-sched-0@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
-    member: serviceAccount:gf-rrag-ing-sched-0@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
-    project: your-prefix-gf-rrag-all-0
+    email: gf-rrag-ing-sched-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+    member: serviceAccount:gf-rrag-ing-sched-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+    project: your-prefix-gf-rrag-0
     timeouts: null
   module.projects.module.service-accounts["service-01/iac-rw"].google_service_account.service_account[0]:
     account_id: iac-rw
@@ -1212,9 +1190,9 @@ values:
     description: null
     disabled: false
     display_name: Terraform-managed.
-    email: iac-rw@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
-    member: serviceAccount:iac-rw@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
-    project: your-prefix-gf-rrag-all-0
+    email: iac-rw@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+    member: serviceAccount:iac-rw@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+    project: your-prefix-gf-rrag-0
     timeouts: null
   module.projects.terraform_data.defaults_preconditions:
     input: null
@@ -1234,7 +1212,7 @@ values:
     network_firewall_policy_enforcement_order: AFTER_CLASSIC_FIREWALL
     network_profile: null
     params: []
-    project: your-prefix-gf-rrag-all-hp-0
+    project: your-prefix-gf-rrag-hp-0
     routing_mode: GLOBAL
     timeouts: null
   module.vpc[0].google_compute_route.gateway["directpath-googleapis"]:
@@ -1248,7 +1226,7 @@ values:
     next_hop_vpn_tunnel: null
     params: []
     priority: 1000
-    project: your-prefix-gf-rrag-all-hp-0
+    project: your-prefix-gf-rrag-hp-0
     tags: null
     timeouts: null
   module.vpc[0].google_compute_route.gateway["private-googleapis"]:
@@ -1262,7 +1240,7 @@ values:
     next_hop_vpn_tunnel: null
     params: []
     priority: 1000
-    project: your-prefix-gf-rrag-all-hp-0
+    project: your-prefix-gf-rrag-hp-0
     tags: null
     timeouts: null
   module.vpc[0].google_compute_route.gateway["restricted-googleapis"]:
@@ -1276,16 +1254,16 @@ values:
     next_hop_vpn_tunnel: null
     params: []
     priority: 1000
-    project: your-prefix-gf-rrag-all-hp-0
+    project: your-prefix-gf-rrag-hp-0
     tags: null
     timeouts: null
   module.vpc[0].google_compute_shared_vpc_host_project.shared_vpc_host[0]:
-    project: your-prefix-gf-rrag-all-hp-0
+    project: your-prefix-gf-rrag-hp-0
     timeouts: null
-  module.vpc[0].google_compute_shared_vpc_service_project.service_projects["your-prefix-gf-rrag-all-0"]:
+  module.vpc[0].google_compute_shared_vpc_service_project.service_projects["your-prefix-gf-rrag-0"]:
     deletion_policy: null
-    host_project: your-prefix-gf-rrag-all-hp-0
-    service_project: your-prefix-gf-rrag-all-0
+    host_project: your-prefix-gf-rrag-hp-0
+    service_project: your-prefix-gf-rrag-0
     timeouts: null
   module.vpc[0].google_compute_subnetwork.proxy_only["europe-west1/proxy-only-sub-0"]:
     description: Terraform-managed proxy-only subnet for Regional HTTPS, Internal
@@ -1297,7 +1275,7 @@ values:
     name: proxy-only-sub-0
     network: net-0
     params: []
-    project: your-prefix-gf-rrag-all-hp-0
+    project: your-prefix-gf-rrag-hp-0
     purpose: REGIONAL_MANAGED_PROXY
     region: europe-west1
     reserved_internal_range: null
@@ -1315,7 +1293,7 @@ values:
     network: net-0
     params: []
     private_ip_google_access: true
-    project: your-prefix-gf-rrag-all-hp-0
+    project: your-prefix-gf-rrag-hp-0
     region: europe-west1
     reserved_internal_range: null
     resolve_subnet_mask: null
@@ -1334,47 +1312,47 @@ counts:
   google_dns_response_policy_rule: 39
   google_org_policy_policy: 1
   google_project: 2
-  google_project_iam_binding: 28
-  google_project_iam_member: 33
-  google_project_service: 15
-  google_project_service_identity: 10
+  google_project_iam_binding: 27
+  google_project_iam_member: 32
+  google_project_service: 14
+  google_project_service_identity: 9
   google_service_account: 6
   google_service_account_iam_member: 6
   google_storage_bucket: 1
   google_storage_bucket_iam_binding: 2
   local_file: 2
   modules: 15
-  resources: 157
+  resources: 153
   terraform_data: 2
 
 outputs:
   buckets:
-    service-01/iac-state: your-prefix-gf-rrag-all-0-iac-state
+    service-01/iac-state: your-prefix-gf-rrag-0-iac-state
   networking_config: __missing__
   projects: __missing__
   region: europe-west1
   service_accounts:
     service-01/gf-rrag-fe-0:
-      email: gf-rrag-fe-0@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
-      iam_email: serviceAccount:gf-rrag-fe-0@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
-      id: projects/your-prefix-gf-rrag-all-0/serviceAccounts/gf-rrag-fe-0@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
+      email: gf-rrag-fe-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+      iam_email: serviceAccount:gf-rrag-fe-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+      id: projects/your-prefix-gf-rrag-0/serviceAccounts/gf-rrag-fe-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
     service-01/gf-rrag-fe-build-0:
-      email: gf-rrag-fe-build-0@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
-      iam_email: serviceAccount:gf-rrag-fe-build-0@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
-      id: projects/your-prefix-gf-rrag-all-0/serviceAccounts/gf-rrag-fe-build-0@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
+      email: gf-rrag-fe-build-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+      iam_email: serviceAccount:gf-rrag-fe-build-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+      id: projects/your-prefix-gf-rrag-0/serviceAccounts/gf-rrag-fe-build-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
     service-01/gf-rrag-ing-0:
-      email: gf-rrag-ing-0@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
-      iam_email: serviceAccount:gf-rrag-ing-0@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
-      id: projects/your-prefix-gf-rrag-all-0/serviceAccounts/gf-rrag-ing-0@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
+      email: gf-rrag-ing-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+      iam_email: serviceAccount:gf-rrag-ing-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+      id: projects/your-prefix-gf-rrag-0/serviceAccounts/gf-rrag-ing-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
     service-01/gf-rrag-ing-build-0:
-      email: gf-rrag-ing-build-0@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
-      iam_email: serviceAccount:gf-rrag-ing-build-0@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
-      id: projects/your-prefix-gf-rrag-all-0/serviceAccounts/gf-rrag-ing-build-0@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
+      email: gf-rrag-ing-build-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+      iam_email: serviceAccount:gf-rrag-ing-build-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+      id: projects/your-prefix-gf-rrag-0/serviceAccounts/gf-rrag-ing-build-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
     service-01/gf-rrag-ing-sched-0:
-      email: gf-rrag-ing-sched-0@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
-      iam_email: serviceAccount:gf-rrag-ing-sched-0@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
-      id: projects/your-prefix-gf-rrag-all-0/serviceAccounts/gf-rrag-ing-sched-0@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
+      email: gf-rrag-ing-sched-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+      iam_email: serviceAccount:gf-rrag-ing-sched-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+      id: projects/your-prefix-gf-rrag-0/serviceAccounts/gf-rrag-ing-sched-0@your-prefix-gf-rrag-0.iam.gserviceaccount.com
     service-01/iac-rw:
-      email: iac-rw@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
-      iam_email: serviceAccount:iac-rw@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
-      id: projects/your-prefix-gf-rrag-all-0/serviceAccounts/iac-rw@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
+      email: iac-rw@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+      iam_email: serviceAccount:iac-rw@your-prefix-gf-rrag-0.iam.gserviceaccount.com
+      id: projects/your-prefix-gf-rrag-0/serviceAccounts/iac-rw@your-prefix-gf-rrag-0.iam.gserviceaccount.com

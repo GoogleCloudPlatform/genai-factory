@@ -16,4 +16,5 @@
 
 module: cloud-run-rag-search/0-prereqs
 tests:
+  no_host_prj:
   simple:

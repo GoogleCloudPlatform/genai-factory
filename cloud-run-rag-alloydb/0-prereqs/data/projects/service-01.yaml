@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: gf-rrag-0
+name: gf-rrag-all-0
 
 # Enable APIs
 services:

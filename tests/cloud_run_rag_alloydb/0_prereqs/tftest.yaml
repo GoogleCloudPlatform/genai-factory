@@ -15,4 +15,5 @@
 module: cloud-run-rag-alloydb/0-prereqs
 
 tests:
+  no_host_prj:
   simple:

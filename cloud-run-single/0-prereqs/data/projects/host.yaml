@@ -21,9 +21,6 @@ services:
   - compute.googleapis.com
   # To create response policies for Private Google APIs
   - dns.googleapis.com
-  # To create CAS and certificates for private ILBs
-  - certificatemanager.googleapis.com
-  - privateca.googleapis.com
 
 # Grant roles
 iam:
@@ -32,7 +29,6 @@ iam:
 iam_by_principals:
   $iam_principals:service_accounts/service-01/iac-rw:
     - roles/compute.networkAdmin
-    - roles/compute.securityAdmin
     # To create response policies for Private Google APIs
     - roles/dns.admin
   # Grant to cloud run service agent for Cloud Run Direct Egress on shared vpc

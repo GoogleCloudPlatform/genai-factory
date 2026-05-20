@@ -658,6 +658,12 @@ values:
     - serviceAccount:iac-rw@your-prefix-gf-srun-0.iam.gserviceaccount.com
     project: your-prefix-gf-srun-hp-0
     role: roles/dns.admin
+  ? module.projects.module.projects-iam["host"].google_project_iam_binding.authoritative["roles/privateca.certificateRequester"]
+  : condition: []
+    members:
+    - $service_agents:certificatemanager
+    project: your-prefix-gf-srun-hp-0
+    role: roles/privateca.certificateRequester
   module.projects.module.projects-iam["service-01"].google_org_policy_policy.default["compute.restrictSharedVpcSubnetworks"]:
     dry_run_spec: []
     name: projects/your-prefix-gf-srun-0/policies/compute.restrictSharedVpcSubnetworks
@@ -1181,7 +1187,7 @@ counts:
   google_dns_response_policy_rule: 39
   google_org_policy_policy: 1
   google_project: 2
-  google_project_iam_binding: 20
+  google_project_iam_binding: 21
   google_project_iam_member: 29
   google_project_service: 12
   google_project_service_identity: 7
@@ -1191,7 +1197,7 @@ counts:
   google_storage_bucket_iam_binding: 2
   local_file: 2
   modules: 12
-  resources: 132
+  resources: 133
   terraform_data: 2
 
 outputs:
