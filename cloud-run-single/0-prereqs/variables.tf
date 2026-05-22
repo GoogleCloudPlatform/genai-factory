@@ -20,9 +20,34 @@ variable "enable_deletion_protection" {
 }
 
 variable "enable_iac_sa_impersonation" {
-  description = "Whether the user running this module should be granted serviceAccountTokenCreator on the automation service account."
+  description = "Whether the user running this module should be granted serviceAccountTokenCreator on the IaC service account."
   type        = bool
   default     = true
+}
+
+variable "networking_config" {
+  description = "The networking configuration."
+  type = object({
+    create          = optional(bool, true)
+    host_project_id = optional(string, "prj-host-0")
+    subnet = optional(object({
+      ip_cidr_range = optional(string, "10.0.0.0/24")
+      name          = optional(string, "sub-0")
+    }), {})
+    subnet_proxy_only = optional(object({
+      ip_cidr_range = optional(string, "10.20.0.0/24")
+      name          = optional(string, "proxy-only-sub-0")
+    }), {})
+    vpc_name = optional(string, "net-0")
+  })
+  nullable = false
+  default  = {}
+}
+
+variable "prefix" {
+  description = "The name prefix to use for resources with a globally unique name."
+  type        = string
+  nullable    = false
 }
 
 variable "project_config" {
@@ -30,7 +55,6 @@ variable "project_config" {
   type = object({
     billing_account_id = optional(string)
     parent             = optional(string)
-    prefix             = optional(string)
   })
   nullable = false
   validation {
@@ -43,7 +67,8 @@ variable "project_config" {
 }
 
 variable "region" {
-  description = "The region where to create the buckets."
   type        = string
+  description = "The GCP region where to deploy the resources."
+  nullable    = false
   default     = "europe-west1"
 }
