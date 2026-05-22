@@ -24,9 +24,11 @@ from google.adk.events import Event
 
 class FirestoreSessionService(BaseSessionService):
 
-  def __init__(self, project_id: str, collection_name: str = "adk_sessions"):
+  def __init__(self, project_id: str, collection_name: str = "adk_sessions",
+               database: Optional[str] = None):
     self.project_id = project_id
     self.collection_name = collection_name
+    self.database = database
     self._db = None
     self._loop = None
 
@@ -38,7 +40,8 @@ class FirestoreSessionService(BaseSessionService):
     except RuntimeError:
       loop = None
     if self._db is None or self._loop != loop:
-      self._db = firestore.AsyncClient(project=self.project_id)
+      self._db = firestore.AsyncClient(project=self.project_id,
+                                       database=self.database)
       self._loop = loop
     return self._db
 

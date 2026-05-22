@@ -1,3 +1,4 @@
+---
 # Copyright 2026 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,7 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-module: agent-engine/0-projects
+module: agent-engine/0-prereqs
 
 tests:
   simple:
+  no_host_prj:

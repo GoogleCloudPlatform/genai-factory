@@ -15,7 +15,10 @@ The deployment includes:
 - The **agent**, that privately access resources in your VPC.
 - A custom **service account** used by your agent.
 - **Firestore** to store ADK sessions and A2A tasks.
-- Optionally, a VPC, the subnets you need and Secure Web Proxy (SWP), so that your agent can access the Internet through your VPC and via a proxy.
+
+- By default, a **host project**, a **shared VPC**, a subnet, private Google APIs routes, DNS policies, a PSC Network Attachment, Secure Web Proxy (SWP) and Cloud NAT so that the agent can privately access your resources and the Internet (through the proxy). Optionally, you can use your own host project and shared VPCs.
+
+- A **service project** with all the necessary APIs, service accounts, permissions set.
 
 ## Source code deployment
 
@@ -40,5 +43,5 @@ Setting up VPC-SC is a foundational building block and it's outside the scope of
 
 ## Apply the factory
 
-- Enter the [0-projects](0-projects/README.md) folder and follow the instructions to setup your GCP project, service accounts and permissions
+- Enter the [0-prereqs](0-prereqs/README.md) folder and follow the instructions to setup your GCP project, service accounts and permissions
 - Go to the [1-apps](1-apps/README.md) folder and follow the instructions to deploy the agent

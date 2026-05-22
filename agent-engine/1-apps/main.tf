@@ -17,6 +17,10 @@ locals {
     for f in fileset(var.source_config.app_path, "**") : f
     if length(regexall("(?:^|/)(?:__pycache__|\\.venv|\\.DS_Store)(?:$|/)|\\.pyc$|\\.pyo$", f)) == 0
   ]
+  iam_principals = {
+    for k, v in var.service_accounts
+    : k => v.email
+  }
   tar_gz_file_name = "${sha1(join("", [
     for f in local.agent_files
     : filesha1("${var.source_config.app_path}/${f}")
@@ -33,7 +37,7 @@ data "archive_file" "source" {
 module "agent" {
   source                     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/agent-engine?ref=v56.0.0"
   name                       = var.name
-  project_id                 = var.project_config.id
+  project_id                 = var.project_id
   region                     = var.region
   managed                    = false
   enable_deletion_protection = var.enable_deletion_protection
@@ -42,17 +46,18 @@ module "agent" {
     class_methods = try(
       templatefile(var.agent_engine_config.class_methods, {
         agent_name = var.name
-        project_id = var.project_config.id
+        project_id = var.project_id
         region     = var.region
       }),
       var.agent_engine_config.class_methods
     )
     environment_variables = {
-      ENABLE_PSC_I  = var.agent_engine_config.enable_psc_i
-      PROJECT_ID    = var.project_config.id
-      PROXY_ADDRESS = local.proxy_ip
-      PROXY_PORT    = var.networking_config.proxy_port
-      REGION        = var.region
+      ENABLE_PSC_I       = var.agent_engine_config.enable_psc_i
+      FIRESTORE_DATABASE = var.name
+      PROJECT_ID         = var.project_id
+      PROXY_ADDRESS      = var.proxy_config.ip_address
+      PROXY_PORT         = var.proxy_config.port
+      REGION             = var.region
       # Enable ADK logging and tracing
       # For other frameworks see https://docs.cloud.google.com/agent-builder/agent-engine/manage/tracing#adk
       GOOGLE_CLOUD_AGENT_ENGINE_ENABLE_TELEMETRY         = tostring(var.agent_engine_config.enable_adk_telemetry),
@@ -76,25 +81,29 @@ module "agent" {
     }
   }
   networking_config = {
-    network_attachment_id = local.network_attachment_id
+    network_attachment_id = var.network_attachment_id
     dns_peering_configs = {
-      for k, v in var.networking_config.dns_peering_configs : k => {
-        target_network_name = coalesce(v.target_network_name, local.vpc_name)
-        target_project_id   = coalesce(v.target_project_id, var.project_config.id)
+      for k, v in var.dns_peering_configs : k => {
+        target_network_name = coalesce(v.target_network_name, basename(var.networking_config.vpc))
+        target_project_id   = coalesce(v.target_project_id, split("/", var.networking_config.vpc)[1])
       }
     }
   }
   service_account_config = {
     create = false
-    email  = var.service_accounts["project/gf-ae-0"].email
+    email  = var.service_account_emails["service-01/gf-ae-0"]
+  }
+  context = {
+    iam_principals = local.iam_principals
+    networks       = var.vpc_self_links
   }
 }
 
 module "firestore" {
   source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/firestore?ref=v56.0.0"
-  project_id = var.project_config.id
+  project_id = var.project_id
   database = {
-    name        = "(default)"
+    name        = var.name
     type        = "FIRESTORE_NATIVE"
     location_id = var.region
   }

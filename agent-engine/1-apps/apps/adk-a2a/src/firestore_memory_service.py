@@ -14,6 +14,7 @@
 
 import time
 import uuid
+from typing import Optional
 
 from google.cloud import firestore
 from google.adk.memory.base_memory_service import BaseMemoryService, SearchMemoryResponse
@@ -24,9 +25,11 @@ from google.genai import types
 
 class FirestoreMemoryService(BaseMemoryService):
 
-  def __init__(self, project_id: str, collection_name: str = "adk_memory"):
+  def __init__(self, project_id: str, collection_name: str = "adk_memory",
+               database: Optional[str] = None):
     self.project_id = project_id
     self.collection_name = collection_name
+    self.database = database
     self._db = None
     self._loop = None
 
@@ -38,7 +41,8 @@ class FirestoreMemoryService(BaseMemoryService):
     except RuntimeError:
       loop = None
     if self._db is None or self._loop != loop:
-      self._db = firestore.AsyncClient(project=self.project_id)
+      self._db = firestore.AsyncClient(project=self.project_id,
+                                       database=self.database)
       self._loop = loop
     return self._db
 

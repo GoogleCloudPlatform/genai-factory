@@ -14,20 +14,24 @@
 
 name   = "test-agent"
 prefix = "test"
-project_config = {
-  id     = "test-project"
-  number = "123456789"
-}
+
+project_id = "test-project"
+number     = "123456789"
+
 region = "europe-west1"
-service_accounts = {
-  "project/gf-ae-0" = {
-    email     = "agent@test-project.iam.gserviceaccount.com"
-    iam_email = "serviceAccount:agent@test-project.iam.gserviceaccount.com"
-    id        = "projects/test-project/serviceAccounts/agent@test-project.iam.gserviceaccount.com"
-  }
-  "project/iac-rw" = {
-    email     = "iac-rw@test-project.iam.gserviceaccount.com"
-    iam_email = "serviceAccount:iac-rw@test-project.iam.gserviceaccount.com"
-    id        = "projects/test-project/serviceAccounts/iac-rw@test-project.iam.gserviceaccount.com"
-  }
+
+network_attachment_id = "projects/test-project/regions/europe-west1/networkAttachments/test-attachment"
+
+proxy_config = {
+  ip_address = "10.0.0.100"
+  port       = "443"
+}
+
+networking_config = {
+  vpc = "projects/prefix-gf-srun-hp-0/global/networks/net-0"
+}
+
+service_account_emails = {
+  "service-01/gf-ae-0" = "agent@test-project.iam.gserviceaccount.com"
+  "service-01/iac-rw"  = "iac-rw@test-project.iam.gserviceaccount.com"
 }
