@@ -87,9 +87,17 @@ class CurrencyAgentExecutorWithRunner(AgentExecutor):
           app_name=self.agent.name,
           agent=self.agent,
           artifact_service=FirestoreArtifactService(
-              project_id=config.PROJECT_ID),
-          session_service=FirestoreSessionService(project_id=config.PROJECT_ID),
-          memory_service=FirestoreMemoryService(project_id=config.PROJECT_ID),
+              project_id=config.PROJECT_ID,
+              database=config.FIRESTORE_DATABASE,
+          ),
+          session_service=FirestoreSessionService(
+              project_id=config.PROJECT_ID,
+              database=config.FIRESTORE_DATABASE,
+          ),
+          memory_service=FirestoreMemoryService(
+              project_id=config.PROJECT_ID,
+              database=config.FIRESTORE_DATABASE,
+          ),
       )
 
   async def cancel(self, context: RequestContext, event_queue: EventQueue):
@@ -201,6 +209,9 @@ agent = A2aAgent(
     agent_card=agent_card,
     agent_executor_builder=lambda: CurrencyAgentExecutorWithRunner(agent=
                                                                    llm_agent),
-    task_store_builder=lambda: FirestoreTaskStore(project_id=config.PROJECT_ID),
+    task_store_builder=lambda: FirestoreTaskStore(
+        project_id=config.PROJECT_ID,
+        database=config.FIRESTORE_DATABASE,
+    ),
 )
 agent.set_up()

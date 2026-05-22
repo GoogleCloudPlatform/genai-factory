@@ -19,6 +19,8 @@ import os
 PROJECT_ID = os.environ.get("PROJECT_ID")
 REGION = os.environ.get("REGION")
 
+FIRESTORE_DATABASE = os.environ.get("FIRESTORE_DATABASE", "agent-0")
+
 # TODO: to be checked periodically
 # Update to gemini-3.0 when it works on regional endpoints
 MODEL_NAME = os.environ.get("MODEL_NAME", "gemini-2.5-flash")

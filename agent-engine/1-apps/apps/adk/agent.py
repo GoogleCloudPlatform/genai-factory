@@ -55,9 +55,11 @@ root_agent = LlmAgent(
 
 
 def session_service_builder():
-  return FirestoreSessionService(project_id=config.PROJECT_ID)
+  return FirestoreSessionService(
+      project_id=config.PROJECT_ID,
+      database=config.FIRESTORE_DATABASE,
+  )
 
 
 agent = AdkApp(agent=root_agent,
                session_service_builder=session_service_builder)
-a = 1

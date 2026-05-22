@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+prefix = "test"
 project_config = {
   billing_account_id = "012345-678901-ABCDEF"
   parent             = "folders/1234567890"
-  prefix             = "test"
 }

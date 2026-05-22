@@ -28,6 +28,17 @@ variable "agent_engine_config" {
   default  = {}
 }
 
+variable "dns_peering_configs" {
+  description = "DNS peering configurations for the Agent Engine network."
+  type = map(object({
+    target_network_name = optional(string)
+    target_project_id   = optional(string)
+  }))
+  default = {
+    "." = {}
+  }
+}
+
 variable "enable_deletion_protection" {
   description = "Whether deletion protection should be enabled."
   type        = bool
@@ -42,34 +53,24 @@ variable "name" {
   default     = "agent-0"
 }
 
+variable "network_attachment_id" {
+  description = "The network attachment ID."
+  type        = string
+  default     = null
+}
+
 variable "networking_config" {
-  description = "The networking configuration."
+  description = "The networking configuration. Each element is either the id of the resource or the key of the map var.vpc_self_links."
   type = object({
-    create = optional(bool, true)
-    # key is the domain
-    dns_peering_configs = optional(map(object({
-      # by default, all dns queries go to your VPC.
-      target_network_name = optional(string)
-      target_project_id   = optional(string)
-      })), {
-      "." = {}
-    })
-    # to be set if create = false
-    network_attachment_id = optional(string)
-    proxy_ip              = optional(string, "10.0.0.100")
-    proxy_port            = optional(string, "443")
-    subnet = optional(object({
-      ip_cidr_range = optional(string, "10.0.0.0/24")
-      name          = optional(string, "sub-0")
-    }), {})
-    subnet_proxy_only = optional(object({
-      ip_cidr_range = optional(string, "10.20.0.0/24")
-      name          = optional(string, "proxy-only-sub-0")
-    }), {})
-    vpc_id = optional(string, "net-0")
+    vpc = string
   })
   nullable = false
-  default  = {}
+}
+
+variable "number" {
+  description = "The project number where to create the resources."
+  type        = string
+  nullable    = false
 }
 
 variable "prefix" {
@@ -78,45 +79,32 @@ variable "prefix" {
   nullable    = false
 }
 
-variable "project_config" {
-  description = "The project where to create the resources."
+variable "project_id" {
+  description = "The project ID where to create the resources."
+  type        = string
+  nullable    = false
+}
+
+variable "proxy_config" {
+  description = "The proxy configuration."
   type = object({
-    id     = string
-    number = string
+    ip_address = string
+    port       = number
   })
   nullable = false
 }
 
-variable "proxy_policy_rules" {
-  description = "The Secure Web Proxy policy rules."
-  type = map(object({
-    priority        = number
-    session_matcher = string
-    allow           = optional(bool, true)
-  }))
-  default = {
-    host-0 = {
-      priority        = 1000
-      allow           = true
-      session_matcher = "host() == 'api.frankfurter.dev'"
-    }
-  }
-}
 variable "region" {
   type        = string
   description = "The GCP region where to deploy the resources."
   nullable    = false
-  default     = "europe-west1"
 }
 
-variable "service_accounts" {
-  description = "The pre-created service accounts used by the blueprint."
-  type = map(object({
-    email     = string
-    iam_email = string
-    id        = string
-  }))
-  default = {}
+# Expected keys: service-01/gf-ae-0, service-01/iac-rw
+variable "service_account_emails" {
+  description = "The service account emails. Each element is the email of the service account or the key of the map var.service_accounts."
+  type        = map(string)
+  nullable    = false
 }
 
 variable "source_config" {
