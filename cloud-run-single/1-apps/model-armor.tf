@@ -14,7 +14,7 @@
 
 resource "google_model_armor_template" "model_armor_template" {
   count       = var.model_armor_template_config.enabled ? 1 : 0
-  project     = var.project_config.id
+  project     = var.project_id
   location    = var.region
   template_id = "model-armor-template"
 
@@ -65,7 +65,7 @@ resource "google_model_armor_template" "model_armor_template" {
 resource "google_model_armor_floorsetting" "floorsetting" {
   count    = var.model_armor_floorsetting_config.enabled ? 1 : 0
   location = "global"
-  parent   = "projects/${var.project_config.id}"
+  parent   = "projects/${var.project_id}"
 
   filter_config {
 
@@ -97,13 +97,7 @@ resource "google_model_armor_floorsetting" "floorsetting" {
 
   enable_floor_setting_enforcement = true
 
-  google_mcp_server_floor_setting {
-    inspect_only         = var.model_armor_floorsetting_config.google_mcp_server_floor_setting.inspect_only ? true : null
-    inspect_and_block    = var.model_armor_floorsetting_config.google_mcp_server_floor_setting.inspect_and_block ? true : null
-    enable_cloud_logging = var.model_armor_floorsetting_config.google_mcp_server_floor_setting.logging
-  }
-
-  integrated_services = ["AI_PLATFORM", "GOOGLE_MCP_SERVER"]
+  integrated_services = ["AI_PLATFORM"]
 
   ai_platform_floor_setting {
     inspect_only         = var.model_armor_floorsetting_config.enforcement_type == "INSPECT_ONLY" ? true : null
