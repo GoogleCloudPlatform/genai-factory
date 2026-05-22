@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: gf-rrag-all-0
+name: gf-rrag-0
 
 # Enable APIs
 services:
@@ -26,41 +26,32 @@ services:
   - cloudbuild.googleapis.com
   - cloudresourcemanager.googleapis.com
   - cloudscheduler.googleapis.com
-  - compute.googleapis.com
-  - dns.googleapis.com
   - run.googleapis.com
   - servicenetworking.googleapis.com
   # Needed for ILB only
   - certificatemanager.googleapis.com
   - privateca.googleapis.com
 
-org_policies:
-  compute.restrictSharedVpcSubnetworks:
-    rules:
-      - allow:
-          values:
-            - projects/${try(projects["host"], networking_config["host_project_id"])}/regions/${networking_config["region"]}/subnetworks/${networking_config["subnet_name"]}
-
 buckets:
   iac-state:
     description: Terraform state bucket
     iam:
       roles/storage.objectAdmin:
-        - $iam_principals:service_accounts/_self_/iac-rw
+        - $iam_principals:service_accounts/project/iac-rw
       roles/storage.objectViewer:
-        - $iam_principals:service_accounts/_self_/iac-rw
+        - $iam_principals:service_accounts/project/iac-rw
 
 service_accounts:
   # Automation SAs
   iac-rw:
     iam_sa_roles:
-      $service_account_ids:service-01/gf-rrag-fe-0: [roles/iam.serviceAccountUser]
-      $service_account_ids:service-01/gf-rrag-fe-build-0:
+      $service_account_ids:project/gf-rrag-fe-0: [roles/iam.serviceAccountUser]
+      $service_account_ids:project/gf-rrag-fe-build-0:
         - roles/iam.serviceAccountUser
-      $service_account_ids:service-01/gf-rrag-ing-0: [roles/iam.serviceAccountUser]
-      $service_account_ids:service-01/gf-rrag-ing-build-0:
+      $service_account_ids:project/gf-rrag-ing-0: [roles/iam.serviceAccountUser]
+      $service_account_ids:project/gf-rrag-ing-build-0:
         - roles/iam.serviceAccountUser
-      $service_account_ids:service-01/gf-rrag-ing-sched-0:
+      $service_account_ids:project/gf-rrag-ing-sched-0:
         - roles/iam.serviceAccountUser
   # Application SAs
   gf-rrag-fe-0: {}
@@ -73,16 +64,13 @@ service_accounts:
 iam:
   roles/privateca.certificateRequester: [$service_agents:certificatemanager]
 iam_by_principals:
-  $iam_principals:service_accounts/_self_/iac-rw:
+  $iam_principals:service_accounts/project/iac-rw:
     - roles/artifactregistry.admin
     - roles/cloudbuild.builds.editor
     - roles/bigquery.user
     - roles/cloudscheduler.admin
     - roles/alloydb.admin
     - roles/compute.loadBalancerAdmin
-    - roles/compute.networkAdmin
-    - roles/compute.securityAdmin
-    - roles/dns.admin
     - roles/run.admin
     - roles/secretmanager.admin
     - roles/storage.admin
@@ -91,14 +79,11 @@ iam_by_principals:
     # Needed for ILB only
     - roles/certificatemanager.owner
     - roles/privateca.admin
-    # Crucial Service Project IAM Permissions (GCP E2E Lessons)
-    - roles/servicedirectory.editor
-    - roles/serviceusage.serviceUsageConsumer
-  $iam_principals:service_accounts/_self_/gf-rrag-fe-0:
+  $iam_principals:service_accounts/project/gf-rrag-fe-0:
     - roles/alloydb.client
     - roles/alloydb.databaseUser
     - roles/serviceusage.serviceUsageConsumer
-  $iam_principals:service_accounts/_self_/gf-rrag-fe-build-0:
+  $iam_principals:service_accounts/project/gf-rrag-fe-build-0:
     - roles/artifactregistry.writer
     - roles/cloudbuild.builds.editor
     - roles/logging.logWriter
@@ -106,13 +91,13 @@ iam_by_principals:
     - roles/storage.admin
     - roles/storage.objectCreator
     - roles/storage.objectViewer
-  $iam_principals:service_accounts/_self_/gf-rrag-ing-0:
+  $iam_principals:service_accounts/project/gf-rrag-ing-0:
     - roles/bigquery.dataViewer
     - roles/bigquery.jobUser
     - roles/alloydb.client
     - roles/alloydb.databaseUser
     - roles/serviceusage.serviceUsageConsumer
-  $iam_principals:service_accounts/_self_/gf-rrag-ing-build-0:
+  $iam_principals:service_accounts/project/gf-rrag-ing-build-0:
     - roles/artifactregistry.writer
     - roles/cloudbuild.builds.editor
     - roles/logging.logWriter
@@ -124,8 +109,8 @@ iam_by_principals:
 # as it is authoritatively granted by aiplatform APIs to default SA
 iam_bindings_additive:
   run_fe_ai_user:
-    member: $iam_principals:service_accounts/_self_/gf-rrag-fe-0
+    member: $iam_principals:service_accounts/project/gf-rrag-fe-0
     role: roles/aiplatform.user
   run_ing_ai_user:
-    member: $iam_principals:service_accounts/_self_/gf-rrag-ing-0
+    member: $iam_principals:service_accounts/project/gf-rrag-ing-0
     role: roles/aiplatform.user
