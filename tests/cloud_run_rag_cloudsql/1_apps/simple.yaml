@@ -16,6 +16,7 @@ values:
   google_cloud_scheduler_job.ingestion_scheduler:
     app_engine_http_target: []
     attempt_deadline: 60s
+    deletion_policy: DELETE
     description: Scheduler to periodically trigger the data ingestion.
     http_target:
     - body: null
@@ -36,6 +37,7 @@ values:
     timeouts: null
   google_compute_address.address_internal[0]:
     address_type: INTERNAL
+    deletion_policy: DELETE
     description: null
     effective_labels:
       goog-terraform-provisioned: 'true'
@@ -53,6 +55,7 @@ values:
     timeouts: null
   google_compute_address.cloudsql_address:
     address_type: INTERNAL
+    deletion_policy: DELETE
     description: null
     effective_labels:
       goog-terraform-provisioned: 'true'
@@ -72,6 +75,7 @@ values:
     allow_global_access: null
     allow_psc_global_access: null
     backend_service: null
+    deletion_policy: DELETE
     description: null
     ip_collection: null
     is_mirroring_collector: null
@@ -88,6 +92,7 @@ values:
     timeouts: null
   google_compute_global_address.address_external[0]:
     address_type: null
+    deletion_policy: DELETE
     description: null
     effective_labels:
       goog-terraform-provisioned: 'true'
@@ -103,6 +108,7 @@ values:
   google_compute_region_security_policy.security_policy_internal[0]:
     advanced_options_config: []
     ddos_protection_config: []
+    deletion_policy: DELETE
     description: null
     name: gf-rrag-0-internal
     project: prefix-gf-rrag-0
@@ -139,6 +145,7 @@ values:
     user_defined_fields: []
   google_compute_security_policy.security_policy_external[0]:
     adaptive_protection_config: []
+    deletion_policy: DELETE
     description: null
     effective_labels:
       goog-terraform-provisioned: 'true'
@@ -179,6 +186,7 @@ values:
       goog-terraform-provisioned: 'true'
     timeouts: null
   google_dns_record_set.cloudsql_dns_record_set:
+    deletion_policy: DELETE
     managed_zone: gf-rrag-0-cloudsql
     project: prefix-gf-rrag-0
     routing_policy: []
@@ -190,6 +198,7 @@ values:
     default_partition_expiration_ms: null
     default_table_expiration_ms: null
     delete_contents_on_destroy: false
+    deletion_policy: DELETE
     description: Terraform managed.
     effective_labels:
       goog-terraform-provisioned: 'true'
@@ -208,6 +217,7 @@ values:
     biglake_configuration: []
     clustering: null
     dataset_id: gf_rrag_0
+    deletion_policy: DELETE
     deletion_protection: true
     description: Terraform managed.
     effective_labels:
@@ -234,6 +244,7 @@ values:
     time_partitioning: []
     view: []
   module.cas[0].google_privateca_ca_pool.default[0]:
+    deletion_policy: DELETE
     effective_labels:
       goog-terraform-provisioned: 'true'
     encryption_spec: []
@@ -291,6 +302,7 @@ values:
           unknown_extended_key_usages: []
         name_constraints: []
         policy_ids: []
+    deletion_policy: DELETE
     deletion_protection: true
     desired_state: null
     effective_labels:
@@ -313,6 +325,7 @@ values:
     type: SELF_SIGNED
     user_defined_access_urls: []
   module.certificate_manager[0].google_certificate_manager_certificate.certificates["gf-rrag-0"]:
+    deletion_policy: DELETE
     description: null
     effective_labels:
       goog-terraform-provisioned: 'true'
@@ -333,6 +346,7 @@ values:
     certificate_authority_config:
     - certificate_authority_service_config:
       - {}
+    deletion_policy: DELETE
     description: null
     effective_labels:
       goog-terraform-provisioned: 'true'
@@ -354,6 +368,7 @@ values:
     client_version: null
     custom_audiences: null
     default_uri_disabled: null
+    deletion_policy: DELETE
     deletion_protection: true
     description: null
     effective_labels:
@@ -421,6 +436,7 @@ values:
     binary_authorization: []
     client: null
     client_version: null
+    deletion_policy: DELETE
     deletion_protection: true
     effective_labels:
       goog-terraform-provisioned: 'true'
@@ -477,6 +493,7 @@ values:
     backupdr_backup: null
     clone: []
     database_version: POSTGRES_14
+    deletion_policy: DELETE
     deletion_protection: true
     final_backup_description: null
     name: gf-rrag-0
@@ -505,6 +522,7 @@ values:
       edition: ENTERPRISE
       enable_dataplex_integration: null
       enable_google_ml_integration: null
+      entraid_config: []
       final_backup_config: []
       ip_configuration:
       - allocated_ip_range: null
@@ -531,7 +549,7 @@ values:
     timeouts: null
   module.cloudsql.google_sql_user.users["gf-rrag-fe-0@prefix-gf-rrag-0.iam.gserviceaccount.com"]:
     database_roles: null
-    deletion_policy: null
+    deletion_policy: DELETE
     instance: gf-rrag-0
     name: gf-rrag-fe-0@prefix-gf-rrag-0.iam
     password: null
@@ -543,7 +561,7 @@ values:
     type: CLOUD_IAM_SERVICE_ACCOUNT
   module.cloudsql.google_sql_user.users["gf-rrag-ing-0@prefix-gf-rrag-0.iam.gserviceaccount.com"]:
     database_roles: null
-    deletion_policy: null
+    deletion_policy: DELETE
     instance: gf-rrag-0
     name: gf-rrag-ing-0@prefix-gf-rrag-0.iam
     password: null
@@ -554,6 +572,7 @@ values:
     timeouts: null
     type: CLOUD_IAM_SERVICE_ACCOUNT
   module.dns_policy_googleapis[0].google_dns_response_policy.default[0]:
+    deletion_policy: DELETE
     description: Terraform managed.
     gke_clusters: []
     networks:
@@ -563,6 +582,7 @@ values:
     timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["accounts"]:
     behavior: null
+    deletion_policy: DELETE
     dns_name: accounts.google.com.
     local_data:
     - local_datas:
@@ -577,6 +597,7 @@ values:
     timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["aiplatform-notebook-cloud-all"]:
     behavior: null
+    deletion_policy: DELETE
     dns_name: '*.aiplatform-notebook.cloud.google.com.'
     local_data:
     - local_datas:
@@ -591,6 +612,7 @@ values:
     timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["aiplatform-notebook-gu-all"]:
     behavior: null
+    deletion_policy: DELETE
     dns_name: '*.aiplatform-notebook.googleusercontent.com.'
     local_data:
     - local_datas:
@@ -605,6 +627,7 @@ values:
     timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["backupdr-cloud"]:
     behavior: null
+    deletion_policy: DELETE
     dns_name: backupdr.cloud.google.com.
     local_data:
     - local_datas:
@@ -619,6 +642,7 @@ values:
     timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["backupdr-cloud-all"]:
     behavior: null
+    deletion_policy: DELETE
     dns_name: '*.backupdr.cloud.google.com.'
     local_data:
     - local_datas:
@@ -633,6 +657,7 @@ values:
     timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["backupdr-gu"]:
     behavior: null
+    deletion_policy: DELETE
     dns_name: backupdr.googleusercontent.google.com.
     local_data:
     - local_datas:
@@ -647,6 +672,7 @@ values:
     timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["backupdr-gu-all"]:
     behavior: null
+    deletion_policy: DELETE
     dns_name: '*.backupdr.googleusercontent.google.com.'
     local_data:
     - local_datas:
@@ -661,6 +687,7 @@ values:
     timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["cloudfunctions"]:
     behavior: null
+    deletion_policy: DELETE
     dns_name: '*.cloudfunctions.net.'
     local_data:
     - local_datas:
@@ -675,6 +702,7 @@ values:
     timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["cloudproxy"]:
     behavior: null
+    deletion_policy: DELETE
     dns_name: '*.cloudproxy.app.'
     local_data:
     - local_datas:
@@ -689,6 +717,7 @@ values:
     timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["composer-cloud-all"]:
     behavior: null
+    deletion_policy: DELETE
     dns_name: '*.composer.cloud.google.com.'
     local_data:
     - local_datas:
@@ -703,6 +732,7 @@ values:
     timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["composer-gu-all"]:
     behavior: null
+    deletion_policy: DELETE
     dns_name: '*.composer.googleusercontent.com.'
     local_data:
     - local_datas:
@@ -717,6 +747,7 @@ values:
     timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["datafusion-all"]:
     behavior: null
+    deletion_policy: DELETE
     dns_name: '*.datafusion.cloud.google.com.'
     local_data:
     - local_datas:
@@ -731,6 +762,7 @@ values:
     timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["datafusion-gu-all"]:
     behavior: null
+    deletion_policy: DELETE
     dns_name: '*.datafusion.googleusercontent.com.'
     local_data:
     - local_datas:
@@ -745,6 +777,7 @@ values:
     timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["dataproc"]:
     behavior: null
+    deletion_policy: DELETE
     dns_name: dataproc.cloud.google.com.
     local_data:
     - local_datas:
@@ -759,6 +792,7 @@ values:
     timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["dataproc-all"]:
     behavior: null
+    deletion_policy: DELETE
     dns_name: '*.dataproc.cloud.google.com.'
     local_data:
     - local_datas:
@@ -773,6 +807,7 @@ values:
     timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["dataproc-gu"]:
     behavior: null
+    deletion_policy: DELETE
     dns_name: dataproc.googleusercontent.com.
     local_data:
     - local_datas:
@@ -787,6 +822,7 @@ values:
     timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["dataproc-gu-all"]:
     behavior: null
+    deletion_policy: DELETE
     dns_name: '*.dataproc.googleusercontent.com.'
     local_data:
     - local_datas:
@@ -801,6 +837,7 @@ values:
     timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["dl"]:
     behavior: null
+    deletion_policy: DELETE
     dns_name: dl.google.com.
     local_data:
     - local_datas:
@@ -815,6 +852,7 @@ values:
     timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["gcr"]:
     behavior: null
+    deletion_policy: DELETE
     dns_name: gcr.io.
     local_data:
     - local_datas:
@@ -829,6 +867,7 @@ values:
     timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["gcr-all"]:
     behavior: null
+    deletion_policy: DELETE
     dns_name: '*.gcr.io.'
     local_data:
     - local_datas:
@@ -843,6 +882,7 @@ values:
     timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["gke-all"]:
     behavior: null
+    deletion_policy: DELETE
     dns_name: '*.gke.goog.'
     local_data:
     - local_datas:
@@ -857,6 +897,7 @@ values:
     timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["googleapis-all"]:
     behavior: null
+    deletion_policy: DELETE
     dns_name: '*.googleapis.com.'
     local_data:
     - local_datas:
@@ -871,6 +912,7 @@ values:
     timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["googleapis-private"]:
     behavior: null
+    deletion_policy: DELETE
     dns_name: private.googleapis.com.
     local_data:
     - local_datas:
@@ -893,6 +935,7 @@ values:
     timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["googleapis-restricted"]:
     behavior: null
+    deletion_policy: DELETE
     dns_name: restricted.googleapis.com.
     local_data:
     - local_datas:
@@ -915,6 +958,7 @@ values:
     timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["gstatic-all"]:
     behavior: null
+    deletion_policy: DELETE
     dns_name: '*.gstatic.com.'
     local_data:
     - local_datas:
@@ -929,6 +973,7 @@ values:
     timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["kernels-gu"]:
     behavior: null
+    deletion_policy: DELETE
     dns_name: kernels.googleusercontent.com.
     local_data:
     - local_datas:
@@ -943,6 +988,7 @@ values:
     timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["kernels-gu-all"]:
     behavior: null
+    deletion_policy: DELETE
     dns_name: '*.kernels.googleusercontent.com.'
     local_data:
     - local_datas:
@@ -957,6 +1003,7 @@ values:
     timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["ltsapis-all"]:
     behavior: null
+    deletion_policy: DELETE
     dns_name: '*.ltsapis.goog.'
     local_data:
     - local_datas:
@@ -971,6 +1018,7 @@ values:
     timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["notebooks-all"]:
     behavior: null
+    deletion_policy: DELETE
     dns_name: '*.notebooks.cloud.google.com.'
     local_data:
     - local_datas:
@@ -985,6 +1033,7 @@ values:
     timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["notebooks-gu-all"]:
     behavior: null
+    deletion_policy: DELETE
     dns_name: '*.notebooks.googleusercontent.com.'
     local_data:
     - local_datas:
@@ -999,6 +1048,7 @@ values:
     timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["packages-cloud"]:
     behavior: null
+    deletion_policy: DELETE
     dns_name: packages.cloud.google.com.
     local_data:
     - local_datas:
@@ -1013,6 +1063,7 @@ values:
     timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["packages-cloud-all"]:
     behavior: null
+    deletion_policy: DELETE
     dns_name: '*.packages.cloud.google.com.'
     local_data:
     - local_datas:
@@ -1027,6 +1078,7 @@ values:
     timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["pkgdev"]:
     behavior: null
+    deletion_policy: DELETE
     dns_name: pkg.dev.
     local_data:
     - local_datas:
@@ -1041,6 +1093,7 @@ values:
     timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["pkgdev-all"]:
     behavior: null
+    deletion_policy: DELETE
     dns_name: '*.pkg.dev.'
     local_data:
     - local_datas:
@@ -1055,6 +1108,7 @@ values:
     timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["pkigoog"]:
     behavior: null
+    deletion_policy: DELETE
     dns_name: pki.goog.
     local_data:
     - local_datas:
@@ -1069,6 +1123,7 @@ values:
     timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["pkigoog-all"]:
     behavior: null
+    deletion_policy: DELETE
     dns_name: '*.pki.goog.'
     local_data:
     - local_datas:
@@ -1083,6 +1138,7 @@ values:
     timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["run-all"]:
     behavior: null
+    deletion_policy: DELETE
     dns_name: '*.run.app.'
     local_data:
     - local_datas:
@@ -1097,6 +1153,7 @@ values:
     timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["source"]:
     behavior: null
+    deletion_policy: DELETE
     dns_name: source.developers.google.com.
     local_data:
     - local_datas:
@@ -1111,6 +1168,7 @@ values:
     timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["storage"]:
     behavior: null
+    deletion_policy: DELETE
     dns_name: storage.cloud.google.com.
     local_data:
     - local_datas:
@@ -1126,6 +1184,7 @@ values:
   module.dns_private_zone_cloudsql.google_dns_managed_zone.dns_managed_zone[0]:
     cloud_logging_config:
     - enable_logging: false
+    deletion_policy: DELETE
     description: Terraform managed.
     effective_labels:
       goog-terraform-provisioned: 'true'
@@ -1157,6 +1216,7 @@ values:
     custom_metrics: []
     custom_request_headers: null
     custom_response_headers: null
+    deletion_policy: DELETE
     description: Terraform managed.
     dynamic_forwarding: []
     edge_security_policy: null
@@ -1182,6 +1242,7 @@ values:
     tls_settings: []
   module.lb_external[0].google_compute_global_forwarding_rule.default[""]:
     allow_psc_global_access: null
+    deletion_policy: DELETE
     description: Terraform managed.
     external_managed_backend_bucket_migration_state: null
     external_managed_backend_bucket_migration_testing_percentage: null
@@ -1197,6 +1258,7 @@ values:
     source_ip_ranges: null
     timeouts: null
   module.lb_external[0].google_compute_managed_ssl_certificate.default["default"]:
+    deletion_policy: DELETE
     description: null
     managed:
     - domains:
@@ -1211,6 +1273,7 @@ values:
     cloud_run:
     - tag: null
       url_mask: null
+    deletion_policy: DELETE
     description: Terraform managed.
     name: gf-rrag-0-external-gf-rrag-0-external
     network_endpoint_type: SERVERLESS
@@ -1223,6 +1286,7 @@ values:
   module.lb_external[0].google_compute_target_https_proxy.new[0]:
     certificate_manager_certificates: null
     certificate_map: null
+    deletion_policy: DELETE
     description: Terraform managed.
     http_keep_alive_timeout_sec: null
     name: gf-rrag-0-external
@@ -1235,6 +1299,7 @@ values:
     default_custom_error_response_policy: []
     default_route_action: []
     default_url_redirect: []
+    deletion_policy: DELETE
     description: Terraform managed.
     header_action: []
     host_rule: []
@@ -1245,6 +1310,7 @@ values:
     timeouts: null
   module.lb_external_redirect[0].google_compute_global_forwarding_rule.default[""]:
     allow_psc_global_access: null
+    deletion_policy: DELETE
     description: Terraform managed.
     external_managed_backend_bucket_migration_state: null
     external_managed_backend_bucket_migration_testing_percentage: null
@@ -1260,6 +1326,7 @@ values:
     source_ip_ranges: null
     timeouts: null
   module.lb_external_redirect[0].google_compute_target_http_proxy.new[0]:
+    deletion_policy: DELETE
     description: Terraform managed.
     http_keep_alive_timeout_sec: null
     name: gf-rrag-0-redirect
@@ -1276,6 +1343,7 @@ values:
       prefix_redirect: null
       redirect_response_code: MOVED_PERMANENTLY_DEFAULT
       strip_query: false
+    deletion_policy: DELETE
     description: HTTP to HTTPS redirect.
     header_action: []
     host_rule: []
@@ -1289,6 +1357,7 @@ values:
     allow_global_access: null
     allow_psc_global_access: null
     backend_service: null
+    deletion_policy: DELETE
     description: Terraform managed.
     ip_collection: null
     ip_protocol: TCP
@@ -1327,6 +1396,7 @@ values:
     connection_tracking_policy: []
     consistent_hash: []
     custom_metrics: []
+    deletion_policy: DELETE
     description: Terraform managed.
     dynamic_forwarding: []
     enable_cdn: null
@@ -1354,6 +1424,7 @@ values:
     cloud_run:
     - tag: null
       url_mask: null
+    deletion_policy: DELETE
     description: Terraform managed.
     name: gf-rrag-0-internal-gf-rrag-0-internal
     network_endpoint_type: SERVERLESS
@@ -1363,6 +1434,7 @@ values:
     subnetwork: null
     timeouts: null
   module.lb_internal[0].google_compute_region_target_https_proxy.default[0]:
+    deletion_policy: DELETE
     description: Terraform managed.
     http_keep_alive_timeout_sec: null
     name: gf-rrag-0-internal
@@ -1375,6 +1447,7 @@ values:
   module.lb_internal[0].google_compute_region_url_map.default:
     default_route_action: []
     default_url_redirect: []
+    deletion_policy: DELETE
     description: Terraform managed.
     header_action: []
     host_rule: []
@@ -1387,6 +1460,7 @@ values:
   module.lb_internal_dns[0].google_dns_managed_zone.dns_managed_zone[0]:
     cloud_logging_config:
     - enable_logging: false
+    deletion_policy: DELETE
     description: Terraform managed.
     dns_name: example.com.
     effective_labels:
@@ -1404,6 +1478,7 @@ values:
     timeouts: null
     visibility: private
   module.lb_internal_dns[0].google_dns_record_set.dns_record_set["A example.com"]:
+    deletion_policy: DELETE
     managed_zone: gf-rrag-0
     name: example.com.example.com.
     project: prefix-gf-rrag-0
@@ -1415,6 +1490,7 @@ values:
     allow_global_access: null
     allow_psc_global_access: null
     backend_service: null
+    deletion_policy: DELETE
     description: Terraform managed.
     ip_collection: null
     ip_protocol: TCP
@@ -1433,6 +1509,7 @@ values:
     source_ip_ranges: null
     timeouts: null
   module.lb_internal_redirect[0].google_compute_region_target_http_proxy.default[0]:
+    deletion_policy: DELETE
     description: Terraform managed.
     http_keep_alive_timeout_sec: null
     name: gf-rrag-0-internal-redirect
@@ -1449,6 +1526,7 @@ values:
       prefix_redirect: null
       redirect_response_code: MOVED_PERMANENTLY_DEFAULT
       strip_query: false
+    deletion_policy: DELETE
     description: HTTP to HTTPS redirect.
     header_action: []
     host_rule: []
@@ -1462,6 +1540,7 @@ values:
     auto_create_subnetworks: false
     delete_bgp_always_compare_med: false
     delete_default_routes_on_create: false
+    deletion_policy: DELETE
     description: Terraform-managed.
     enable_ula_internal_ipv6: null
     name: net-0
@@ -1472,6 +1551,7 @@ values:
     routing_mode: GLOBAL
     timeouts: null
   module.vpc[0].google_compute_route.gateway["directpath-googleapis"]:
+    deletion_policy: DELETE
     description: Terraform-managed.
     dest_range: 34.126.0.0/18
     name: net-0-directpath-googleapis
@@ -1486,6 +1566,7 @@ values:
     tags: null
     timeouts: null
   module.vpc[0].google_compute_route.gateway["private-googleapis"]:
+    deletion_policy: DELETE
     description: Terraform-managed.
     dest_range: 199.36.153.8/30
     name: net-0-private-googleapis
@@ -1500,6 +1581,7 @@ values:
     tags: null
     timeouts: null
   module.vpc[0].google_compute_route.gateway["restricted-googleapis"]:
+    deletion_policy: DELETE
     description: Terraform-managed.
     dest_range: 199.36.153.4/30
     name: net-0-restricted-googleapis
@@ -1514,6 +1596,7 @@ values:
     tags: null
     timeouts: null
   module.vpc[0].google_compute_subnetwork.proxy_only["europe-west1/proxy-only-sub-0"]:
+    deletion_policy: DELETE
     description: Terraform-managed proxy-only subnet for Regional HTTPS, Internal
       HTTPS or Cross-Regional HTTPS Internal LB.
     ip_cidr_range: 10.20.0.0/24
@@ -1532,6 +1615,7 @@ values:
     send_secondary_ip_range_if_empty: null
     timeouts: null
   module.vpc[0].google_compute_subnetwork.subnetwork["europe-west1/sub-0"]:
+    deletion_policy: DELETE
     description: Terraform-managed.
     ip_cidr_range: 10.0.0.0/24
     ip_collection: null
