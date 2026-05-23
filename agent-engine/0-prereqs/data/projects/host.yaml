@@ -22,12 +22,15 @@ services:
   - aiplatform.googleapis.com
   - compute.googleapis.com
   - dns.googleapis.com
-  # Needed for SWP if you set network_config.create in 1-apps
+  # Needed for SWP
   - networksecurity.googleapis.com
   - networkservices.googleapis.com
 
 # Grant roles
 iam_by_principals:
+  # If you create the network attachment in the service project
+  # grant networkUser here and networkAdmin in the service project
+  # to the service project service agent
   $iam_principals:service_agents/_self_/aiplatform:
     - roles/compute.networkAdmin
   # Service agent roles needed for Agent Engine PSC-I.

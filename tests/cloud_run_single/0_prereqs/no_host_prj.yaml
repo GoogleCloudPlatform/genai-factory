@@ -36,6 +36,7 @@ values:
     cors: []
     custom_placement_config: []
     default_event_based_hold: null
+    deletion_policy: DELETE
     effective_labels:
       goog-terraform-provisioned: 'true'
     enable_object_retention: null
@@ -318,60 +319,70 @@ values:
     project: your-prefix-gf-srun-0
     role: roles/aiplatform.tuningServiceAgent
   module.projects.module.projects["service-01"].google_project_service.project_services["aiplatform.googleapis.com"]:
+    deletion_policy: DELETE
     disable_dependent_services: false
     disable_on_destroy: false
     project: your-prefix-gf-srun-0
     service: aiplatform.googleapis.com
     timeouts: null
   module.projects.module.projects["service-01"].google_project_service.project_services["artifactregistry.googleapis.com"]:
+    deletion_policy: DELETE
     disable_dependent_services: false
     disable_on_destroy: false
     project: your-prefix-gf-srun-0
     service: artifactregistry.googleapis.com
     timeouts: null
   module.projects.module.projects["service-01"].google_project_service.project_services["certificatemanager.googleapis.com"]:
+    deletion_policy: DELETE
     disable_dependent_services: false
     disable_on_destroy: false
     project: your-prefix-gf-srun-0
     service: certificatemanager.googleapis.com
     timeouts: null
   module.projects.module.projects["service-01"].google_project_service.project_services["cloudbuild.googleapis.com"]:
+    deletion_policy: DELETE
     disable_dependent_services: false
     disable_on_destroy: false
     project: your-prefix-gf-srun-0
     service: cloudbuild.googleapis.com
     timeouts: null
   ? module.projects.module.projects["service-01"].google_project_service.project_services["cloudresourcemanager.googleapis.com"]
-  : disable_dependent_services: false
+  : deletion_policy: DELETE
+    disable_dependent_services: false
     disable_on_destroy: false
     project: your-prefix-gf-srun-0
     service: cloudresourcemanager.googleapis.com
     timeouts: null
   module.projects.module.projects["service-01"].google_project_service.project_services["compute.googleapis.com"]:
+    deletion_policy: DELETE
     disable_dependent_services: false
     disable_on_destroy: false
     project: your-prefix-gf-srun-0
     service: compute.googleapis.com
     timeouts: null
   module.projects.module.projects["service-01"].google_project_service.project_services["modelarmor.googleapis.com"]:
+    deletion_policy: DELETE
     disable_dependent_services: false
     disable_on_destroy: false
     project: your-prefix-gf-srun-0
     service: modelarmor.googleapis.com
     timeouts: null
   module.projects.module.projects["service-01"].google_project_service.project_services["privateca.googleapis.com"]:
+    deletion_policy: DELETE
     disable_dependent_services: false
     disable_on_destroy: false
     project: your-prefix-gf-srun-0
     service: privateca.googleapis.com
     timeouts: null
   module.projects.module.projects["service-01"].google_project_service.project_services["run.googleapis.com"]:
+    deletion_policy: DELETE
     disable_dependent_services: false
     disable_on_destroy: false
     project: your-prefix-gf-srun-0
     service: run.googleapis.com
     timeouts: null
   module.projects.module.projects["service-01"].google_project_service.project_services["serviceusage.googleapis.com"]:
+    deletion_policy: DELETE
     disable_dependent_services: false
     disable_on_destroy: false
     project: your-prefix-gf-srun-0
@@ -412,6 +423,7 @@ values:
   module.projects.module.service-accounts["service-01/crun-0"].google_service_account.service_account[0]:
     account_id: crun-0
     create_ignore_already_exists: null
+    deletion_policy: DELETE
     description: null
     disabled: false
     display_name: Terraform-managed.
@@ -422,6 +434,7 @@ values:
   module.projects.module.service-accounts["service-01/crun-build-0"].google_service_account.service_account[0]:
     account_id: crun-build-0
     create_ignore_already_exists: null
+    deletion_policy: DELETE
     description: null
     disabled: false
     display_name: Terraform-managed.
@@ -432,6 +445,7 @@ values:
   module.projects.module.service-accounts["service-01/iac-rw"].google_service_account.service_account[0]:
     account_id: iac-rw
     create_ignore_already_exists: null
+    deletion_policy: DELETE
     description: null
     disabled: false
     display_name: Terraform-managed.
