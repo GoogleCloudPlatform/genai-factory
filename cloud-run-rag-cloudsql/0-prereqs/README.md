@@ -1,6 +1,6 @@
-# Cloud Run - Single / Prerequisites stage
+# Cloud Run - RAG with Cloud SQL / Prerequisites
 
-This stage is part of the `Cloud Run - RAG - Cloud SQL` factory.
+This stage is part of the `Cloud Run - Single` factory.
 
 It performs the following tasks:
 
@@ -16,12 +16,12 @@ The [host](data/projects/host.yaml) and [service](data/projects/service-01.yaml)
 
 ## Required roles
 
-To execute this stage, you need the following roles:
+To execute this stage, you need these roles:
 
-- `roles/resourcemanager.projectCreator` on the organization or folder where you create the project.
-- `roles/billing.user` on the billing account you use.
+- `roles/resourcemanager.projectCreator` on the organization or folder where you will create the project.
+- `roles/billing.user` on the billing account you wish to use.
 
-Alternatively, you can use the more permissive `roles/owner` role on the organization or folder.
+Alternatively, you can use the more permissive `roles/owner` on the organization or folder.
 
 If you create the networking stack using this stage, you must also grant yourself the `roles/compute.xpnAdmin` role on the organization or folder.
 
@@ -36,7 +36,7 @@ terraform init
 terraform apply
 ```
 
-After a successful deployment, the stage generates the `providers.tf` and `terraform.auto.tfvars` files in the [1-apps folder](../1-apps/README.md). Navigate to the [1-apps folder](../1-apps/README.md) to deploy your applications.
+You should now see the `providers.tf` and `terraform.auto.tfvars` files in the [1-apps folder](../1-apps/README.md). Enter the [1-apps folder](../1-apps/README.md) to proceed with the deployment.
 
 ## Manage prerequisites independently
 
@@ -88,3 +88,13 @@ This is useful if your shared VPC is managed by someone else, outside this facto
 | [region](outputs.tf#L93) | The region where to create the resources. |  |
 | [service_accounts](outputs.tf#L98) | Created service accounts. |  |
 <!-- END TFDOC -->
+
+## Teardown & Cleanup
+
+> [!CAUTION]
+> **GCP Direct VPC Egress Subnetwork Cooling Delay:**
+> When tearing down this stage, `terraform destroy` on `0-prereqs` may fail to delete the subnet/VPC network immediately after destroying `1-apps`.
+>
+> This is an **expected Google Cloud Platform behavior** for Cloud Run services configured with Direct VPC Egress. GCP retains the dynamically allocated container network interfaces (ENIs) inside the subnetwork for a **cooling-off period of 2 to 3 hours** after the service is deleted to allow rapid deployment restarts.
+>
+> **Resolution:** If the VPC destruction fails with a `resource-in-use` error, wait 2 to 3 hours for the network interfaces to naturally time out and clear inside GCP, then re-run `terraform destroy` to complete the cleanup.

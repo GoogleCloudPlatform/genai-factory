@@ -12,48 +12,41 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# variables from 0-projects
+# variables from 0-prereqs
 
-project_config = {
-  id     = "prefix-gf-rrag-0"
-  number = "123456789012"
+networking_config = {
+  subnet = "projects/prefix-gf-rrag-hp-0/regions/europe-west1/subnetworks/sub-0"
+  vpc    = "projects/prefix-gf-rrag-hp-0/global/networks/net-0"
 }
-service_accounts = {
-  "project/gf-rrag-fe-0" = {
-    email     = "gf-rrag-fe-0@prefix-gf-rrag-0.iam.gserviceaccount.com"
-    iam_email = "serviceAccount:gf-rrag-fe-0@prefix-gf-rrag-0.iam.gserviceaccount.com"
-    id        = "projects/prefix-gf-rrag-0/serviceAccounts/gf-rrag-fe-0@prefix-gf-rrag-0.iam.gserviceaccount.com"
-  }
-  "project/gf-rrag-fe-build-0" = {
-    email     = "gf-rrag-fe-build-0@prefix-gf-rrag-0.iam.gserviceaccount.com"
-    iam_email = "serviceAccount:gf-rrag-fe-build-0@prefix-gf-rrag-0.iam.gserviceaccount.com"
-    id        = "projects/prefix-gf-rrag-0/serviceAccounts/gf-rrag-fe-build-0@prefix-gf-rrag-0.iam.gserviceaccount.com"
-  }
-  "project/gf-rrag-ing-0" = {
-    email     = "gf-rrag-ing-0@prefix-gf-rrag-0.iam.gserviceaccount.com"
-    iam_email = "serviceAccount:gf-rrag-ing-0@prefix-gf-rrag-0.iam.gserviceaccount.com"
-    id        = "projects/prefix-gf-rrag-0/serviceAccounts/gf-rrag-ing-0@prefix-gf-rrag-0.iam.gserviceaccount.com"
-  }
-  "project/gf-rrag-ing-build-0" = {
-    email     = "gf-rrag-ing-build-0@prefix-gf-rrag-0.iam.gserviceaccount.com"
-    iam_email = "serviceAccount:gf-rrag-ing-build-0@prefix-gf-rrag-0.iam.gserviceaccount.com"
-    id        = "projects/prefix-gf-rrag-0/serviceAccounts/gf-rrag-ing-build-0@prefix-gf-rrag-0.iam.gserviceaccount.com"
-  }
-  "project/gf-rrag-ing-sched-0" = {
-    email     = "gf-rrag-ing-sched-0@prefix-gf-rrag-0.iam.gserviceaccount.com"
-    iam_email = "serviceAccount:gf-rrag-ing-sched-0@prefix-gf-rrag-0.iam.gserviceaccount.com"
-    id        = "projects/prefix-gf-rrag-0/serviceAccounts/gf-rrag-ing-sched-0@prefix-gf-rrag-0.iam.gserviceaccount.com"
-  }
-  "project/iac-rw" = {
-    email     = "iac-rw@prefix-gf-rrag-0.iam.gserviceaccount.com"
-    iam_email = "serviceAccount:iac-rw@prefix-gf-rrag-0.iam.gserviceaccount.com"
-    id        = "projects/prefix-gf-rrag-0/serviceAccounts/iac-rw@prefix-gf-rrag-0.iam.gserviceaccount.com"
-  }
+
+prefix = "prefix"
+
+project_id = "prefix-gf-rrag-0"
+number     = "123456789012"
+
+region = "europe-west1"
+
+service_account_emails = {
+  "service-01/gf-rrag-fe-0"        = "gf-rrag-fe-0@prefix-gf-rrag-0.iam.gserviceaccount.com"
+  "service-01/gf-rrag-fe-build-0"  = "gf-rrag-fe-build-0@prefix-gf-rrag-0.iam.gserviceaccount.com"
+  "service-01/gf-rrag-ing-0"       = "gf-rrag-ing-0@prefix-gf-rrag-0.iam.gserviceaccount.com"
+  "service-01/gf-rrag-ing-build-0" = "gf-rrag-ing-build-0@prefix-gf-rrag-0.iam.gserviceaccount.com"
+  "service-01/gf-rrag-ing-sched-0" = "gf-rrag-ing-sched-0@prefix-gf-rrag-0.iam.gserviceaccount.com"
+  "service-01/iac-rw"              = "iac-rw@prefix-gf-rrag-0.iam.gserviceaccount.com"
+}
+
+service_account_ids = {
+  "service-01/gf-rrag-fe-0"        = "projects/prefix-gf-rrag-0/serviceAccounts/gf-rrag-fe-0@prefix-gf-rrag-0.iam.gserviceaccount.com"
+  "service-01/gf-rrag-fe-build-0"  = "projects/prefix-gf-rrag-0/serviceAccounts/gf-rrag-fe-build-0@prefix-gf-rrag-0.iam.gserviceaccount.com"
+  "service-01/gf-rrag-ing-0"       = "projects/prefix-gf-rrag-0/serviceAccounts/gf-rrag-ing-0@prefix-gf-rrag-0.iam.gserviceaccount.com"
+  "service-01/gf-rrag-ing-build-0" = "projects/prefix-gf-rrag-0/serviceAccounts/gf-rrag-ing-build-0@prefix-gf-rrag-0.iam.gserviceaccount.com"
+  "service-01/gf-rrag-ing-sched-0" = "projects/prefix-gf-rrag-0/serviceAccounts/gf-rrag-ing-sched-0@prefix-gf-rrag-0.iam.gserviceaccount.com"
+  "service-01/iac-rw"              = "projects/prefix-gf-rrag-0/serviceAccounts/iac-rw@prefix-gf-rrag-0.iam.gserviceaccount.com"
 }
 
 # variables from 1-apps
 
-lbs_config = {
+lbs_configs = {
   external = {
     domain = "your-domain.com"
   }
