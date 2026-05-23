@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+prefix = "your-prefix"
 project_config = {
   billing_account_id = "billing-acct-id"
   parent             = "organizations/1122334455"
-  prefix             = "your-prefix"
 }
