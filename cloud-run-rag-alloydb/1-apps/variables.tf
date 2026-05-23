@@ -12,9 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Only used when ILBs are created.
-# CA pools can't be recreated in the same project with the same name.
-# This can be handy during experimentation
 variable "ca_pool_name_suffix" {
   description = "The name suffix of the CA pool used for app ILB certificates."
   type        = string
@@ -72,7 +69,7 @@ variable "enable_deletion_protection" {
 }
 
 variable "ingestion_schedule_configs" {
-  description = "The configuration of the Cloud Scheduler that calls invokes the Cloud Run ingestion job."
+  description = "The configuration of the Cloud Scheduler that invokes the Cloud Run ingestion job."
   type = object({
     attempt_deadline = optional(string, "60s")
     retry_count      = optional(number, 3)
@@ -82,21 +79,17 @@ variable "ingestion_schedule_configs" {
   default  = {}
 }
 
-variable "lbs_config" {
+variable "lbs_configs" {
   description = "The load balancers configuration."
   type = object({
     external = optional(object({
-      enable = optional(bool, true)
-      # The optional load balancer IP address.
-      # If not specified, the module will create one.
+      enable            = optional(bool, true)
       ip_address        = optional(string)
       domain            = optional(string, "example.com")
       allowed_ip_ranges = optional(list(string), ["0.0.0.0/0"])
     }), {})
     internal = optional(object({
-      enable = optional(bool, false)
-      # The optional load balancer IP address.
-      # If not specified, the module will create one.
+      enable            = optional(bool, false)
       ip_address        = optional(string)
       domain            = optional(string, "example.com")
       allowed_ip_ranges = optional(list(string), ["0.0.0.0/0"])
@@ -117,45 +110,40 @@ variable "name" {
 }
 
 variable "networking_config" {
-  description = "The networking configuration."
+  description = "The networking configuration. Each element is either the id of the resource or the key of the map var.vpc_self_links."
   type = object({
-    create = optional(bool, true)
-    vpc_id = optional(string, "net-0")
-    subnet = optional(object({
-      ip_cidr_range = optional(string, "10.0.0.0/24")
-      name          = optional(string, "sub-0")
-    }), {})
-    subnet_proxy_only = optional(object({
-      ip_cidr_range = optional(string, "10.20.0.0/24")
-      name          = optional(string, "proxy-only-sub-0")
-    }), {})
+    subnet = string
+    vpc    = string
   })
   nullable = false
-  default  = {}
 }
 
-variable "project_config" {
-  description = "The project where to create the resources."
-  type = object({
-    id     = string
-    number = string
-  })
-  nullable = false
+variable "number" {
+  description = "The number of the project where to create the resources."
+  type        = string
+  nullable    = false
+}
+
+variable "project_id" {
+  description = "The id of the project where to create the resources."
+  type        = string
+  nullable    = false
 }
 
 variable "region" {
   type        = string
   description = "The GCP region where to deploy the resources."
   nullable    = false
-  default     = "europe-west1"
 }
 
-variable "service_accounts" {
-  description = "The pre-created service accounts used by the blueprint."
-  type = map(object({
-    email     = string
-    iam_email = string
-    id        = string
-  }))
-  default = {}
+variable "service_account_emails" {
+  description = "The service account emails. Each element is the email of the service account or the key of the map var.service_accounts."
+  type        = map(string)
+  nullable    = false
+}
+
+variable "service_account_ids" {
+  description = "The service account ids. Each element is the id of the service account or the key of the map var.service_accounts."
+  type        = map(string)
+  nullable    = false
 }

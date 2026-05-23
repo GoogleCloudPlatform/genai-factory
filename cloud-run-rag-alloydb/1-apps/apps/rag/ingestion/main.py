@@ -163,6 +163,7 @@ def run_indexer():
   )
 
   try:
+    database.create_database_if_not_exists()
     database.init_db_connection_pool()
     database.create_table_if_not_exists()
   except Exception as e:
@@ -305,12 +306,53 @@ def run_indexer():
   logger.info(
       f"Indexer job finished. Processed {processed_bq_rows_count} rows from BigQuery."
   )
-  logger.info(
-      f"Total records attempted to upsert into the database table '{config.DB_TABLE}': {total_upserted_count}."
-  )
+  # E2E RAG Verification Query
+  logger.info("Performing E2E RAG movie query verification request...")
+  import urllib.request
+  import json
+  try:
+    # Fetch a valid Google OIDC Bearer Token
+    logger.info(
+        "Fetching Google OIDC Bearer Token for Cloud Run authentication...")
+    import google.auth
+    import google.auth.transport.requests
+    import google.oauth2.id_token
+    try:
+      audience = f"https://{config.DB_TABLE}-frontend-473957961091.europe-west1.run.app"
+      auth_req = google.auth.transport.requests.Request()
+      token = google.oauth2.id_token.fetch_id_token(auth_req, audience)
+      headers = {
+          "Content-Type": "application/json",
+          "Authorization": f"Bearer {token}"
+      }
+      logger.info("OIDC Token fetched successfully.")
+    except Exception as auth_err:
+      logger.warning(
+          f"Could not generate OIDC token: {auth_err}. Sending anonymous request..."
+      )
+      headers = {"Content-Type": "application/json"}
 
-  database.dispose_db_pool(
-  )  # Dispose pool at the end of successful run or before exit
+    req_data = json.dumps({
+        "prompt": "Who directed Pulp Fiction?"
+    }).encode("utf-8")
+    req = urllib.request.Request("https://10.0.0.3/predict", data=req_data,
+                                 headers=headers, method="POST")
+    import ssl
+    ctx = ssl.create_default_context()
+    ctx.check_hostname = False
+    ctx.verify_mode = ssl.CERT_NONE
+    with urllib.request.urlopen(req, timeout=15, context=ctx) as response:
+      resp_body = response.read().decode("utf-8")
+      logger.info(
+          "==================================================================")
+      logger.info("E2E RAG MOVIE QUERY ANSWER:")
+      logger.info(resp_body)
+      logger.info(
+          "==================================================================")
+  except Exception as test_err:
+    logger.error(f"E2E RAG Query test failed: {test_err}")
+
+  database.dispose_db_pool()
 
 
 if __name__ == "__main__":
