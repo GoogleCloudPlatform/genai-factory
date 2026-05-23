@@ -5,7 +5,7 @@ This stage is part of the `Cloud Run RAG - Cloud SQL` factory.
 It performs the following tasks:
 
 - Deploys the Cloud Run services for ingestion and serving the frontend agent.
-- Deploys an AlloyDB database where to store the embeddings.
+- Deploys a Cloud SQL database where to store the embeddings.
 - Deploys BigQuery where we store the initial data.
 - Optionally, creates external and/or internal load balancers with custom domains.
 - Optionally, sets up Certificate Authority Service (CAS) and Certificate Manager to generate and store your Internal Load Balancers certificates.
