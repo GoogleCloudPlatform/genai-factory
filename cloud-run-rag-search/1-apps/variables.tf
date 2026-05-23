@@ -84,8 +84,8 @@ variable "ingestion_schedule_configs" {
   default  = {}
 }
 
-variable "lbs_config" {
-  description = "The load balancers configuration."
+variable "lbs_configs" {
+  description = "The load balancers configurations."
   type = object({
     external = optional(object({
       enable = optional(bool, true)
@@ -119,48 +119,45 @@ variable "name" {
 }
 
 variable "networking_config" {
-  description = "The networking configuration."
+  description = "The networking configuration. Each element is either the id of the resource or the key of the map var.vpc_self_links."
   type = object({
-    create = optional(bool, true)
-    vpc_id = optional(string, "net-0")
-    subnet = optional(object({
-      ip_cidr_range = optional(string, "10.0.0.0/24")
-      name          = optional(string, "sub-0")
-    }), {})
-    subnet_proxy_only = optional(object({
-      ip_cidr_range = optional(string, "10.20.0.0/24")
-      name          = optional(string, "proxy-only-sub-0")
-    }), {})
+    subnet = string
+    vpc    = string
   })
   nullable = false
-  default  = {}
 }
 
-variable "project_config" {
-  description = "The project where to create the resources."
-  type = object({
-    id     = string
-    number = string
-    prefix = string
-  })
-  nullable = false
+
+variable "prefix" {
+  description = "The prefix to use for resources with globally unique names."
+  type        = string
+  nullable    = false
+}
+
+variable "project_id" {
+  description = "The id of the project where to create the resources."
+  type        = string
+  nullable    = false
 }
 
 variable "region" {
   type        = string
   description = "The GCP region where to deploy the resources."
   nullable    = false
-  default     = "europe-west1"
 }
 
-variable "service_accounts" {
-  description = "The pre-created service accounts used by the blueprint."
-  type = map(object({
-    email     = string
-    iam_email = string
-    id        = string
-  }))
-  default = {}
+# Expected keys: service-01/gf-rrag-fe-0, service-01/gf-rrag-fe-build-0, service-01/gf-rrag-ing-0, service-01/gf-rrag-ing-build-0, service-01/gf-rrag-ing-sched-0, service-01/iac-rw
+variable "service_account_emails" {
+  description = "The service account emails. Each element is the email of the service account or the key of the map var.service_accounts."
+  type        = map(string)
+  nullable    = false
+}
+
+# Expected keys: service-01/gf-rrag-fe-0, service-01/gf-rrag-fe-build-0, service-01/gf-rrag-ing-0, service-01/gf-rrag-ing-build-0, service-01/gf-rrag-ing-sched-0, service-01/iac-rw
+variable "service_account_ids" {
+  description = "The service account ids. Each element is the id of the service account or the key of the map var.service_accounts."
+  type        = map(string)
+  nullable    = false
 }
 
 variable "vector_search_config" {
@@ -175,7 +172,7 @@ variable "vector_search_config" {
     approximate_neighbors_count = optional(number, 150)
     dimensions                  = optional(number, 768)
     distance_measure_type       = optional(string, "DOT_PRODUCT_DISTANCE")
-    index_shard_size            = optional(string, "SHARD_SIZE_SO_DYNAMIC")
+    index_shard_size            = optional(string, "SHARD_SIZE_SMALL")
     index_update_method         = optional(string, "STREAM_UPDATE")
     deployment_tier             = optional(string, "STORAGE")
     # see https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/vertex_ai_index_endpoint_deployed_index#dedicated_resources-1
