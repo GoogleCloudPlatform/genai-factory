@@ -17,9 +17,9 @@ locals {
 }
 
 module "index-bucket" {
-  source        = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/gcs?ref=v56.0.0"
-  project_id    = var.project_config.id
-  prefix        = var.project_config.prefix
+  source        = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/gcs?ref=v55.4.0"
+  project_id    = var.project_id
+  prefix        = var.prefix
   name          = var.name
   location      = var.region
   versioning    = true
@@ -28,7 +28,7 @@ module "index-bucket" {
 
 resource "google_vertex_ai_index" "index" {
   display_name        = var.name
-  project             = var.project_config.id
+  project             = var.project_id
   region              = var.region
   index_update_method = var.vector_search_config.index_update_method
   description         = "VertexAI index."
@@ -42,11 +42,13 @@ resource "google_vertex_ai_index" "index" {
       shard_size                  = var.vector_search_config.index_shard_size
       distance_measure_type       = var.vector_search_config.distance_measure_type
 
-      algorithm_config {
-
-        tree_ah_config {
-          leaf_node_embedding_count    = var.vector_search_config.algorithm_config.tree_ah_config.leaf_node_embedding_count
-          leaf_nodes_to_search_percent = var.vector_search_config.algorithm_config.tree_ah_config.leaf_nodes_to_search_percent
+      dynamic "algorithm_config" {
+        for_each = var.vector_search_config.index_shard_size == "SHARD_SIZE_SO_DYNAMIC" ? [] : [1]
+        content {
+          tree_ah_config {
+            leaf_node_embedding_count    = var.vector_search_config.algorithm_config.tree_ah_config.leaf_node_embedding_count
+            leaf_nodes_to_search_percent = var.vector_search_config.algorithm_config.tree_ah_config.leaf_nodes_to_search_percent
+          }
         }
       }
     }
@@ -55,14 +57,14 @@ resource "google_vertex_ai_index" "index" {
 
 resource "google_vertex_ai_index_endpoint" "index_endpoint" {
   display_name = var.name
-  project      = var.project_config.id
+  project      = var.project_id
   region       = var.region
   description  = "VertexAI index endpoint."
 
   private_service_connect_config {
     enable_private_service_connect = true
     project_allowlist = [
-      var.project_config.id
+      var.project_id
     ]
   }
 }
@@ -87,18 +89,18 @@ resource "google_vertex_ai_index_endpoint_deployed_index" "index_deployment" {
 
 resource "google_compute_address" "vector_search_address" {
   name         = var.name
-  project      = var.project_config.id
+  project      = var.project_id
   address_type = "INTERNAL"
-  subnetwork   = local.subnet_id
+  subnetwork   = var.networking_config.subnet
   region       = var.region
 }
 
 resource "google_compute_forwarding_rule" "vector_search_psc_endpoint" {
   name                  = var.name
-  project               = var.project_config.id
+  project               = var.project_id
   region                = var.region
   target                = google_vertex_ai_index_endpoint_deployed_index.index_deployment.private_endpoints[0].service_attachment
   load_balancing_scheme = ""
-  network               = local.vpc_id
+  network               = var.networking_config.vpc
   ip_address            = google_compute_address.vector_search_address.id
 }
