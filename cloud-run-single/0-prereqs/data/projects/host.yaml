@@ -23,14 +23,7 @@ services:
   - dns.googleapis.com
 
 # Grant roles
-iam:
-  roles/privateca.certificateRequester:
-    - $service_agents:certificatemanager
 iam_by_principals:
-  $iam_principals:service_accounts/service-01/iac-rw:
-    - roles/compute.networkAdmin
-    # To create response policies for Private Google APIs
-    - roles/dns.admin
   # Grant to cloud run service agent for Cloud Run Direct Egress on shared vpc
   $iam_principals:service_agents/service-01/run:
     - roles/compute.networkUser
