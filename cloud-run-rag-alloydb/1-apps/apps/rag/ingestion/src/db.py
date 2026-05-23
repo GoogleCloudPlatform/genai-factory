@@ -32,6 +32,39 @@ _db_pool: sqlalchemy.engine.Engine | None = None
 _connector: Connector | None = None
 
 
+def create_database_if_not_exists():
+  """Connects to default postgres database and creates var.name database if it doesn't exist."""
+  logger.info(f"Ensuring database '{config.DB_NAME}' exists...")
+  connector = Connector(ip_type="PSC")
+
+  def getconn():
+    return connector.connect(
+        instance_uri=config.ALLOYDB_INSTANCE_URI,
+        driver="pg8000",
+        user=config.DB_SA,
+        db="postgres",
+        enable_iam_auth=True,
+    )
+
+  engine = sqlalchemy.create_engine(
+      "postgresql+pg8000://",
+      creator=getconn,
+  )
+  try:
+    with engine.connect().execution_options(
+        isolation_level="AUTOCOMMIT") as connection:
+      connection.execute(sqlalchemy.text(f'CREATE DATABASE "{config.DB_NAME}"'))
+      logger.info(f"Successfully created database '{config.DB_NAME}'")
+  except Exception as e:
+    if "already exists" in str(e):
+      logger.info(f"Database '{config.DB_NAME}' already exists.")
+    else:
+      logger.error(f"Error creating database: {e}")
+  finally:
+    engine.dispose()
+    connector.close()
+
+
 def init_db_connection_pool():
   """Initializes a connection pool using the Python Connector."""
   global _db_pool, _connector

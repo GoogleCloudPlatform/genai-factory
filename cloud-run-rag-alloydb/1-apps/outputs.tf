@@ -14,11 +14,11 @@
 
 locals {
   _sa_db_frontend = trimsuffix(
-    var.service_accounts["project/gf-rrag-fe-0"].email,
+    var.service_account_emails["service-01/gf-rrag-fe-0"],
     ".gserviceaccount.com"
   )
   _sa_db_ingestion = trimsuffix(
-    var.service_accounts["project/gf-rrag-ing-0"].email,
+    var.service_account_emails["service-01/gf-rrag-ing-0"],
     ".gserviceaccount.com"
   )
 
@@ -26,7 +26,7 @@ locals {
     "DB_NAME=${var.name}",
     "DB_SA=${local._sa_db_frontend}",
     "DB_TABLE=${var.name}",
-    "PROJECT_ID=${var.project_config.id}",
+    "PROJECT_ID=${var.project_id}",
     "REGION=${var.region}"
   ]
   _env_vars_ingestion = [
@@ -35,7 +35,7 @@ locals {
     "DB_NAME=${var.name}",
     "DB_SA=${local._sa_db_ingestion}",
     "DB_TABLE=${var.name}",
-    "PROJECT_ID=${var.project_config.id}",
+    "PROJECT_ID=${var.project_id}",
     "REGION=${var.region}"
   ]
 
@@ -53,7 +53,7 @@ output "commands" {
   gcloud alloydb users set-password postgres \
   --cluster alloydb \
   --password YOUR_COMPLEX_PASSWORD_HERE \
-  --project ${var.project_config.id} \
+  --project ${var.project_id} \
   --region ${var.region}
 
   # Install the vector extension in AlloyDB
@@ -64,56 +64,56 @@ output "commands" {
      # Then, create the database: CREATE DATABASE "${var.name}";
 
   # Load sample data into BigQuery
-  gcloud config set auth/impersonate_service_account ${var.service_accounts["project/iac-rw"].email}
+  gcloud config set auth/impersonate_service_account ${var.service_account_emails["service-01/iac-rw"]}
   bq load \
-    --project_id ${var.project_config.id} \
+    --project_id ${var.project_id} \
     --source_format=CSV \
     --skip_leading_rows=1 \
     --autodetect \
-    ${var.project_config.id}:${local.bigquery_id}.${local.bigquery_id} \
+    ${var.project_id}:${local.bigquery_id}.${local.bigquery_id} \
     ./data/top-100-imdb-movies.csv
   gcloud config unset auth/impersonate_service_account
 
   gcloud artifacts repositories create ${var.name} \
-    --project=${var.project_config.id} \
+    --project=${var.project_id} \
     --location ${var.region} \
     --repository-format docker \
-    --impersonate-service-account=${var.service_accounts["project/iac-rw"].email}
+    --impersonate-service-account=${var.service_account_emails["service-01/iac-rw"]}
 
   # Ingestion Cloud Run
   gcloud builds submit ./apps/rag/ingestion \
-    --project ${var.project_config.id} \
-    --tag ${var.region}-docker.pkg.dev/${var.project_config.id}/${var.name}/ingestion \
-    --service-account ${var.service_accounts["project/gf-rrag-ing-build-0"].id} \
+    --project ${var.project_id} \
+    --tag ${var.region}-docker.pkg.dev/${var.project_id}/${var.name}/ingestion \
+    --service-account ${var.service_account_ids["service-01/gf-rrag-ing-build-0"]} \
     --default-buckets-behavior=REGIONAL_USER_OWNED_BUCKET \
     --region ${var.region} \
     --quiet \
-    --impersonate-service-account=${var.service_accounts["project/iac-rw"].email}
+    --impersonate-service-account=${var.service_account_emails["service-01/iac-rw"]}
 
   gcloud run jobs deploy ${var.name}-ingestion \
-    --impersonate-service-account=${var.service_accounts["project/iac-rw"].email} \
-    --project ${var.project_config.id} \
+    --impersonate-service-account=${var.service_account_emails["service-01/iac-rw"]} \
+    --project ${var.project_id} \
     --region ${var.region} \
     --container=ingestion \
-    --image=${var.region}-docker.pkg.dev/${var.project_config.id}/${var.name}/ingestion \
+    --image=${var.region}-docker.pkg.dev/${var.project_id}/${var.name}/ingestion \
     --set-env-vars ${local.env_vars_ingestion}
 
   # Frontend Cloud Run
   gcloud builds submit ./apps/rag/frontend \
-    --project ${var.project_config.id} \
-    --tag ${var.region}-docker.pkg.dev/${var.project_config.id}/${var.name}/frontend \
-    --service-account ${var.service_accounts["project/gf-rrag-fe-build-0"].id} \
+    --project ${var.project_id} \
+    --tag ${var.region}-docker.pkg.dev/${var.project_id}/${var.name}/frontend \
+    --service-account ${var.service_account_ids["service-01/gf-rrag-fe-build-0"]} \
     --default-buckets-behavior=REGIONAL_USER_OWNED_BUCKET \
     --region ${var.region} \
     --quiet \
-    --impersonate-service-account=${var.service_accounts["project/iac-rw"].email}
+    --impersonate-service-account=${var.service_account_emails["service-01/iac-rw"]}
 
   gcloud run deploy ${var.name}-frontend \
-    --impersonate-service-account=${var.service_accounts["project/iac-rw"].email} \
-    --project ${var.project_config.id} \
+    --impersonate-service-account=${var.service_account_emails["service-01/iac-rw"]} \
+    --project ${var.project_id} \
     --region ${var.region} \
     --container=frontend \
-    --image=${var.region}-docker.pkg.dev/${var.project_config.id}/${var.name}/frontend \
+    --image=${var.region}-docker.pkg.dev/${var.project_id}/${var.name}/frontend \
     --set-env-vars ${local.env_vars_frontend}
   EOT
 }
@@ -122,12 +122,12 @@ output "ip_addresses" {
   description = "The load balancers IP addresses."
   value = {
     external = (
-      var.lbs_config.external.enable
-      ? module.lb_external[0].address[""]
+      var.lbs_configs.external.enable
+      ? module.lb_ext_glb[0].address
       : null
     )
     internal = (
-      var.lbs_config.internal.enable
+      var.lbs_configs.internal.enable
       ? module.lb_internal[0].address
       : null
     )

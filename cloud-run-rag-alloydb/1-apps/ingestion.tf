@@ -14,7 +14,7 @@
 
 module "cloud_run_ingestion" {
   source              = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/cloud-run-v2?ref=v56.0.0"
-  project_id          = var.project_config.id
+  project_id          = var.project_id
   type                = "JOB"
   name                = "${var.name}-ingestion"
   region              = var.region
@@ -22,7 +22,7 @@ module "cloud_run_ingestion" {
   deletion_protection = var.enable_deletion_protection
   service_account_config = {
     create = false
-    email  = var.service_accounts["project/gf-rrag-ing-0"].email
+    email  = var.service_account_emails["service-01/gf-rrag-ing-0"]
   }
   containers = merge({
     alloydb-proxy = {
@@ -32,22 +32,21 @@ module "cloud_run_ingestion" {
         module.alloydb.instances["primary"].name,
         "--psc",
         "--structured-logs"
-        #        "--auto-iam-authn"
       ]
     } },
     var.cloud_run_configs.ingestion.containers
   )
   iam = {
     "roles/run.invoker" = concat(
-      [var.service_accounts["project/gf-rrag-ing-sched-0"].iam_email],
+      ["serviceAccount:${var.service_account_emails["service-01/gf-rrag-ing-sched-0"]}"],
       var.cloud_run_configs.ingestion.service_invokers
     )
   }
   revision = {
     vpc_access = {
       egress  = var.cloud_run_configs.ingestion.vpc_access_egress
-      network = local.vpc_id
-      subnet  = local.subnet_id
+      network = var.networking_config.vpc
+      subnet  = var.networking_config.subnet
       tags    = var.cloud_run_configs.ingestion.vpc_access_tags
     }
   }
@@ -59,6 +58,11 @@ module "cloud_run_ingestion" {
       min_instance_count = var.cloud_run_configs.ingestion.min_instance_count
     }
   }
+  context = {
+    iam_principals = local.iam_principals
+    networks       = var.vpc_self_links
+    subnets        = var.subnet_self_links
+  }
 }
 
 resource "google_cloud_scheduler_job" "ingestion_scheduler" {
@@ -67,7 +71,7 @@ resource "google_cloud_scheduler_job" "ingestion_scheduler" {
   schedule         = var.ingestion_schedule_configs.schedule
   attempt_deadline = var.ingestion_schedule_configs.attempt_deadline
   region           = var.region
-  project          = var.project_config.id
+  project          = var.project_id
 
   retry_config {
     retry_count = var.ingestion_schedule_configs.retry_count
@@ -75,10 +79,10 @@ resource "google_cloud_scheduler_job" "ingestion_scheduler" {
 
   http_target {
     http_method = "POST"
-    uri         = "https://${var.region}-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/${var.project_config.id}/jobs/${module.cloud_run_ingestion.job.name}:run"
+    uri         = "https://${var.region}-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/${var.project_id}/jobs/${module.cloud_run_ingestion.job.name}:run"
 
     oauth_token {
-      service_account_email = var.service_accounts["project/gf-rrag-ing-sched-0"].email
+      service_account_email = var.service_account_emails["service-01/gf-rrag-ing-sched-0"]
     }
   }
 }
