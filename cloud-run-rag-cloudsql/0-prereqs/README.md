@@ -1,6 +1,6 @@
 # Cloud Run - RAG with Cloud SQL / Prerequisites
 
-This stage is part of the `Cloud Run - Single` factory.
+This stage is part of the `Cloud Run RAG - Cloud SQL` factory.
 
 It performs the following tasks:
 

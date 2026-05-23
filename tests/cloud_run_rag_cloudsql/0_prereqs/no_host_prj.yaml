@@ -676,22 +676,10 @@ values:
     - serviceAccount:iac-rw@your-prefix-gf-rrag-0.iam.gserviceaccount.com
     role: roles/storage.objectAdmin
     timeouts: null
-  module.projects.module.projects-iam["host"].google_project_iam_binding.authoritative["roles/compute.networkAdmin"]:
-    condition: []
-    members:
-    - serviceAccount:iac-rw@your-prefix-gf-rrag-0.iam.gserviceaccount.com
-    project: your-prefix-gf-rrag-hp-0
-    role: roles/compute.networkAdmin
   module.projects.module.projects-iam["host"].google_project_iam_binding.authoritative["roles/compute.networkUser"]:
     condition: []
     project: your-prefix-gf-rrag-hp-0
     role: roles/compute.networkUser
-  module.projects.module.projects-iam["host"].google_project_iam_binding.authoritative["roles/dns.admin"]:
-    condition: []
-    members:
-    - serviceAccount:iac-rw@your-prefix-gf-rrag-0.iam.gserviceaccount.com
-    project: your-prefix-gf-rrag-hp-0
-    role: roles/dns.admin
   module.projects.module.projects-iam["service-01"].google_org_policy_policy.default["compute.restrictSharedVpcSubnetworks"]:
     dry_run_spec: []
     name: projects/your-prefix-gf-rrag-0/policies/compute.restrictSharedVpcSubnetworks
@@ -1307,7 +1295,7 @@ counts:
   google_dns_response_policy_rule: 39
   google_org_policy_policy: 1
   google_project: 2
-  google_project_iam_binding: 21
+  google_project_iam_binding: 19
   google_project_iam_member: 30
   google_project_service: 12
   google_project_service_identity: 8
@@ -1317,7 +1305,7 @@ counts:
   google_storage_bucket_iam_binding: 1
   local_file: 2
   modules: 15
-  resources: 141
+  resources: 139
   terraform_data: 2
 
 outputs:
