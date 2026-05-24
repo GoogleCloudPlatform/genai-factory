@@ -33,16 +33,13 @@ variable "name" {
   description = "The name of the resources. This is also the project suffix if a new project is created."
   type        = string
   nullable    = false
-  default     = "gf-ai-apps-srch-0"
+  default     = "srch-0"
 }
 
-variable "project_config" {
-  description = "The project where to create the resources."
-  type = object({
-    id     = string
-    number = string
-  })
-  nullable = false
+variable "project_id" {
+  description = "The id of the project where to create the resources."
+  type        = string
+  nullable    = false
 }
 
 variable "region" {
