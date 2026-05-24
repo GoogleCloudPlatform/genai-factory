@@ -13,20 +13,37 @@
 # limitations under the License.
 
 locals {
-  _sa_db_frontend = trimsuffix(
-    var.service_accounts["project/gf-nl2sql-bq-fe-0"].email,
-    ".gserviceaccount.com"
-  )
-
-  _env_vars_frontend = [
+  _env_vars = [
     "BQ_DATA_PROJECT_ID=bigquery-public-data",
     "BQ_DATASET_ID=thelook_ecommerce",
-    "DB_SA=${local._sa_db_frontend}",
-    "PROJECT_ID=${var.project_config.id}",
+    "DB_SA=${local._sa_db}",
+    "PROJECT_ID=${var.project_id}",
     "REGION=${var.region}"
   ]
-
-  env_vars_frontend = join(",", local._env_vars_frontend)
+  _sa_db = trimsuffix(
+    local.service_account_emails["service-01/nl2sql-0"],
+    ".gserviceaccount.com"
+  )
+  # Extract service account emails and ids from var.service_accounts, if any
+  _service_account_emails = {
+    for k, v in var.service_accounts : k => v.email
+  }
+  _service_account_ids = {
+    for k, v in var.service_accounts : k => v.id
+  }
+  env_vars = join(",", local._env_vars)
+  # if the emails provided by the user are keys of var.service_accounts
+  # return the corresponding value, otherwise keep the email
+  service_account_emails = {
+    for k, v in var.service_account_emails
+    : k => lookup(local._service_account_emails, v, v)
+  }
+  # if the ids provided by the user are keys of var.service_accounts
+  # return the corresponding value, otherwise keep the id
+  service_account_ids = {
+    for k, v in var.service_account_ids
+    : k => lookup(local._service_account_ids, v, v)
+  }
 }
 
 output "commands" {
@@ -36,28 +53,28 @@ output "commands" {
   # Alternatively, deploy the application through your CI/CD pipeline.
 
   gcloud artifacts repositories create ${var.name} \
-    --project=${var.project_config.id} \
+    --project=${var.project_id} \
     --location ${var.region} \
     --repository-format docker \
-    --impersonate-service-account=${var.service_accounts["project/iac-rw"].email}
+    --impersonate-service-account=${local.service_account_emails["service-01/iac-rw"]}
 
-  # Frontend Cloud Run
-  gcloud builds submit ./apps/nl2sql/frontend \
-    --project ${var.project_config.id} \
-    --tag ${var.region}-docker.pkg.dev/${var.project_config.id}/${var.name}/frontend \
-    --service-account ${var.service_accounts["project/gf-nl2sql-bq-fe-build-0"].id} \
+  # Cloud Run
+  gcloud builds submit ./apps/nl2sql \
+    --project ${var.project_id} \
+    --tag ${var.region}-docker.pkg.dev/${var.project_id}/${var.name} \
+    --service-account ${local.service_account_ids["service-01/nl2sql-build-0"]} \
     --default-buckets-behavior=REGIONAL_USER_OWNED_BUCKET \
     --region ${var.region} \
     --quiet \
-    --impersonate-service-account=${var.service_accounts["project/iac-rw"].email}
+    --impersonate-service-account=${local.service_account_emails["service-01/iac-rw"]}
 
-  gcloud run deploy ${var.name}-frontend \
-    --impersonate-service-account=${var.service_accounts["project/iac-rw"].email} \
-    --project ${var.project_config.id} \
+  gcloud run deploy ${var.name} \
+    --impersonate-service-account=${local.service_account_emails["service-01/iac-rw"]} \
+    --project ${var.project_id} \
     --region ${var.region} \
     --container=frontend \
-    --image=${var.region}-docker.pkg.dev/${var.project_config.id}/${var.name}/frontend \
-    --set-env-vars ${local.env_vars_frontend}
+    --image=${var.region}-docker.pkg.dev/${var.project_id}/${var.name} \
+    --set-env-vars ${local.env_vars}
   EOT
 }
 
@@ -65,13 +82,13 @@ output "ip_addresses" {
   description = "The load balancers IP addresses."
   value = {
     external = (
-      var.lbs_config.external.enable
-      ? module.lb_external[0].address[""]
+      var.lbs_configs.external.enable
+      ? local.address_ext_glb
       : null
     )
     internal = (
-      var.lbs_config.internal.enable
-      ? module.lb_internal[0].address
+      var.lbs_configs.internal.enable
+      ? local.address_ilb
       : null
     )
   }

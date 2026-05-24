@@ -1,6 +1,6 @@
-# Cloud Run - Single / Prerequisites stage
+# Cloud Run - NL2SQL with BigQuery / Prerequisites stage
 
-This stage is part of the `Cloud Run - RAG - Cloud SQL` factory.
+This stage is part of the `Cloud Run - NL2SQL with BigQuery` factory.
 
 It performs the following tasks:
 
@@ -51,9 +51,9 @@ You should now see the `providers.tf` and `terraform.auto.tfvars` files in the [
 
 | name | description | sensitive |
 |---|---|:---:|
-| [buckets](outputs.tf#L78) | Created buckets. |  |
-| [networking_config](outputs.tf#L83) | The networking configuration. |  |
-| [projects](outputs.tf#L88) | Created projects. |  |
-| [region](outputs.tf#L93) | The region where to create the resources. |  |
-| [service_accounts](outputs.tf#L98) | Created service accounts. |  |
+| [buckets](outputs.tf#L79) | Created buckets. |  |
+| [networking_config](outputs.tf#L84) | The networking configuration. |  |
+| [projects](outputs.tf#L89) | Created projects. |  |
+| [region](outputs.tf#L94) | The region where to create the resources. |  |
+| [service_accounts](outputs.tf#L99) | Created service accounts. |  |
 <!-- END TFDOC -->

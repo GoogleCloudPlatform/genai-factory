@@ -22,46 +22,25 @@ variable "ca_pool_name_suffix" {
   default     = "ca-pool-0"
 }
 
-variable "cloud_run_configs" {
-  description = "The Cloud Run configurations."
+variable "cloud_run_config" {
+  description = "The Cloud Run configuration."
   type = object({
-    frontend = object({
-      containers = optional(map(any), {
-        frontend = {
-          image = "us-docker.pkg.dev/cloudrun/container/hello"
-          ports = {
-            frontend = {
-              container_port = 8080
-            }
-          }
-        }
-      })
-      ingress            = optional(string, "INGRESS_TRAFFIC_INTERNAL_LOAD_BALANCER")
-      max_instance_count = optional(number, 3)
-      min_instance_count = optional(number, 1)
-      service_invokers   = optional(list(string), [])
-      vpc_access_egress  = optional(string, "ALL_TRAFFIC")
-      vpc_access_tags    = optional(list(string), [])
+    containers = optional(map(any), {
+      ai = {
+        image = "us-docker.pkg.dev/cloudrun/container/hello"
+      }
     })
-    ingestion = object({
-      containers = optional(map(any), {
-        ingestion = {
-          image = "us-docker.pkg.dev/cloudrun/container/hello"
-        }
-      })
-      ingress            = optional(string, "INGRESS_TRAFFIC_INTERNAL_ONLY")
-      max_instance_count = optional(number, 3)
-      min_instance_count = optional(number, 1)
-      service_invokers   = optional(list(string), [])
-      vpc_access_egress  = optional(string, "ALL_TRAFFIC")
-      vpc_access_tags    = optional(list(string), [])
-    })
+    gpu_zonal_redundancy_disabled = optional(bool, null)
+    ingress                       = optional(string, "INGRESS_TRAFFIC_INTERNAL_LOAD_BALANCER")
+    max_instance_count            = optional(number, 3)
+    min_instance_count            = optional(number, 1)
+    node_selector                 = optional(map(string), null)
+    service_invokers              = optional(list(string), [])
+    vpc_access_egress             = optional(string, "ALL_TRAFFIC")
+    vpc_access_tags               = optional(list(string), [])
   })
   nullable = false
-  default = {
-    frontend  = {}
-    ingestion = {}
-  }
+  default  = {}
 }
 
 variable "enable_deletion_protection" {
@@ -71,8 +50,8 @@ variable "enable_deletion_protection" {
   default     = true
 }
 
-variable "lbs_config" {
-  description = "The load balancers configuration."
+variable "lbs_configs" {
+  description = "The load balancers configurations."
   type = object({
     external = optional(object({
       enable = optional(bool, true)
@@ -102,49 +81,40 @@ variable "name" {
   description = "The name of the resources. This is also the project suffix if a new project is created."
   type        = string
   nullable    = false
-  default     = "gf-nl2sql-bq-0"
+  default     = "nl2sql-0"
 }
 
 variable "networking_config" {
-  description = "The networking configuration."
+  description = "The networking configuration. Each element is either the id of the resource or the key of the map var.vpc_self_links."
   type = object({
-    create = optional(bool, true)
-    vpc_id = optional(string, "net-0")
-    subnet = optional(object({
-      ip_cidr_range = optional(string, "10.0.0.0/24")
-      name          = optional(string, "sub-0")
-    }), {})
-    subnet_proxy_only = optional(object({
-      ip_cidr_range = optional(string, "10.20.0.0/24")
-      name          = optional(string, "proxy-only-sub-0")
-    }), {})
+    subnet = string
+    vpc    = string
   })
   nullable = false
-  default  = {}
 }
 
-variable "project_config" {
-  description = "The project where to create the resources."
-  type = object({
-    id     = string
-    number = string
-  })
-  nullable = false
+variable "project_id" {
+  description = "The id of the project where to create the resources."
+  type        = string
+  nullable    = false
 }
 
 variable "region" {
   type        = string
   description = "The GCP region where to deploy the resources."
   nullable    = false
-  default     = "europe-west1"
 }
 
-variable "service_accounts" {
-  description = "The pre-created service accounts used by the blueprint."
-  type = map(object({
-    email     = string
-    iam_email = string
-    id        = string
-  }))
-  default = {}
+# Expected keys: service-01/nl2sql-0-0, service-01/nl2sql-build-0, service-01/iac-rw
+variable "service_account_emails" {
+  description = "The service account emails. Each element is the email of the service account or the key of the map var.service_accounts."
+  type        = map(string)
+  nullable    = false
+}
+
+# Expected keys: service-01/nl2sql-0-0, service-01/nl2sql-build-0, service-01/iac-rw
+variable "service_account_ids" {
+  description = "The service account ids. Each element is the id of the service account or the key of the map var.service_accounts."
+  type        = map(string)
+  nullable    = false
 }
