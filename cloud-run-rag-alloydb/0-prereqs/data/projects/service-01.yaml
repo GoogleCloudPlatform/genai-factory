@@ -28,6 +28,8 @@ services:
   - cloudscheduler.googleapis.com
   - run.googleapis.com
   - servicenetworking.googleapis.com
+  # To create LBs
+  - compute.googleapis.com
   # Needed for ILB only
   - certificatemanager.googleapis.com
   - privateca.googleapis.com
@@ -78,6 +80,8 @@ iam_by_principals:
     # Needed for ILB only
     - roles/certificatemanager.owner
     - roles/privateca.admin
+    # Needed for Cloud Armor
+    - roles/compute.securityAdmin
   $iam_principals:service_accounts/_self_/gf-rrag-fe-0:
     - roles/alloydb.client
     - roles/alloydb.databaseUser

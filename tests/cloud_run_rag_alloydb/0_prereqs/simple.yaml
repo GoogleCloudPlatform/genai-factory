@@ -757,6 +757,12 @@ values:
     - serviceAccount:iac-rw@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
     project: your-prefix-gf-rrag-all-0
     role: roles/compute.loadBalancerAdmin
+  module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/compute.securityAdmin"]:
+    condition: []
+    members:
+    - serviceAccount:iac-rw@your-prefix-gf-rrag-all-0.iam.gserviceaccount.com
+    project: your-prefix-gf-rrag-all-0
+    role: roles/compute.securityAdmin
   module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/logging.logWriter"]:
     condition: []
     members:
@@ -919,6 +925,10 @@ values:
     condition: []
     project: your-prefix-gf-rrag-all-0
     role: roles/cloudscheduler.serviceAgent
+  module.projects.module.projects["service-01"].google_project_iam_member.service_agents["compute-system"]:
+    condition: []
+    project: your-prefix-gf-rrag-all-0
+    role: roles/compute.serviceAgent
   module.projects.module.projects["service-01"].google_project_iam_member.service_agents["serverless-robot-prod"]:
     condition: []
     project: your-prefix-gf-rrag-all-0
@@ -1034,6 +1044,13 @@ values:
     disable_on_destroy: false
     project: your-prefix-gf-rrag-all-0
     service: cloudscheduler.googleapis.com
+    timeouts: null
+  module.projects.module.projects["service-01"].google_project_service.project_services["compute.googleapis.com"]:
+    deletion_policy: DELETE
+    disable_dependent_services: false
+    disable_on_destroy: false
+    project: your-prefix-gf-rrag-all-0
+    service: compute.googleapis.com
     timeouts: null
   module.projects.module.projects["service-01"].google_project_service.project_services["privateca.googleapis.com"]:
     deletion_policy: DELETE
@@ -1298,9 +1315,9 @@ counts:
   google_dns_response_policy: 1
   google_dns_response_policy_rule: 39
   google_project: 2
-  google_project_iam_binding: 20
-  google_project_iam_member: 31
-  google_project_service: 13
+  google_project_iam_binding: 21
+  google_project_iam_member: 32
+  google_project_service: 14
   google_project_service_identity: 9
   google_service_account: 6
   google_service_account_iam_member: 6
@@ -1308,7 +1325,7 @@ counts:
   google_storage_bucket_iam_binding: 1
   local_file: 2
   modules: 15
-  resources: 142
+  resources: 145
   terraform_data: 2
 
 outputs:

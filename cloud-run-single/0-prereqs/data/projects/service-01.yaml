@@ -23,9 +23,10 @@ services:
   - artifactregistry.googleapis.com
   - cloudbuild.googleapis.com
   - cloudresourcemanager.googleapis.com
-  - compute.googleapis.com
   - run.googleapis.com
   - serviceusage.googleapis.com
+  # To create LBs
+  - compute.googleapis.com
   # Needed for ILB only
   - certificatemanager.googleapis.com
   - privateca.googleapis.com
