@@ -14,16 +14,6 @@
  * limitations under the License.
  */
 
-project_config = {
-  id     = "${projects.project.id}"
-  number = "${projects.project.number}"
-}
-service_accounts = {
-%{ for k,v in service_accounts ~}
-  "${k}" = {
-    email     = "${v.email}"
-    iam_email = "${v.iam_email}"
-    id        = "${v.id}"
-  }
-%{ endfor ~}
-}
+project_id = "${project_id}"
+
+region = "${region}"

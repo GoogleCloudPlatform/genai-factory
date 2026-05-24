@@ -41,6 +41,6 @@ output "commands" {
     }'
 
   # Alternatively, use the GUI to integrate the widget to your website
-  # https://console.cloud.google.com/gen-app-builder/locations/global/engines/${var.name}-app/integration/widget?project=${var.project_config.id}
+  # https://console.cloud.google.com/gen-app-builder/locations/global/engines/${var.name}-app/integration/widget?project=${var.project_id}
   EOT
 }

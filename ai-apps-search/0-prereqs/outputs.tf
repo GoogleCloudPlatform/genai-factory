@@ -25,10 +25,10 @@ locals {
     }
   }
   providers = {
-    project_id      = local.projects.project.id
-    project_number  = local.projects.project.number
-    bucket          = local.buckets["project/iac-state"]
-    service_account = local.service_accounts["project/iac-rw"].email
+    project_id      = local.projects["service-01"].id
+    project_number  = local.projects["service-01"].number
+    bucket          = local.buckets["service-01/iac-state"]
+    service_account = local.service_accounts["service-01/iac-rw"].email
   }
   service_accounts = {
     for k, v in module.projects.service_accounts : k => {
@@ -38,9 +38,8 @@ locals {
     }
   }
   tfvars = {
-    projects         = local.projects
-    buckets          = local.buckets
-    service_accounts = local.service_accounts
+    project_id = local.projects["service-01"].id
+    region     = var.region
   }
 }
 

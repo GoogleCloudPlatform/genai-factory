@@ -12,9 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# variables from 0-projects
+# variables from 0-prereqs
 
-project_config = {
-  id     = "prefix-gf-ai-apps-srch-0"
-  number = "123456789012"
-}
+project_id = "your-project"
+
+region = "europe-west1"
