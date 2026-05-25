@@ -3,11 +3,11 @@
 
 # Get bearer token impersonating iac-rw SA
 export BEARER_TOKEN=$(gcloud auth print-access-token \
-  --impersonate-service-account ${service_accounts["project/iac-rw"].email})
+  --impersonate-service-account ${service_account_emails["service-01/iac-rw"]})
 
 # Load faq data into the data store
 gcloud storage cp ./data/ds-faq/faq.csv ${bucket_url_ds}/ds-faq/ \
-  --impersonate-service-account ${service_accounts["project/iac-rw"].email} \
+  --impersonate-service-account ${service_account_emails["service-01/iac-rw"]} \
   --billing-project ${project_id} &&
 curl -X POST ${ds_uri_faq} \
   -H "Authorization: Bearer $BEARER_TOKEN" \
@@ -56,7 +56,7 @@ uv run ./scripts/agentutil/agentutil.py replace-data-store \
   "${ds_name_faq}" &&
 zip -r ${agent_dir}/agent.dist.zip ${agent_dir}/* &&
 gcloud storage cp ${agent_dir}/agent.dist.zip ${bucket_url_build}/agents/agent-${agent_variant}.dist.zip \
-  --impersonate-service-account ${service_accounts["project/iac-rw"].email} \
+  --impersonate-service-account ${service_account_emails["service-01/iac-rw"]} \
   --billing-project ${project_id} &&
 curl -X POST ${agent_uri} \
   -H "Authorization: Bearer $BEARER_TOKEN" \

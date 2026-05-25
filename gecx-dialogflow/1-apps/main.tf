@@ -18,20 +18,20 @@ locals {
 
 module "ds-bucket" {
   source        = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/gcs?ref=v56.1.0"
-  project_id    = var.project_config.id
-  prefix        = var.project_config.prefix
+  project_id    = var.project_id
+  prefix        = var.prefix
   name          = "${local.bucket_name}-ds"
-  location      = var.regions.resources
+  location      = var.region_discovery_engine
   versioning    = true
   force_destroy = !var.enable_deletion_protection
 }
 
 module "build-bucket" {
   source        = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/gcs?ref=v56.1.0"
-  project_id    = var.project_config.id
-  prefix        = var.project_config.prefix
+  project_id    = var.project_id
+  prefix        = var.prefix
   name          = "${local.bucket_name}-build"
-  location      = var.regions.resources
+  location      = var.region
   versioning    = true
   force_destroy = !var.enable_deletion_protection
 }
@@ -41,16 +41,16 @@ module "build-bucket" {
 module "dialogflow" {
   source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/ai-applications?ref=v56.1.0"
   name       = var.name
-  project_id = var.project_config.id
-  location   = var.regions.agent
+  project_id = var.project_id
+  location   = var.region
   data_stores_configs = {
     faq = {
-      location       = var.regions.datastores
+      location       = var.region_discovery_engine
       content_config = "NO_CONTENT"
       solution_types = ["SOLUTION_TYPE_CHAT"]
     }
     kb = {
-      location                     = var.regions.datastores
+      location                     = var.region_discovery_engine
       content_config               = "CONTENT_REQUIRED"
       solution_types               = ["SOLUTION_TYPE_CHAT"]
       skip_default_schema_creation = true
@@ -70,7 +70,7 @@ module "dialogflow" {
     }
   }
   engines_configs = {
-    engine_location = var.regions.engine
+    engine_location = var.region_discovery_engine
     data_store_ids = [
       "faq",
       "kb"
@@ -79,7 +79,7 @@ module "dialogflow" {
     company_name      = "Cymbal"
     chat_engine_config = {
       agent_config = {
-        location = var.regions.agent
+        location = var.region
       }
       allow_cross_region    = true
       default_language_code = "en-us"

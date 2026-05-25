@@ -25,12 +25,36 @@ variable "enable_iac_sa_impersonation" {
   default     = true
 }
 
+variable "networking_config" {
+  description = "The networking configuration."
+  type = object({
+    create          = optional(bool, true)
+    host_project_id = optional(string, "prj-host-0")
+    subnet = optional(object({
+      ip_cidr_range = optional(string, "10.0.0.0/24")
+      name          = optional(string, "sub-0")
+    }), {})
+    subnet_proxy_only = optional(object({
+      ip_cidr_range = optional(string, "10.20.0.0/24")
+      name          = optional(string, "proxy-only-sub-0")
+    }), {})
+    vpc_name = optional(string, "net-0")
+  })
+  nullable = false
+  default  = {}
+}
+
+variable "prefix" {
+  description = "The name prefix to use for resources with a globally unique name."
+  type        = string
+  nullable    = false
+}
+
 variable "project_config" {
   description = "The project configuration."
   type = object({
     billing_account_id = optional(string)
     parent             = optional(string)
-    prefix             = optional(string)
   })
   nullable = false
   validation {

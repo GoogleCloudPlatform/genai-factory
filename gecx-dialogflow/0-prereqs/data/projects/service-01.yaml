@@ -26,10 +26,9 @@ services:
   - cloudfunctions.googleapis.com
   - logging.googleapis.com
   - run.googleapis.com
-  # Needed for network creation (function create only)
-  - compute.googleapis.com
+  # Needed for Service Directory DNS zone
   - dns.googleapis.com
-  # Needed for ILB creation (function create only)
+  # Needed for TCP proxy ILB creation (function create only)
   - certificatemanager.googleapis.com
   - privateca.googleapis.com
   # Only needed if you define private endpoints to be reached
@@ -42,8 +41,6 @@ buckets:
     iam:
       roles/storage.objectAdmin:
         - $iam_principals:service_accounts/_self_/iac-rw
-      roles/storage.objectViewer:
-        - $iam_principals:service_accounts/_self_/iac-rw
 
 service_accounts:
   # Automation SAs
@@ -53,13 +50,12 @@ service_accounts:
         member: $iam_principals:service_agents/_self_/cloudrun
         role: roles/iam.serviceAccountTokenCreator
     iam_sa_roles:
-      $service_account_ids:_self_/gecx-df-0: [roles/iam.serviceAccountUser]
+      $service_account_ids:_self_/gecx-df-0:
+        - roles/iam.serviceAccountUser
       $service_account_ids:_self_/gecx-df-build-0:
         - roles/iam.serviceAccountUser
-  # Cloud Function SA (only used if Cloud Function is created)
+  # Cloud Function SAs (only used if Cloud Function is created)
   gecx-df-0: {}
-  # SA dedicated for the Cloud Function build
-  # (only used if Cloud Function is created)
   gecx-df-build-0: {}
 
 # Grant roles
@@ -71,9 +67,7 @@ iam_by_principals:
     - roles/storage.admin
     # Needed to create Cloud Functions (function create only)
     - roles/cloudfunctions.admin
-    # Needed for network administration (function create only)
-    - roles/compute.networkAdmin
-    - roles/compute.securityAdmin
+    # Needed for Service Directory DNS zone
     - roles/dns.admin
     # Needed for ILB (function create only)
     - roles/certificatemanager.owner

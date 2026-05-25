@@ -14,8 +14,8 @@
 
 module "cloud_function" {
   source           = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/cloud-function-v2?ref=v56.1.0"
-  project_id       = var.project_config.id
-  region           = var.regions.resources
+  project_id       = var.project_id
+  region           = var.region
   name             = var.name
   bucket_name      = module.gcs_bucket.name
   ingress_settings = "ALLOW_INTERNAL_ONLY"
@@ -24,31 +24,36 @@ module "cloud_function" {
     path = var.cloud_function_config.bundle_path
   }
   direct_vpc_egress = {
-    network    = local.vpc_id
-    subnetwork = local.subnet_id
+    network    = var.networking_config.vpc
+    subnetwork = var.networking_config.subnet
     tags       = var.cloud_function_config.direct_vpc_egress_tags
     mode       = var.cloud_function_config.direct_vpc_egress_mode
   }
   service_account_config = {
     create = false
-    email  = var.service_accounts["project/gecx-df-0"].email
+    email  = var.service_account_emails["service-01/gecx-df-0"]
   }
-  build_service_account = var.service_accounts["project/gecx-df-0"].id
+  build_service_account = var.service_account_ids["service-01/gecx-df-0"]
   iam = {
     "roles/run.invoker" = concat(
       var.cloud_function_config.service_invokers,
       # This allows Dialogflow CX (through its service agent) to call the function
-      ["serviceAccount:service-${var.project_config.number}@gcp-sa-dialogflow.iam.gserviceaccount.com"]
+      ["serviceAccount:service-${var.number}@gcp-sa-dialogflow.iam.gserviceaccount.com"]
     )
+  }
+  context = {
+    iam_principals = local.iam_principals
+    networks       = var.vpc_self_links
+    subnets        = var.subnet_self_links
   }
 }
 
 module "gcs_bucket" {
   source                   = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/gcs?ref=v56.1.0"
-  project_id               = var.project_config.id
-  prefix                   = var.project_config.prefix
+  project_id               = var.project_id
+  prefix                   = var.prefix
   name                     = local.bucket_name
-  location                 = var.regions.resources
+  location                 = var.region
   versioning               = true
   public_access_prevention = "enforced"
   force_destroy            = !var.enable_deletion_protection
