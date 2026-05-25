@@ -37,7 +37,7 @@ to the billing account.
 cd cloud-run-single
 
 # Create the project, service accounts, and grant permissions.
-cd 0-projects
+cd 0-prereqs
 cp terraform.tfvars.sample terraform.tfvars # Replace prefix, billing account and parent.
 terraform init
 terraform apply
@@ -57,41 +57,32 @@ terraform apply
 
 Each factory contains two stages:
 
-### 0-projects
+### 0-prereqs
 
-It creates projects and service accounts, enables APIs, and grants IAM roles using [Fabric FAST project application templates](https://github.com/GoogleCloudPlatform/cloud-foundation-fabric/tree/master/modules/project-factory).
+It creates projects and service accounts, enables APIs, grants IAM roles and creates the networking stack (shared VPC, subnets, DNS zones, firewall policies, ...) using [Fabric FAST project application templates](https://github.com/GoogleCloudPlatform/cloud-foundation-fabric/tree/master/modules/project-factory).
 
-Running this stage is optional. If you can create projects, use it. Alternatively, give the yaml project template to your platform team. They can use it with their [FAST project factory](https://github.com/GoogleCloudPlatform/cloud-foundation-fabric/tree/master/fast/stages/2-project-factory) or easily derive the requirements and implement them with their own mechanism.
+The stage also creates some components in the service project to allow Terraform in [1-apps](#1-apps) to run. This includes a service account dedicated to Terraform (with least privilege roles) and a GCS bucket where to store the Terraform state. Finally, the stage creates `providers.tf` and `terraform.auto.tfvars` files in the [1-apps folder](#1-apps) so that it's ready to run.
 
-The stage also creates components in the same project to allow the [1-apps](#1-apps) stage to run. This includes Terraform service accounts, roles, and a state bucket. Finally, the stage writes `providers.tf` and `terraform.auto.tfvars` files in the [1-apps folder](#1-apps).
+Running this stage is optional. If you can create projects and manage shared VPCs, use it.
+Alternatively, give the yaml project templates to your infrastructure team. They can use it with their [FAST project factory](https://github.com/GoogleCloudPlatform/cloud-foundation-fabric/tree/master/fast/stages/2-project-factory) or easily derive the requirements and implement them with their own mechanism.
 
 ### 1-apps
 
-It deploys the core platform resources within the project and the AI application on top.
+It deploys the core platform resources within the project and the generative AI sample application on top.
 
-If you created the project outside genai-factory (instead of using [0-projects](#0-projects)), make sure to provide the `1-apps` stage with the APIs, service accounts and roles it requires. Projects and service account details are passed to `1-apps` via a `terraform.auto.tfvars` file, automatically created when [0-projects](#0-projects) runs.
+If you created the project outside genai-factory (instead of using [0-prereqs](#0-prereqs)), make sure to provide the `1-apps` stage with the projects, APIs, service accounts, roles and networking components it requires. We pass these information to `1-apps` via `terraform.auto.tfvars` files that we automatically create when [0-prereqs](#0-prereqs) runs.
 
 # Networking Configuration
 
-By default, [1-apps](#1-apps) stages create VPCs and other networking components if these are needed by the factory infrastructure and applications. These include VPCs, subnets, routes, DNS zones, Private Google Access (PGA), and more.
+By default, the [0-prereqs](#0-prereqs) stages create the networking components that the generative AI  applications need. These include shared VPCs, subnets, routes, firewall policies, DNS zones, Private Google Access (PGA), and more.
 
-You also have the option to leverage existing VPCs. In this case, it will be your responsibility to create everything needed by the application to work.
+You also have the option to still create the service project through [0-prereqs](#0-prereqs) but leverage existing networking infrastructure. To do so, you can set in every [0-prereqs stage](#0-prereqs) `var.networking_config.create = false` and pass the details of your existing infrastructure.
 
-To do so, make sure your `terraform.tfvars` in [1-apps](#1-apps) contains this configuration:
-
-```hcl
-networking_config = {
-  create    = false
-  vpc_id    = "your-vpc-id"
-  subnet = {
-    name = "your-subnet-id"
-  }
-}
-```
+You can find more details in the [0-prereqs stage](#0-prereqs) of each factory.
 
 ## Credits
 
-Thanks to the [Cloud Foundation Fabric](https://github.com/GoogleCloudPlatform/cloud-foundation-fabric) community for ideas, input, and useful tools.
+Thanks to the [Cloud Foundation Fabric](https://github.com/GoogleCloudPlatform/cloud-foundation-fabric) community for ideas, inputs and useful tools.
 
 ## Contribute
 

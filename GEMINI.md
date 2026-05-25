@@ -20,18 +20,18 @@ Each factory is a folder. The only folders that are not factories are `.github`,
 When scaffolding a new factory, adhere to these rules:
 
 - **Naming:** The factory folder name should describe the use case (e.g., `cloud-run-nl2sql-bq`), the main product used underneath (e.g., `cloud-run-*`), or a mix of both.
-- **Sub-folders:** Each factory must contain exactly two stage folders: `0-projects` and `1-apps`.
-- **0-projects Structure:** The `0-projects` folder structure is identical across all factories, with the exception of the templates inside `data/projects`, and occasionally `templates/terraform.auto.tfvars.tpl` or `outputs.tf` depending on the values passed to `1-apps`.
+- **Sub-folders:** Each factory must contain exactly two stage folders: `0-prereqs` and `1-apps`.
+- **0-prereqs Structure:** The `0-prereqs` folder structure is identical across all factories, with the exception of the templates inside `data/projects`, and occasionally `templates/terraform.auto.tfvars.tpl` or `outputs.tf` depending on the values passed to `1-apps`.
 - **1-apps Structure:** The `1-apps` stage must always include an architecture diagram named `diagram.png`. This diagram must be linked in the `README.md` of `1-apps`.
 - **Applications:** The `1-apps` stage may contain an `apps` subfolder for application code (e.g., Python) deployed on top of the infrastructure. Commands to deploy these apps must be returned to the user via Terraform outputs in `1-apps`.
-- **Documentation:** The factory root folder, the `0-projects` stage, and the `1-apps` stage must all have a `README.md` file. These READMEs follow a standard logical structure consistent across the repository; review existing factories (e.g., `cloud-run-single`) to derive and replicate this structure.
+- **Documentation:** The factory root folder, the `0-prereqs` stage, and the `1-apps` stage must all have a `README.md` file. These READMEs follow a standard logical structure consistent across the repository; review existing factories (e.g., `cloud-run-single`) to derive and replicate this structure.
 
 Each factory (folder) is split into two stages (which correspond to two Terraform modules and two sub-folders):
 
-- **0-projects**: meant to be executed by infrastructure teams to prepare the project where the application team will deploy the resources and delegate permissions to the application team).
+- **0-prereqs**: meant to be executed by infrastructure teams to prepare the project where the application team will deploy the resources and delegate permissions to the application team).
 - **1-apps**: used by the application team to deploy the resources in the project created at the step before, with the identity created at the step before, that has been granted the roles needed at the step before.
 
-### 0-projects
+### 0-prereqs
 
 - It creates the project(s).
 - It creates the service accounts used:
@@ -70,8 +70,8 @@ The `1-apps` stage (Terraform module) has two goals:
 - Deploy some sample AI applications on top of the infrastructure resources deployed. This is usually done via gcloud or curl commands.
 
 The stage declares a set of variables in the file `variables.tf`.
-If users create project(s) using the `0-projects` stage from genai-factory, some of these values are already present in a `terraform.auto.tfvars` file.
-If users create project(s) outside genai-factory (instead of using `0-projects`), it's their responsibility to prepare the `providers.tf` and `terraform.auto.tfvars` files.
+If users create project(s) using the `0-prereqs` stage from genai-factory, some of these values are already present in a `terraform.auto.tfvars` file.
+If users create project(s) outside genai-factory (instead of using `0-prereqs`), it's their responsibility to prepare the `providers.tf` and `terraform.auto.tfvars` files.
 Values for other variables are specific to the stage itself and need to be added through a separate `terraform.tfvars` file (either created by the user or by automation tools running this stage).
 
 Once users run `terraform apply`, the stage prints a set of output commands (usually `gcloud` or `curl`) to deploy sample AI applications on top of the deployed infrastructure. This repository focuses on AI infrastructure rather than AI application development. However, we provide examples so users can test the deployed infrastructure end-to-end. These examples also serve as comprehensive base templates that users can easily customize.
@@ -157,7 +157,7 @@ pytest tests
 pytest tests/<factory_test_folder_name>
 
 # Automatically generate an inventory file given a tfvars in input
-uv run tools/plan_summary.py cloud-run-single/0-projects \
+uv run tools/plan_summary.py cloud-run-single/0-prereqs \
   tests/cloud_run_single/0_projects/simple.tfvars \
   > tests/cloud_run_single/0_projects/simple.yaml
 ```
