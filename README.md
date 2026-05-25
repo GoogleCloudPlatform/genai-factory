@@ -5,12 +5,13 @@
 Genai-factory is a collection of **end-to-end blueprints to deploy generative AI infrastructures** in GCP, following security best-practices.
 
 - Embraces IaC best practices. Infrastructure is implemented in [Terraform](https://developer.hashicorp.com/terraform), leveraging [Terraform resources](https://registry.terraform.io/providers/hashicorp/google/latest/docs) and [Cloud Foundations Fabric modules](https://github.com/GoogleCloudPlatform/cloud-foundation-fabric/tree/master/modules).
+- Leverages natively [shared VPCs](https://docs.cloud.google.com/vpc/docs/shared-vpc).
 - Follows the least-privilege principle: no default service accounts, primitive roles, minimal permissions.
 - Compatible with [Cloud Foundation Fabric FAST](https://github.com/GoogleCloudPlatform/cloud-foundation-fabric) [project-factory](https://github.com/GoogleCloudPlatform/cloud-foundation-fabric/tree/master/modules/project-factory) and application templates.
 
 ## Cloud Foundation Fabric Compatibility
 
-Works with Cloud Foundation Fabric from [v55.4.0](https://github.com/GoogleCloudPlatform/cloud-foundation-fabric/tree/v55.2.0).
+Works with Cloud Foundation Fabric from [v56.1.0](https://github.com/GoogleCloudPlatform/cloud-foundation-fabric/tree/v55.2.0).
 Compatibility with master is not guaranteed.
 
 ## Factories
