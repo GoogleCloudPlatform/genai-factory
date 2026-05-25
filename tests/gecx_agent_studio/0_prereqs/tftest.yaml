@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-module: gecx-agent-studio/0-projects
+module: gecx-agent-studio/0-prereqs
 
 tests:
   simple:
