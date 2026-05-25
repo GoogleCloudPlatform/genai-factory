@@ -12,23 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# # This bucket is used to store resources during import/export operations
-# module "build_bucket" {
-#   source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/gcs?ref=v56.0.0"
-#   project_id = var.project_id
-#   prefix     = var.prefix
-#   name       = var.name
-#   location   = var.region
-#   versioning = true
-# }
-
-
-resource "google_storage_bucket" "build" {
-  project                     = var.project_id
-  name                        = "${var.prefix}-${var.name}-build"
-  location                    = var.region
-  uniform_bucket_level_access = true
-  force_destroy               = !var.enable_deletion_protection
+# To store agent app src during its deployment
+# when using agentutil
+module "build_bucket" {
+  source        = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/gcs?ref=v56.0.0"
+  project_id    = var.project_id
+  prefix        = var.prefix
+  name          = "${var.name}-build"
+  location      = var.region
+  force_destroy = !var.enable_deletion_protection
 }
 
 resource "google_discovery_engine_data_store" "knowledge_base" {
@@ -53,7 +45,6 @@ resource "google_discovery_engine_data_store" "knowledge_base" {
         enable_table_annotation = true
       }
     }
-
     chunking_config {
       layout_based_chunking_config {
         chunk_size                = 500
@@ -77,11 +68,12 @@ resource "google_discovery_engine_schema" "knowledge_base" {
 }
 
 resource "google_ces_app" "gecx_as_app" {
-  app_id       = var.name
-  display_name = var.name
-  project      = var.project_id
-  location     = var.region_discovery_engine
-  description  = "A sample Gemini Enterprise for CX application."
+  app_id              = var.name
+  display_name        = var.name
+  project             = var.project_id
+  location            = var.region_discovery_engine
+  description         = "A sample Gemini Enterprise for CX application."
+  tool_execution_mode = var.cx_as_configs.tool_execution_mode
 
   language_settings {
     default_language_code = var.cx_as_configs.supported_languages[0]
@@ -108,6 +100,9 @@ resource "google_ces_app" "gecx_as_app" {
   logging_settings {
     cloud_logging_settings {
       enable_cloud_logging = var.cx_as_configs.enable_cloud_logging
+    }
+    conversation_logging_settings {
+      disable_conversation_logging = !var.cx_as_configs.enable_conversation_logging
     }
   }
 

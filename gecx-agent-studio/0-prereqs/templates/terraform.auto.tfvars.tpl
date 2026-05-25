@@ -19,3 +19,9 @@ enable_deletion_protection = ${enable_deletion_protection}
 prefix = "${prefix}"
 
 project_id = "${project_id}"
+
+service_account_emails = {
+%{ for k,v in service_account_emails ~}
+  "${k}" = "${v}"
+%{ endfor ~}
+}

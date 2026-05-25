@@ -24,6 +24,7 @@ import google.auth
 import google.auth.transport.requests
 from rich.progress import track
 from google.cloud import storage
+from agentutil.gcp_util import get_credentials
 
 logger = logging.getLogger(__name__)
 
@@ -53,15 +54,16 @@ def process_data_store_documents(source_dir: str, target_dir: str,
         """
 
   # --- 1. Input Validation and Setup ---
+  credentials, project = get_credentials()
   if not os.path.isdir(source_dir):
-    raise FileNotFoundError(f"Error: Source folder not found: '{source_dir}'")
+    raise FileNotFoundError(f"Source folder not found: '{source_dir}'")
 
   os.makedirs(target_dir, exist_ok=True)
   logger.debug(f"Destination folder ensured: '{target_dir}'")
 
   if not gcs_bucket_folder_path.startswith("gs://"):
     raise ValueError(
-        f"Error: GCS bucket path must start with 'gs://'. Got: '{gcs_bucket_folder_path}'"
+        f"GCS bucket path must start with 'gs://'. Got: '{gcs_bucket_folder_path}'"
     )
 
   gcs_bucket_folder_path = f"{gcs_bucket_folder_path.rstrip('/')}/"
@@ -171,7 +173,7 @@ def process_data_store_documents(source_dir: str, target_dir: str,
   logger.info(
       f"\nUploading generated files to GCS bucket: '{gcs_bucket_folder_path}'..."
   )
-  storage_client = storage.Client()
+  storage_client = storage.Client(project=project, credentials=credentials)
   bucket = storage_client.bucket(gcs_bucket_name)
 
   for local_file_path in track(local_files_to_upload):
@@ -239,7 +241,7 @@ def import_documents(full_data_store_name: str, gcs_uri: str) -> None:
   logger.debug(f"Import API Endpoint: {api_endpoint}")
 
   # Authentication
-  credentials, project = google.auth.default()
+  credentials, project = get_credentials()
   auth_req = google.auth.transport.requests.Request()
   credentials.refresh(auth_req)
   access_token = credentials.token

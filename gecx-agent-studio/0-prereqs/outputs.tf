@@ -41,6 +41,9 @@ locals {
     enable_deletion_protection = var.enable_deletion_protection
     prefix                     = var.prefix
     project_id                 = local.projects["service-01"].id
+    service_account_emails = {
+      for k, v in module.projects.service_accounts : k => v.email
+    }
   }
 }
 

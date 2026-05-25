@@ -43,8 +43,8 @@ You should now see the `providers.tf` and `terraform.auto.tfvars` files in the [
 
 | name | description | sensitive |
 |---|---|:---:|
-| [buckets](outputs.tf#L47) | Created buckets. |  |
-| [prefix](outputs.tf#L52) | The unique name prefix to be used for all global unique resources. |  |
-| [projects](outputs.tf#L57) | Created projects. |  |
-| [service_accounts](outputs.tf#L62) | Created service accounts. |  |
+| [buckets](outputs.tf#L50) | Created buckets. |  |
+| [prefix](outputs.tf#L55) | The unique name prefix to be used for all global unique resources. |  |
+| [projects](outputs.tf#L60) | Created projects. |  |
+| [service_accounts](outputs.tf#L65) | Created service accounts. |  |
 <!-- END TFDOC -->

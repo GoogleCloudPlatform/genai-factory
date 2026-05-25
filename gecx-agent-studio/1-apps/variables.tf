@@ -18,10 +18,12 @@
 variable "cx_as_configs" {
   description = "The CX Agent Studio configurations."
   type = object({
-    enable_cloud_logging = optional(bool, true)
-    speaking_rate        = optional(number, 0)
-    supported_languages  = optional(list(string), ["en-US"])
-    timezone             = optional(string, "Europe/Rome")
+    enable_cloud_logging        = optional(bool, true)
+    enable_conversation_logging = optional(bool, true)
+    speaking_rate               = optional(number, 0)
+    supported_languages         = optional(list(string), ["en-US"])
+    timezone                    = optional(string, "Europe/Rome")
+    tool_execution_mode         = optional(string, "PARALLEL")
   })
   nullable = false
   default  = {}
@@ -71,4 +73,11 @@ variable "region_discovery_engine" {
     )
     error_message = "region_discovery_engine should be set either to eu or us."
   }
+}
+
+# Expected keys: service-01/iac-rw
+variable "service_account_emails" {
+  description = "The service account emails. Each element is the email of the service account or the key of the map var.service_accounts."
+  type        = map(string)
+  nullable    = false
 }

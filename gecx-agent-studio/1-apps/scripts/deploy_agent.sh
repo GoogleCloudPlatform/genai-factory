@@ -46,6 +46,13 @@ while [[ "$#" -gt 0 ]]; do
     shift
 done
 
+if [ "$INGEST_KB" = true ]; then
+    echo "Ingesting Knowledge Base"
+    export TARGET_KB_BUCKET_PATH="gs://$BUILD_BUCKET/$CES_APP_ID/data_store/ingestion/"
+    agentutil data-store ingest ../data/ds-kb ./build/data_store $TARGET_KB_BUCKET_PATH --ingest-to "$KNOWLEDGE_BASE_DATA_STORE_NAME"
+    exit 0
+fi
+
 mkdir -p ./build
 
 echo "Building Agent Application"
@@ -63,9 +70,3 @@ agentutil ces agent replace-data-store $TARGET_AGENT_DIR/agent/ "kb_data_store" 
 # Zip and upload agent
 echo "Uploading Agent"
 agentutil ces agent push $TARGET_AGENT_DIR/agent/ projects/$GCP_PROJECT_ID/locations/$CES_APP_LOCATION/apps/$CES_APP_ID $BUILD_BUCKET
-
-if [ "$INGEST_KB" = true ]; then
-    echo "Ingesting Knowledge Base"
-    export TARGET_KB_BUCKET_PATH="gs://$BUILD_BUCKET/$CES_APP_ID/data_store/ingestion/"
-    agentutil data-store ingest ../data/ds-kb ./build/data_store $TARGET_KB_BUCKET_PATH --ingest-to "$KNOWLEDGE_BASE_DATA_STORE_NAME"
-fi
