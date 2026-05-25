@@ -1,13 +1,13 @@
 # Gemini Enterprise for Customer Experience (GECX) - CX Agent Studio / Platform Deployment
 
 This stage is part of the `# Gemini Enterprise for Customer Experience (GECX) - CX Agent Studio` factory.
-It is responsible for deploying the components enabling the AI use case, either in the project you created in [0-projects](../0-projects) or in an existing project.
+It is responsible for deploying the components enabling the AI use case, either in the project you created in [0-prereqs](../0-prereqs) or in an existing project.
 
 ![Architecture Diagram](../diagram.png)
 
 ## Deploy the stage
 
-This assumes you have created a project leveraging the [0-projects](../0-projects) stage.
+This assumes you have created a project leveraging the [0-prereqs](../0-prereqs) stage.
 
 ```shell
 terraform init
@@ -19,9 +19,9 @@ terraform apply
 # - Query the agent
 ```
 
-## I have not used 0-projects
+## I have not used 0-prereqs
 
-The [0-projects](../0-projects) stage generates the necessary Terraform input files for this stage. If you're not using the [0-projects stage](../0-projects), you'll need to manually add the required variables to your `terraform.tfvars` file, as defined in [variables.tf](./variables.tf).
+The [0-prereqs](../0-prereqs) stage generates the necessary Terraform input files for this stage. If you're not using the [0-prereqs stage](../0-prereqs), you'll need to manually add the required variables to your `terraform.tfvars` file, as defined in [variables.tf](./variables.tf).
 
 ## Manage agent variants
 
@@ -42,12 +42,12 @@ uv run scripts/agentutil.py pull_agent {AGENT_REMOTE} data/agents/{AGENT_VARIANT
 | name | description | type | required | default |
 |---|---|:---:|:---:|:---:|
 | [prefix](variables.tf#L44) | The unique name prefix to be used for all global unique resources. | <code>string</code> | ✓ |  |
-| [project_config](variables.tf#L50) | The project where to create the resources. | <code title="object&#40;&#123;&#10;  id     &#61; string&#10;  number &#61; string&#10;&#125;&#41;">object&#40;&#123;&#8230;&#125;&#41;</code> | ✓ |  |
-| [enable_deletion_protection](variables.tf#L15) | Whether deletion protection should be enabled. | <code>bool</code> |  | <code>true</code> |
-| [gecx_as_configs](variables.tf#L25) | The ge4cx-as configurations. | <code title="object&#40;&#123;&#10;  enable_cloud_logging &#61; optional&#40;bool, true&#41;&#10;  speaking_rate        &#61; optional&#40;number, 0&#41;&#10;  supported_languages  &#61; optional&#40;list&#40;string&#41;, &#91;&#34;en-US&#34;&#93;&#41;&#10;  timezone             &#61; optional&#40;string, &#34;Europe&#47;Rome&#34;&#41;&#10;&#125;&#41;">object&#40;&#123;&#8230;&#125;&#41;</code> |  | <code>&#123;&#125;</code> |
-| [name](variables.tf#L37) | The name of the resources. | <code>string</code> |  | <code>&#34;gf-gecx-as-0&#34;</code> |
-| [region](variables.tf#L59) | The GCP region where to deploy the resources. | <code>string</code> |  | <code>&#34;europe-west1&#34;</code> |
-| [region_ai_applications](variables.tf#L66) | The GCP region where to deploy the data store and CX Agent Studio App. | <code>string</code> |  | <code>&#34;eu&#34;</code> |
+| [project_id](variables.tf#L50) | The id of the project where to create the resources. | <code>string</code> | ✓ |  |
+| [cx_as_configs](variables.tf#L18) | The CX Agent Studio configurations. | <code title="object&#40;&#123;&#10;  enable_cloud_logging &#61; optional&#40;bool, true&#41;&#10;  speaking_rate        &#61; optional&#40;number, 0&#41;&#10;  supported_languages  &#61; optional&#40;list&#40;string&#41;, &#91;&#34;en-US&#34;&#93;&#41;&#10;  timezone             &#61; optional&#40;string, &#34;Europe&#47;Rome&#34;&#41;&#10;&#125;&#41;">object&#40;&#123;&#8230;&#125;&#41;</code> |  | <code>&#123;&#125;</code> |
+| [enable_deletion_protection](variables.tf#L30) | Whether deletion protection should be enabled. | <code>bool</code> |  | <code>true</code> |
+| [name](variables.tf#L37) | The name of the resources. | <code>string</code> |  | <code>&#34;cx-as-0&#34;</code> |
+| [region](variables.tf#L56) | The GCP region where to deploy the resources. | <code>string</code> |  | <code>&#34;europe-west1&#34;</code> |
+| [region_discovery_engine](variables.tf#L63) | The GCP region where to deploy the data store and CX Agent Studio App. | <code>string</code> |  | <code>&#34;eu&#34;</code> |
 
 ## Outputs
 

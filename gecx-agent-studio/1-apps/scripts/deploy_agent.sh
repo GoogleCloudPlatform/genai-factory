@@ -48,14 +48,14 @@ done
 
 mkdir -p ./build
 
-echo "Building Agent"
+echo "Building Agent Application"
 
-export TARGET_AGENT_DIR="./build/agent/dist"
+export TARGET_AGENT_DIR="./build/app/dist"
 
 # Make a copy of the agent in the target build directory
 rm -rf $TARGET_AGENT_DIR
 mkdir -p $TARGET_AGENT_DIR
-cp -r ../apps/default $TARGET_AGENT_DIR/agent
+cp -r ../data/apps/default $TARGET_AGENT_DIR/agent
 
 # Update Data Store reference
 agentutil ces agent replace-data-store $TARGET_AGENT_DIR/agent/ "kb_data_store" $KNOWLEDGE_BASE_DATA_STORE_NAME
@@ -67,5 +67,5 @@ agentutil ces agent push $TARGET_AGENT_DIR/agent/ projects/$GCP_PROJECT_ID/locat
 if [ "$INGEST_KB" = true ]; then
     echo "Ingesting Knowledge Base"
     export TARGET_KB_BUCKET_PATH="gs://$BUILD_BUCKET/$CES_APP_ID/data_store/ingestion/"
-    agentutil data-store ingest ../data/knowledge-base ./build/data_store $TARGET_KB_BUCKET_PATH --ingest-to "$KNOWLEDGE_BASE_DATA_STORE_NAME"
+    agentutil data-store ingest ../data/ds-kb ./build/data_store $TARGET_KB_BUCKET_PATH --ingest-to "$KNOWLEDGE_BASE_DATA_STORE_NAME"
 fi

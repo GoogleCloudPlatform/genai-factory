@@ -16,6 +16,6 @@ It complements the factory a script ingest documents in the data store and to de
 
 ## Apply the factory
 
-- Navigate to the [0-projects](0-projects/README.md). Follow the instructions to provision the GCP project, configure required APIs, and set up Service Accounts with the necessary IAM permissions.
+- Navigate to the [0-prereqs](0-prereqs/README.md). Follow the instructions to provision the GCP project, configure required APIs, and set up Service Accounts with the necessary IAM permissions.
 - Navigate to the [1-apps](1-apps/README.md). Follow the instructions to deploy the above-mentioned components.
 - Follow the commands at screen.

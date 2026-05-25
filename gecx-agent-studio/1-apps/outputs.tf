@@ -31,7 +31,7 @@ resource "local_file" "env_vars" {
 # This file is generated following terraform apply. It can be read by script to interact with the deployed resources
 
 export BUILD_BUCKET="${google_storage_bucket.build.name}"
-export GCP_PROJECT_ID="${var.project_config.id}"
+export GCP_PROJECT_ID="${var.project_id}"
 export CES_APP_ID="${google_ces_app.gecx_as_app.app_id}"
 export CES_APP_LOCATION="${google_ces_app.gecx_as_app.location}"
 export KNOWLEDGE_BASE_DATA_STORE_ID="${google_discovery_engine_data_store.knowledge_base.data_store_id}"

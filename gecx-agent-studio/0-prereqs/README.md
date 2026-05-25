@@ -5,7 +5,7 @@ It is responsible for setting up the Google Cloud project, activating the APIs a
 
 It leverages the Cloud Foundation Fabric [`project-factory`](https://github.com/GoogleCloudPlatform/cloud-foundation-fabric/tree/master/modules/project-factory).
 
-You can refer to the [YAML project configuration](data/projects/project.yaml) for more details about enabled APIs and roles assigned in the project.
+You can refer to the [YAML project configuration](data/projects/service-01.yaml) for more details about enabled APIs and roles assigned in the project.
 
 ## Required roles
 
@@ -33,10 +33,11 @@ You should now see the `providers.tf` and `terraform.auto.tfvars` files in the [
 
 | name | description | type | required | default |
 |---|---|:---:|:---:|:---:|
-| [project_config](variables.tf#L28) | The project configuration. | <code title="object&#40;&#123;&#10;  billing_account_id &#61; optional&#40;string&#41;&#10;  parent             &#61; optional&#40;string&#41;&#10;  prefix             &#61; optional&#40;string&#41;&#10;&#125;&#41;">object&#40;&#123;&#8230;&#125;&#41;</code> | ✓ |  |
+| [prefix](variables.tf#L28) | The name prefix to use for resources with a globally unique name. | <code>string</code> | ✓ |  |
+| [project_config](variables.tf#L34) | The project configuration. | <code title="object&#40;&#123;&#10;  billing_account_id &#61; optional&#40;string&#41;&#10;  parent             &#61; optional&#40;string&#41;&#10;&#125;&#41;">object&#40;&#123;&#8230;&#125;&#41;</code> | ✓ |  |
 | [enable_deletion_protection](variables.tf#L15) | Whether deletion protection should be enabled. | <code>bool</code> |  | <code>true</code> |
 | [enable_iac_sa_impersonation](variables.tf#L22) | Whether the user running this module should be granted serviceAccountTokenCreator on the automation service account. | <code>bool</code> |  | <code>true</code> |
-| [region](variables.tf#L45) | The region where to create the buckets. | <code>string</code> |  | <code>&#34;europe-west1&#34;</code> |
+| [region](variables.tf#L50) | The region where to create the buckets. | <code>string</code> |  | <code>&#34;europe-west1&#34;</code> |
 
 ## Outputs
 

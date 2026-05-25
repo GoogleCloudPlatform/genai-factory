@@ -12,9 +12,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# This bucket is used to store resources during import/export operations
+# # This bucket is used to store resources during import/export operations
+# module "build_bucket" {
+#   source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/gcs?ref=v56.0.0"
+#   project_id = var.project_id
+#   prefix     = var.prefix
+#   name       = var.name
+#   location   = var.region
+#   versioning = true
+# }
+
+
 resource "google_storage_bucket" "build" {
-  project                     = var.project_config.id
+  project                     = var.project_id
   name                        = "${var.prefix}-${var.name}-build"
   location                    = var.region
   uniform_bucket_level_access = true
@@ -24,12 +34,17 @@ resource "google_storage_bucket" "build" {
 resource "google_discovery_engine_data_store" "knowledge_base" {
   data_store_id                = "${var.name}-kb"
   display_name                 = "${var.name} knowledge base"
-  project                      = var.project_config.id
-  location                     = var.region_ai_applications
+  project                      = var.project_id
+  location                     = var.region_discovery_engine
   industry_vertical            = "GENERIC"
   content_config               = "CONTENT_REQUIRED"
   solution_types               = ["SOLUTION_TYPE_CHAT"]
   skip_default_schema_creation = true
+  deletion_policy = (
+    var.enable_deletion_protection
+    ? "PREVENT"
+    : "DELETE"
+  )
 
   document_processing_config {
     default_parsing_config {
@@ -50,49 +65,54 @@ resource "google_discovery_engine_data_store" "knowledge_base" {
 
 resource "google_discovery_engine_schema" "knowledge_base" {
   schema_id     = "${var.name}-kb-schema"
-  project       = var.project_config.id
-  location      = var.region_ai_applications
+  project       = var.project_id
+  location      = var.region_discovery_engine
   data_store_id = google_discovery_engine_data_store.knowledge_base.data_store_id
-  json_schema   = file("./data/knowledge-base/knowledge_base_data_store_schema.json")
+  json_schema   = file("./data/ds-kb/knowledge_base_data_store_schema.json")
+  deletion_policy = (
+    var.enable_deletion_protection
+    ? "PREVENT"
+    : "DELETE"
+  )
 }
 
 resource "google_ces_app" "gecx_as_app" {
-  app_id       = "${var.name}-app"
-  display_name = "${var.name} App"
-  project      = var.project_config.id
-  location     = var.region_ai_applications
+  app_id       = var.name
+  display_name = var.name
+  project      = var.project_id
+  location     = var.region_discovery_engine
   description  = "A sample Gemini Enterprise for CX application."
 
   language_settings {
-    default_language_code = var.gecx_as_configs.supported_languages[0]
+    default_language_code = var.cx_as_configs.supported_languages[0]
     supported_language_codes = (
       slice(
-        var.gecx_as_configs.supported_languages,
+        var.cx_as_configs.supported_languages,
         1,
-        length(var.gecx_as_configs.supported_languages)
+        length(var.cx_as_configs.supported_languages)
     ))
     enable_multilingual_support = false
   }
 
   audio_processing_config {
     dynamic "synthesize_speech_configs" {
-      for_each = toset(var.gecx_as_configs.supported_languages)
+      for_each = toset(var.cx_as_configs.supported_languages)
 
       content {
         language_code = synthesize_speech_configs.value
-        speaking_rate = var.gecx_as_configs.speaking_rate
+        speaking_rate = var.cx_as_configs.speaking_rate
       }
     }
   }
 
   logging_settings {
     cloud_logging_settings {
-      enable_cloud_logging = var.gecx_as_configs.enable_cloud_logging
+      enable_cloud_logging = var.cx_as_configs.enable_cloud_logging
     }
   }
 
   time_zone_settings {
-    time_zone = var.gecx_as_configs.timezone
+    time_zone = var.cx_as_configs.timezone
   }
 
   lifecycle {

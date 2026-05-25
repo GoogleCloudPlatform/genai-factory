@@ -26,16 +26,16 @@ buckets:
     description: Terraform state bucket
     iam:
       roles/storage.objectAdmin:
-        - $iam_principals:service_accounts/project/iac-rw
-      roles/storage.objectViewer:
-        - $iam_principals:service_accounts/project/iac-rw
+        - $iam_principals:service_accounts/_self_/iac-rw
 
 service_accounts:
   # Automation SAs
   iac-rw:
 # Grant roles
 iam_by_principals:
-  $iam_principals:service_accounts/project/iac-rw:
+  $iam_principals:service_accounts/_self_/iac-rw:
     - roles/ces.admin
-    - roles/storage.admin
     - roles/discoveryengine.admin
+    # For build bucket creation.
+    # Not needed if the application is configured via GUI.
+    - roles/storage.admin
