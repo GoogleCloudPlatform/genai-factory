@@ -12,20 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Copyright 2026 Google LLC
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 values:
   google_service_account_iam_member.me_sa_token_creator[0]:
     condition: []
@@ -39,17 +25,30 @@ values:
     sensitive_content: null
     source: null
   local_file.tfvars:
+    content: "/**\n * Copyright 2026 Google LLC\n *\n * Licensed under the Apache\
+      \ License, Version 2.0 (the \"License\");\n * you may not use this file except\
+      \ in compliance with the License.\n * You may obtain a copy of the License at\n\
+      \ *\n *      http://www.apache.org/licenses/LICENSE-2.0\n *\n * Unless required\
+      \ by applicable law or agreed to in writing, software\n * distributed under\
+      \ the License is distributed on an \"AS IS\" BASIS,\n * WITHOUT WARRANTIES OR\
+      \ CONDITIONS OF ANY KIND, either express or implied.\n * See the License for\
+      \ the specific language governing permissions and\n * limitations under the\
+      \ License.\n */\n\nenable_deletion_protection = true\n\nprefix = \"your-prefix\"\
+      \n\nproject_id = \"your-prefix-gf-gecx-as-0\"\n\nservice_account_emails = {\n\
+      \  \"service-01/iac-rw\" = \"iac-rw@your-prefix-gf-gecx-as-0.iam.gserviceaccount.com\"\
+      \n}\n"
     content_base64: null
     directory_permission: '0777'
     file_permission: '0644'
     filename: ../1-apps/terraform.auto.tfvars
     sensitive_content: null
     source: null
-  module.projects.module.buckets["project/iac-state"].google_storage_bucket.bucket[0]:
+  module.projects.module.buckets["service-01/iac-state"].google_storage_bucket.bucket[0]:
     autoclass: []
     cors: []
     custom_placement_config: []
     default_event_based_hold: null
+    deletion_policy: DELETE
     effective_labels:
       goog-terraform-provisioned: 'true'
     enable_object_retention: null
@@ -72,39 +71,32 @@ values:
     uniform_bucket_level_access: true
     versioning:
     - enabled: false
-  ? module.projects.module.buckets["project/iac-state"].google_storage_bucket_iam_binding.authoritative["roles/storage.objectAdmin"]
+  ? module.projects.module.buckets["service-01/iac-state"].google_storage_bucket_iam_binding.authoritative["roles/storage.objectAdmin"]
   : bucket: your-prefix-gf-gecx-as-0-iac-state
     condition: []
     members:
     - serviceAccount:iac-rw@your-prefix-gf-gecx-as-0.iam.gserviceaccount.com
     role: roles/storage.objectAdmin
     timeouts: null
-  ? module.projects.module.buckets["project/iac-state"].google_storage_bucket_iam_binding.authoritative["roles/storage.objectViewer"]
-  : bucket: your-prefix-gf-gecx-as-0-iac-state
-    condition: []
-    members:
-    - serviceAccount:iac-rw@your-prefix-gf-gecx-as-0.iam.gserviceaccount.com
-    role: roles/storage.objectViewer
-    timeouts: null
-  module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/ces.admin"]:
+  module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/ces.admin"]:
     condition: []
     members:
     - serviceAccount:iac-rw@your-prefix-gf-gecx-as-0.iam.gserviceaccount.com
     project: your-prefix-gf-gecx-as-0
     role: roles/ces.admin
-  module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/discoveryengine.admin"]:
+  module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/discoveryengine.admin"]:
     condition: []
     members:
     - serviceAccount:iac-rw@your-prefix-gf-gecx-as-0.iam.gserviceaccount.com
     project: your-prefix-gf-gecx-as-0
     role: roles/discoveryengine.admin
-  module.projects.module.projects-iam["project"].google_project_iam_binding.authoritative["roles/storage.admin"]:
+  module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/storage.admin"]:
     condition: []
     members:
     - serviceAccount:iac-rw@your-prefix-gf-gecx-as-0.iam.gserviceaccount.com
     project: your-prefix-gf-gecx-as-0
     role: roles/storage.admin
-  module.projects.module.projects["project"].google_project.project[0]:
+  module.projects.module.projects["service-01"].google_project.project[0]:
     auto_create_network: false
     billing_account: billing-acct-id
     deletion_policy: DELETE
@@ -119,37 +111,40 @@ values:
     terraform_labels:
       goog-terraform-provisioned: 'true'
     timeouts: null
-  module.projects.module.projects["project"].google_project_iam_member.service_agents["ces"]:
+  module.projects.module.projects["service-01"].google_project_iam_member.service_agents["ces"]:
     condition: []
     project: your-prefix-gf-gecx-as-0
     role: roles/ces.serviceAgent
-  module.projects.module.projects["project"].google_project_iam_member.service_agents["discoveryengine"]:
+  module.projects.module.projects["service-01"].google_project_iam_member.service_agents["discoveryengine"]:
     condition: []
     project: your-prefix-gf-gecx-as-0
     role: roles/discoveryengine.serviceAgent
-  module.projects.module.projects["project"].google_project_service.project_services["ces.googleapis.com"]:
+  module.projects.module.projects["service-01"].google_project_service.project_services["ces.googleapis.com"]:
+    deletion_policy: DELETE
     disable_dependent_services: false
     disable_on_destroy: false
     project: your-prefix-gf-gecx-as-0
     service: ces.googleapis.com
     timeouts: null
-  module.projects.module.projects["project"].google_project_service.project_services["discoveryengine.googleapis.com"]:
+  module.projects.module.projects["service-01"].google_project_service.project_services["discoveryengine.googleapis.com"]:
+    deletion_policy: DELETE
     disable_dependent_services: false
     disable_on_destroy: false
     project: your-prefix-gf-gecx-as-0
     service: discoveryengine.googleapis.com
     timeouts: null
-  module.projects.module.projects["project"].google_project_service_identity.default["ces.googleapis.com"]:
+  module.projects.module.projects["service-01"].google_project_service_identity.default["ces.googleapis.com"]:
     project: your-prefix-gf-gecx-as-0
     service: ces.googleapis.com
     timeouts: null
-  module.projects.module.projects["project"].google_project_service_identity.default["discoveryengine.googleapis.com"]:
+  module.projects.module.projects["service-01"].google_project_service_identity.default["discoveryengine.googleapis.com"]:
     project: your-prefix-gf-gecx-as-0
     service: discoveryengine.googleapis.com
     timeouts: null
-  module.projects.module.service-accounts["project/iac-rw"].google_service_account.service_account[0]:
+  module.projects.module.service-accounts["service-01/iac-rw"].google_service_account.service_account[0]:
     account_id: iac-rw
     create_ignore_already_exists: null
+    deletion_policy: DELETE
     description: null
     disabled: false
     display_name: Terraform-managed.
@@ -175,19 +170,19 @@ counts:
   google_service_account: 1
   google_service_account_iam_member: 1
   google_storage_bucket: 1
-  google_storage_bucket_iam_binding: 2
+  google_storage_bucket_iam_binding: 1
   local_file: 2
   modules: 5
-  resources: 19
+  resources: 18
   terraform_data: 2
 
 outputs:
   buckets:
-    project/iac-state: your-prefix-gf-gecx-as-0-iac-state
+    service-01/iac-state: your-prefix-gf-gecx-as-0-iac-state
   prefix: your-prefix
   projects: __missing__
   service_accounts:
-    project/iac-rw:
+    service-01/iac-rw:
       email: iac-rw@your-prefix-gf-gecx-as-0.iam.gserviceaccount.com
       iam_email: serviceAccount:iac-rw@your-prefix-gf-gecx-as-0.iam.gserviceaccount.com
       id: projects/your-prefix-gf-gecx-as-0/serviceAccounts/iac-rw@your-prefix-gf-gecx-as-0.iam.gserviceaccount.com
