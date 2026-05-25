@@ -5,6 +5,7 @@
 #     "google-cloud-dialogflow-cx",
 #     "google-cloud-storage",
 #     "markdown",
+#     "pyopenssl",
 # ]
 #
 # [[tool.uv.index]]
