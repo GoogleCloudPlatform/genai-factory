@@ -12,6 +12,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+locals {
+  # Extract service account emails and ids from var.service_accounts, if any
+  _service_account_emails = {
+    for k, v in var.service_accounts : k => v.email
+  }
+  # if the emails provided by the user are keys of var.service_accounts
+  # return the corresponding value, otherwise keep the email
+  service_account_emails = {
+    for k, v in var.service_account_emails
+    : k => lookup(local._service_account_emails, v, v)
+  }
+}
+
 output "commands" {
   description = "Run the following commands when the deployment completes to update and manage the application."
   value       = <<EOT
@@ -30,13 +43,14 @@ resource "local_file" "env_vars" {
   content  = <<-EOT
 # This file is generated following terraform apply. It can be read by script to interact with the deployed resources
 
-export BUILD_BUCKET="${google_storage_bucket.build.name}"
-export GCP_PROJECT_ID="${var.project_config.id}"
+export BUILD_BUCKET="${module.build_bucket.name}"
+export GCP_PROJECT_ID="${var.project_id}"
 export CES_APP_ID="${google_ces_app.gecx_as_app.app_id}"
 export CES_APP_LOCATION="${google_ces_app.gecx_as_app.location}"
 export KNOWLEDGE_BASE_DATA_STORE_ID="${google_discovery_engine_data_store.knowledge_base.data_store_id}"
 export KNOWLEDGE_BASE_DATA_STORE_LOCATION="${google_discovery_engine_data_store.knowledge_base.location}"
 export KNOWLEDGE_BASE_DATA_STORE_NAME="${google_discovery_engine_data_store.knowledge_base.name}"
+export IMPERSONATE_SERVICE_ACCOUNT="${local.service_account_emails["service-01/iac-rw"]}"
 EOT
   filename = "./scripts/variables.generated.env"
 }

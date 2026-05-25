@@ -28,7 +28,7 @@ from google.auth.transport.requests import Request
 from google.cloud import storage
 from slugify import slugify
 
-from agentutil.gcp_util import get_current_user_email, has_sa_user_role
+from agentutil.gcp_util import get_current_user_email, has_sa_user_role, get_credentials
 
 logger = logging.getLogger(__name__)
 
@@ -37,7 +37,7 @@ class CesAgent:
 
   def __init__(self, local_agent_path: str):
     self.local_agent_path = Path(local_agent_path)
-    self.credentials, self.project_id = google.auth.default()
+    self.credentials, self.project_id = get_credentials()
 
   def _get_headers(self):
     if not self.credentials.valid:

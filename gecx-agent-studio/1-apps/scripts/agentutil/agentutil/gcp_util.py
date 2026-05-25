@@ -13,11 +13,32 @@
 # limitations under the License.
 
 import logging
+import os
 import subprocess
 import requests
+import google.auth
+from google.auth import impersonated_credentials
 from google.auth.transport.requests import Request
 
 logger = logging.getLogger(__name__)
+
+_logged_impersonation = False
+
+
+def get_credentials():
+  """Gets credentials, optionally impersonating a service account."""
+  global _logged_impersonation
+  credentials, project = google.auth.default()
+  impersonate_sa = os.environ.get("IMPERSONATE_SERVICE_ACCOUNT")
+  if impersonate_sa:
+    if not _logged_impersonation:
+      print(f"Impersonating service account: {impersonate_sa}")
+      _logged_impersonation = True
+    credentials = impersonated_credentials.Credentials(
+        source_credentials=credentials, target_principal=impersonate_sa,
+        target_scopes=["https://www.googleapis.com/auth/cloud-platform"],
+        lifetime=3600)
+  return credentials, project
 
 
 def get_current_user_email(credentials) -> str:

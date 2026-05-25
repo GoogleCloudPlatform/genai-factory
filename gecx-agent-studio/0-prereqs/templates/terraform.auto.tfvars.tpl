@@ -14,8 +14,14 @@
  * limitations under the License.
  */
 
+enable_deletion_protection = ${enable_deletion_protection}
+
 prefix = "${prefix}"
-project_config = {
-  id     = "${projects.project.id}"
-  number = "${projects.project.number}"
+
+project_id = "${project_id}"
+
+service_account_emails = {
+%{ for k,v in service_account_emails ~}
+  "${k}" = "${v}"
+%{ endfor ~}
 }

@@ -1,5 +1,3 @@
----
-
 # Copyright 2026 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,28 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: gf-gecx-as-0
-
-# Enable APIs
-services:
-  - ces.googleapis.com
-  - discoveryengine.googleapis.com
-
-buckets:
-  iac-state:
-    description: Terraform state bucket
-    iam:
-      roles/storage.objectAdmin:
-        - $iam_principals:service_accounts/project/iac-rw
-      roles/storage.objectViewer:
-        - $iam_principals:service_accounts/project/iac-rw
-
-service_accounts:
-  # Automation SAs
-  iac-rw:
-# Grant roles
-iam_by_principals:
-  $iam_principals:service_accounts/project/iac-rw:
-    - roles/ces.admin
-    - roles/storage.admin
-    - roles/discoveryengine.admin
+prefix = "your-prefix"
+project_config = {
+  billing_account_id = "billing-acct-id"
+  parent             = "organizations/1122334455"
+}

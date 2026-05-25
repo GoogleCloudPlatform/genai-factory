@@ -42,8 +42,12 @@ def replace_data_store_ces(target_agent_dir: str, tool_name: str,
         tool_name: Name of the tool.
         data_store_id: ID of the new data store.
     """
-  agent = CesAgent(target_agent_dir)
-  agent.replace_data_store(tool_name, data_store_id)
+  try:
+    agent = CesAgent(target_agent_dir)
+    agent.replace_data_store(tool_name, data_store_id)
+  except Exception as e:
+    logger.error(f"Error: {e}")
+    raise typer.Exit(code=1)
 
 
 @ces_agent_app.command()
@@ -55,8 +59,12 @@ def replace_sa_auth(target_agent_dir: str, tool_name: str, sa_email: str):
         tool_name: Name of the tool.
         sa_email: Service Account email.
     """
-  agent = CesAgent(target_agent_dir)
-  agent.replace_sa_auth(tool_name, sa_email)
+  try:
+    agent = CesAgent(target_agent_dir)
+    agent.replace_sa_auth(tool_name, sa_email)
+  except Exception as e:
+    logger.error(f"Error: {e}")
+    raise typer.Exit(code=1)
 
 
 @ces_agent_app.command()
@@ -68,8 +76,12 @@ def push(target_dir: str, agent_id: str, bucket: str):
         agent_id: Remote Agent ID (resource name).
         bucket: GCS bucket name for intermediate storage.
     """
-  agent = CesAgent(target_dir)
-  agent.push(agent_id, bucket)
+  try:
+    agent = CesAgent(target_dir)
+    agent.push(agent_id, bucket)
+  except Exception as e:
+    logger.error(f"Error: {e}")
+    raise typer.Exit(code=1)
 
 
 @ces_agent_app.command()
@@ -82,8 +94,12 @@ def pull(agent_id: str, target_dir: str, bucket: str, environment: str = None):
         bucket: GCS bucket name for intermediate storage.
         environment: Optional environment ID.
     """
-  agent = CesAgent(target_dir)
-  agent.pull(agent_id, bucket, environment)
+  try:
+    agent = CesAgent(target_dir)
+    agent.pull(agent_id, bucket, environment)
+  except Exception as e:
+    logger.error(f"Error: {e}")
+    raise typer.Exit(code=1)
 
 
 @documents_app.command('ingest')
@@ -111,8 +127,12 @@ def process_data_store_documents(source_dir: str, target_dir: str,
         Exception: For errors during GCS upload.
     """
   from agentutil.document_processing.data_store import process_data_store_documents
-  process_data_store_documents(source_dir, target_dir, gcs_bucket_folder_path,
-                               ingest_to)
+  try:
+    process_data_store_documents(source_dir, target_dir, gcs_bucket_folder_path,
+                                 ingest_to)
+  except Exception as e:
+    logger.error(f"Error: {e}")
+    raise typer.Exit(code=1)
 
 
 def main():

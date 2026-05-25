@@ -14,7 +14,7 @@
 
 values:
   google_ces_app.gecx_as_app:
-    app_id: gf-gecx-as-0-app
+    app_id: cx-as-0
     audio_processing_config:
     - ambient_sound_config: []
       barge_in_config: []
@@ -26,8 +26,9 @@ values:
     client_certificate_settings: []
     data_store_settings: []
     default_channel_profile: []
+    deletion_policy: DELETE
     description: A sample Gemini Enterprise for CX application.
-    display_name: gf-gecx-as-0 App
+    display_name: cx-as-0
     evaluation_metrics_thresholds: []
     global_instruction: null
     guardrails: null
@@ -42,22 +43,25 @@ values:
       bigquery_export_settings: []
       cloud_logging_settings:
       - enable_cloud_logging: true
-      conversation_logging_settings: []
+      conversation_logging_settings:
+      - disable_conversation_logging: false
       redaction_config: []
     metadata: null
     model_settings: []
     pinned: null
-    project: prefix-gf-ai-apps-df-0
+    project: your-project
     root_agent: null
     time_zone_settings:
     - time_zone: Europe/Rome
     timeouts: null
+    tool_execution_mode: PARALLEL
     variable_declarations: []
   google_discovery_engine_data_store.knowledge_base:
     content_config: CONTENT_REQUIRED
     create_advanced_site_search: false
-    data_store_id: gf-gecx-as-0-kb
-    display_name: gf-gecx-as-0 knowledge base
+    data_store_id: cx-as-0-kb
+    deletion_policy: PREVENT
+    display_name: cx-as-0 knowledge base
     document_processing_config:
     - chunking_config:
       - layout_based_chunking_config:
@@ -77,23 +81,32 @@ values:
     industry_vertical: GENERIC
     kms_key_name: null
     location: eu
-    project: prefix-gf-ai-apps-df-0
+    project: your-project
     skip_default_schema_creation: true
     solution_types:
     - SOLUTION_TYPE_CHAT
     timeouts: null
   google_discovery_engine_schema.knowledge_base:
-    data_store_id: gf-gecx-as-0-kb
+    data_store_id: cx-as-0-kb
+    deletion_policy: PREVENT
     json_schema: '{"$schema":"https://json-schema.org/draft/2020-12/schema","properties":{"brand_code":{"dynamicFacetable":false,"indexable":true,"retrievable":true,"searchable":false,"type":"string"},"title":{"keyPropertyMapping":"title","retrievable":true,"type":"string"},"url":{"dynamicFacetable":false,"indexable":false,"retrievable":true,"searchable":false,"type":"string"}},"type":"object"}'
     location: eu
-    project: prefix-gf-ai-apps-df-0
-    schema_id: gf-gecx-as-0-kb-schema
+    project: your-project
+    schema_id: cx-as-0-kb-schema
     timeouts: null
-  google_storage_bucket.build:
+  local_file.env_vars:
+    content_base64: null
+    directory_permission: '0777'
+    file_permission: '0777'
+    filename: ./scripts/variables.generated.env
+    sensitive_content: null
+    source: null
+  module.build_bucket.google_storage_bucket.bucket[0]:
     autoclass: []
     cors: []
     custom_placement_config: []
     default_event_based_hold: null
+    deletion_policy: DELETE
     effective_labels:
       goog-terraform-provisioned: 'true'
     enable_object_retention: null
@@ -105,8 +118,8 @@ values:
     lifecycle_rule: []
     location: EUROPE-WEST1
     logging: []
-    name: prefix-gf-gecx-as-0-build
-    project: prefix-gf-ai-apps-df-0
+    name: prefix-cx-as-0-build
+    project: your-project
     requester_pays: null
     retention_policy: []
     storage_class: STANDARD
@@ -114,13 +127,6 @@ values:
       goog-terraform-provisioned: 'true'
     timeouts: null
     uniform_bucket_level_access: true
-  local_file.env_vars:
-    content_base64: null
-    directory_permission: '0777'
-    file_permission: '0777'
-    filename: ./scripts/variables.generated.env
-    sensitive_content: null
-    source: null
 
 counts:
   google_ces_app: 1
@@ -128,7 +134,7 @@ counts:
   google_discovery_engine_schema: 1
   google_storage_bucket: 1
   local_file: 1
-  modules: 0
+  modules: 1
   resources: 5
 
 outputs:

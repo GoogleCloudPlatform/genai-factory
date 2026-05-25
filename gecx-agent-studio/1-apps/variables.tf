@@ -12,6 +12,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# By default, these values are overridden when you redeploy the app
+# by using agentutil. Update the ignore_changes in the google_ces_app resource
+# to fully manage and update the resource via terraform.
+variable "cx_as_configs" {
+  description = "The CX Agent Studio configurations."
+  type = object({
+    enable_cloud_logging        = optional(bool, true)
+    enable_conversation_logging = optional(bool, true)
+    speaking_rate               = optional(number, 0)
+    supported_languages         = optional(list(string), ["en-US"])
+    timezone                    = optional(string, "Europe/Rome")
+    tool_execution_mode         = optional(string, "PARALLEL")
+  })
+  nullable = false
+  default  = {}
+}
+
 variable "enable_deletion_protection" {
   description = "Whether deletion protection should be enabled."
   type        = bool
@@ -19,26 +36,11 @@ variable "enable_deletion_protection" {
   default     = true
 }
 
-# By default, these values are overridden when you redeploy the app
-# by using agentutil. Update the ignore_changes in the google_ces_app resource
-# to fully manage and update the resource via terraform.
-variable "gecx_as_configs" {
-  description = "The ge4cx-as configurations."
-  type = object({
-    enable_cloud_logging = optional(bool, true)
-    speaking_rate        = optional(number, 0)
-    supported_languages  = optional(list(string), ["en-US"])
-    timezone             = optional(string, "Europe/Rome")
-  })
-  nullable = false
-  default  = {}
-}
-
 variable "name" {
   description = "The name of the resources."
   type        = string
   nullable    = false
-  default     = "gf-gecx-as-0"
+  default     = "cx-as-0"
 }
 
 variable "prefix" {
@@ -47,13 +49,10 @@ variable "prefix" {
   nullable    = false
 }
 
-variable "project_config" {
-  description = "The project where to create the resources."
-  type = object({
-    id     = string
-    number = string
-  })
-  nullable = false
+variable "project_id" {
+  description = "The id of the project where to create the resources."
+  type        = string
+  nullable    = false
 }
 
 variable "region" {
@@ -63,15 +62,22 @@ variable "region" {
   default     = "europe-west1"
 }
 
-variable "region_ai_applications" {
+variable "region_discovery_engine" {
   description = "The GCP region where to deploy the data store and CX Agent Studio App."
   type        = string
   nullable    = false
   default     = "eu"
   validation {
     condition = (
-      var.region_ai_applications == "eu" || var.region_ai_applications == "us"
+      var.region_discovery_engine == "eu" || var.region_discovery_engine == "us"
     )
-    error_message = "region_ai_applications should be set either to eu or us."
+    error_message = "region_discovery_engine should be set either to eu or us."
   }
+}
+
+# Expected keys: service-01/iac-rw
+variable "service_account_emails" {
+  description = "The service account emails. Each element is the email of the service account or the key of the map var.service_accounts."
+  type        = map(string)
+  nullable    = false
 }

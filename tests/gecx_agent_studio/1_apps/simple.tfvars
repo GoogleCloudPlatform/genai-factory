@@ -12,17 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# variables from 0-projects
+# variables from 0-prereqs
 
 prefix = "prefix"
-project_config = {
-  id     = "prefix-gf-ai-apps-df-0"
-  number = "123456789012"
-}
-service_accounts = {
-  "project/iac-rw" = {
-    email     = "iac-rw@prefix-gf-ai-apps-df-0.iam.gserviceaccount.com"
-    iam_email = "serviceAccount:iac-rw@prefix-gf-ai-apps-df-0.iam.gserviceaccount.com"
-    id        = "projects/prefix-gf-ai-apps-df-0/serviceAccounts/iac-rw@prefix-gf-ai-apps-df-0.iam.gserviceaccount.com"
-  }
+
+project_id = "your-project"
+
+region = "europe-west1"
+
+service_account_emails = {
+  "service-01/iac-rw" = "iac-rw@prefix-gf-ai-apps-df-0.iam.gserviceaccount.com"
 }
