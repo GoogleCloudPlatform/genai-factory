@@ -2,9 +2,11 @@
 # requires-python = ">=3.13"
 # dependencies = [
 #     "click",
+#     "google-auth",
 #     "google-cloud-dialogflow-cx",
 #     "google-cloud-storage",
 #     "markdown",
+#     "pyopenssl",
 # ]
 #
 # [[tool.uv.index]]
@@ -35,6 +37,7 @@ import datetime
 import io
 import json
 import logging
+import os
 import shutil
 import uuid
 import zipfile
@@ -44,6 +47,8 @@ from typing import Optional
 from urllib.parse import urlparse
 
 import click
+import google.auth
+from google.auth import impersonated_credentials
 import markdown
 from google.cloud import dialogflowcx_v3beta1 as dialogflow
 from google.cloud import storage
@@ -67,6 +72,26 @@ class DataStoreType(Enum):
 
 # --- Helper Functions ---
 
+_logged_impersonation = False
+
+
+def get_credentials():
+  """Gets credentials, optionally impersonating a service account."""
+  global _logged_impersonation
+  credentials, project = google.auth.default()
+  impersonate_sa = os.environ.get("IMPERSONATE_SERVICE_ACCOUNT")
+  if impersonate_sa:
+    if not _logged_impersonation:
+      logger.info(f"Impersonating service account: {impersonate_sa}")
+      _logged_impersonation = True
+    credentials = impersonated_credentials.Credentials(
+        source_credentials=credentials,
+        target_principal=impersonate_sa,
+        target_scopes=["https://www.googleapis.com/auth/cloud-platform"],
+        lifetime=3600,
+    )
+  return credentials, project
+
 
 def _ensure_agentutil_dirs() -> None:
   """Ensures that the utility and backup directories exist."""
@@ -81,7 +106,9 @@ def _get_dialogflow_client(agent_name: str) -> dialogflow.AgentsClient:
     client_options = {
         "api_endpoint": f"{location_id}-dialogflow.googleapis.com"
     }
-    return dialogflow.AgentsClient(client_options=client_options)
+    credentials, _ = get_credentials()
+    return dialogflow.AgentsClient(client_options=client_options,
+                                   credentials=credentials)
   except IndexError:
     raise ValueError(
         "Invalid agent_name format. Expected: "
@@ -310,7 +337,8 @@ def process_documents(source_dir: str, dest_dir: str, gcs_path: str,
       click.echo(
           f"\nUploading {len(files_to_upload)} files to gs://{gcs_bucket_name}/{gcs_blob_prefix}..."
       )
-      storage_client = storage.Client()
+      credentials, project = get_credentials()
+      storage_client = storage.Client(project=project, credentials=credentials)
       bucket = storage_client.bucket(gcs_bucket_name)
 
       with click.progressbar(files_to_upload, label="Uploading files") as bar:

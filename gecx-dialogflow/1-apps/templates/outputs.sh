@@ -1,16 +1,17 @@
 # Run these commands to complete the deployment.
 # Alternatively, deploy the agent through your CI/CD pipeline.
 
-# Get bearer token impersonating iac-rw SA
-export BEARER_TOKEN=$(gcloud auth print-access-token \
-  --impersonate-service-account ${service_accounts["project/iac-rw"].email})
+# Get access token impersonating iac-rw SA
+export IMPERSONATE_SERVICE_ACCOUNT="${service_account_emails["service-01/iac-rw"]}"
+export ACCESS_TOKEN=$(gcloud auth application-default print-access-token \
+  --impersonate-service-account $IMPERSONATE_SERVICE_ACCOUNT)
 
 # Load faq data into the data store
 gcloud storage cp ./data/ds-faq/faq.csv ${bucket_url_ds}/ds-faq/ \
-  --impersonate-service-account ${service_accounts["project/iac-rw"].email} \
+  --impersonate-service-account ${service_account_emails["service-01/iac-rw"]} \
   --billing-project ${project_id} &&
 curl -X POST ${ds_uri_faq} \
-  -H "Authorization: Bearer $BEARER_TOKEN" \
+  -H "Authorization: Bearer $ACCESS_TOKEN" \
   -H "Content-Type: application/json" \
   -H "X-Goog-User-Project: ${project_id}" \
   -d '{
@@ -29,7 +30,7 @@ uv run ./scripts/agentutil/agentutil.py process-documents \
   ${bucket_url_ds}/ds-kb/ \
   --upload &&
 curl -X POST ${ds_uri_kb} \
-  -H "Authorization: Bearer $BEARER_TOKEN" \
+  -H "Authorization: Bearer $ACCESS_TOKEN" \
   -H "Content-Type: application/json" \
   -H "X-Goog-User-Project: ${project_id}" \
   -d '{
@@ -56,10 +57,10 @@ uv run ./scripts/agentutil/agentutil.py replace-data-store \
   "${ds_name_faq}" &&
 zip -r ${agent_dir}/agent.dist.zip ${agent_dir}/* &&
 gcloud storage cp ${agent_dir}/agent.dist.zip ${bucket_url_build}/agents/agent-${agent_variant}.dist.zip \
-  --impersonate-service-account ${service_accounts["project/iac-rw"].email} \
+  --impersonate-service-account ${service_account_emails["service-01/iac-rw"]} \
   --billing-project ${project_id} &&
 curl -X POST ${agent_uri} \
-  -H "Authorization: Bearer $BEARER_TOKEN" \
+  -H "Authorization: Bearer $ACCESS_TOKEN" \
   -H "Content-Type: application/json" \
   -H "X-Goog-User-Project: ${project_id}" \
   -d '{
@@ -78,7 +79,7 @@ uv run ./scripts/agentutil/agentutil.py create-webhook \
 
 # Query the agent
 curl -X POST ${agent_uri_query} \
--H "Authorization: Bearer $BEARER_TOKEN" \
+-H "Authorization: Bearer $ACCESS_TOKEN" \
 -H "Content-Type: application/json" \
 -H "X-Goog-User-Project: ${project_id}" \
 -d '{

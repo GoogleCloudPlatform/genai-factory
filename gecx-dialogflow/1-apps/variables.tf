@@ -51,89 +51,102 @@ variable "name" {
   description = "The name of the resources."
   type        = string
   nullable    = false
-  default     = "gf-gecx-df-0"
+  default     = "gecx-df-0"
 }
 
 variable "networking_config" {
-  description = "The networking configuration."
+  description = "The networking configuration. Each element is either the id of the resource or the key of the map var.vpc_self_links."
   type = object({
-    create = optional(bool, true)
-    vpc_id = optional(string, "net-0")
-    subnet = optional(object({
-      ip_cidr_range = optional(string, "10.0.0.0/24")
-      name          = optional(string, "sub-0")
-    }), {})
-    subnet_proxy_only = optional(object({
-      ip_cidr_range = optional(string, "10.20.0.0/24")
-      name          = optional(string, "proxy-only-sub-0")
-    }), {})
-  })
-  nullable = false
-  default  = {}
-}
-
-variable "project_config" {
-  description = "The project where to create the resources."
-  type = object({
-    id     = string
-    number = string
-    prefix = string
+    subnet = string
+    vpc    = string
   })
   nullable = false
 }
 
-variable "regions" {
-  description = "The GCP region where to deploy the Dialogflow agents."
-  type = object({
-    agent      = optional(string, "europe-west1")
-    datastores = optional(string, "eu")
-    engine     = optional(string, "eu")
-    resources  = optional(string, "europe-west1")
-  })
-  nullable = false
-  default  = {}
+variable "number" {
+  description = "The project number."
+  type        = string
+  nullable    = false
 }
 
-variable "service_accounts" {
-  description = "The pre-created service accounts used by the blueprint."
-  type = map(object({
-    email     = string
-    iam_email = string
-    id        = string
-  }))
-  default = {}
+variable "prefix" {
+  description = "The name prefix to use for resources with a globally unique name."
+  type        = string
+  nullable    = false
 }
 
-# If the Cloud Function is created, its endpoint is automatically created
+variable "project_id" {
+  description = "The id of the project where to create the resources."
+  type        = string
+  nullable    = false
+}
+
+variable "region" {
+  type        = string
+  description = "The GCP region where to deploy the resources."
+  nullable    = false
+  default     = "europe-west1"
+}
+
+variable "region_discovery_engine" {
+  type        = string
+  description = "The GCP region where to deploy the Discovery Engine resources."
+  nullable    = false
+  default     = "eu"
+}
+
+# Expected keys: service-01/gecx-df-0, service-01/gecx-df-build-0, service-01/iac-rw
+variable "service_account_emails" {
+  description = "The service account emails. Each element is the email of the service account or the key of the map var.service_accounts."
+  type        = map(string)
+  nullable    = false
+}
+
+# Expected keys: service-01/gecx-df-0, service-01/gecx-df-build-0, service-01/iac-rw
+variable "service_account_ids" {
+  description = "The service account ids. Each element is the id of the service account or the key of the map var.service_accounts."
+  type        = map(string)
+  nullable    = false
+}
+
 variable "service_directory_configs" {
-  description = "The endpoints to be optionally created in Service Directory."
-  type = object({
-    cloud_dns_domain            = optional(string)
-    create_firewall_policy_rule = optional(bool, true)
+  description = "The service to create in Service Directory (key is the namespace name)."
+  type = map(object({
+    cloud_dns_domain = optional(string)
     endpoints = optional(map(object({
-      address = string
-      port    = number
+      address   = string
+      port      = number
+      create_lb = optional(bool, true)
+      metadata  = optional(map(string), {})
     })), {})
-    namespace_name = optional(string)
     services = optional(map(object({
-      allowed_ca_certs = optional(list(string))
       endpoints        = list(string)
+      allowed_ca_certs = optional(list(string))
+      metadata         = optional(map(string), {})
     })), {})
-  })
+  }))
   nullable = false
   default = {
-    cloud_dns_domain            = "example.com"
-    create_firewall_policy_rule = true
-    endpoints = {
-      onprem-ep-one = {
-        address = "192.168.0.100"
-        port    = 443
+    default = {
+      cloud_dns_domain = "example.com"
+      endpoints = {
+        onprem-01 = {
+          address = "192.168.0.100"
+          port    = 443
+        }
       }
-    }
-    services = {
-      onprem = {
-        endpoints = ["onprem-ep-one"]
+      services = {
+        onprem = {
+          endpoints = ["onprem-01"]
+        }
       }
     }
   }
+}
+
+variable "zones" {
+  description = "The three zones in the region in use."
+  type        = list(string)
+  nullable    = false
+  default     = ["b", "c", "d"]
 }

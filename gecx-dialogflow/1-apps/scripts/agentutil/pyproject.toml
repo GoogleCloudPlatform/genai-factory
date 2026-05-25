@@ -6,9 +6,11 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "click>=8.0",
+    "google-auth>=2.0.0",
     "google-cloud-dialogflow-cx>=1.41.0",
     "google-cloud-storage>=2.0.0",
     "markdown>=3.6",
+    "pyopenssl>=26.2.0",
 ]
 
 [project.scripts]
@@ -20,3 +22,7 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["."]
+
+[[tool.uv.index]]
+url = "https://pypi.org/simple"
+default = true

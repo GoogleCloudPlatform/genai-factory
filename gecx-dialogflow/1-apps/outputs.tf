@@ -16,16 +16,26 @@ locals {
   _dialogflow_agent_id  = module.dialogflow.chat_agent_id
   _dialogflow_apis      = "https://${local.uris_prefix_agent}dialogflow.googleapis.com"
   _discoveryengine_apis = "https://${local.uris_prefix_ds}discoveryengine.googleapis.com"
-  agent_dir             = "./build/agent/dist"
+  # Extract service account emails and ids from var.service_accounts, if any
+  _service_account_emails = {
+    for k, v in var.service_accounts : k => v.email
+  }
+  agent_dir = "./build/agent/dist"
+  # if the emails provided by the user are keys of var.service_accounts
+  # return the corresponding value, otherwise keep the email
+  service_account_emails = {
+    for k, v in var.service_account_emails
+    : k => lookup(local._service_account_emails, v, v)
+  }
   uris_prefix_agent = (
-    var.regions.agent == null || var.regions.agent == "global"
+    var.region == null || var.region == "global"
     ? ""
-    : "${var.regions.agent}-"
+    : "${var.region}-"
   )
   uris_prefix_ds = (
-    var.regions.datastores == null || var.regions.datastores == "global"
+    var.region_discovery_engine == null || var.region_discovery_engine == "global"
     ? ""
-    : "${var.regions.datastores}-"
+    : "${var.region_discovery_engine}-"
   )
   uris = {
     agent       = "${local._dialogflow_apis}/v3/${local._dialogflow_agent_id}:restore"
@@ -33,40 +43,35 @@ locals {
     ds_faq      = "${local._discoveryengine_apis}/v1/${module.dialogflow.data_stores["faq"].name}/branches/0/documents:import"
     ds_kb       = "${local._discoveryengine_apis}/v1/${module.dialogflow.data_stores["kb"].name}/branches/0/documents:import"
   }
-  webhooks = merge(
-    {
-      function = {
-        uri = module.cloud_function.uri
-      }
-    },
-    {
-      for k, v in module.service_directory.service_id
-      : "sd-${k}" => {
-        allowed_ca_certs  = var.service_directory_configs.services[k].allowed_ca_certs
-        service_directory = v
-        uri               = "${module.service_directory.service_names[k]}.${var.service_directory_configs.cloud_dns_domain}"
+  webhooks = merge([
+    for namespace_name, namespace_config in var.service_directory_configs : {
+      for service_name, service_config in namespace_config.services :
+      "${namespace_name}-${service_name}" => {
+        allowed_ca_certs  = service_config.allowed_ca_certs
+        service_directory = module.service_directory[namespace_name].service_id[service_name]
+        uri               = "${module.service_directory[namespace_name].service_names[service_name]}.${namespace_config.cloud_dns_domain}"
       }
     }
-  )
+  ]...)
 }
 
 output "commands" {
   description = "Run these commands to complete the deployment."
   value = templatefile("./templates/outputs.sh", {
-    agent_dir        = local.agent_dir
-    agent_language   = var.agent_configs.language
-    agent_region     = var.regions["agent"]
-    agent_uri        = local.uris["agent"]
-    agent_uri_query  = local.uris["agent_query"]
-    agent_variant    = var.agent_configs.variant
-    bucket_url_build = module.build-bucket.url
-    bucket_url_ds    = module.ds-bucket.url
-    ds_name_faq      = module.dialogflow.data_stores["faq"].name
-    ds_name_kb       = module.dialogflow.data_stores["kb"].name
-    ds_uri_faq       = local.uris["ds_faq"]
-    ds_uri_kb        = local.uris["ds_kb"]
-    project_id       = var.project_config.id
-    service_accounts = var.service_accounts
-    webhooks         = local.webhooks
+    agent_dir              = local.agent_dir
+    agent_language         = var.agent_configs.language
+    agent_region           = var.region
+    agent_uri              = local.uris["agent"]
+    agent_uri_query        = local.uris["agent_query"]
+    agent_variant          = var.agent_configs.variant
+    bucket_url_build       = module.build-bucket.url
+    bucket_url_ds          = module.ds-bucket.url
+    ds_name_faq            = module.dialogflow.data_stores["faq"].name
+    ds_name_kb             = module.dialogflow.data_stores["kb"].name
+    ds_uri_faq             = local.uris["ds_faq"]
+    ds_uri_kb              = local.uris["ds_kb"]
+    project_id             = var.project_id
+    service_account_emails = local.service_account_emails
+    webhooks               = local.webhooks
   })
 }

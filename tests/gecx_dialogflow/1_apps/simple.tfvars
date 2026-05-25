@@ -12,27 +12,28 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# variables from 0-projects
+# variables from 0-prereqs
 
-project_config = {
-  id     = "prefix-gf-ai-apps-df-0"
-  number = "123456789012"
-  prefix = "prefix"
+networking_config = {
+  subnet = "projects/prefix-gf-srun-hp-0/regions/europe-west1/subnetworks/sub-0"
+  vpc    = "projects/prefix-gf-srun-hp-0/global/networks/net-0"
 }
-service_accounts = {
-  "project/gecx-df-0" = {
-    email     = "gecx-df-0@prefix-gf-gecx-df-0.iam.gserviceaccount.com"
-    iam_email = "serviceAccount:gecx-df-0@prefix-gf-gecx-df-0.iam.gserviceaccount.com"
-    id        = "projects/prefix-gf-gecx-df-0/serviceAccounts/gecx-df-0@prefix-gf-gecx-df-0.iam.gserviceaccount.com"
-  }
-  "project/gecx-df-build-0" = {
-    email     = "gecx-df-build-0@prefix-gf-gecx-df-0.iam.gserviceaccount.com"
-    iam_email = "serviceAccount:gecx-df-build-0@prefix-gf-gecx-df-0.iam.gserviceaccount.com"
-    id        = "projects/prefix-gf-gecx-df-0/serviceAccounts/gecx-df-build-0@prefix-gf-gecx-df-0.iam.gserviceaccount.com"
-  }
-  "project/iac-rw" = {
-    email     = "iac-rw@prefix-gf-gecx-df-0.iam.gserviceaccount.com"
-    iam_email = "serviceAccount:iac-rw@prefix-gf-gecx-df-0.iam.gserviceaccount.com"
-    id        = "projects/prefix-gf-gecx-df-0/serviceAccounts/iac-rw@prefix-gf-gecx-df-0.iam.gserviceaccount.com"
-  }
+
+prefix = "prefix"
+
+project_id = "your-project"
+number     = "123456789012"
+
+region = "europe-west1"
+
+service_account_emails = {
+  "service-01/gecx-df-0"       = "gecx-df-0@prefix-gf-ai-apps-df-0.iam.gserviceaccount.com"
+  "service-01/gecx-df-build-0" = "gecx-df-build-0@prefix-gf-ai-apps-df-0.iam.gserviceaccount.com"
+  "service-01/iac-rw"          = "iac-rw@prefix-gf-ai-apps-df-0.iam.gserviceaccount.com"
+}
+
+service_account_ids = {
+  "service-01/gecx-df-0"       = "projects/prefix-gf-ai-apps-df-0/serviceAccounts/gecx-df-0@prefix-gf-ai-apps-df-0.iam.gserviceaccount.com"
+  "service-01/gecx-df-build-0" = "projects/prefix-gf-ai-apps-df-0/serviceAccounts/gecx-df-build-0@prefix-gf-ai-apps-df-0.iam.gserviceaccount.com"
+  "service-01/iac-rw"          = "projects/prefix-gf-ai-apps-df-0/serviceAccounts/iac-rw@prefix-gf-ai-apps-df-0.iam.gserviceaccount.com"
 }
