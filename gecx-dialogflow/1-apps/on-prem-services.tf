@@ -79,9 +79,8 @@ module "dns_service_directory" {
 }
 
 module "lbs-int-proxy" {
-  for_each = local.endpoints_with_lb
-  source   = "../../../cloud-foundation-fabric/modules/net-lb-proxy-int"
-  # source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-lb-proxy-int?ref=v56.0.0"
+  for_each   = local.endpoints_with_lb
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-lb-proxy-int?ref=v56.1.0"
   name       = each.key
   project_id = var.project_id
   region     = var.region
