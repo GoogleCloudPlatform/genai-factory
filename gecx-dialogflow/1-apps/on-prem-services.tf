@@ -36,7 +36,7 @@ locals {
 
 module "service_directory" {
   for_each   = var.service_directory_configs
-  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/service-directory?ref=v56.0.0"
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/service-directory?ref=v56.1.0"
   project_id = var.project_id
   location   = var.region
   name       = each.key
@@ -66,7 +66,7 @@ module "dns_service_directory" {
     for k, v in var.service_directory_configs
     : k => v if try(v.cloud_dns_domain, null) != null
   }
-  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/dns?ref=v56.0.0"
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/dns?ref=v56.1.0"
   project_id = var.project_id
   name       = replace(each.value.cloud_dns_domain, ".", "-")
   zone_config = {
