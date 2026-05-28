@@ -18,6 +18,16 @@ locals {
   buckets = {
     for k, v in module.projects.storage_buckets : k => v
   }
+  networking_config = {
+    subnet = coalesce(
+      try(module.vpc[0].subnet_ids["${var.region}/${var.networking_config.subnet.name}"], null),
+      "projects/${var.networking_config.host_project_id}/regions/${var.region}/subnetworks/${var.networking_config.subnet.name}"
+    )
+    vpc = coalesce(
+      try(module.vpc[0].id, null),
+      "projects/${var.networking_config.host_project_id}/global/networks/${var.networking_config.vpc_name}"
+    )
+  }
   projects = {
     for k, v in module.projects.projects : k => {
       id     = v.project_id
@@ -39,10 +49,16 @@ locals {
   }
   tfvars = {
     enable_deletion_protection = var.enable_deletion_protection
+    networking_config          = local.networking_config
     prefix                     = var.prefix
     project_id                 = local.projects["service-01"].id
+    project_number             = local.projects["service-01"].number
+    region                     = var.region
     service_account_emails = {
       for k, v in module.projects.service_accounts : k => v.email
+    }
+    service_account_ids = {
+      for k, v in module.projects.service_accounts : k => v.id
     }
   }
 }
@@ -50,6 +66,11 @@ locals {
 output "buckets" {
   description = "Created buckets."
   value       = local.buckets
+}
+
+output "networking_config" {
+  description = "The networking configuration."
+  value       = local.networking_config
 }
 
 output "prefix" {

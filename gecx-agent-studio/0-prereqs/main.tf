@@ -34,8 +34,20 @@ module "projects" {
   }
   factories_config = {
     basepath = "./data"
+    exclusions = {
+      projects = var.networking_config.create ? [] : ["host"]
+    }
     paths = {
       projects = "projects"
+    }
+  }
+  context = {
+    condition_vars = {
+      networking_config = {
+        host_project_id = var.networking_config.host_project_id
+        region          = var.region
+        subnet_name     = var.networking_config.subnet.name
+      }
     }
   }
 }
@@ -47,6 +59,14 @@ data "google_client_openid_userinfo" "me" {
 resource "google_service_account_iam_member" "me_sa_token_creator" {
   count              = var.enable_iac_sa_impersonation ? 1 : 0
   service_account_id = module.projects.service_accounts["service-01/iac-rw"].id
+  role               = "roles/iam.serviceAccountTokenCreator"
+  member             = "user:${local.effective_user_identity}"
+}
+
+# move to factory later on
+
+resource "google_service_account_iam_member" "me_sa_token_creator" {
+  service_account_id = "service-726568496271@gcp-sa-ces.iam.gserviceaccount.com" # Customer Engagement Suite Service Agent
   role               = "roles/iam.serviceAccountTokenCreator"
   member             = "user:${local.effective_user_identity}"
 }
