@@ -34,18 +34,20 @@ You should now see the `providers.tf` and `terraform.auto.tfvars` files in the [
 
 | name | description | type | required | default |
 |---|---|:---:|:---:|:---:|
-| [prefix](variables.tf#L28) | The name prefix to use for resources with a globally unique name. | <code>string</code> | ✓ |  |
-| [project_config](variables.tf#L34) | The project configuration. | <code title="object&#40;&#123;&#10;  billing_account_id &#61; optional&#40;string&#41;&#10;  parent             &#61; optional&#40;string&#41;&#10;&#125;&#41;">object&#40;&#123;&#8230;&#125;&#41;</code> | ✓ |  |
+| [prefix](variables.tf#L48) | The name prefix to use for resources with a globally unique name. | <code>string</code> | ✓ |  |
+| [project_config](variables.tf#L54) | The project configuration. | <code title="object&#40;&#123;&#10;  billing_account_id &#61; optional&#40;string&#41;&#10;  parent             &#61; optional&#40;string&#41;&#10;&#125;&#41;">object&#40;&#123;&#8230;&#125;&#41;</code> | ✓ |  |
 | [enable_deletion_protection](variables.tf#L15) | Whether deletion protection should be enabled. | <code>bool</code> |  | <code>true</code> |
 | [enable_iac_sa_impersonation](variables.tf#L22) | Whether the user running this module should be granted serviceAccountTokenCreator on the automation service account. | <code>bool</code> |  | <code>true</code> |
-| [region](variables.tf#L50) | The region where to create the buckets. | <code>string</code> |  | <code>&#34;europe-west1&#34;</code> |
+| [networking_config](variables.tf#L28) | The networking configuration. | <code title="object&#40;&#123;&#10;  create          &#61; optional&#40;bool, true&#41;&#10;  host_project_id &#61; optional&#40;string, &#34;prj-host-0&#34;&#41;&#10;  subnet &#61; optional&#40;object&#40;&#123;&#10;    ip_cidr_range &#61; optional&#40;string, &#34;10.0.0.0&#47;24&#34;&#41;&#10;    name          &#61; optional&#40;string, &#34;sub-0&#34;&#41;&#10;  &#125;&#41;, &#123;&#125;&#41;&#10;  subnet_proxy_only &#61; optional&#40;object&#40;&#123;&#10;    ip_cidr_range &#61; optional&#40;string, &#34;10.20.0.0&#47;24&#34;&#41;&#10;    name          &#61; optional&#40;string, &#34;proxy-only-sub-0&#34;&#41;&#10;  &#125;&#41;, &#123;&#125;&#41;&#10;  vpc_name &#61; optional&#40;string, &#34;net-0&#34;&#41;&#10;&#125;&#41;">object&#40;&#123;&#8230;&#125;&#41;</code> |  | <code>&#123;&#125;</code> |
+| [region](variables.tf#L70) | The region where to create the buckets. | <code>string</code> |  | <code>&#34;europe-west1&#34;</code> |
 
 ## Outputs
 
 | name | description | sensitive |
 |---|---|:---:|
-| [buckets](outputs.tf#L50) | Created buckets. |  |
-| [prefix](outputs.tf#L55) | The unique name prefix to be used for all global unique resources. |  |
-| [projects](outputs.tf#L60) | Created projects. |  |
-| [service_accounts](outputs.tf#L65) | Created service accounts. |  |
+| [buckets](outputs.tf#L66) | Created buckets. |  |
+| [networking_config](outputs.tf#L71) | The networking configuration. |  |
+| [prefix](outputs.tf#L76) | The unique name prefix to be used for all global unique resources. |  |
+| [projects](outputs.tf#L81) | Created projects. |  |
+| [service_accounts](outputs.tf#L86) | Created service accounts. |  |
 <!-- END TFDOC -->
