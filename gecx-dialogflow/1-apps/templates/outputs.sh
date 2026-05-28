@@ -44,7 +44,8 @@ curl -X POST ${ds_uri_kb} \
 # Build and deploy an agent variant
 rm -rf ${agent_dir} &&
 mkdir -p ${agent_dir} &&
-cp -r ./data/agents/${agent_variant}/* ${agent_dir} &&
+cp -r ./data/agents/${agent_variant}/* ${agent_dir}
+
 uv run ./scripts/agentutil/agentutil.py replace-data-store \
   "${agent_dir}" \
   "knowledge-base-and-faq" \
@@ -54,7 +55,19 @@ uv run ./scripts/agentutil/agentutil.py replace-data-store \
   "./build/agent/dist" \
   "knowledge-base-and-faq" \
   STRUCTURED \
-  "${ds_name_faq}" &&
+  "${ds_name_faq}"
+
+## MISSING: command to create public function webhook
+
+%{ for k,v in webhooks ~}
+uv run ./scripts/agentutil/agentutil.py create-webhook \
+  ${agent_dir} \
+  ${k} \
+  ${v.uri}%{ if try(length(v.allowed_ca_certs) > 0, false) || try(v.service_directory, null) != null } \%{ endif }%{ if try(length(v.allowed_ca_certs) > 0, false) }
+  --allowed-ca-certs ${v.allowed_ca_certs}%{ if try(v.service_directory, null) != null } \%{ endif }%{ endif }%{ if try(v.service_directory, null) != null }
+  --service-directory ${v.service_directory}%{ endif }
+%{ endfor ~}
+
 zip -r ${agent_dir}/agent.dist.zip ${agent_dir}/* &&
 gcloud storage cp ${agent_dir}/agent.dist.zip ${bucket_url_build}/agents/agent-${agent_variant}.dist.zip \
   --impersonate-service-account ${service_account_emails["service-01/iac-rw"]} \
@@ -66,16 +79,6 @@ curl -X POST ${agent_uri} \
   -d '{
       "agentUri": "${bucket_url_build}/agents/agent-${agent_variant}.dist.zip"
     }'
-
-
-%{ for k,v in webhooks ~}
-uv run ./scripts/agentutil/agentutil.py create-webhook \
-  ${agent_dir} \
-  ${k} \
-  ${v.uri}%{ if try(length(v.allowed_ca_certs) > 0, false) || try(v.service_directory, null) != null } \%{ endif }%{ if try(length(v.allowed_ca_certs) > 0, false) }
-  --allowed-ca-certs ${v.allowed_ca_certs}%{ if try(v.service_directory, null) != null } \%{ endif }%{ endif }%{ if try(v.service_directory, null) != null }
-  --service-directory ${v.service_directory}%{ endif }
-%{ endfor ~}
 
 # Query the agent
 curl -X POST ${agent_uri_query} \
