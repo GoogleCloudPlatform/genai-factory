@@ -37,8 +37,8 @@ module "cloud_function" {
   iam = {
     "roles/run.invoker" = concat(
       var.cloud_function_config.service_invokers,
-      # This allows Dialogflow CX (through its service agent) to call the function
-      ["serviceAccount:service-${var.number}@gcp-sa-dialogflow.iam.gserviceaccount.com"]
+      # Allows CES (through its service agent) to call the function
+      ["serviceAccount:service-${var.number}@gcp-sa-ces.iam.gserviceaccount.com"]
     )
   }
   context = {

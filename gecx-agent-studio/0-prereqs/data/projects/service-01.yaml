@@ -61,7 +61,7 @@ service_accounts:
 # Grant roles
 iam_by_principals:
   $iam_principals:service_accounts/_self_/iac-rw:
-    - roles/dialogflow.admin
+    - roles/ces.admin
     - roles/discoveryengine.admin
     - roles/serviceusage.serviceUsageConsumer
     - roles/storage.admin
