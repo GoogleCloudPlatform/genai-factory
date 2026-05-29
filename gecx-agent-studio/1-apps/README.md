@@ -8,6 +8,8 @@ It performs the following tasks:
 
 - Deploys the CX AS agent application.
 - Creates an unstructured datastore backed by sample data loaded from a GCS bucket.
+- Deploys a sample Cloud Function privately accessible from Dialogflow and with private access to your VPC.
+- Deploys Service Directory that connects to an internal TCP Proxy LB, which connects on-premises via hybrid NEGs.
 
 ![Architecture Diagram](../diagram.png)
 
