@@ -2,7 +2,13 @@
 
 This stage is part of the `# Gemini Enterprise for Customer Experience (GECX) - CX Agent Studio` factory.
 
-It is responsible for setting up the Google Cloud project, activating the APIs and granting the roles you need to deploy and manage the components enabling the AI use case.
+It performs the following tasks:
+
+- Sets up GCP projects.
+- Activates the required APIs.
+- Creates service accounts.
+- Grants required roles to identities (users, service agents, and service accounts).
+- Creates the required networking stack by default (this can be disabled). The stack typically includes a host project, a Shared VPC, subnets, firewall policies and rules, and DNS response policies.
 
 This stage leverages the Cloud Foundation Fabric [project-factory module](https://github.com/GoogleCloudPlatform/cloud-foundation-fabric/tree/master/modules/project-factory).
 
@@ -16,6 +22,8 @@ To execute this stage, you need these roles:
 - `roles/billing.user` on the billing account you wish to use.
 
 Alternatively, you can use the more permissive `roles/owner` on the organization or folder.
+
+If you create the networking stack using this stage, you must also grant yourself the `roles/compute.xpnAdmin` role on the organization or folder.
 
 ## Deploy the stage
 
