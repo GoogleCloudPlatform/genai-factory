@@ -20,27 +20,20 @@ name: gf-gecx-as-0
 services:
   - ces.googleapis.com
   - discoveryengine.googleapis.com
-  - dialogflow.googleapis.com
-  # Needed for Cloud Function / Cloud Run deployments
+  # Needed for Cloud Function (function create only)
   - artifactregistry.googleapis.com
   - cloudbuild.googleapis.com
   - cloudfunctions.googleapis.com
   - logging.googleapis.com
   - run.googleapis.com
-  # Needed for Service Directory DNS zone and internal load balancer resolution
+  # Needed for Service Directory DNS zone
   - dns.googleapis.com
-  # Needed for HTTPS Internal Load Balancer certificates
+  # Needed for TCP proxy ILB creation (function create only)
   - certificatemanager.googleapis.com
   - privateca.googleapis.com
-  # Needed for Service Directory Private Network Access
+  # Only needed if you define private endpoints to be reached
+  # via Service Directory
   - servicedirectory.googleapis.com
-
-org_policies:
-  compute.restrictSharedVpcSubnetworks:
-    rules:
-      - allow:
-          values:
-            - projects/${try(projects["host"], networking_config["host_project_id"])}/regions/${networking_config["region"]}/subnetworks/${networking_config["subnet_name"]}
 
 buckets:
   iac-state:
@@ -61,37 +54,29 @@ service_accounts:
         - roles/iam.serviceAccountUser
       $service_account_ids:_self_/gecx-as-build-0:
         - roles/iam.serviceAccountUser
-      $service_account_ids:_self_/crun-private-0:
-        - roles/iam.serviceAccountUser
-      $service_account_ids:_self_/crun-private-build-0:
-        - roles/iam.serviceAccountUser
-  # Cloud Function SAs
+  # Cloud Function SAs (only used if Cloud Function is created)
   gecx-as-0: {}
   gecx-as-build-0: {}
-  # Cloud Run Private Tool SAs
-  crun-private-0: {}
-  crun-private-build-0: {}
 
 # Grant roles
 iam_by_principals:
   $iam_principals:service_accounts/_self_/iac-rw:
-    - roles/ces.admin
+    - roles/dialogflow.admin
     - roles/discoveryengine.admin
-    # For build bucket creation.
-    # Not needed if the application is configured via GUI.
+    - roles/serviceusage.serviceUsageConsumer
     - roles/storage.admin
-    # Needed to create Cloud Functions / Cloud Run
+    # Needed to create Cloud Functions (function create only)
     - roles/cloudfunctions.admin
-    # Needed for DNS zones
+    # Needed for Service Directory DNS zone
     - roles/dns.admin
-    # Needed for HTTPS ILBs
+    # Needed for ILB (function create only)
     - roles/certificatemanager.owner
     - roles/compute.loadBalancerAdmin
     - roles/privateca.admin
-    # Needed for Service Directory
+    # Only needed if you define private endpoints to be reached
+    # via Service Directory
     - roles/servicedirectory.admin
-    - roles/serviceusage.serviceUsageConsumer
-  # The following role assignments are used for Cloud Function / Cloud Run execution
+  # The following role assignments are used only if Cloud Function is created
   $iam_principals:service_accounts/_self_/gecx-as-0:
     - roles/logging.logWriter
     - roles/storage.objectViewer
@@ -99,17 +84,8 @@ iam_by_principals:
   $iam_principals:service_accounts/_self_/gecx-as-build-0:
     - roles/run.builder
     - roles/artifactregistry.reader
-  $iam_principals:service_accounts/_self_/crun-private-0:
-    - roles/logging.logWriter
-    - roles/storage.objectViewer
-  $iam_principals:service_accounts/_self_/crun-private-build-0:
-    - roles/run.builder
-    - roles/artifactregistry.reader
   $iam_principals:service_agents/_self_/certificatemanager:
     - roles/privateca.certificateRequester
   $iam_principals:service_agents/_self_/ces:
-    - roles/servicedirectory.pscAuthorizedService
-    - roles/servicedirectory.viewer
-  $iam_principals:service_agents/_self_/dialogflow:
     - roles/servicedirectory.pscAuthorizedService
     - roles/servicedirectory.viewer
