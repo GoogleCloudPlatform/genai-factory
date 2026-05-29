@@ -11,18 +11,26 @@ rm -rf ./build
 
 # Build and ingest data store
 mkdir -p ./build/data_store
-uv run agentutil data-store ingest \
+uv run scripts/agentutil.py data-store ingest \
   ./data/ds-kb \
   ./build/data_store \
-  $bucket_url_ds \
-  --ingest-to $ds_name
+  ${bucket_url_ds} \
+  --ingest-to ${ds_name}
 
 # Rebuild agent
+rm -rf ./build/app/dist/agent
 mkdir -p ./build/app/dist
-cp -r ../data/apps/default ./build/app/dist/agent
+cp -r ./data/apps/default ./build/app/dist/agent
+
+# Update Data Store reference
+uv run scripts/agentutil.py ces agent replace-data-store \
+  "./build/app/dist/agent" \
+  "kb_data_store" \
+  ${ds_name}
+
 
 %{ for k,v in toolsets ~}
-uv run agentutil create-toolset \
+uv run scripts/agentutil.py create-toolset \
   "./build/app/dist/agent" \
   ${k} \
   ${v.uri}%{ if try(length(v.allowed_ca_certs) > 0, false) || try(v.service_directory, null) != null } \%{ endif }%{ if try(length(v.allowed_ca_certs) > 0, false) }
@@ -30,9 +38,9 @@ uv run agentutil create-toolset \
   --service-directory ${v.service_directory}%{ endif }
 %{ endfor ~}
 
-uv run agentutil ces agent push ./build/app/dist/agent/ \
-  projects/$project_id/locations/$region_discovery_engine/apps/$app_id \
-  $bucket_url_build
+uv run scripts/agentutil.py ces agent push ./build/app/dist/agent/ \
+  projects/${project_id}/locations/${region_discovery_engine}/apps/${app_id} \
+  ${bucket_url_build}
 
 # To finalize the agent configuration go to
 # https://ces.cloud.google.com/projects/$project_id/locations/region_discovery_engine/apps/$app_id
