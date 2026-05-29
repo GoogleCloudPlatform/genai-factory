@@ -23,7 +23,7 @@ cp -r ../data/apps/default ./build/app/dist/agent
 
 %{ for k,v in toolsets ~}
 uv run agentutil create-toolset \
-  ${agent_dir} \
+  "./build/app/dist/agent" \
   ${k} \
   ${v.uri}%{ if try(length(v.allowed_ca_certs) > 0, false) || try(v.service_directory, null) != null } \%{ endif }%{ if try(length(v.allowed_ca_certs) > 0, false) }
   --allowed-ca-certs ${v.allowed_ca_certs}%{ if try(v.service_directory, null) != null } \%{ endif }%{ endif }%{ if try(v.service_directory, null) != null }

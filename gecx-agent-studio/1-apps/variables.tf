@@ -12,6 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+variable "bucket_name" {
+  description = "The name for all GCS buckets added after the prefix. If not specified, var.name is used instead."
+  type        = string
+  default     = null
+}
+
 # By default, these values are overridden when you redeploy the app
 # by using agentutil. Update the ignore_changes in the google_ces_app resource
 # to fully manage and update the resource via terraform.
