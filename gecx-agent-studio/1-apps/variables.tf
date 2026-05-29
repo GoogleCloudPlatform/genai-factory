@@ -102,14 +102,14 @@ variable "region_discovery_engine" {
   }
 }
 
-# Expected keys: service-01/iac-rw
+# Expected keys: service-01/gecx-as-0, service-01/gecx-as-build-0, service-01/iac-rw
 variable "service_account_emails" {
   description = "The service account emails. Each element is the email of the service account or the key of the map var.service_accounts."
   type        = map(string)
   nullable    = false
 }
 
-# Expected keys: service-01/gecx-as-0, service-01/gecx-as-build-0, service-01/crun-private-0, service-01/crun-private-build-0, service-01/iac-rw
+# Expected keys: service-01/gecx-as-0, service-01/gecx-as-build-0, service-01/iac-rw
 variable "service_account_ids" {
   description = "The service account ids. Each element is the id of the service account or the key of the map var.service_accounts."
   type        = map(string)
@@ -149,29 +149,6 @@ variable "service_directory_configs" {
       }
     }
   }
-}
-
-variable "tool_configs" {
-  description = "The configurations for the private Cloud Run tool fronted by an HTTPS ILB."
-  type = object({
-    containers = optional(map(any), {
-      hello = {
-        image = "us-docker.pkg.dev/cloudrun/container/hello"
-      }
-    })
-    domain                        = optional(string, "tool.internal.gcp")
-    ca_pool_name_suffix           = optional(string, "ca-pool")
-    allowed_ip_ranges             = optional(list(string), ["10.0.0.0/8"])
-    ingress                       = optional(string, "INGRESS_TRAFFIC_INTERNAL_LOAD_BALANCER")
-    vpc_access_egress             = optional(string, "ALL_TRAFFIC")
-    vpc_access_tags               = optional(list(string), [])
-    gpu_zonal_redundancy_disabled = optional(bool, null)
-    node_selector                 = optional(map(string), null)
-    max_instance_count            = optional(number, 10)
-    min_instance_count            = optional(number, 0)
-  })
-  nullable = false
-  default  = {}
 }
 
 variable "zones" {

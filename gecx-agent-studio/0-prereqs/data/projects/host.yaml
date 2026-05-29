@@ -36,10 +36,6 @@ iam_by_principals:
     - roles/servicedirectory.networkAttacher
     # TODO: Remove, only for testing
     - roles/compute.securityAdmin
-  # TODO: Check if CES or dialogflow SA is used
   $iam_principals:service_agents/service-01/ces:
-    - roles/servicedirectory.pscAuthorizedService
-    - roles/servicedirectory.viewer
-  $iam_principals:service_agents/service-01/dialogflow:
     - roles/servicedirectory.pscAuthorizedService
     - roles/servicedirectory.viewer
