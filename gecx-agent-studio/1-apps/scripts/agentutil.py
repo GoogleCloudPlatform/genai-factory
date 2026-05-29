@@ -31,8 +31,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import base64
 import io
 import json
+import uuid
 import logging
 import os
 import re
@@ -66,9 +68,16 @@ _logged_impersonation = False
 
 
 def get_credentials():
-  """Gets credentials, optionally impersonating a service account."""
+  """Gets credentials, optionally impersonating a service account or using an access token."""
   global _logged_impersonation
   credentials, project = google.auth.default()
+
+  access_token = os.environ.get("ACCESS_TOKEN")
+  if access_token:
+    from google.oauth2.credentials import Credentials as OAuth2Credentials
+    credentials = OAuth2Credentials(token=access_token)
+    return credentials, project
+
   impersonate_sa = os.environ.get("IMPERSONATE_SERVICE_ACCOUNT")
   if impersonate_sa:
     if not _logged_impersonation:
@@ -84,7 +93,10 @@ def get_credentials():
 def get_current_user_email(credentials) -> str:
   """Retrieves the email of the currently authenticated user."""
   if not credentials.valid:
-    credentials.refresh(Request())
+    try:
+      credentials.refresh(Request())
+    except Exception as e:
+      logger.debug(f"Could not refresh credentials: {e}")
 
   try:
     r = requests.get("https://www.googleapis.com/oauth2/v3/userinfo",
@@ -115,7 +127,10 @@ def has_sa_user_role(sa_email: str, user_email: str, project_id: str | None,
     return True  # Can't check
 
   if not credentials.valid:
-    credentials.refresh(Request())
+    try:
+      credentials.refresh(Request())
+    except Exception as e:
+      logger.debug(f"Could not refresh credentials: {e}")
 
   headers = {
       "Authorization": f"Bearer {credentials.token}",
@@ -149,7 +164,10 @@ class CesAgent:
 
   def _get_headers(self):
     if not self.credentials.valid:
-      self.credentials.refresh(Request())
+      try:
+        self.credentials.refresh(Request())
+      except Exception as e:
+        logger.debug(f"Could not refresh credentials: {e}")
     return {
         "Authorization": f"Bearer {self.credentials.token}",
         "Content-Type": "application/json",
@@ -599,7 +617,10 @@ def import_documents(full_data_store_name: str, gcs_uri: str) -> None:
 
   credentials, project = get_credentials()
   auth_req = google.auth.transport.requests.Request()
-  credentials.refresh(auth_req)
+  try:
+    credentials.refresh(auth_req)
+  except Exception as e:
+    logger.debug(f"Could not refresh credentials: {e}")
   access_token = credentials.token
 
   headers = {
@@ -698,17 +719,154 @@ def process_data_store_documents_command(source_dir: str, target_dir: str,
     raise typer.Exit(code=1)
 
 
+def _ensure_base64(cert_str: str) -> str:
+  cert_str = cert_str.strip()
+  if "---BEGIN CERTIFICATE---" in cert_str:
+    return base64.b64encode(cert_str.encode("utf-8")).decode("utf-8")
+  try:
+    base64.b64decode(cert_str, validate=True)
+    return cert_str
+  except Exception:
+    return base64.b64encode(cert_str.encode("utf-8")).decode("utf-8")
+
+
+def _parse_ca_certs(allowed_ca_certs: Optional[str]) -> list[dict]:
+  if not allowed_ca_certs:
+    return []
+  cleaned = allowed_ca_certs.strip()
+  if cleaned.startswith("[") and cleaned.endswith("]"):
+    try:
+      parsed_list = json.loads(cleaned)
+      if isinstance(parsed_list, list):
+        certs_list = []
+        for i, cert in enumerate(parsed_list):
+          certs_list.append({
+              "displayName": f"cert-{i}.der",
+              "cert": _ensure_base64(cert)
+          })
+        return certs_list
+    except json.JSONDecodeError:
+      cleaned = cleaned[1:-1].replace("'", "").replace('"', "")
+  parts = [p.strip() for p in cleaned.split(",") if p.strip()]
+  certs_list = []
+  for i, cert in enumerate(parts):
+    certs_list.append({
+        "displayName": f"cert-{i}.der",
+        "cert": _ensure_base64(cert)
+    })
+  return certs_list
+
+
 @app.command("create-toolset")
 def create_toolset(
     target_agent_dir: str,
     toolset_name: str,
     uri: str,
-    service_directory: str = None,
-    allowed_ca_certs: str = None,
+    service_directory: Optional[str] = typer.Option(None,
+                                                    "--service-directory"),
+    allowed_ca_certs: Optional[str] = typer.Option(None, "--allowed-ca-certs"),
 ):
-  """Stub command for create-toolset."""
+  """Creates a new OpenAPI Toolset configuration inside the agent directory."""
+  agent_path = Path(target_agent_dir)
+  toolsets_dir = agent_path / "toolsets" / toolset_name
+  toolsets_dir.mkdir(parents=True, exist_ok=True)
+
+  # 1. Create open_api_schema.yaml
+  schema_dir = toolsets_dir / "open_api_toolset"
+  schema_dir.mkdir(parents=True, exist_ok=True)
+  schema_file = schema_dir / "open_api_schema.yaml"
+
+  yaml_content = """# skip boilerplate check
+openapi: 3.0.3
+info:
+  title: Simple Hello Test API
+  description: A basic API to test a hello endpoint.
+  version: 1.0.0
+servers:
+  - url: $env_var
+    description: test URL
+paths:
+  /hello:
+    get:
+      summary: Returns a greeting message
+      description: A simple endpoint that responds with a JSON message saying hello.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Hello, World!"
+"""
+
+  with open(schema_file, "w", encoding="utf-8") as f:
+    f.write(yaml_content)
+
+  # 2. Create toolset metadata json file (e.g. default-onprem.json)
+  toolset_id = str(uuid.uuid4())
+  toolset_json = {
+      "name": toolset_id,
+      "displayName": toolset_name,
+      "openApiToolset": {
+          "openApiSchema":
+              f"toolsets/{toolset_name}/open_api_toolset/open_api_schema.yaml",
+          "apiAuthentication": {
+              "serviceAgentIdTokenAuthConfig": {}
+          }
+      },
+      "executionType": "SYNCHRONOUS",
+      "description": f"OpenAPI toolset for {toolset_name}"
+  }
+
+  if service_directory:
+    toolset_json["openApiToolset"]["serviceDirectoryConfig"] = {
+        "service": "$env_var"
+    }
+
+  ca_certs = _parse_ca_certs(allowed_ca_certs)
+  if ca_certs:
+    toolset_json["openApiToolset"]["tlsConfig"] = {"caCerts": ca_certs}
+
+  metadata_file = toolsets_dir / f"{toolset_name}.json"
+  with open(metadata_file, "w", encoding="utf-8") as f:
+    json.dump(toolset_json, f, indent=2)
+
+  # 3. Modify environment.json
+  env_path = agent_path / "environment.json"
+  if env_path.exists():
+    with open(env_path, "r", encoding="utf-8") as f:
+      try:
+        env_data = json.load(f)
+      except json.JSONDecodeError:
+        env_data = {}
+  else:
+    env_data = {}
+
+  if "toolsets" not in env_data:
+    env_data["toolsets"] = {}
+
+  normalized_url = uri.strip()
+  if not normalized_url.startswith(("http://", "https://")):
+    normalized_url = f"https://{normalized_url}"
+
+  toolset_env_config = {"openApiToolset": {"url": normalized_url}}
+
+  if service_directory:
+    toolset_env_config["openApiToolset"]["serviceDirectoryConfig"] = {
+        "service": service_directory
+    }
+
+  env_data["toolsets"][toolset_name] = toolset_env_config
+
+  with open(env_path, "w", encoding="utf-8") as f:
+    json.dump(env_data, f, indent=4)
+
   logger.info(
-      f"Stub: create-toolset for {toolset_name} targeting {uri} (service_directory={service_directory})"
+      f"✅ Successfully created toolset '{toolset_name}' in {metadata_file} and updated environment.json"
   )
 
 
