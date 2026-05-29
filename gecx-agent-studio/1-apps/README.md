@@ -84,5 +84,5 @@ uv run scripts/agentutil.py pull_agent {AGENT_REMOTE} data/agents/{AGENT_VARIANT
 
 | name | description | sensitive |
 |---|---|:---:|
-| [commands](outputs.tf#L28) | Run the following commands when the deployment completes to update and manage the application. |  |
+| [commands](outputs.tf#L38) | Run these commands to complete the deployment. |  |
 <!-- END TFDOC -->

@@ -65,8 +65,8 @@ resource "google_service_account_iam_member" "me_sa_token_creator" {
 
 # move to factory later on
 
-resource "google_service_account_iam_member" "me_sa_token_creator" {
-  service_account_id = "service-726568496271@gcp-sa-ces.iam.gserviceaccount.com" # Customer Engagement Suite Service Agent
-  role               = "roles/iam.serviceAccountTokenCreator"
-  member             = "user:${local.effective_user_identity}"
-}
+# resource "google_service_account_iam_member" "me_sa_token_creator" {
+#   service_account_id = "service-726568496271@gcp-sa-ces.iam.gserviceaccount.com" # Customer Engagement Suite Service Agent
+#   role               = "roles/iam.serviceAccountTokenCreator"
+#   member             = "user:${local.effective_user_identity}"
+# }

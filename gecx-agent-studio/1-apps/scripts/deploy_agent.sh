@@ -53,22 +53,20 @@ if [ "$INGEST_KB" = true ]; then
     exit 0
 fi
 
-mkdir -p ./build
-
-echo "Building Agent Application"
-
-export TARGET_AGENT_DIR="./build/app/dist"
-
-# Make a copy of the agent in the target build directory
-rm -rf $TARGET_AGENT_DIR
-mkdir -p $TARGET_AGENT_DIR
-cp -r ../data/apps/default $TARGET_AGENT_DIR/agent
+# Rebuilding Agent Application
+rm -rf ./build
+mkdir -p ./build/app/dist
+cp -r ../data/apps/default ./build/app/dist/agent
 
 # Update Data Store reference
-agentutil ces agent replace-data-store $TARGET_AGENT_DIR/agent/ "kb_data_store" $KNOWLEDGE_BASE_DATA_STORE_NAME
+agentutil ces agent replace-data-store \
+    $TARGET_AGENT_DIR/agent/ \
+    "kb_data_store" \
+    $KNOWLEDGE_BASE_DATA_STORE_NAME
 
 # TODO: add webhook creation
 
-# Zip and upload agent
-echo "Uploading Agent"
-agentutil ces agent push $TARGET_AGENT_DIR/agent/ projects/$GCP_PROJECT_ID/locations/$CES_APP_LOCATION/apps/$CES_APP_ID $BUILD_BUCKET
+# Uploading new agent
+agentutil ces agent push $TARGET_AGENT_DIR/agent/ \
+    projects/$GCP_PROJECT_ID/locations/$CES_APP_LOCATION/apps/$CES_APP_ID \
+    $BUILD_BUCKET

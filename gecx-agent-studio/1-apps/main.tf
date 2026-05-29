@@ -12,14 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# To store agent app src during its deployment
-# when using agentutil
+# To store agent app src during its deployment when using agentutil
 module "build_bucket" {
   source        = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/gcs?ref=v56.2.0"
   project_id    = var.project_id
   prefix        = var.prefix
-  name          = "${var.name}-build"
+  name          = "${local.bucket_name}-build"
   location      = var.region
+  versioning    = true
   force_destroy = !var.enable_deletion_protection
 }
 
