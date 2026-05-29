@@ -18,7 +18,6 @@ uv run scripts/agentutil.py data-store ingest \
   --ingest-to ${ds_name}
 
 # Rebuild agent
-rm -rf ./build/app/dist/agent
 mkdir -p ./build/app/dist
 cp -r ./data/apps/default ./build/app/dist/agent
 
@@ -27,7 +26,6 @@ uv run scripts/agentutil.py ces agent replace-data-store \
   "./build/app/dist/agent" \
   "kb_data_store" \
   ${ds_name}
-
 
 %{ for k,v in toolsets ~}
 uv run scripts/agentutil.py create-toolset \
@@ -43,4 +41,4 @@ uv run scripts/agentutil.py ces agent push ./build/app/dist/agent/ \
   ${bucket_url_build}
 
 # To finalize the agent configuration go to
-# https://ces.cloud.google.com/projects/$project_id/locations/region_discovery_engine/apps/$app_id
+# https://ces.cloud.google.com/projects/${project_id}/locations/${region_discovery_engine}/apps/${app_id}
