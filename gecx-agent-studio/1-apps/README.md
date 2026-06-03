@@ -8,7 +8,7 @@ It performs the following tasks:
 
 - Deploys the CX AS agent application.
 - Creates an unstructured datastore backed by sample data loaded from a GCS bucket.
-- Deploys a sample Cloud Function privately accessible from Dialogflow and with private access to your VPC.
+- Deploys a sample Cloud Function privately accessible from CX AS (through a CX AS toolset and Service Directory) and with private access to your VPC.
 - Deploys Service Directory that connects to an internal TCP Proxy LB, which connects on-premises via hybrid NEGs.
 
 ![Architecture Diagram](../diagram.png)
@@ -96,14 +96,14 @@ We recommend you to DO NOT store the certificate in clear text in the Terraform 
 | [region](variables.tf#L94) | The GCP region where to deploy the resources. | <code>string</code> |  | <code>&#34;europe-west1&#34;</code> |
 | [region_discovery_engine](variables.tf#L101) | The GCP region where to deploy the data store and CX Agent Studio App. | <code>string</code> |  | <code>&#34;eu&#34;</code> |
 | [service_accounts](variables-fast.tf#L18) | The service accounts created for this stage. | <code title="map&#40;object&#40;&#123;&#10;  email     &#61; string&#10;  iam_email &#61; string&#10;  id        &#61; string&#10;&#125;&#41;&#41;">map&#40;object&#40;&#123;&#8230;&#125;&#41;&#41;</code> |  | <code>&#123;&#125;</code> |
-| [service_directory_configs](variables.tf#L128) | The service to create in Service Directory (key is the namespace name). | <code title="map&#40;object&#40;&#123;&#10;  cloud_dns_domain &#61; optional&#40;string&#41;&#10;  endpoints &#61; optional&#40;map&#40;object&#40;&#123;&#10;    address   &#61; string&#10;    port      &#61; number&#10;    create_lb &#61; optional&#40;bool, true&#41;&#10;    metadata  &#61; optional&#40;map&#40;string&#41;, &#123;&#125;&#41;&#10;  &#125;&#41;&#41;, &#123;&#125;&#41;&#10;  services &#61; optional&#40;map&#40;object&#40;&#123;&#10;    endpoints        &#61; list&#40;string&#41;&#10;    allowed_ca_certs &#61; optional&#40;list&#40;string&#41;&#41;&#10;    metadata         &#61; optional&#40;map&#40;string&#41;, &#123;&#125;&#41;&#10;  &#125;&#41;&#41;, &#123;&#125;&#41;&#10;&#125;&#41;&#41;">map&#40;object&#40;&#123;&#8230;&#125;&#41;&#41;</code> |  | <code title="&#123;&#10;  example-com &#61; &#123;&#10;    cloud_dns_domain &#61; &#34;example.com&#34;&#10;    endpoints &#61; &#123;&#10;      onprem-01 &#61; &#123;&#10;        address &#61; &#34;10.0.0.2&#34;&#10;        port    &#61; 443&#10;      &#125;&#10;    &#125;&#10;    services &#61; &#123;&#10;      onprem &#61; &#123;&#10;        endpoints &#61; &#91;&#34;onprem-01&#34;&#93;&#10;      &#125;&#10;    &#125;&#10;  &#125;&#10;&#125;">&#123;&#8230;&#125;</code> |
+| [service_directory_configs](variables.tf#L128) | The service to create in Service Directory (key is the namespace name). | <code title="map&#40;object&#40;&#123;&#10;  cloud_dns_domain &#61; optional&#40;string&#41;&#10;  endpoints &#61; optional&#40;map&#40;object&#40;&#123;&#10;    address   &#61; string&#10;    port      &#61; number&#10;    create_lb &#61; optional&#40;bool, true&#41;&#10;    metadata  &#61; optional&#40;map&#40;string&#41;, &#123;&#125;&#41;&#10;  &#125;&#41;&#41;, &#123;&#125;&#41;&#10;  services &#61; optional&#40;map&#40;object&#40;&#123;&#10;    endpoints        &#61; list&#40;string&#41;&#10;    openapi_spec     &#61; string&#10;    allowed_ca_certs &#61; optional&#40;list&#40;string&#41;&#41;&#10;    metadata         &#61; optional&#40;map&#40;string&#41;, &#123;&#125;&#41;&#10;  &#125;&#41;&#41;, &#123;&#125;&#41;&#10;&#125;&#41;&#41;">map&#40;object&#40;&#123;&#8230;&#125;&#41;&#41;</code> |  | <code title="&#123;&#10;  example-com &#61; &#123;&#10;    cloud_dns_domain &#61; &#34;example.com&#34;&#10;    endpoints &#61; &#123;&#10;      onprem-01 &#61; &#123;&#10;        address &#61; &#34;10.0.0.2&#34;&#10;        port    &#61; 443&#10;      &#125;&#10;    &#125;&#10;    services &#61; &#123;&#10;      onprem &#61; &#123;&#10;        endpoints    &#61; &#91;&#34;onprem-01&#34;&#93;&#10;        openapi_spec &#61; &#34;data&#47;onprem&#47;openapi-spec.yaml&#34;&#10;      &#125;&#10;    &#125;&#10;  &#125;&#10;&#125;">&#123;&#8230;&#125;</code> |
 | [subnet_self_links](variables-fast.tf#L30) | Shared VPCs subnet IDs. | <code>map&#40;string&#41;</code> |  | <code>&#123;&#125;</code> |
 | [vpc_self_links](variables-fast.tf#L38) | Shared VPC name => self link mappings. | <code>map&#40;string&#41;</code> |  | <code>&#123;&#125;</code> |
-| [zones](variables.tf#L163) | The three zones in the region in use. | <code>list&#40;string&#41;</code> |  | <code>&#91;&#34;b&#34;, &#34;c&#34;, &#34;d&#34;&#93;</code> |
+| [zones](variables.tf#L165) | The three zones in the region in use. | <code>list&#40;string&#41;</code> |  | <code>&#91;&#34;b&#34;, &#34;c&#34;, &#34;d&#34;&#93;</code> |
 
 ## Outputs
 
 | name | description | sensitive |
 |---|---|:---:|
-| [commands](outputs.tf#L38) | Run these commands to complete the deployment. |  |
+| [commands](outputs.tf#L49) | Run these commands to complete the deployment. |  |
 <!-- END TFDOC -->

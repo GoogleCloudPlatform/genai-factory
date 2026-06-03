@@ -94,6 +94,25 @@ values:
     project: your-project
     schema_id: cx-as-0-kb-schema
     timeouts: null
+  module.address-ilb.google_compute_address.internal["ilb-01"]:
+    address_type: INTERNAL
+    deletion_policy: DELETE
+    description: Terraform managed.
+    effective_labels:
+      goog-terraform-provisioned: 'true'
+    ip_collection: null
+    ip_version: null
+    ipv6_endpoint_type: null
+    labels: null
+    name: ilb-01
+    network: null
+    project: your-project
+    purpose: SHARED_LOADBALANCER_VIP
+    region: europe-west1
+    subnetwork: projects/prefix-gf-srun-hp-0/regions/europe-west1/subnetworks/sub-0
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
+    timeouts: null
   module.build-bucket.google_storage_bucket.bucket[0]:
     autoclass: []
     cors: []
@@ -122,7 +141,192 @@ values:
     uniform_bucket_level_access: true
     versioning:
     - enabled: true
-  module.cloud_function.google_cloud_run_service_iam_binding.invoker[0]:
+  module.certificate-manager.google_certificate_manager_certificate.certificates["cx-as-0"]:
+    deletion_policy: DELETE
+    description: null
+    effective_labels:
+      goog-terraform-provisioned: 'true'
+    labels: null
+    location: europe-west1
+    managed: []
+    name: cx-as-0
+    project: your-project
+    scope: null
+    self_managed:
+    - certificate_pem: null
+      pem_certificate: '-----BEGIN CERTIFICATE-----
+
+        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
+
+        B6E0gJ67
+
+        -----END CERTIFICATE-----
+
+        '
+      pem_private_key: '-----BEGIN PRIVATE KEY-----
+
+        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
+
+        7XlAl0W3UK8BbgSYnyBE0QdJIvth+g==
+
+        -----END PRIVATE KEY-----
+
+        '
+      private_key_pem: null
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
+    timeouts: null
+  module.cloud-function.google_cloud_run_service_iam_binding.invoker[0]:
     condition: []
     location: europe-west1
     members:
@@ -130,7 +334,7 @@ values:
     project: your-project
     role: roles/run.invoker
     service: cx-as-0
-  module.cloud_function.google_cloudfunctions2_function.function:
+  module.cloud-function.google_cloudfunctions2_function.function:
     build_config:
     - entry_point: main
       on_deploy_update_policy: []
@@ -140,7 +344,7 @@ values:
       - repo_source: []
         storage_source:
         - bucket: prefix-cx-as-0
-          object: bundle-f8b906bfa04284ea676ad910f350bd70.zip
+          object: bundle-0f6c6a3fb8a496aeb3f6d58a15b6ba98.zip
       worker_pool: null
     deletion_policy: DELETE
     description: Terraform managed.
@@ -176,7 +380,7 @@ values:
     terraform_labels:
       goog-terraform-provisioned: 'true'
     timeouts: null
-  module.cloud_function.google_storage_bucket_object.bundle[0]:
+  module.cloud-function.google_storage_bucket_object.bundle[0]:
     bucket: prefix-cx-as-0
     cache_control: null
     content_disposition: null
@@ -189,13 +393,13 @@ values:
     event_based_hold: null
     force_empty_content_type: null
     metadata: null
-    name: bundle-f8b906bfa04284ea676ad910f350bd70.zip
+    name: bundle-0f6c6a3fb8a496aeb3f6d58a15b6ba98.zip
     retention: []
     source: /tmp/bundle-your-project-cx-as-0.zip
-    source_md5hash: f8b906bfa04284ea676ad910f350bd70
+    source_md5hash: 0f6c6a3fb8a496aeb3f6d58a15b6ba98
     temporary_hold: null
     timeouts: null
-  module.dns_service_directory["default"].google_dns_managed_zone.dns_managed_zone[0]:
+  module.dns_service_directory["example-com"].google_dns_managed_zone.dns_managed_zone[0]:
     cloud_logging_config:
     - enable_logging: false
     deletion_policy: DELETE
@@ -275,7 +479,7 @@ values:
     uniform_bucket_level_access: true
     versioning:
     - enabled: true
-  module.lbs-int-proxy["default-onprem-01"].google_compute_forwarding_rule.default:
+  module.lb_internal.google_compute_forwarding_rule.default:
     all_ports: null
     allow_global_access: null
     allow_psc_global_access: null
@@ -287,7 +491,169 @@ values:
     is_mirroring_collector: null
     labels: null
     load_balancing_scheme: INTERNAL_MANAGED
-    name: default-onprem-01
+    name: cx-as-0-internal
+    network: projects/prefix-gf-srun-hp-0/global/networks/net-0
+    network_tier: PREMIUM
+    no_automate_dns_zone: null
+    port_range: '443'
+    ports: null
+    project: your-project
+    recreate_closed_psc: false
+    region: europe-west1
+    service_label: null
+    source_ip_ranges: null
+    subnetwork: projects/prefix-gf-srun-hp-0/regions/europe-west1/subnetworks/sub-0
+    timeouts: null
+  module.lb_internal.google_compute_region_backend_service.default["default"]:
+    affinity_cookie_ttl_sec: null
+    backend:
+    - balancing_mode: UTILIZATION
+      capacity_scaler: 1
+      custom_metrics: []
+      description: Terraform managed.
+      failover: false
+      max_connections: null
+      max_connections_per_endpoint: null
+      max_connections_per_instance: null
+      max_rate: null
+      max_rate_per_endpoint: null
+      max_rate_per_instance: null
+      max_utilization: null
+      traffic_duration: ''
+    circuit_breakers: []
+    connection_draining_timeout_sec: 300
+    connection_tracking_policy: []
+    consistent_hash: []
+    custom_metrics: []
+    deletion_policy: DELETE
+    description: Terraform managed.
+    dynamic_forwarding: []
+    enable_cdn: null
+    failover_policy: []
+    ha_policy: []
+    health_checks: null
+    ip_address_selection_policy: null
+    load_balancing_scheme: INTERNAL_MANAGED
+    locality_lb_policy: null
+    name: cx-as-0-internal-default
+    network: null
+    network_pass_through_lb_traffic_policy: []
+    outlier_detection: []
+    params: []
+    project: your-project
+    protocol: HTTPS
+    region: europe-west1
+    security_policy: null
+    strong_session_affinity_cookie: []
+    subsetting: []
+    timeouts: null
+    tls_settings: []
+  module.lb_internal.google_compute_region_network_endpoint_group.default["cx-as-0-internal"]:
+    app_engine: []
+    cloud_function: []
+    cloud_run:
+    - service: cx-as-0
+      tag: null
+      url_mask: null
+    deletion_policy: DELETE
+    description: Terraform managed.
+    name: cx-as-0-internal-cx-as-0-internal
+    network_endpoint_type: SERVERLESS
+    project: your-project
+    psc_target_service: null
+    region: europe-west1
+    subnetwork: null
+    timeouts: null
+  module.lb_internal.google_compute_region_target_https_proxy.default[0]:
+    deletion_policy: DELETE
+    description: Terraform managed.
+    http_keep_alive_timeout_sec: null
+    name: cx-as-0-internal
+    project: your-project
+    region: europe-west1
+    server_tls_policy: null
+    ssl_certificates: null
+    ssl_policy: null
+    timeouts: null
+  module.lb_internal.google_compute_region_url_map.default:
+    default_route_action: []
+    default_url_redirect: []
+    deletion_policy: DELETE
+    description: Terraform managed.
+    header_action: []
+    host_rule: []
+    name: cx-as-0-internal
+    path_matcher: []
+    project: your-project
+    region: europe-west1
+    test: []
+    timeouts: null
+  module.lb_internal_redirect.google_compute_forwarding_rule.default:
+    all_ports: null
+    allow_global_access: null
+    allow_psc_global_access: null
+    backend_service: null
+    deletion_policy: DELETE
+    description: Terraform managed.
+    ip_collection: null
+    ip_protocol: TCP
+    is_mirroring_collector: null
+    labels: null
+    load_balancing_scheme: INTERNAL_MANAGED
+    name: cx-as-0-internal-redirect
+    network: projects/prefix-gf-srun-hp-0/global/networks/net-0
+    network_tier: PREMIUM
+    no_automate_dns_zone: null
+    port_range: '80'
+    ports: null
+    project: your-project
+    recreate_closed_psc: false
+    region: europe-west1
+    service_label: null
+    source_ip_ranges: null
+    subnetwork: projects/prefix-gf-srun-hp-0/regions/europe-west1/subnetworks/sub-0
+    timeouts: null
+  module.lb_internal_redirect.google_compute_region_target_http_proxy.default[0]:
+    deletion_policy: DELETE
+    description: Terraform managed.
+    http_keep_alive_timeout_sec: null
+    name: cx-as-0-internal-redirect
+    project: your-project
+    region: europe-west1
+    timeouts: null
+  module.lb_internal_redirect.google_compute_region_url_map.default:
+    default_route_action: []
+    default_service: null
+    default_url_redirect:
+    - host_redirect: null
+      https_redirect: true
+      path_redirect: null
+      prefix_redirect: null
+      redirect_response_code: MOVED_PERMANENTLY_DEFAULT
+      strip_query: false
+    deletion_policy: DELETE
+    description: HTTP to HTTPS redirect.
+    header_action: []
+    host_rule: []
+    name: cx-as-0-internal-redirect
+    path_matcher: []
+    project: your-project
+    region: europe-west1
+    test: []
+    timeouts: null
+  module.lbs-int-proxy["example-com-onprem-01"].google_compute_forwarding_rule.default:
+    all_ports: null
+    allow_global_access: null
+    allow_psc_global_access: null
+    backend_service: null
+    deletion_policy: DELETE
+    description: Terraform managed.
+    ip_collection: null
+    ip_protocol: TCP
+    is_mirroring_collector: null
+    labels: null
+    load_balancing_scheme: INTERNAL_MANAGED
+    name: example-com-onprem-01
     network: https://www.googleapis.com/compute/v1/projects/prefix-gf-srun-hp-0/global/networks/net-0
     no_automate_dns_zone: null
     port_range: '443'
@@ -299,67 +665,67 @@ values:
     source_ip_ranges: null
     subnetwork: projects/prefix-gf-srun-hp-0/regions/europe-west1/subnetworks/sub-0
     timeouts: null
-  module.lbs-int-proxy["default-onprem-01"].google_compute_network_endpoint.default["b-0"]:
+  module.lbs-int-proxy["example-com-onprem-01"].google_compute_network_endpoint.default["b-0"]:
     deletion_policy: DELETE
     instance: null
     ip_address: 10.0.0.2
-    network_endpoint_group: default-onprem-01-b
+    network_endpoint_group: example-com-onprem-01-b
     port: 443
     project: your-project
     timeouts: null
     zone: europe-west1-b
-  module.lbs-int-proxy["default-onprem-01"].google_compute_network_endpoint.default["c-0"]:
+  module.lbs-int-proxy["example-com-onprem-01"].google_compute_network_endpoint.default["c-0"]:
     deletion_policy: DELETE
     instance: null
     ip_address: 10.0.0.2
-    network_endpoint_group: default-onprem-01-c
+    network_endpoint_group: example-com-onprem-01-c
     port: 443
     project: your-project
     timeouts: null
     zone: europe-west1-c
-  module.lbs-int-proxy["default-onprem-01"].google_compute_network_endpoint.default["d-0"]:
+  module.lbs-int-proxy["example-com-onprem-01"].google_compute_network_endpoint.default["d-0"]:
     deletion_policy: DELETE
     instance: null
     ip_address: 10.0.0.2
-    network_endpoint_group: default-onprem-01-d
+    network_endpoint_group: example-com-onprem-01-d
     port: 443
     project: your-project
     timeouts: null
     zone: europe-west1-d
-  module.lbs-int-proxy["default-onprem-01"].google_compute_network_endpoint_group.default["b"]:
+  module.lbs-int-proxy["example-com-onprem-01"].google_compute_network_endpoint_group.default["b"]:
     default_port: null
     deletion_policy: DELETE
     description: Terraform managed.
-    name: default-onprem-01-b
+    name: example-com-onprem-01-b
     network: https://www.googleapis.com/compute/v1/projects/prefix-gf-srun-hp-0/global/networks/net-0
     network_endpoint_type: NON_GCP_PRIVATE_IP_PORT
     project: your-project
     subnetwork: null
     timeouts: null
     zone: europe-west1-b
-  module.lbs-int-proxy["default-onprem-01"].google_compute_network_endpoint_group.default["c"]:
+  module.lbs-int-proxy["example-com-onprem-01"].google_compute_network_endpoint_group.default["c"]:
     default_port: null
     deletion_policy: DELETE
     description: Terraform managed.
-    name: default-onprem-01-c
+    name: example-com-onprem-01-c
     network: https://www.googleapis.com/compute/v1/projects/prefix-gf-srun-hp-0/global/networks/net-0
     network_endpoint_type: NON_GCP_PRIVATE_IP_PORT
     project: your-project
     subnetwork: null
     timeouts: null
     zone: europe-west1-c
-  module.lbs-int-proxy["default-onprem-01"].google_compute_network_endpoint_group.default["d"]:
+  module.lbs-int-proxy["example-com-onprem-01"].google_compute_network_endpoint_group.default["d"]:
     default_port: null
     deletion_policy: DELETE
     description: Terraform managed.
-    name: default-onprem-01-d
+    name: example-com-onprem-01-d
     network: https://www.googleapis.com/compute/v1/projects/prefix-gf-srun-hp-0/global/networks/net-0
     network_endpoint_type: NON_GCP_PRIVATE_IP_PORT
     project: your-project
     subnetwork: null
     timeouts: null
     zone: europe-west1-d
-  module.lbs-int-proxy["default-onprem-01"].google_compute_region_backend_service.default:
+  module.lbs-int-proxy["example-com-onprem-01"].google_compute_region_backend_service.default:
     affinity_cookie_ttl_sec: null
     backend:
     - balancing_mode: CONNECTION
@@ -415,7 +781,7 @@ values:
     ip_address_selection_policy: null
     load_balancing_scheme: INTERNAL_MANAGED
     locality_lb_policy: null
-    name: default-onprem-01
+    name: example-com-onprem-01
     network: null
     network_pass_through_lb_traffic_policy: []
     outlier_detection: []
@@ -429,7 +795,7 @@ values:
     subsetting: []
     timeouts: null
     tls_settings: []
-  module.lbs-int-proxy["default-onprem-01"].google_compute_region_health_check.default[0]:
+  module.lbs-int-proxy["example-com-onprem-01"].google_compute_region_health_check.default[0]:
     check_interval_sec: 5
     deletion_policy: DELETE
     description: Terraform managed.
@@ -439,7 +805,7 @@ values:
     http2_health_check: []
     http_health_check: []
     https_health_check: []
-    name: default-onprem-01
+    name: example-com-onprem-01
     project: your-project
     region: europe-west1
     ssl_health_check: []
@@ -453,64 +819,88 @@ values:
     timeout_sec: 5
     timeouts: null
     unhealthy_threshold: 2
-  module.lbs-int-proxy["default-onprem-01"].google_compute_region_target_tcp_proxy.default:
+  module.lbs-int-proxy["example-com-onprem-01"].google_compute_region_target_tcp_proxy.default:
     deletion_policy: DELETE
     description: Terraform managed.
-    name: default-onprem-01
+    name: example-com-onprem-01
     project: your-project
     proxy_header: NONE
     region: europe-west1
     timeouts: null
-  module.service_directory["default"].google_service_directory_endpoint.default["onprem/onprem-01"]:
+  module.service_directory["example-com"].google_service_directory_endpoint.default["function/function-01"]:
+    address: ''
+    deletion_policy: DELETE
+    endpoint_id: function-01
+    id: projects/lpb-gf-gecx-as-0/locations/europe-west1/namespaces/example-com/services/function/endpoints/function-01
+    metadata: {}
+    name: projects/lpb-gf-gecx-as-0/locations/europe-west1/namespaces/example-com/services/function/endpoints/function-01
+    network: ''
+    port: 0
+    service: projects/lpb-gf-gecx-as-0/locations/europe-west1/namespaces/example-com/services/function
+    timeouts: null
+  module.service_directory["example-com"].google_service_directory_endpoint.default["onprem/onprem-01"]:
     address: ''
     deletion_policy: DELETE
     endpoint_id: onprem-01
-    id: projects/lpb-gf-gecx-as-0/locations/europe-west1/namespaces/default/services/onprem/endpoints/onprem-01
+    id: projects/lpb-gf-gecx-as-0/locations/europe-west1/namespaces/example-com/services/onprem/endpoints/onprem-01
     metadata: {}
-    name: projects/lpb-gf-gecx-as-0/locations/europe-west1/namespaces/default/services/onprem/endpoints/onprem-01
+    name: projects/lpb-gf-gecx-as-0/locations/europe-west1/namespaces/example-com/services/onprem/endpoints/onprem-01
     network: ''
     port: 0
-    service: projects/lpb-gf-gecx-as-0/locations/europe-west1/namespaces/default/services/onprem
+    service: projects/lpb-gf-gecx-as-0/locations/europe-west1/namespaces/example-com/services/onprem
     timeouts: null
-  module.service_directory["default"].google_service_directory_namespace.default:
+  module.service_directory["example-com"].google_service_directory_namespace.default:
     deletion_policy: DELETE
     effective_labels:
       goog-terraform-provisioned: 'true'
     labels: null
     location: europe-west1
-    namespace_id: default
+    namespace_id: example-com
     project: your-project
     terraform_labels:
       goog-terraform-provisioned: 'true'
     timeouts: null
-  module.service_directory["default"].google_service_directory_service.default["onprem"]:
+  module.service_directory["example-com"].google_service_directory_service.default["function"]:
     deletion_policy: DELETE
-    id: projects/lpb-gf-gecx-as-0/locations/europe-west1/namespaces/default/services/onprem
+    id: projects/lpb-gf-gecx-as-0/locations/europe-west1/namespaces/example-com/services/function
     metadata: {}
-    name: projects/lpb-gf-gecx-as-0/locations/europe-west1/namespaces/default/services/onprem
+    name: projects/lpb-gf-gecx-as-0/locations/europe-west1/namespaces/example-com/services/function
+    service_id: function
+    timeouts: null
+  module.service_directory["example-com"].google_service_directory_service.default["onprem"]:
+    deletion_policy: DELETE
+    id: projects/lpb-gf-gecx-as-0/locations/europe-west1/namespaces/example-com/services/onprem
+    metadata: {}
+    name: projects/lpb-gf-gecx-as-0/locations/europe-west1/namespaces/example-com/services/onprem
     service_id: onprem
     timeouts: null
 
 counts:
+  google_certificate_manager_certificate: 1
   google_ces_app: 1
   google_cloud_run_service_iam_binding: 1
   google_cloudfunctions2_function: 1
-  google_compute_forwarding_rule: 1
+  google_compute_address: 1
+  google_compute_forwarding_rule: 3
   google_compute_network_endpoint: 3
   google_compute_network_endpoint_group: 3
-  google_compute_region_backend_service: 1
+  google_compute_region_backend_service: 2
   google_compute_region_health_check: 1
+  google_compute_region_network_endpoint_group: 1
+  google_compute_region_target_http_proxy: 1
+  google_compute_region_target_https_proxy: 1
   google_compute_region_target_tcp_proxy: 1
+  google_compute_region_url_map: 2
   google_discovery_engine_data_store: 1
   google_discovery_engine_schema: 1
   google_dns_managed_zone: 1
-  google_service_directory_endpoint: 1
+  google_service_directory_endpoint: 2
   google_service_directory_namespace: 1
-  google_service_directory_service: 1
+  google_service_directory_service: 2
   google_storage_bucket: 3
   google_storage_bucket_object: 1
-  modules: 7
-  resources: 23
+  modules: 11
+  resources: 35
 
 outputs:
   commands: __missing__

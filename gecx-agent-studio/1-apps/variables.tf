@@ -137,6 +137,7 @@ variable "service_directory_configs" {
     })), {})
     services = optional(map(object({
       endpoints        = list(string)
+      openapi_spec     = string
       allowed_ca_certs = optional(list(string))
       metadata         = optional(map(string), {})
     })), {})
@@ -153,7 +154,8 @@ variable "service_directory_configs" {
       }
       services = {
         onprem = {
-          endpoints = ["onprem-01"]
+          endpoints    = ["onprem-01"]
+          openapi_spec = "data/onprem/openapi-spec.yaml"
         }
       }
     }

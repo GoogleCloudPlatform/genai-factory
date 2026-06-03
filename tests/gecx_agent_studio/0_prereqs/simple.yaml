@@ -702,10 +702,6 @@ values:
   : condition: []
     project: your-prefix-gf-gecx-as-hp-0
     role: roles/servicedirectory.pscAuthorizedService
-  module.projects.module.projects-iam["host"].google_project_iam_binding.authoritative["roles/servicedirectory.viewer"]:
-    condition: []
-    project: your-prefix-gf-gecx-as-hp-0
-    role: roles/servicedirectory.viewer
   ? module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/artifactregistry.reader"]
   : condition: []
     members:
@@ -760,12 +756,6 @@ values:
     - serviceAccount:gecx-as-0@your-prefix-gf-gecx-as-0.iam.gserviceaccount.com
     project: your-prefix-gf-gecx-as-0
     role: roles/logging.logWriter
-  module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/privateca.admin"]:
-    condition: []
-    members:
-    - serviceAccount:iac-rw@your-prefix-gf-gecx-as-0.iam.gserviceaccount.com
-    project: your-prefix-gf-gecx-as-0
-    role: roles/privateca.admin
   ? module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/privateca.certificateRequester"]
   : condition: []
     project: your-prefix-gf-gecx-as-0
@@ -782,10 +772,6 @@ values:
     - serviceAccount:iac-rw@your-prefix-gf-gecx-as-0.iam.gserviceaccount.com
     project: your-prefix-gf-gecx-as-0
     role: roles/servicedirectory.admin
-  ? module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/servicedirectory.pscAuthorizedService"]
-  : condition: []
-    project: your-prefix-gf-gecx-as-0
-    role: roles/servicedirectory.pscAuthorizedService
   ? module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/servicedirectory.viewer"]
   : condition: []
     project: your-prefix-gf-gecx-as-0
@@ -886,6 +872,10 @@ values:
     condition: []
     project: your-prefix-gf-gecx-as-0
     role: roles/cloudbuild.builds.builder
+  module.projects.module.projects["service-01"].google_project_iam_member.service_agents["compute-system"]:
+    condition: []
+    project: your-prefix-gf-gecx-as-0
+    role: roles/compute.serviceAgent
   module.projects.module.projects["service-01"].google_project_iam_member.service_agents["discoveryengine"]:
     condition: []
     project: your-prefix-gf-gecx-as-0
@@ -941,6 +931,13 @@ values:
     project: your-prefix-gf-gecx-as-0
     service: cloudfunctions.googleapis.com
     timeouts: null
+  module.projects.module.projects["service-01"].google_project_service.project_services["compute.googleapis.com"]:
+    deletion_policy: DELETE
+    disable_dependent_services: false
+    disable_on_destroy: false
+    project: your-prefix-gf-gecx-as-0
+    service: compute.googleapis.com
+    timeouts: null
   module.projects.module.projects["service-01"].google_project_service.project_services["discoveryengine.googleapis.com"]:
     deletion_policy: DELETE
     disable_dependent_services: false
@@ -961,13 +958,6 @@ values:
     disable_on_destroy: false
     project: your-prefix-gf-gecx-as-0
     service: logging.googleapis.com
-    timeouts: null
-  module.projects.module.projects["service-01"].google_project_service.project_services["privateca.googleapis.com"]:
-    deletion_policy: DELETE
-    disable_dependent_services: false
-    disable_on_destroy: false
-    project: your-prefix-gf-gecx-as-0
-    service: privateca.googleapis.com
     timeouts: null
   module.projects.module.projects["service-01"].google_project_service.project_services["run.googleapis.com"]:
     deletion_policy: DELETE
@@ -1006,10 +996,6 @@ values:
   module.projects.module.projects["service-01"].google_project_service_identity.default["dns.googleapis.com"]:
     project: your-prefix-gf-gecx-as-0
     service: dns.googleapis.com
-    timeouts: null
-  module.projects.module.projects["service-01"].google_project_service_identity.default["privateca.googleapis.com"]:
-    project: your-prefix-gf-gecx-as-0
-    service: privateca.googleapis.com
     timeouts: null
   module.projects.module.projects["service-01"].google_project_service_identity.default["run.googleapis.com"]:
     project: your-prefix-gf-gecx-as-0
@@ -1187,17 +1173,17 @@ counts:
   google_dns_response_policy_rule: 39
   google_logging_project_settings: 1
   google_project: 2
-  google_project_iam_binding: 24
-  google_project_iam_member: 12
+  google_project_iam_binding: 21
+  google_project_iam_member: 13
   google_project_service: 13
-  google_project_service_identity: 10
+  google_project_service_identity: 9
   google_service_account: 3
   google_service_account_iam_member: 4
   google_storage_bucket: 1
   google_storage_bucket_iam_binding: 1
   local_file: 2
   modules: 12
-  resources: 123
+  resources: 120
   terraform_data: 2
 
 outputs:

@@ -11,7 +11,7 @@ rm -rf ./build
 
 # Build and ingest data store
 mkdir -p ./build/data_store
-uv run scripts/agentutil.py data-store ingest \
+uv run scripts/agentutil.py --impersonate-service-account "$IMPERSONATE_SERVICE_ACCOUNT" data-store ingest \
   ./data/ds-kb \
   ./build/data_store \
   ${bucket_url_ds} \
@@ -22,22 +22,27 @@ mkdir -p ./build/app/dist
 cp -r ./data/apps/default ./build/app/dist/agent
 
 # Update Data Store reference
-uv run scripts/agentutil.py ces agent replace-data-store \
+uv run scripts/agentutil.py --impersonate-service-account "$IMPERSONATE_SERVICE_ACCOUNT" ces agent replace-data-store \
   "./build/app/dist/agent" \
   "kb_data_store" \
   ${ds_name}
 
+%{ if length(toolsets) > 0 ~}
+# Setup webhooks
 %{ for k,v in toolsets ~}
-uv run scripts/agentutil.py create-toolset \
+uv run scripts/agentutil.py --impersonate-service-account "$IMPERSONATE_SERVICE_ACCOUNT" create-toolset \
   "./build/app/dist/agent" \
   ${k} \
-  ${v.uri}%{ if try(length(v.allowed_ca_certs) > 0, false) || try(v.service_directory, null) != null } \%{ endif }%{ if try(length(v.allowed_ca_certs) > 0, false) }
-  --allowed-ca-certs ${v.allowed_ca_certs}%{ if try(v.service_directory, null) != null } \%{ endif }%{ endif }%{ if try(v.service_directory, null) != null }
+  ${v.uri} \
+  --openapi-spec "${v.openapi_spec}"%{ if try(length(v.allowed_ca_certs) > 0, false) || try(v.service_directory, null) != null } \%{ endif }%{ if try(length(v.allowed_ca_certs) > 0, false) }
+  --allowed-ca-certs "${join(",", v.allowed_ca_certs)}"%{ if try(v.service_directory, null) != null } \%{ endif }%{ endif }%{ if try(v.service_directory, null) != null }
   --service-directory ${v.service_directory}%{ endif }
+
 %{ endfor ~}
+%{ endif ~}
 
 # Push the agent
-uv run scripts/agentutil.py ces agent push ./build/app/dist/agent/ \
+uv run scripts/agentutil.py --impersonate-service-account "$IMPERSONATE_SERVICE_ACCOUNT" ces agent push ./build/app/dist/agent/ \
   projects/${project_id}/locations/${region_discovery_engine}/apps/${app_id} \
   ${bucket_url_build}
 

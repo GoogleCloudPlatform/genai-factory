@@ -1,0 +1,35 @@
+# skip boilerplate check
+openapi: 3.0.3
+info:
+  title: CX AS Toolset API
+  description: HTTP Cloud Function for CX AS toolset.
+  version: 1.0.0
+paths:
+  /:
+    post:
+      summary: CX AS toolset
+      description: Receives an incoming JSON request from CX AS and returns a formatted
+        response.
+      requestBody:
+        description: The incoming HTTP request object from CX AS.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: The generic JSON payload sent by the CX AS.
+      responses:
+        '200':
+          description: A JSON response with a simple string payload.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  response:
+                    type: string
+                    example: Hello! Just letting you know this message was generated
+                      from the toolset code.
+servers:
+- url: $env_var
+  description: test URL
