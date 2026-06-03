@@ -35,6 +35,7 @@ import base64
 import io
 import json
 import uuid
+import yaml
 import logging
 import os
 import re
@@ -66,19 +67,23 @@ logger = logging.getLogger("agentutil")
 
 _logged_impersonation = False
 
+impersonate_service_account_global = None
+access_token_global = None
+
 
 def get_credentials():
   """Gets credentials, optionally impersonating a service account or using an access token."""
   global _logged_impersonation
   credentials, project = google.auth.default()
 
-  access_token = os.environ.get("ACCESS_TOKEN")
+  access_token = access_token_global or os.environ.get("ACCESS_TOKEN")
   if access_token:
     from google.oauth2.credentials import Credentials as OAuth2Credentials
     credentials = OAuth2Credentials(token=access_token)
     return credentials, project
 
-  impersonate_sa = os.environ.get("IMPERSONATE_SERVICE_ACCOUNT")
+  impersonate_sa = impersonate_service_account_global or os.environ.get(
+      "IMPERSONATE_SERVICE_ACCOUNT")
   if impersonate_sa:
     if not _logged_impersonation:
       print(f"Impersonating service account: {impersonate_sa}")
@@ -652,6 +657,25 @@ def import_documents(full_data_store_name: str, gcs_uri: str) -> None:
 app = typer.Typer(name='agentutil',
                   help='A set of utilities to develop CX Agent Studio Apps.')
 
+
+@app.callback()
+def main_callback(
+    impersonate_service_account: Optional[str] = typer.Option(
+        None,
+        "--impersonate-service-account",
+        help="Service account email to impersonate for GCP operations.",
+    ),
+    access_token: Optional[str] = typer.Option(
+        None,
+        "--access-token",
+        help="OAuth2 Access Token to use for GCP authentication.",
+    ),
+):
+  global impersonate_service_account_global, access_token_global
+  impersonate_service_account_global = impersonate_service_account
+  access_token_global = access_token
+
+
 ces_app = typer.Typer()
 app.add_typer(ces_app, name="ces", help="Utilities for CES platform")
 ces_agent_app = typer.Typer()
@@ -719,15 +743,25 @@ def process_data_store_documents_command(source_dir: str, target_dir: str,
     raise typer.Exit(code=1)
 
 
-def _ensure_base64(cert_str: str) -> str:
-  cert_str = cert_str.strip()
-  if "---BEGIN CERTIFICATE---" in cert_str:
-    return base64.b64encode(cert_str.encode("utf-8")).decode("utf-8")
+def _load_cert_as_base64(cert_input: str) -> str:
+  cert_input = cert_input.strip()
   try:
-    base64.b64decode(cert_str, validate=True)
-    return cert_str
-  except Exception:
-    return base64.b64encode(cert_str.encode("utf-8")).decode("utf-8")
+    p = Path(cert_input)
+    if p.exists() and p.is_file():
+      cert_bytes = p.read_bytes()
+      try:
+        text_content = cert_bytes.decode("utf-8")
+        # PEM text file - base64 encode it
+        return base64.b64encode(text_content.encode("utf-8")).decode("utf-8")
+      except UnicodeDecodeError:
+        # Binary DER file - base64 encode it
+        return base64.b64encode(cert_bytes).decode("utf-8")
+  except Exception as e:
+    logger.debug(f"Failed to check/load file path '{cert_input}': {e}")
+
+  # File check failed or file doesn't exist.
+  # Assume the value is already base64.
+  return cert_input
 
 
 def _parse_ca_certs(allowed_ca_certs: Optional[str]) -> list[dict]:
@@ -742,7 +776,7 @@ def _parse_ca_certs(allowed_ca_certs: Optional[str]) -> list[dict]:
         for i, cert in enumerate(parsed_list):
           certs_list.append({
               "displayName": f"cert-{i}.der",
-              "cert": _ensure_base64(cert)
+              "cert": _load_cert_as_base64(cert)
           })
         return certs_list
     except json.JSONDecodeError:
@@ -752,9 +786,36 @@ def _parse_ca_certs(allowed_ca_certs: Optional[str]) -> list[dict]:
   for i, cert in enumerate(parts):
     certs_list.append({
         "displayName": f"cert-{i}.der",
-        "cert": _ensure_base64(cert)
+        "cert": _load_cert_as_base64(cert)
     })
   return certs_list
+
+
+def _ensure_servers_block(yaml_content: str) -> str:
+  try:
+    data = yaml.safe_load(yaml_content)
+    if not isinstance(data, dict):
+      return yaml_content
+
+    servers = data.get("servers")
+    if not servers or not isinstance(servers, list):
+      data["servers"] = [{"url": "$env_var", "description": "test URL"}]
+      return yaml.safe_dump(data, sort_keys=False)
+
+    has_url = False
+    for s in servers:
+      if isinstance(s, dict) and "url" in s:
+        has_url = True
+        break
+
+    if not has_url:
+      servers.append({"url": "$env_var", "description": "test URL"})
+      return yaml.safe_dump(data, sort_keys=False)
+
+  except Exception as e:
+    logger.warning(f"Could not parse or verify OpenAPI spec: {e}")
+
+  return yaml_content
 
 
 @app.command("create-toolset")
@@ -762,6 +823,7 @@ def create_toolset(
     target_agent_dir: str,
     toolset_name: str,
     uri: str,
+    openapi_spec: str = typer.Option(..., "--openapi-spec"),
     service_directory: Optional[str] = typer.Option(None,
                                                     "--service-directory"),
     allowed_ca_certs: Optional[str] = typer.Option(None, "--allowed-ca-certs"),
@@ -771,40 +833,22 @@ def create_toolset(
   toolsets_dir = agent_path / "toolsets" / toolset_name
   toolsets_dir.mkdir(parents=True, exist_ok=True)
 
-  # 1. Create open_api_schema.yaml
+  # 1. Copy openapi spec to open_api_schema.yaml
   schema_dir = toolsets_dir / "open_api_toolset"
   schema_dir.mkdir(parents=True, exist_ok=True)
   schema_file = schema_dir / "open_api_schema.yaml"
 
-  yaml_content = """# skip boilerplate check
-openapi: 3.0.3
-info:
-  title: Simple Hello Test API
-  description: A basic API to test a hello endpoint.
-  version: 1.0.0
-servers:
-  - url: $env_var
-    description: test URL
-paths:
-  /hello:
-    get:
-      summary: Returns a greeting message
-      description: A simple endpoint that responds with a JSON message saying hello.
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Hello, World!"
-"""
+  openapi_path = Path(openapi_spec)
+  if not openapi_path.exists():
+    raise FileNotFoundError(f"OpenAPI spec file not found at: {openapi_spec}")
 
-  with open(schema_file, "w", encoding="utf-8") as f:
-    f.write(yaml_content)
+  openapi_content = openapi_path.read_text(encoding="utf-8")
+  openapi_content = _ensure_servers_block(openapi_content)
+
+  if not openapi_content.startswith("# skip boilerplate check"):
+    openapi_content = f"# skip boilerplate check\n{openapi_content}"
+
+  schema_file.write_text(openapi_content, encoding="utf-8")
 
   # 2. Create toolset metadata json file (e.g. default-onprem.json)
   toolset_id = str(uuid.uuid4())

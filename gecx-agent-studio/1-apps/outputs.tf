@@ -23,16 +23,27 @@ locals {
     for k, v in var.service_account_emails
     : k => lookup(local._service_account_emails, v, v)
   }
-  toolsets = merge([
-    for namespace_name, namespace_config in var.service_directory_configs : {
-      for service_name, service_config in namespace_config.services :
-      "${namespace_name}-${service_name}" => {
-        allowed_ca_certs  = service_config.allowed_ca_certs
-        service_directory = module.service_directory[namespace_name].service_id[service_name]
-        uri               = "${module.service_directory[namespace_name].service_names[service_name]}.${namespace_config.cloud_dns_domain}"
+  toolsets = merge(
+    merge([
+      for namespace_name, namespace_config in var.service_directory_configs : {
+        for service_name, service_config in namespace_config.services :
+        "${service_name}-${namespace_name}" => {
+          allowed_ca_certs  = service_config.allowed_ca_certs
+          openapi_spec      = service_config.openapi_spec
+          service_directory = module.service_directory[namespace_name].service_id[service_name]
+          uri               = "${module.service_directory[namespace_name].service_names[service_name]}.${namespace_config.cloud_dns_domain}"
+        }
+      }
+    ]...),
+    {
+      "function-example-com" = {
+        allowed_ca_certs  = [filebase64("data/function-cert/cert.der")]
+        openapi_spec      = "data/function/openapi-spec.yaml"
+        service_directory = module.service_directory["example-com"].service_id["function"]
+        uri               = "${module.service_directory["example-com"].service_names["function"]}.example.com"
       }
     }
-  ]...)
+  )
 }
 
 output "commands" {

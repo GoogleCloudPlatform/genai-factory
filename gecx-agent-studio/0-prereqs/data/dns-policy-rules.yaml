@@ -85,7 +85,7 @@ googleapis-private:
       rrdatas: [199.36.153.8, 199.36.153.9, 199.36.153.10, 199.36.153.11]
     AAAA:
       rrdatas: ['2600:2d00:2:2000::']
-# GECX / Dialogflow CX uses restricted range sometimes.
+# CX AS uses restricted range sometimes.
 googleapis-restricted:
   dns_name: restricted.googleapis.com.
   local_data:
