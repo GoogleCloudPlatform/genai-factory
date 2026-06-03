@@ -36,6 +36,7 @@ uv run scripts/agentutil.py create-toolset \
   --service-directory ${v.service_directory}%{ endif }
 %{ endfor ~}
 
+# Push the agent
 uv run scripts/agentutil.py ces agent push ./build/app/dist/agent/ \
   projects/${project_id}/locations/${region_discovery_engine}/apps/${app_id} \
   ${bucket_url_build}

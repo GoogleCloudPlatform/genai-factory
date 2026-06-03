@@ -25,6 +25,9 @@ variable "cloud_function_config" {
   description = "The configuration of an optional Cloud Function to reach via Service Directory."
   type = object({
     bundle_path            = optional(string, "data/function")
+    cert_bundle_path       = optional(string, "data/function-cert")
+    cert_common_name       = optional(string, "example.com")
+    cert_organization      = optional(string, "ACME Examples, Inc")
     direct_vpc_egress_mode = optional(string, "VPC_EGRESS_ALL_TRAFFIC")
     direct_vpc_egress_tags = optional(list(string), [])
     service_invokers       = optional(list(string), [])
@@ -140,10 +143,10 @@ variable "service_directory_configs" {
   }))
   nullable = false
   default = {
-    default = {
+    example-com = {
       cloud_dns_domain = "example.com"
       endpoints = {
-        onprem-01 = { # TODO: make it dynamic
+        onprem-01 = {
           address = "10.0.0.2"
           port    = 443
         }

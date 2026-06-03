@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-module "cloud_function" {
+module "cloud-function" {
   source           = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/cloud-function-v2?ref=v56.1.0"
   project_id       = var.project_id
   region           = var.region
