@@ -28,11 +28,10 @@ services:
   - run.googleapis.com
   # Needed for Service Directory DNS zone
   - dns.googleapis.com
-  # Needed for TCP proxy ILB creation (function create only)
+  # Needed for LBs creation
   - certificatemanager.googleapis.com
-  - privateca.googleapis.com
-  # Only needed if you define private endpoints to be reached
-  # via Service Directory
+  - compute.googleapis.com
+  # Needed if you define private endpoints to be reached via Service Directory
   - servicedirectory.googleapis.com
 
 buckets:
@@ -69,11 +68,10 @@ iam_by_principals:
     - roles/cloudfunctions.admin
     # Needed for Service Directory DNS zone
     - roles/dns.admin
-    # Needed for ILB (function create only)
+    # Needed for LBs
     - roles/certificatemanager.owner
     - roles/compute.loadBalancerAdmin
-    - roles/privateca.admin
-    # Only needed if you define private endpoints to be reached
+    # Needed if you define private endpoints to be reached
     # via Service Directory
     - roles/servicedirectory.admin
   # The following role assignments are used only if Cloud Function is created
@@ -87,5 +85,4 @@ iam_by_principals:
   $iam_principals:service_agents/_self_/certificatemanager:
     - roles/privateca.certificateRequester
   $iam_principals:service_agents/_self_/ces:
-    - roles/servicedirectory.pscAuthorizedService
     - roles/servicedirectory.viewer

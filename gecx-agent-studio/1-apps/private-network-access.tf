@@ -40,26 +40,44 @@ module "service_directory" {
   project_id = var.project_id
   location   = var.region
   name       = each.key
-  services = {
-    for k, v in each.value.services
-    : k => {
-      endpoints = v.endpoints
-      metadata  = v.metadata
+  services = merge(
+    {
+      function = {
+        endpoints = ["function-01"]
+        metadata  = {}
+      }
+    },
+    {
+      for k, v in each.value.services
+      : k => {
+        endpoints = v.endpoints
+        metadata  = v.metadata
+      }
     }
-  }
-  endpoint_config = {
-    for k, v in each.value.endpoints
-    : k => {
-      address = (
-        v.create_lb
-        ? module.lbs-int-proxy["${each.key}-${k}"].address
-        : v.address
-      )
-      port     = v.port
-      network  = var.networking_config.vpc
-      metadata = v.metadata
+  )
+  endpoint_config = merge(
+    {
+      function-01 = {
+        address  = module.address-ilb.internal_addresses["ilb-01"].address
+        port     = 443
+        network  = var.networking_config.vpc
+        metadata = {}
+      }
+    },
+    {
+      for k, v in each.value.endpoints
+      : k => {
+        address = (
+          v.create_lb
+          ? module.lbs-int-proxy["${each.key}-${k}"].address
+          : v.address
+        )
+        port     = v.port
+        network  = var.networking_config.vpc
+        metadata = v.metadata
+      }
     }
-  }
+  )
 }
 
 module "dns_service_directory" {

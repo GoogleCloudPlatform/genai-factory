@@ -38,4 +38,3 @@ iam_by_principals:
     - roles/compute.securityAdmin
   $iam_principals:service_agents/service-01/ces:
     - roles/servicedirectory.pscAuthorizedService
-    - roles/servicedirectory.viewer
