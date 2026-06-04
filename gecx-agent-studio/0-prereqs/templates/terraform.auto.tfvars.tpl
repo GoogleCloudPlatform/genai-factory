@@ -17,8 +17,9 @@
 enable_deletion_protection = ${enable_deletion_protection}
 
 networking_config = {
-  subnet = "${try(networking_config.subnet, "")}"
-  vpc    = "${try(networking_config.vpc, "")}"
+  host_project_number = "${try(networking_config.host_project_number, "")}"
+  subnet              = "${try(networking_config.subnet, "")}"
+  vpc                 = "${try(networking_config.vpc, "")}"
 }
 
 prefix = "${prefix}"

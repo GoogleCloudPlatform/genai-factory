@@ -37,7 +37,7 @@ def main(request):
   # Construct the fulfillment response
   res = {
       "response":
-          'Hello! Just letting you know this message was generated from the toolset code.'
+          'Hello! Just letting you know this message was generated from a function called through a CX AS toolset.'
   }
 
   # Return the dictionary as a JSON response with a 200 OK status

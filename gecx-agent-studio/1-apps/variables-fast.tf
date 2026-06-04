@@ -15,6 +15,8 @@
 # These variables are automatically populated when using the FAST framework.
 # Ignore if not used.
 
+
+
 variable "service_accounts" {
   # tfdoc:variable:source 2-project-factory
   description = "The service accounts created for this stage."

@@ -20,6 +20,7 @@ info:
 paths:
   /:
     post:
+      operationId: helloFunction
       summary: CX AS toolset
       description: Receives an incoming JSON request from CX AS and returns a formatted response.
       requestBody:
