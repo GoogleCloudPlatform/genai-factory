@@ -31,7 +31,7 @@ locals {
           allowed_ca_certs  = service_config.allowed_ca_certs
           openapi_spec      = service_config.openapi_spec
           service_directory = module.service_directory[namespace_name].service_id[service_name]
-          uri               = "${module.service_directory[namespace_name].service_names[service_name]}.${namespace_config.cloud_dns_domain}"
+          uri               = "${module.service_directory[namespace_name].services[service_name].service_id}.${namespace_config.cloud_dns_domain}"
         }
       }
     ]...),
@@ -40,7 +40,7 @@ locals {
         allowed_ca_certs  = [filebase64("data/function-cert/cert.der")]
         openapi_spec      = "data/function/openapi-spec.yaml"
         service_directory = module.service_directory["example-com"].service_id["function"]
-        uri               = "${module.service_directory["example-com"].service_names["function"]}.example.com"
+        uri               = "${module.service_directory["example-com"].services["function"].service_id}.${var.cloud_function_config.cert_common_name}"
       }
     }
   )

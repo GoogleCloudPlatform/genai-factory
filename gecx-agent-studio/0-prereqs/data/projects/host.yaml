@@ -34,7 +34,5 @@ iam_by_principals:
     - roles/dns.admin
     # Used for Service Directory
     - roles/servicedirectory.networkAttacher
-    # TODO: Remove, only for testing
-    - roles/compute.securityAdmin
   $iam_principals:service_agents/service-01/ces:
     - roles/servicedirectory.pscAuthorizedService

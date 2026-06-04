@@ -32,6 +32,12 @@ locals {
     for k, v in var.service_accounts
     : k => v.email
   }
+  vpc_number = join("/", [
+    "projects",
+    var.networking_config.host_project_number,
+    "locations/global/networks",
+    basename(var.networking_config.vpc)
+  ])
 }
 
 module "service_directory" {
@@ -57,10 +63,10 @@ module "service_directory" {
   )
   endpoint_config = merge(
     {
-      function-01 = {
+      "function/function-01" = {
         address  = module.address-ilb.internal_addresses["ilb-01"].address
         port     = 443
-        network  = var.networking_config.vpc
+        network  = local.vpc_number
         metadata = {}
       }
     },
@@ -73,7 +79,7 @@ module "service_directory" {
           : v.address
         )
         port     = v.port
-        network  = var.networking_config.vpc
+        network  = local.vpc_number
         metadata = v.metadata
       }
     }

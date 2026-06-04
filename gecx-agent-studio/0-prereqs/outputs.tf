@@ -19,6 +19,7 @@ locals {
     for k, v in module.projects.storage_buckets : k => v
   }
   networking_config = {
+    host_project_number = try(local.projects["host"].number, null)
     subnet = coalesce(
       try(module.vpc[0].subnet_ids["${var.region}/${var.networking_config.subnet.name}"], null),
       "projects/${var.networking_config.host_project_id}/regions/${var.region}/subnetworks/${var.networking_config.subnet.name}"

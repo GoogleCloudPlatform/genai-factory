@@ -67,8 +67,9 @@ variable "name" {
 variable "networking_config" {
   description = "The networking configuration. Each element is either the id of the resource or the key of the map var.vpc_self_links."
   type = object({
-    subnet = string
-    vpc    = string
+    host_project_number = number
+    subnet              = string
+    vpc                 = string
   })
   nullable = false
 }

@@ -676,6 +676,14 @@ def main_callback(
   access_token_global = access_token
 
 
+def _update_global_auth(impersonate_sa: Optional[str], token: Optional[str]):
+  global impersonate_service_account_global, access_token_global
+  if impersonate_sa:
+    impersonate_service_account_global = impersonate_sa
+  if token:
+    access_token_global = token
+
+
 ces_app = typer.Typer()
 app.add_typer(ces_app, name="ces", help="Utilities for CES platform")
 ces_agent_app = typer.Typer()
@@ -686,9 +694,16 @@ app.add_typer(documents_app, name="data-store",
 
 
 @ces_agent_app.command("replace-data-store")
-def replace_data_store_ces(target_agent_dir: str, tool_name: str,
-                           data_store_id: str):
+def replace_data_store_ces(
+    target_agent_dir: str,
+    tool_name: str,
+    data_store_id: str,
+    impersonate_service_account: Optional[str] = typer.Option(
+        None, "--impersonate-service-account"),
+    access_token: Optional[str] = typer.Option(None, "--access-token"),
+):
   """Replace a data store reference in environment.json."""
+  _update_global_auth(impersonate_service_account, access_token)
   try:
     agent = CesAgent(target_agent_dir)
     agent.replace_data_store(tool_name, data_store_id)
@@ -698,8 +713,16 @@ def replace_data_store_ces(target_agent_dir: str, tool_name: str,
 
 
 @ces_agent_app.command()
-def replace_sa_auth(target_agent_dir: str, tool_name: str, sa_email: str):
+def replace_sa_auth(
+    target_agent_dir: str,
+    tool_name: str,
+    sa_email: str,
+    impersonate_service_account: Optional[str] = typer.Option(
+        None, "--impersonate-service-account"),
+    access_token: Optional[str] = typer.Option(None, "--access-token"),
+):
   """Replace Service Account authentication for a tool."""
+  _update_global_auth(impersonate_service_account, access_token)
   try:
     agent = CesAgent(target_agent_dir)
     agent.replace_sa_auth(tool_name, sa_email)
@@ -709,8 +732,16 @@ def replace_sa_auth(target_agent_dir: str, tool_name: str, sa_email: str):
 
 
 @ces_agent_app.command()
-def push(target_dir: str, agent_id: str, bucket: str):
+def push(
+    target_dir: str,
+    agent_id: str,
+    bucket: str,
+    impersonate_service_account: Optional[str] = typer.Option(
+        None, "--impersonate-service-account"),
+    access_token: Optional[str] = typer.Option(None, "--access-token"),
+):
   """Push local agent to remote CES agent."""
+  _update_global_auth(impersonate_service_account, access_token)
   try:
     agent = CesAgent(target_dir)
     agent.push(agent_id, bucket)
@@ -720,8 +751,17 @@ def push(target_dir: str, agent_id: str, bucket: str):
 
 
 @ces_agent_app.command()
-def pull(agent_id: str, target_dir: str, bucket: str, environment: str = None):
+def pull(
+    agent_id: str,
+    target_dir: str,
+    bucket: str,
+    environment: str = None,
+    impersonate_service_account: Optional[str] = typer.Option(
+        None, "--impersonate-service-account"),
+    access_token: Optional[str] = typer.Option(None, "--access-token"),
+):
   """Pull remote CES agent to local directory."""
+  _update_global_auth(impersonate_service_account, access_token)
   try:
     agent = CesAgent(target_dir)
     agent.pull(agent_id, bucket, environment)
@@ -731,10 +771,17 @@ def pull(agent_id: str, target_dir: str, bucket: str, environment: str = None):
 
 
 @documents_app.command('ingest')
-def process_data_store_documents_command(source_dir: str, target_dir: str,
-                                         gcs_bucket_folder_path: str,
-                                         ingest_to: str = None) -> None:
+def process_data_store_documents_command(
+    source_dir: str,
+    target_dir: str,
+    gcs_bucket_folder_path: str,
+    ingest_to: str = None,
+    impersonate_service_account: Optional[str] = typer.Option(
+        None, "--impersonate-service-account"),
+    access_token: Optional[str] = typer.Option(None, "--access-token"),
+) -> None:
   """Preprocesses Markdown files for Data Store ingestion."""
+  _update_global_auth(impersonate_service_account, access_token)
   try:
     process_data_store_documents(source_dir, target_dir, gcs_bucket_folder_path,
                                  ingest_to)
@@ -827,8 +874,12 @@ def create_toolset(
     service_directory: Optional[str] = typer.Option(None,
                                                     "--service-directory"),
     allowed_ca_certs: Optional[str] = typer.Option(None, "--allowed-ca-certs"),
+    impersonate_service_account: Optional[str] = typer.Option(
+        None, "--impersonate-service-account"),
+    access_token: Optional[str] = typer.Option(None, "--access-token"),
 ):
   """Creates a new OpenAPI Toolset configuration inside the agent directory."""
+  _update_global_auth(impersonate_service_account, access_token)
   agent_path = Path(target_agent_dir)
   toolsets_dir = agent_path / "toolsets" / toolset_name
   toolsets_dir.mkdir(parents=True, exist_ok=True)

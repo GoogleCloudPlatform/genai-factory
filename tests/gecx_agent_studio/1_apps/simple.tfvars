@@ -15,8 +15,9 @@
 # variables from 0-prereqs
 
 networking_config = {
-  subnet = "projects/prefix-gf-srun-hp-0/regions/europe-west1/subnetworks/sub-0"
-  vpc    = "projects/prefix-gf-srun-hp-0/global/networks/net-0"
+  host_project_number = 123456789012
+  subnet              = "projects/prefix-gf-srun-hp-0/regions/europe-west1/subnetworks/sub-0"
+  vpc                 = "projects/prefix-gf-srun-hp-0/global/networks/net-0"
 }
 
 prefix = "prefix"

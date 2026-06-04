@@ -2,11 +2,12 @@
 openapi: 3.0.3
 info:
   title: CX AS Toolset API
-  description: HTTP Cloud Function for CX AS toolset.
+  description: HTTP Cloud onprem for CX AS toolset.
   version: 1.0.0
 paths:
   /:
     post:
+      operationId: helloOnprem
       summary: CX AS toolset
       description: Receives an incoming JSON request from CX AS and returns a formatted
         response.
@@ -28,8 +29,4 @@ paths:
                 properties:
                   response:
                     type: string
-                    example: Hello! Just letting you know this message was generated
-                      from the toolset code.
-servers:
-- url: $env_var
-  description: test URL
+                    example: Hello! You reached your onpremise service.
