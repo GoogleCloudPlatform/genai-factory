@@ -1,0 +1,103 @@
+# Copyright 2026 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+openapi: 3.0.3
+info:
+  title: Httpbin Demo Echo API
+  description: An OpenAPI definition for the httpbin POST echo endpoint used in the Docker demo.
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+    description: Local Docker Instance
+paths:
+  /post:
+    post:
+      summary: Echoes back the incoming POST request data
+      description: Takes any JSON payload, parses it, and returns it inside a structured wrapper object along with client network and header metadata.
+      operationId: echoPost
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  description: The custom demo message text sent from the client.
+              example:
+                message: "Hello from my curl command!"
+      responses:
+        '200':
+          description: Successful execution. Returns the echoed request attributes.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - args
+                  - data
+                  - files
+                  - form
+                  - headers
+                  - json
+                  - origin
+                  - url
+                properties:
+                  args:
+                    type: object
+                    description: Any query parameters passed in the URL string.
+                    additionalProperties: true
+                  data:
+                    type: string
+                    description: The raw, unparsed string version of the incoming body payload.
+                    example: "{\\\"message\\\": \\\"Hello from my curl command!\\\"}"
+                  files:
+                    type: object
+                    description: Key-value map of files transmitted via multipart form uploads.
+                    additionalProperties: true
+                  form:
+                    type: object
+                    description: Key-value map of form fields submitted via application/x-www-form-urlencoded.
+                    additionalProperties: true
+                  headers:
+                    type: object
+                    description: The complete block of HTTP headers received by the server.
+                    properties:
+                      Accept:
+                        type: string
+                      Content-Length:
+                        type: string
+                      Content-Type:
+                        type: string
+                      Host:
+                        type: string
+                      User-Agent:
+                        type: string
+                  json:
+                    type: object
+                    description: The cleanly parsed JSON request body sent by the client.
+                    properties:
+                      message:
+                        type: string
+                    example:
+                      message: "Hello from my curl command!"
+                  origin:
+                    type: string
+                    description: The requesting client's IP address or Docker gateway network identifier.
+                    example: "172.17.0.1"
+                  url:
+                    type: string
+                    description: The exact, absolute URL string parsed by the container handling the request.
+                    example: "http://localhost:8080/post"

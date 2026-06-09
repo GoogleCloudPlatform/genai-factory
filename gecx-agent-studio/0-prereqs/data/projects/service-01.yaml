@@ -20,10 +20,9 @@ name: gf-gecx-as-0
 services:
   - ces.googleapis.com
   - discoveryengine.googleapis.com
-  # Needed for Cloud Function (function create only)
+  # Needed for Cloud Run
   - artifactregistry.googleapis.com
   - cloudbuild.googleapis.com
-  - cloudfunctions.googleapis.com
   - logging.googleapis.com
   - run.googleapis.com
   # Needed for Service Directory DNS zone
@@ -51,11 +50,8 @@ service_accounts:
     iam_sa_roles:
       $service_account_ids:_self_/gecx-as-0:
         - roles/iam.serviceAccountUser
-      $service_account_ids:_self_/gecx-as-build-0:
-        - roles/iam.serviceAccountUser
-  # Cloud Function SAs (only used if Cloud Function is created)
+  # Cloud Run SAs
   gecx-as-0: {}
-  gecx-as-build-0: {}
 
 # Grant roles
 iam_by_principals:
@@ -64,8 +60,8 @@ iam_by_principals:
     - roles/discoveryengine.admin
     - roles/serviceusage.serviceUsageConsumer
     - roles/storage.admin
-    # Needed to create Cloud Functions (function create only)
-    - roles/cloudfunctions.admin
+    # Needed to create Cloud Run
+    - roles/run.admin
     # Needed for Service Directory DNS zone
     - roles/dns.admin
     # Needed for LBs
@@ -74,14 +70,11 @@ iam_by_principals:
     # Needed if you define private endpoints to be reached
     # via Service Directory
     - roles/servicedirectory.admin
-  # The following role assignments are used only if Cloud Function is created
+  # The following role assignments are used only if Cloud Run is created
   $iam_principals:service_accounts/_self_/gecx-as-0:
     - roles/logging.logWriter
     - roles/storage.objectViewer
     - roles/artifactregistry.writer
-  $iam_principals:service_accounts/_self_/gecx-as-build-0:
-    - roles/run.builder
-    - roles/artifactregistry.reader
   $iam_principals:service_agents/_self_/certificatemanager:
     - roles/privateca.certificateRequester
   $iam_principals:service_agents/_self_/ces:

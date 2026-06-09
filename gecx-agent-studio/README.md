@@ -12,8 +12,8 @@ The deployment includes:
 - An unstructured **data store** that indexes and serves content to the agent.
 - A **GCS bucket** that stores and loads the agent configuration and the source files for the data store ingestion.
 
-**Cloud Function**
-- A sample **Cloud Function** configured to be accessed privately and configured with direct VPC egress. The function is accessible via webhook that directly access it from the user VPC.
+**Cloud Run**
+- A sample **Cloud Run** instance, configured to be accessed privately and configured with direct VPC egress. CX AS accesses Cloud Run as a toolset (in the gui, tool) via Service Directory.
 
 **Private on-premise connectivity via Service Directory and Proxy LB**
 - **Service Directory** that implements [Private Network Access](https://docs.cloud.google.com/service-directory/docs/private-network-access-overview) and by default we configured to connect to an Internal TCP Proxy Load Balancer (next item in this list). You can customize the namespaces and the endpoints configurations through the service directory variable.

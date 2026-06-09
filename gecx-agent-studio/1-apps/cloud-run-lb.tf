@@ -19,8 +19,8 @@ module "certificate-manager" {
     (var.name) = {
       location = var.region
       self_managed = {
-        pem_certificate = file("${var.cloud_function_config.cert_bundle_path}/cert.pem")
-        pem_private_key = file("${var.cloud_function_config.cert_bundle_path}/key.pem")
+        pem_certificate = file("${var.cloud_run_config.cert_bundle_path}/cert.pem")
+        pem_private_key = file("${var.cloud_run_config.cert_bundle_path}/key.pem")
       }
     }
   }
@@ -88,7 +88,7 @@ module "lb_internal" {
       cloudrun = {
         region = var.region
         target_service = {
-          name = module.cloud-function.function_name
+          name = module.cloud-run.service_name
         }
       }
     }

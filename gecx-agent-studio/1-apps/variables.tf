@@ -18,24 +18,33 @@ variable "bucket_name" {
   default     = null
 }
 
-# By default, these values are overridden when you redeploy the app
-# by using agentutil. Update the ignore_changes in the google_ces_app resource
-# to fully manage and update the resource via terraform.
-variable "cloud_function_config" {
-  description = "The configuration of an optional Cloud Function to reach via Service Directory."
+variable "cloud_run_config" {
+  description = "The Cloud Run configuration."
   type = object({
-    bundle_path            = optional(string, "data/function")
-    cert_bundle_path       = optional(string, "data/function-cert")
-    cert_common_name       = optional(string, "example.com")
-    cert_organization      = optional(string, "ACME Examples, Inc")
-    direct_vpc_egress_mode = optional(string, "VPC_EGRESS_ALL_TRAFFIC")
-    direct_vpc_egress_tags = optional(list(string), [])
-    service_invokers       = optional(list(string), [])
+    cert_bundle_path  = optional(string, "data/cloud-run")
+    cert_common_name  = optional(string, "example.com")
+    cert_organization = optional(string, "ACME Examples, Inc")
+    containers = optional(map(any), {
+      ai = {
+        image = "us-docker.pkg.dev/cloudrun/container/hello"
+      }
+    })
+    gpu_zonal_redundancy_disabled = optional(bool, null)
+    ingress                       = optional(string, "INGRESS_TRAFFIC_INTERNAL_LOAD_BALANCER")
+    max_instance_count            = optional(number, 3)
+    min_instance_count            = optional(number, 1)
+    node_selector                 = optional(map(string), null)
+    service_invokers              = optional(list(string), [])
+    vpc_access_egress             = optional(string, "ALL_TRAFFIC")
+    vpc_access_tags               = optional(list(string), [])
   })
   nullable = false
   default  = {}
 }
 
+# By default, these values are overridden when you redeploy the app
+# by using agentutil. Update the ignore_changes in the google_ces_app resource
+# to fully manage and update the resource via terraform.
 variable "cx_as_configs" {
   description = "The CX Agent Studio configurations."
   type = object({
@@ -72,12 +81,6 @@ variable "networking_config" {
     vpc                 = string
   })
   nullable = false
-}
-
-variable "number" {
-  description = "The project number."
-  type        = string
-  nullable    = false
 }
 
 variable "prefix" {
@@ -119,13 +122,6 @@ variable "service_account_emails" {
   nullable    = false
 }
 
-# Expected keys: service-01/gecx-as-0, service-01/gecx-as-build-0, service-01/iac-rw
-variable "service_account_ids" {
-  description = "The service account ids. Each element is the id of the service account or the key of the map var.service_accounts."
-  type        = map(string)
-  nullable    = false
-}
-
 variable "service_directory_configs" {
   description = "The service to create in Service Directory (key is the namespace name)."
   type = map(object({
@@ -148,7 +144,7 @@ variable "service_directory_configs" {
     example-com = {
       cloud_dns_domain = "example.com"
       endpoints = {
-        onprem-01 = {
+        "onprem/onprem-01" = {
           address = "10.0.0.2"
           port    = 443
         }

@@ -58,6 +58,47 @@ from rich.logging import RichHandler
 from rich.progress import track
 from slugify import slugify
 
+# Patch urllib3 + pyOpenSSL context mutation issue
+try:
+  import urllib3.contrib.pyopenssl
+  # 1. Patch verify_mode setter
+  orig_verify_mode_setter = urllib3.contrib.pyopenssl.PyOpenSSLContext.verify_mode.fset
+
+  def patched_verify_mode_setter(self, value):
+    if self.verify_mode != value:
+      orig_verify_mode_setter(self, value)
+
+  urllib3.contrib.pyopenssl.PyOpenSSLContext.verify_mode = property(
+      fget=urllib3.contrib.pyopenssl.PyOpenSSLContext.verify_mode.fget,
+      fset=patched_verify_mode_setter,
+      fdel=urllib3.contrib.pyopenssl.PyOpenSSLContext.verify_mode.fdel)
+
+  # 2. Patch load_verify_locations to prevent reloading identical certificates on an active context
+  orig_load_verify_locations = urllib3.contrib.pyopenssl.PyOpenSSLContext.load_verify_locations
+
+  def patched_load_verify_locations(self, cafile=None, capath=None,
+                                    cadata=None):
+    current_args = (cafile, capath, cadata)
+    if getattr(self, "_locations_loaded_args", None) == current_args:
+      return
+    orig_load_verify_locations(self, cafile, capath, cadata)
+    self._locations_loaded_args = current_args
+
+  urllib3.contrib.pyopenssl.PyOpenSSLContext.load_verify_locations = patched_load_verify_locations
+
+  # 3. Patch set_alpn_protocols to prevent resetting identical protocols on an active context
+  orig_set_alpn_protocols = urllib3.contrib.pyopenssl.PyOpenSSLContext.set_alpn_protocols
+
+  def patched_set_alpn_protocols(self, protocols):
+    if getattr(self, "_alpn_protocols_set", None) == protocols:
+      return
+    orig_set_alpn_protocols(self, protocols)
+    self._alpn_protocols_set = protocols
+
+  urllib3.contrib.pyopenssl.PyOpenSSLContext.set_alpn_protocols = patched_set_alpn_protocols
+except (ImportError, AttributeError):
+  pass
+
 logging.getLogger("google_genai").setLevel(logging.WARNING)
 logging.getLogger("httpx").setLevel(logging.WARNING)
 
