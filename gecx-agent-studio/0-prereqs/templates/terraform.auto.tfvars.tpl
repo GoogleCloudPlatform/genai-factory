@@ -25,18 +25,11 @@ networking_config = {
 prefix = "${prefix}"
 
 project_id = "${project_id}"
-number     = "${project_number}"
 
 region = "${region}"
 
 service_account_emails = {
 %{ for k,v in service_account_emails ~}
-  "${k}" = "${v}"
-%{ endfor ~}
-}
-
-service_account_ids = {
-%{ for k,v in service_account_ids ~}
   "${k}" = "${v}"
 %{ endfor ~}
 }
