@@ -28,10 +28,6 @@ locals {
       if endpoint_config.create_lb
     }
   ]...)
-  iam_principals = {
-    for k, v in var.service_accounts
-    : k => v.email
-  }
   vpc_number = join("/", [
     "projects",
     var.networking_config.host_project_number,
@@ -48,8 +44,8 @@ module "service_directory" {
   name       = each.key
   services = merge(
     {
-      function = {
-        endpoints = ["function-01"]
+      run = {
+        endpoints = ["run-01"]
         metadata  = {}
       }
     },
@@ -63,7 +59,7 @@ module "service_directory" {
   )
   endpoint_config = merge(
     {
-      "function/function-01" = {
+      "run/run-01" = {
         address  = module.address-ilb.internal_addresses["ilb-01"].address
         port     = 443
         network  = local.vpc_number

@@ -36,11 +36,11 @@ locals {
       }
     ]...),
     {
-      "function-example-com" = {
-        allowed_ca_certs  = [filebase64("data/function-cert/cert.der")]
-        openapi_spec      = "data/function/openapi-spec.yaml"
-        service_directory = module.service_directory["example-com"].service_id["function"]
-        uri               = "${module.service_directory["example-com"].services["function"].service_id}.${var.cloud_function_config.cert_common_name}"
+      "run-example-com" = {
+        allowed_ca_certs  = [filebase64("data/cloud-run/cert.der")]
+        openapi_spec      = "data/cloud-run/openapi-spec.yaml"
+        service_directory = module.service_directory["example-com"].service_id["run"]
+        uri               = "${module.service_directory["example-com"].services["run"].service_id}.${var.cloud_run_config.cert_common_name}"
       }
     }
   )

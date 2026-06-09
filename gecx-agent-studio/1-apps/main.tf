@@ -14,16 +14,10 @@
 
 locals {
   bucket_name = coalesce(var.bucket_name, var.name)
-}
-
-module "ds-bucket" {
-  source        = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/gcs?ref=v56.1.0"
-  project_id    = var.project_id
-  prefix        = var.prefix
-  name          = "${local.bucket_name}-ds"
-  location      = var.region_discovery_engine
-  versioning    = true
-  force_destroy = !var.enable_deletion_protection
+  iam_principals = {
+    for k, v in var.service_accounts
+    : k => v.email
+  }
 }
 
 module "build-bucket" {
