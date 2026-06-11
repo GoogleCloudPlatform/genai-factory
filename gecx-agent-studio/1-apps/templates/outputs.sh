@@ -12,7 +12,7 @@ mkdir -p ./build/data_store
 uv run scripts/agentutil.py data-store ingest \
   ./data/ds-kb \
   ./build/data_store \
-  ${bucket_url_ds} \
+  ${bucket_url_build} \
   --ingest-to ${ds_name} \
   --impersonate-service-account "$IMPERSONATE_SERVICE_ACCOUNT"
 
