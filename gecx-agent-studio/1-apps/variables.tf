@@ -27,6 +27,12 @@ variable "cloud_run_config" {
     containers = optional(map(any), {
       ai = {
         image = "us-docker.pkg.dev/cloudrun/container/hello"
+        resources = {
+          limits = {
+            cpu    = "1000m"
+            memory = "512Mi"
+          }
+        }
       }
     })
     gpu_zonal_redundancy_disabled = optional(bool, null)
