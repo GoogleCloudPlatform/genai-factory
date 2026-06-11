@@ -51,7 +51,6 @@ output "commands" {
   value = templatefile("./templates/outputs.sh", {
     app_id                  = google_ces_app.gecx_as_app.app_id
     bucket_url_build        = module.build-bucket.url
-    bucket_url_ds           = module.ds-bucket.url
     ds_name                 = google_discovery_engine_data_store.knowledge_base.name
     project_id              = var.project_id
     region_discovery_engine = var.region_discovery_engine
