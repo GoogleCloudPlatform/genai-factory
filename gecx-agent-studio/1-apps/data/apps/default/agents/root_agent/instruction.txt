@@ -24,5 +24,12 @@
                 Use {@TOOL: kb_data_store_search}  to find information about plans.
             </action>
         </step>
+
+        <step name="handle-travel-policy-question">
+            <trigger>The customer asks a questions about travel policies.</trigger>
+            <action>
+                Use {@TOOL: run_example_com_echoPost} to find information about travel policies.
+            </action>
+        </step>
     </subtask>
 </taskflow>

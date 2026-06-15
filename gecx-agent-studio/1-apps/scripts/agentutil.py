@@ -879,31 +879,118 @@ def _parse_ca_certs(allowed_ca_certs: Optional[str]) -> list[dict]:
   return certs_list
 
 
-def _ensure_servers_block(yaml_content: str) -> str:
+def _ensure_servers_block(yaml_content: str,
+                          override_url: Optional[str] = None) -> str:
   try:
     data = yaml.safe_load(yaml_content)
     if not isinstance(data, dict):
       return yaml_content
 
-    servers = data.get("servers")
-    if not servers or not isinstance(servers, list):
-      data["servers"] = [{"url": "$env_var", "description": "test URL"}]
-      return yaml.safe_dump(data, sort_keys=False)
+    if override_url:
+      target_url = override_url.strip()
+      if not target_url.startswith(("http://", "https://")):
+        target_url = f"https://{target_url}"
+      data["servers"] = [{"url": target_url, "description": "Service Instance"}]
+    else:
+      servers = data.get("servers")
+      if not servers or not isinstance(servers, list):
+        data["servers"] = [{
+            "url": "$env_var",
+            "description": "Service Instance"
+        }]
+      else:
+        has_url = False
+        for s in servers:
+          if isinstance(s, dict) and "url" in s:
+            has_url = True
+            break
+        if not has_url:
+          data["servers"] = [{
+              "url": "$env_var",
+              "description": "Service Instance"
+          }]
 
-    has_url = False
-    for s in servers:
-      if isinstance(s, dict) and "url" in s:
-        has_url = True
-        break
-
-    if not has_url:
-      servers.append({"url": "$env_var", "description": "test URL"})
-      return yaml.safe_dump(data, sort_keys=False)
-
+    return yaml.safe_dump(data, sort_keys=False)
   except Exception as e:
     logger.warning(f"Could not parse or verify OpenAPI spec: {e}")
 
   return yaml_content
+
+
+def _extract_operation_ids(openapi_yaml_path: Path) -> list[str]:
+  try:
+    with open(openapi_yaml_path, "r", encoding="utf-8") as f:
+      spec = yaml.safe_load(f)
+  except Exception as e:
+    logger.warning(
+        f"Could not load OpenAPI spec for extracting operation IDs: {e}")
+    return []
+
+  operation_ids = []
+  if not spec or not isinstance(spec, dict):
+    return operation_ids
+
+  paths = spec.get("paths", {})
+  for path, methods in paths.items():
+    if not isinstance(methods, dict):
+      continue
+    for method, operation in methods.items():
+      if not isinstance(operation, dict):
+        continue
+      if "operationId" in operation:
+        operation_ids.append(operation["operationId"])
+
+  return operation_ids
+
+
+def _update_root_agent(agent_dir: Path, toolset_name: str,
+                       toolset_ids: list[str]) -> None:
+  root_agent_json_path = agent_dir / "agents" / "root_agent" / "root_agent.json"
+  root_agent_yaml_path = agent_dir / "agents" / "root_agent" / "root_agent.yaml"
+
+  is_yaml = root_agent_yaml_path.exists()
+  config_path = root_agent_yaml_path if is_yaml else root_agent_json_path
+
+  if not config_path.exists():
+    logger.warning("Root agent configuration file not found.")
+    return
+
+  if is_yaml:
+    with open(config_path, "r", encoding="utf-8") as f:
+      try:
+        root_data = yaml.safe_load(f) or {}
+      except Exception as e:
+        logger.warning(f"Could not load root agent YAML: {e}")
+        root_data = {}
+  else:
+    with open(config_path, "r", encoding="utf-8") as f:
+      try:
+        root_data = json.load(f)
+      except json.JSONDecodeError:
+        root_data = {}
+
+  if "toolsets" not in root_data:
+    root_data["toolsets"] = []
+
+  found = False
+  for ts in root_data.get("toolsets", []):
+    if isinstance(ts, dict) and ts.get("toolset") == toolset_name:
+      ts["toolIds"] = toolset_ids
+      found = True
+      break
+
+  if not found:
+    root_data["toolsets"].append({
+        "toolset": toolset_name,
+        "toolIds": toolset_ids
+    })
+
+  if is_yaml:
+    with open(config_path, "w", encoding="utf-8") as f:
+      yaml.safe_dump(root_data, f, sort_keys=False)
+  else:
+    with open(config_path, "w", encoding="utf-8") as f:
+      json.dump(root_data, f, indent=2)
 
 
 @app.command("create-toolset")
@@ -935,7 +1022,7 @@ def create_toolset(
     raise FileNotFoundError(f"OpenAPI spec file not found at: {openapi_spec}")
 
   openapi_content = openapi_path.read_text(encoding="utf-8")
-  openapi_content = _ensure_servers_block(openapi_content)
+  openapi_content = _ensure_servers_block(openapi_content, override_url=uri)
 
   if not openapi_content.startswith("# skip boilerplate check"):
     openapi_content = f"# skip boilerplate check\n{openapi_content}"
@@ -1000,6 +1087,10 @@ def create_toolset(
 
   with open(env_path, "w", encoding="utf-8") as f:
     json.dump(env_data, f, indent=4)
+
+  # 4. Extract operation IDs and update root agent configuration
+  operation_ids = _extract_operation_ids(schema_file)
+  _update_root_agent(agent_path, toolset_name, operation_ids)
 
   logger.info(
       f"✅ Successfully created toolset '{toolset_name}' in {metadata_file} and updated environment.json"
