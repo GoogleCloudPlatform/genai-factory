@@ -53,16 +53,18 @@ variable "cloud_run_config" {
 # to fully manage and update the resource via terraform.
 variable "cx_as_configs" {
   description = "The CX Agent Studio configurations."
-  type = object({
+  type = map(object({
     enable_cloud_logging        = optional(bool, true)
     enable_conversation_logging = optional(bool, true)
     speaking_rate               = optional(number, 0)
     supported_languages         = optional(list(string), ["en-US"])
     timezone                    = optional(string, "Europe/Rome")
     tool_execution_mode         = optional(string, "PARALLEL")
-  })
+  }))
   nullable = false
-  default  = {}
+  default = {
+    cx-as-0 = {}
+  }
 }
 
 variable "enable_deletion_protection" {

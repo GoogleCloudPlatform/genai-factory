@@ -13,7 +13,7 @@
 # limitations under the License.
 
 values:
-  google_ces_app.gecx_as_app:
+  google_ces_app.gecx_as_app["cx-as-0"]:
     app_id: cx-as-0
     audio_processing_config:
     - ambient_sound_config: []
@@ -56,7 +56,7 @@ values:
     timeouts: null
     tool_execution_mode: PARALLEL
     variable_declarations: []
-  google_discovery_engine_data_store.knowledge_base:
+  google_discovery_engine_data_store.knowledge_base["cx-as-0"]:
     content_config: CONTENT_REQUIRED
     create_advanced_site_search: false
     data_store_id: cx-as-0-kb
@@ -86,7 +86,7 @@ values:
     solution_types:
     - SOLUTION_TYPE_CHAT
     timeouts: null
-  google_discovery_engine_schema.knowledge_base:
+  google_discovery_engine_schema.knowledge_base["cx-as-0"]:
     data_store_id: cx-as-0-kb
     deletion_policy: PREVENT
     json_schema: '{"$schema":"https://json-schema.org/draft/2020-12/schema","properties":{"brand_code":{"dynamicFacetable":false,"indexable":true,"retrievable":true,"searchable":false,"type":"string"},"title":{"keyPropertyMapping":"title","retrievable":true,"type":"string"},"url":{"dynamicFacetable":false,"indexable":false,"retrievable":true,"searchable":false,"type":"string"}},"type":"object"}'
@@ -156,168 +156,166 @@ values:
     - certificate_pem: null
       pem_certificate: '-----BEGIN CERTIFICATE-----
 
-        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
+        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
 
-        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
+        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
 
-        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
+        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
 
-        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
+        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
 
-        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
+        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
 
-        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
+        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
 
-        X7NMqIxilVQBLuwN33QfDbAK3YOoyBo/n4/O0OFmDEAwphwDEZnedPDaYxqxkQna
+        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
 
-        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
+        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
 
-        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
+        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
 
-        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
+        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
 
-        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
+        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
 
-        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
+        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
 
-        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
+        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
 
-        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
+        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
 
-        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
+        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
 
-        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
+        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
 
-        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
+        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
 
-        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
+        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
 
-        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
+        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
 
-        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
+        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
 
-        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
+        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
 
-        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
+        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
 
-        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
+        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
 
-        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
+        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
 
-        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
+        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
 
-        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
+        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
 
-        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
+        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
 
-        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
-
-        j9v/M378
+        TXFLGY8AZmt0E1mIzfdPOchjrTub7ah7zyb/BGtQcnO7PgLu3oUF
 
         -----END CERTIFICATE-----
 
         '
       pem_private_key: '-----BEGIN PRIVATE KEY-----
 
-        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
+        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
 
-        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
+        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
 
-        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
+        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
 
-        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
+        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
 
-        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
+        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
 
-        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
+        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
 
-        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
+        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
 
-        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
+        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
 
-        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
+        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
 
-        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
+        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
 
-        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
+        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
 
-        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
+        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
 
-        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
+        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
 
-        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
+        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
 
-        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
+        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
 
-        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
+        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
 
-        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
+        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
 
-        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
+        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
 
-        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
+        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
 
-        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
+        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
 
-        7ByLKQilmPicrpxad/MK+AvRGwMXulpVtJ4gxg0Si+njINahzr30fnDJTt/yVivs
+        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
 
-        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
+        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
 
-        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
+        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
 
-        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
+        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
 
-        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
+        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
 
-        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
+        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
 
-        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
+        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
 
-        XQH8i5j1kO/yna5r0Iz5HJbiR3VA3M29jt8GkPFLdITv/QTjAoIBAQC3Fwb6fH28
+        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
 
-        zhW4pIbU60Par73jsq+8gdecVYq0J9kzGcFCA3oQAryXfFkyG3u49F0Zxl3WsOcr
+        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
 
-        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
+        k/IPwWeV8ZluW/hAvygABkRNPCc2l5quF3gzWDoVAMLfrLVe4JNat5Xq2uPpkgJI
 
-        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
+        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
 
-        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
+        zheNV4eZRAF6uloyMhizDCr7ks0iGD8tijEwyct5UtRH+BCOuZf8/P7IXKQa+BBL
 
-        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
+        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
 
-        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
+        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
 
-        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
+        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
 
-        yU6erh7TJhd9BYUeXMiVJVhae0GAOJQ+7nAVLPz2fhl9ihpX6e9FannCtUQmHChg
+        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
 
-        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
+        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
 
-        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
+        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
 
-        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
+        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
 
-        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
+        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
 
-        +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
+        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
 
-        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
+        NEAroZRCX+sr4PcebVy6B//bYOBljAvNxY0JxyLgdpPeMHbf2pnXKy2j5mREJEFO
 
-        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
+        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
 
-        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
+        nhVUoQr6ylMxJD0fnn+zE4WIFODwqbGAw4r0JOSrwaEgaGf32I7JMYpJ9vL6jpu3
 
-        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
+        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
 
-        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
+        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
 
-        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
+        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
 
-        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
+        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
 
-        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
+        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
 
-        jNtxjDTe4OBhjuuWOb9mjkLYa7SHH3Q=
+        4PE9FhNDIRELhYGn0UZECMUEu98vvfQr
 
         -----END PRIVATE KEY-----
 
@@ -326,79 +324,78 @@ values:
     terraform_labels:
       goog-terraform-provisioned: 'true'
     timeouts: null
-  module.cloud-function.google_cloud_run_service_iam_binding.invoker[0]:
-    condition: []
-    location: europe-west1
-    members:
-    - serviceAccount:service-123456789012@gcp-sa-ces.iam.gserviceaccount.com
-    project: your-project
-    role: roles/run.invoker
-    service: cx-as-0
-  module.cloud-function.google_cloudfunctions2_function.function:
-    build_config:
-    - entry_point: main
-      on_deploy_update_policy: []
-      runtime: python310
-      service_account: projects/prefix-gf-ai-apps-as-0/serviceAccounts/gecx-as-0@prefix-gf-ai-apps-as-0.iam.gserviceaccount.com
-      source:
-      - repo_source: []
-        storage_source:
-        - bucket: prefix-cx-as-0
-          object: bundle-7ad59c95d051745a5fee91ffc94d2890.zip
-      worker_pool: null
+  module.cloud-run.google_cloud_run_v2_service.service[0]:
+    annotations: null
+    binary_authorization: []
+    build_config: []
+    client: null
+    client_version: null
+    custom_audiences:
+    - https://run.example.com
+    - https://run.example.com/*
+    default_uri_disabled: null
     deletion_policy: DELETE
-    description: Terraform managed.
+    deletion_protection: true
+    description: null
     effective_labels:
       goog-terraform-provisioned: 'true'
-    event_trigger: []
-    kms_key_name: null
+    iap_enabled: false
+    ingress: INGRESS_TRAFFIC_INTERNAL_LOAD_BALANCER
+    invoker_iam_disabled: false
     labels: null
     location: europe-west1
+    multi_region_settings: []
     name: cx-as-0
     project: your-project
-    service_config:
-    - all_traffic_on_latest_revision: true
-      available_cpu: '0.166'
-      available_memory: 256M
-      binary_authorization_policy: null
-      direct_vpc_egress: VPC_EGRESS_ALL_TRAFFIC
-      direct_vpc_network_interface:
-      - network: projects/prefix-gf-srun-hp-0/global/networks/net-0
-        subnetwork: projects/prefix-gf-srun-hp-0/regions/europe-west1/subnetworks/sub-0
-        tags: []
-      environment_variables:
-        LOG_EXECUTION_ID: 'true'
-      ingress_settings: ALLOW_INTERNAL_ONLY
-      max_instance_count: 1
-      min_instance_count: 0
-      secret_environment_variables: []
-      secret_volumes: []
-      service_account_email: gecx-as-0@prefix-gf-ai-apps-as-0.iam.gserviceaccount.com
-      timeout_seconds: 180
-      vpc_connector: null
-      vpc_connector_egress_settings: null
+    template:
+    - annotations: null
+      containers:
+      - args: null
+        base_image_uri: null
+        command: null
+        depends_on: null
+        env: []
+        image: us-docker.pkg.dev/cloudrun/container/hello
+        liveness_probe: []
+        name: ai
+        readiness_probe: []
+        resources:
+        - cpu_idle: null
+          limits:
+            cpu: 1000m
+            memory: 512Mi
+          startup_cpu_boost: null
+        source_code: []
+        volume_mounts: []
+        working_dir: null
+      encryption_key: null
+      execution_environment: EXECUTION_ENVIRONMENT_GEN2
+      gpu_zonal_redundancy_disabled: null
+      health_check_disabled: null
+      labels: null
+      node_selector: []
+      revision: null
+      scaling:
+      - max_instance_count: 3
+        min_instance_count: 1
+      service_account: gecx-as-0@prefix-gf-ai-apps-as-0.iam.gserviceaccount.com
+      service_mesh: []
+      session_affinity: null
+      volumes: []
+      vpc_access:
+      - connector: null
+        egress: ALL_TRAFFIC
+        network_interfaces:
+        - network: projects/prefix-gf-srun-hp-0/global/networks/net-0
+          subnetwork: projects/prefix-gf-srun-hp-0/regions/europe-west1/subnetworks/sub-0
+          tags: []
     terraform_labels:
       goog-terraform-provisioned: 'true'
     timeouts: null
-  module.cloud-function.google_storage_bucket_object.bundle[0]:
-    bucket: prefix-cx-as-0
-    cache_control: null
-    content_disposition: null
-    content_encoding: null
-    content_language: null
-    contexts: []
-    customer_encryption: []
-    deletion_policy: DELETE
-    detect_md5hash: null
-    event_based_hold: null
-    force_empty_content_type: null
-    metadata: null
-    name: bundle-7ad59c95d051745a5fee91ffc94d2890.zip
-    retention: []
-    source: /tmp/bundle-your-project-cx-as-0.zip
-    source_md5hash: 7ad59c95d051745a5fee91ffc94d2890
-    temporary_hold: null
-    timeouts: null
+  module.cloud-run.google_cloud_run_v2_service_iam_binding.binding["roles/run.invoker"]:
+    condition: []
+    members: null
+    role: roles/run.invoker
   module.dns_service_directory["example-com"].google_dns_managed_zone.dns_managed_zone[0]:
     cloud_logging_config:
     - enable_logging: false
@@ -422,63 +419,6 @@ values:
       goog-terraform-provisioned: 'true'
     timeouts: null
     visibility: private
-  module.ds-bucket.google_storage_bucket.bucket[0]:
-    autoclass: []
-    cors: []
-    custom_placement_config: []
-    default_event_based_hold: null
-    deletion_policy: DELETE
-    effective_labels:
-      goog-terraform-provisioned: 'true'
-    enable_object_retention: null
-    encryption: []
-    force_destroy: false
-    hierarchical_namespace: []
-    ip_filter: []
-    labels: null
-    lifecycle_rule: []
-    location: EU
-    logging: []
-    name: prefix-cx-as-0-ds
-    project: your-project
-    requester_pays: null
-    retention_policy: []
-    storage_class: STANDARD
-    terraform_labels:
-      goog-terraform-provisioned: 'true'
-    timeouts: null
-    uniform_bucket_level_access: true
-    versioning:
-    - enabled: true
-  module.gcs_bucket.google_storage_bucket.bucket[0]:
-    autoclass: []
-    cors: []
-    custom_placement_config: []
-    default_event_based_hold: null
-    deletion_policy: DELETE
-    effective_labels:
-      goog-terraform-provisioned: 'true'
-    enable_object_retention: null
-    encryption: []
-    force_destroy: false
-    hierarchical_namespace: []
-    ip_filter: []
-    labels: null
-    lifecycle_rule: []
-    location: EUROPE-WEST1
-    logging: []
-    name: prefix-cx-as-0
-    project: your-project
-    public_access_prevention: enforced
-    requester_pays: null
-    retention_policy: []
-    storage_class: STANDARD
-    terraform_labels:
-      goog-terraform-provisioned: 'true'
-    timeouts: null
-    uniform_bucket_level_access: true
-    versioning:
-    - enabled: true
   module.lb_internal.google_compute_forwarding_rule.default:
     all_ports: null
     allow_global_access: null
@@ -552,8 +492,7 @@ values:
     app_engine: []
     cloud_function: []
     cloud_run:
-    - service: cx-as-0
-      tag: null
+    - tag: null
       url_mask: null
     deletion_policy: DELETE
     description: Terraform managed.
@@ -641,7 +580,7 @@ values:
     region: europe-west1
     test: []
     timeouts: null
-  module.lbs-int-proxy["example-com-onprem-01"].google_compute_forwarding_rule.default:
+  module.lbs-int-proxy["example-com-onprem/onprem-01"].google_compute_forwarding_rule.default:
     all_ports: null
     allow_global_access: null
     allow_psc_global_access: null
@@ -653,7 +592,7 @@ values:
     is_mirroring_collector: null
     labels: null
     load_balancing_scheme: INTERNAL_MANAGED
-    name: example-com-onprem-01
+    name: example-com-onprem-onprem-01
     network: https://www.googleapis.com/compute/v1/projects/prefix-gf-srun-hp-0/global/networks/net-0
     no_automate_dns_zone: null
     port_range: '443'
@@ -665,67 +604,67 @@ values:
     source_ip_ranges: null
     subnetwork: projects/prefix-gf-srun-hp-0/regions/europe-west1/subnetworks/sub-0
     timeouts: null
-  module.lbs-int-proxy["example-com-onprem-01"].google_compute_network_endpoint.default["b-0"]:
+  module.lbs-int-proxy["example-com-onprem/onprem-01"].google_compute_network_endpoint.default["b-0"]:
     deletion_policy: DELETE
     instance: null
     ip_address: 10.0.0.2
-    network_endpoint_group: example-com-onprem-01-b
+    network_endpoint_group: example-com-onprem-onprem-01-b
     port: 443
     project: your-project
     timeouts: null
     zone: europe-west1-b
-  module.lbs-int-proxy["example-com-onprem-01"].google_compute_network_endpoint.default["c-0"]:
+  module.lbs-int-proxy["example-com-onprem/onprem-01"].google_compute_network_endpoint.default["c-0"]:
     deletion_policy: DELETE
     instance: null
     ip_address: 10.0.0.2
-    network_endpoint_group: example-com-onprem-01-c
+    network_endpoint_group: example-com-onprem-onprem-01-c
     port: 443
     project: your-project
     timeouts: null
     zone: europe-west1-c
-  module.lbs-int-proxy["example-com-onprem-01"].google_compute_network_endpoint.default["d-0"]:
+  module.lbs-int-proxy["example-com-onprem/onprem-01"].google_compute_network_endpoint.default["d-0"]:
     deletion_policy: DELETE
     instance: null
     ip_address: 10.0.0.2
-    network_endpoint_group: example-com-onprem-01-d
+    network_endpoint_group: example-com-onprem-onprem-01-d
     port: 443
     project: your-project
     timeouts: null
     zone: europe-west1-d
-  module.lbs-int-proxy["example-com-onprem-01"].google_compute_network_endpoint_group.default["b"]:
+  module.lbs-int-proxy["example-com-onprem/onprem-01"].google_compute_network_endpoint_group.default["b"]:
     default_port: null
     deletion_policy: DELETE
     description: Terraform managed.
-    name: example-com-onprem-01-b
+    name: example-com-onprem-onprem-01-b
     network: https://www.googleapis.com/compute/v1/projects/prefix-gf-srun-hp-0/global/networks/net-0
     network_endpoint_type: NON_GCP_PRIVATE_IP_PORT
     project: your-project
     subnetwork: null
     timeouts: null
     zone: europe-west1-b
-  module.lbs-int-proxy["example-com-onprem-01"].google_compute_network_endpoint_group.default["c"]:
+  module.lbs-int-proxy["example-com-onprem/onprem-01"].google_compute_network_endpoint_group.default["c"]:
     default_port: null
     deletion_policy: DELETE
     description: Terraform managed.
-    name: example-com-onprem-01-c
+    name: example-com-onprem-onprem-01-c
     network: https://www.googleapis.com/compute/v1/projects/prefix-gf-srun-hp-0/global/networks/net-0
     network_endpoint_type: NON_GCP_PRIVATE_IP_PORT
     project: your-project
     subnetwork: null
     timeouts: null
     zone: europe-west1-c
-  module.lbs-int-proxy["example-com-onprem-01"].google_compute_network_endpoint_group.default["d"]:
+  module.lbs-int-proxy["example-com-onprem/onprem-01"].google_compute_network_endpoint_group.default["d"]:
     default_port: null
     deletion_policy: DELETE
     description: Terraform managed.
-    name: example-com-onprem-01-d
+    name: example-com-onprem-onprem-01-d
     network: https://www.googleapis.com/compute/v1/projects/prefix-gf-srun-hp-0/global/networks/net-0
     network_endpoint_type: NON_GCP_PRIVATE_IP_PORT
     project: your-project
     subnetwork: null
     timeouts: null
     zone: europe-west1-d
-  module.lbs-int-proxy["example-com-onprem-01"].google_compute_region_backend_service.default:
+  module.lbs-int-proxy["example-com-onprem/onprem-01"].google_compute_region_backend_service.default:
     affinity_cookie_ttl_sec: null
     backend:
     - balancing_mode: CONNECTION
@@ -781,7 +720,7 @@ values:
     ip_address_selection_policy: null
     load_balancing_scheme: INTERNAL_MANAGED
     locality_lb_policy: null
-    name: example-com-onprem-01
+    name: example-com-onprem-onprem-01
     network: null
     network_pass_through_lb_traffic_policy: []
     outlier_detection: []
@@ -795,7 +734,7 @@ values:
     subsetting: []
     timeouts: null
     tls_settings: []
-  module.lbs-int-proxy["example-com-onprem-01"].google_compute_region_health_check.default[0]:
+  module.lbs-int-proxy["example-com-onprem/onprem-01"].google_compute_region_health_check.default[0]:
     check_interval_sec: 5
     deletion_policy: DELETE
     description: Terraform managed.
@@ -805,7 +744,7 @@ values:
     http2_health_check: []
     http_health_check: []
     https_health_check: []
-    name: example-com-onprem-01
+    name: example-com-onprem-onprem-01
     project: your-project
     region: europe-west1
     ssl_health_check: []
@@ -819,31 +758,27 @@ values:
     timeout_sec: 5
     timeouts: null
     unhealthy_threshold: 2
-  module.lbs-int-proxy["example-com-onprem-01"].google_compute_region_target_tcp_proxy.default:
+  module.lbs-int-proxy["example-com-onprem/onprem-01"].google_compute_region_target_tcp_proxy.default:
     deletion_policy: DELETE
     description: Terraform managed.
-    name: example-com-onprem-01
+    name: example-com-onprem-onprem-01
     project: your-project
     proxy_header: NONE
     region: europe-west1
     timeouts: null
-  module.service_directory["example-com"].google_service_directory_endpoint.default["function/function-01"]:
-    endpoint_id: function-01
+  module.service_directory["example-com"].google_service_directory_endpoint.default["onprem/onprem-01"]:
+    endpoint_id: onprem-01
     metadata: null
     network: projects/123456789012/locations/global/networks/net-0
     port: 443
-    service: projects/lpb-gf-gecx-as-0/locations/europe-west1/namespaces/example-com/services/function
+    service: projects/ale1-gf-gecx-as-0/locations/europe-west1/namespaces/example-com/services/onprem
     timeouts: null
-  module.service_directory["example-com"].google_service_directory_endpoint.default["onprem/onprem-01"]:
-    address: ''
-    deletion_policy: DELETE
-    endpoint_id: onprem-01
-    id: projects/lpb-gf-gecx-as-0/locations/europe-west1/namespaces/example-com/services/onprem/endpoints/onprem-01
-    metadata: {}
-    name: projects/lpb-gf-gecx-as-0/locations/europe-west1/namespaces/example-com/services/onprem/endpoints/onprem-01
-    network: ''
-    port: 0
-    service: projects/lpb-gf-gecx-as-0/locations/europe-west1/namespaces/example-com/services/onprem
+  module.service_directory["example-com"].google_service_directory_endpoint.default["run/run-01"]:
+    endpoint_id: run-01
+    metadata: null
+    network: projects/123456789012/locations/global/networks/net-0
+    port: 443
+    service: projects/ale1-gf-gecx-as-0/locations/europe-west1/namespaces/example-com/services/run
     timeouts: null
   module.service_directory["example-com"].google_service_directory_namespace.default:
     deletion_policy: DELETE
@@ -856,26 +791,26 @@ values:
     terraform_labels:
       goog-terraform-provisioned: 'true'
     timeouts: null
-  module.service_directory["example-com"].google_service_directory_service.default["function"]:
-    deletion_policy: DELETE
-    id: projects/lpb-gf-gecx-as-0/locations/europe-west1/namespaces/example-com/services/function
-    metadata: {}
-    name: projects/lpb-gf-gecx-as-0/locations/europe-west1/namespaces/example-com/services/function
-    service_id: function
-    timeouts: null
   module.service_directory["example-com"].google_service_directory_service.default["onprem"]:
     deletion_policy: DELETE
-    id: projects/lpb-gf-gecx-as-0/locations/europe-west1/namespaces/example-com/services/onprem
+    id: projects/ale1-gf-gecx-as-0/locations/europe-west1/namespaces/example-com/services/onprem
     metadata: {}
-    name: projects/lpb-gf-gecx-as-0/locations/europe-west1/namespaces/example-com/services/onprem
+    name: projects/ale1-gf-gecx-as-0/locations/europe-west1/namespaces/example-com/services/onprem
     service_id: onprem
+    timeouts: null
+  module.service_directory["example-com"].google_service_directory_service.default["run"]:
+    deletion_policy: DELETE
+    id: projects/ale1-gf-gecx-as-0/locations/europe-west1/namespaces/example-com/services/run
+    metadata: {}
+    name: projects/ale1-gf-gecx-as-0/locations/europe-west1/namespaces/example-com/services/run
+    service_id: run
     timeouts: null
 
 counts:
   google_certificate_manager_certificate: 1
   google_ces_app: 1
-  google_cloud_run_service_iam_binding: 1
-  google_cloudfunctions2_function: 1
+  google_cloud_run_v2_service: 1
+  google_cloud_run_v2_service_iam_binding: 1
   google_compute_address: 1
   google_compute_forwarding_rule: 3
   google_compute_network_endpoint: 3
@@ -893,10 +828,9 @@ counts:
   google_service_directory_endpoint: 2
   google_service_directory_namespace: 1
   google_service_directory_service: 2
-  google_storage_bucket: 3
-  google_storage_bucket_object: 1
-  modules: 11
-  resources: 35
+  google_storage_bucket: 1
+  modules: 9
+  resources: 32
 
 outputs:
   commands: __missing__

@@ -49,9 +49,13 @@ locals {
 output "commands" {
   description = "Run these commands to complete the deployment."
   value = templatefile("./templates/outputs.sh", {
-    app_id                  = google_ces_app.gecx_as_app.app_id
+    agents = {
+      for k, v in google_ces_app.gecx_as_app : k => {
+        app_id  = v.app_id
+        ds_name = google_discovery_engine_data_store.knowledge_base[k].name
+      }
+    }
     bucket_url_build        = module.build-bucket.url
-    ds_name                 = google_discovery_engine_data_store.knowledge_base.name
     project_id              = var.project_id
     region_discovery_engine = var.region_discovery_engine
     service_account_emails  = local.service_account_emails
