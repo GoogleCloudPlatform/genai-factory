@@ -7,31 +7,35 @@ export IMPERSONATE_SERVICE_ACCOUNT="${service_account_emails["service-01/iac-rw"
 # Cleanup
 rm -rf ./build
 
+# Build and ingest data stores and agents for each agent defined in configuration map
+%{ for agent_id, agent_config in agents ~}
+echo "=== Commands to deploy Agent: ${agent_id} ==="
+
 # Build and ingest data store
-mkdir -p ./build/data_store
+mkdir -p ./build/data_store_${agent_id}
 uv run scripts/agentutil.py data-store ingest \
   ./data/ds-kb \
-  ./build/data_store \
+  ./build/data_store_${agent_id} \
   ${bucket_url_build} \
-  --ingest-to ${ds_name} \
+  --ingest-to ${agent_config.ds_name} \
   --impersonate-service-account "$IMPERSONATE_SERVICE_ACCOUNT"
 
 # Rebuild agent
-mkdir -p ./build/app/dist
-cp -r ./data/apps/default ./build/app/dist/agent
+mkdir -p ./build/app/dist/${agent_id}
+cp -r ./data/apps/default ./build/app/dist/${agent_id}/agent
 
 # Update Data Store reference
 uv run scripts/agentutil.py ces agent replace-data-store \
-  "./build/app/dist/agent" \
+  "./build/app/dist/${agent_id}/agent" \
   "kb_data_store" \
-  ${ds_name} \
+  ${agent_config.ds_name} \
   --impersonate-service-account "$IMPERSONATE_SERVICE_ACCOUNT"
 
 %{ if length(toolsets) > 0 ~}
 # Setup toolsets
 %{ for k,v in toolsets ~}
 uv run scripts/agentutil.py create-toolset \
-  "./build/app/dist/agent" \
+  "./build/app/dist/${agent_id}/agent" \
   ${k} \
   ${v.uri} \
   --openapi-spec "${v.openapi_spec}" \%{ if try(length(v.allowed_ca_certs) > 0, false) }
@@ -43,10 +47,12 @@ uv run scripts/agentutil.py create-toolset \
 %{ endif ~}
 
 # Push the agent
-uv run scripts/agentutil.py ces agent push ./build/app/dist/agent/ \
-  projects/${project_id}/locations/${region_discovery_engine}/apps/${app_id} \
+uv run scripts/agentutil.py ces agent push ./build/app/dist/${agent_id}/agent/ \
+  projects/${project_id}/locations/${region_discovery_engine}/apps/${agent_config.app_id} \
   ${bucket_url_build} \
   --impersonate-service-account "$IMPERSONATE_SERVICE_ACCOUNT"
 
 # To finalize the agent configuration go to
-# https://ces.cloud.google.com/projects/${project_id}/locations/${region_discovery_engine}/apps/${app_id}
+# https://ces.cloud.google.com/projects/${project_id}/locations/${region_discovery_engine}/apps/${agent_config.app_id}
+
+%{ endfor ~}

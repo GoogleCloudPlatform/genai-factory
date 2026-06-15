@@ -31,8 +31,9 @@ module "build-bucket" {
 }
 
 resource "google_discovery_engine_data_store" "knowledge_base" {
-  data_store_id                = "${var.name}-kb"
-  display_name                 = "${var.name} knowledge base"
+  for_each                     = var.cx_as_configs
+  data_store_id                = "${each.key}-kb"
+  display_name                 = "${each.key} knowledge base"
   project                      = var.project_id
   location                     = var.region_discovery_engine
   industry_vertical            = "GENERIC"
@@ -62,10 +63,11 @@ resource "google_discovery_engine_data_store" "knowledge_base" {
 }
 
 resource "google_discovery_engine_schema" "knowledge_base" {
-  schema_id     = "${var.name}-kb-schema"
+  for_each      = var.cx_as_configs
+  schema_id     = "${each.key}-kb-schema"
   project       = var.project_id
   location      = var.region_discovery_engine
-  data_store_id = google_discovery_engine_data_store.knowledge_base.data_store_id
+  data_store_id = google_discovery_engine_data_store.knowledge_base[each.key].data_store_id
   json_schema   = file("./data/ds-kb/knowledge_base_data_store_schema.json")
   deletion_policy = (
     var.enable_deletion_protection
@@ -75,46 +77,47 @@ resource "google_discovery_engine_schema" "knowledge_base" {
 }
 
 resource "google_ces_app" "gecx_as_app" {
-  app_id              = var.name
-  display_name        = var.name
+  for_each            = var.cx_as_configs
+  app_id              = each.key
+  display_name        = each.key
   project             = var.project_id
   location            = var.region_discovery_engine
   description         = "A sample Gemini Enterprise for CX application."
-  tool_execution_mode = var.cx_as_configs.tool_execution_mode
+  tool_execution_mode = each.value.tool_execution_mode
 
   language_settings {
-    default_language_code = var.cx_as_configs.supported_languages[0]
+    default_language_code = each.value.supported_languages[0]
     supported_language_codes = (
       slice(
-        var.cx_as_configs.supported_languages,
+        each.value.supported_languages,
         1,
-        length(var.cx_as_configs.supported_languages)
+        length(each.value.supported_languages)
     ))
     enable_multilingual_support = false
   }
 
   audio_processing_config {
     dynamic "synthesize_speech_configs" {
-      for_each = toset(var.cx_as_configs.supported_languages)
+      for_each = toset(each.value.supported_languages)
 
       content {
         language_code = synthesize_speech_configs.value
-        speaking_rate = var.cx_as_configs.speaking_rate
+        speaking_rate = each.value.speaking_rate
       }
     }
   }
 
   logging_settings {
     cloud_logging_settings {
-      enable_cloud_logging = var.cx_as_configs.enable_cloud_logging
+      enable_cloud_logging = each.value.enable_cloud_logging
     }
     conversation_logging_settings {
-      disable_conversation_logging = !var.cx_as_configs.enable_conversation_logging
+      disable_conversation_logging = !each.value.enable_conversation_logging
     }
   }
 
   time_zone_settings {
-    time_zone = var.cx_as_configs.timezone
+    time_zone = each.value.timezone
   }
 
   lifecycle {
