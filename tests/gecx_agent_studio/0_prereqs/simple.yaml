@@ -16,7 +16,6 @@ values:
   google_service_account_iam_member.me_sa_token_creator[0]:
     condition: []
     role: roles/iam.serviceAccountTokenCreator
-    service_account_id: projects/your-prefix-gf-gecx-as-0/serviceAccounts/iac-rw@your-prefix-gf-gecx-as-0.iam.gserviceaccount.com
   local_file.providers:
     content_base64: null
     directory_permission: '0777'
@@ -696,12 +695,6 @@ values:
   : condition: []
     project: your-prefix-gf-gecx-as-hp-0
     role: roles/servicedirectory.pscAuthorizedService
-  ? module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/artifactregistry.reader"]
-  : condition: []
-    members:
-    - serviceAccount:gecx-as-build-0@your-prefix-gf-gecx-as-0.iam.gserviceaccount.com
-    project: your-prefix-gf-gecx-as-0
-    role: roles/artifactregistry.reader
   ? module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/artifactregistry.writer"]
   : condition: []
     members:
@@ -720,12 +713,6 @@ values:
     - serviceAccount:iac-rw@your-prefix-gf-gecx-as-0.iam.gserviceaccount.com
     project: your-prefix-gf-gecx-as-0
     role: roles/ces.admin
-  module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/cloudfunctions.admin"]:
-    condition: []
-    members:
-    - serviceAccount:iac-rw@your-prefix-gf-gecx-as-0.iam.gserviceaccount.com
-    project: your-prefix-gf-gecx-as-0
-    role: roles/cloudfunctions.admin
   ? module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/compute.loadBalancerAdmin"]
   : condition: []
     members:
@@ -754,12 +741,12 @@ values:
   : condition: []
     project: your-prefix-gf-gecx-as-0
     role: roles/privateca.certificateRequester
-  module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/run.builder"]:
+  module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/run.admin"]:
     condition: []
     members:
-    - serviceAccount:gecx-as-build-0@your-prefix-gf-gecx-as-0.iam.gserviceaccount.com
+    - serviceAccount:iac-rw@your-prefix-gf-gecx-as-0.iam.gserviceaccount.com
     project: your-prefix-gf-gecx-as-0
-    role: roles/run.builder
+    role: roles/run.admin
   module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/servicedirectory.admin"]:
     condition: []
     members:
@@ -878,10 +865,6 @@ values:
     condition: []
     project: your-prefix-gf-gecx-as-0
     role: roles/dns.serviceAgent
-  module.projects.module.projects["service-01"].google_project_iam_member.service_agents["gcf-admin-robot"]:
-    condition: []
-    project: your-prefix-gf-gecx-as-0
-    role: roles/cloudfunctions.serviceAgent
   module.projects.module.projects["service-01"].google_project_iam_member.service_agents["serverless-robot-prod"]:
     condition: []
     project: your-prefix-gf-gecx-as-0
@@ -917,13 +900,6 @@ values:
     disable_on_destroy: false
     project: your-prefix-gf-gecx-as-0
     service: cloudbuild.googleapis.com
-    timeouts: null
-  module.projects.module.projects["service-01"].google_project_service.project_services["cloudfunctions.googleapis.com"]:
-    deletion_policy: DELETE
-    disable_dependent_services: false
-    disable_on_destroy: false
-    project: your-prefix-gf-gecx-as-0
-    service: cloudfunctions.googleapis.com
     timeouts: null
   module.projects.module.projects["service-01"].google_project_service.project_services["compute.googleapis.com"]:
     deletion_policy: DELETE
@@ -979,10 +955,6 @@ values:
     project: your-prefix-gf-gecx-as-0
     service: ces.googleapis.com
     timeouts: null
-  module.projects.module.projects["service-01"].google_project_service_identity.default["cloudfunctions.googleapis.com"]:
-    project: your-prefix-gf-gecx-as-0
-    service: cloudfunctions.googleapis.com
-    timeouts: null
   module.projects.module.projects["service-01"].google_project_service_identity.default["discoveryengine.googleapis.com"]:
     project: your-prefix-gf-gecx-as-0
     service: discoveryengine.googleapis.com
@@ -1003,10 +975,6 @@ values:
   : condition: []
     role: roles/iam.serviceAccountUser
     service_account_id: projects/your-prefix-gf-gecx-as-0/serviceAccounts/gecx-as-0@your-prefix-gf-gecx-as-0.iam.gserviceaccount.com
-  ? module.projects.module.service-accounts-iam["service-01/iac-rw"].google_service_account_iam_member.additive["$service_account_ids:_self_/gecx-as-build-0-roles/iam.serviceAccountUser"]
-  : condition: []
-    role: roles/iam.serviceAccountUser
-    service_account_id: projects/your-prefix-gf-gecx-as-0/serviceAccounts/gecx-as-build-0@your-prefix-gf-gecx-as-0.iam.gserviceaccount.com
   ? module.projects.module.service-accounts-iam["service-01/iac-rw"].google_service_account_iam_member.bindings["cloud-run-token-creator"]
   : condition: []
     role: roles/iam.serviceAccountTokenCreator
@@ -1019,17 +987,6 @@ values:
     display_name: Terraform-managed.
     email: gecx-as-0@your-prefix-gf-gecx-as-0.iam.gserviceaccount.com
     member: serviceAccount:gecx-as-0@your-prefix-gf-gecx-as-0.iam.gserviceaccount.com
-    project: your-prefix-gf-gecx-as-0
-    timeouts: null
-  module.projects.module.service-accounts["service-01/gecx-as-build-0"].google_service_account.service_account[0]:
-    account_id: gecx-as-build-0
-    create_ignore_already_exists: null
-    deletion_policy: DELETE
-    description: null
-    disabled: false
-    display_name: Terraform-managed.
-    email: gecx-as-build-0@your-prefix-gf-gecx-as-0.iam.gserviceaccount.com
-    member: serviceAccount:gecx-as-build-0@your-prefix-gf-gecx-as-0.iam.gserviceaccount.com
     project: your-prefix-gf-gecx-as-0
     timeouts: null
   module.projects.module.service-accounts["service-01/iac-rw"].google_service_account.service_account[0]:
@@ -1167,17 +1124,17 @@ counts:
   google_dns_response_policy_rule: 39
   google_logging_project_settings: 1
   google_project: 2
-  google_project_iam_binding: 20
-  google_project_iam_member: 13
-  google_project_service: 13
-  google_project_service_identity: 9
-  google_service_account: 3
-  google_service_account_iam_member: 4
+  google_project_iam_binding: 18
+  google_project_iam_member: 12
+  google_project_service: 12
+  google_project_service_identity: 8
+  google_service_account: 2
+  google_service_account_iam_member: 3
   google_storage_bucket: 1
   google_storage_bucket_iam_binding: 1
   local_file: 2
-  modules: 12
-  resources: 119
+  modules: 11
+  resources: 112
   terraform_data: 2
 
 outputs:
@@ -1191,10 +1148,6 @@ outputs:
       email: gecx-as-0@your-prefix-gf-gecx-as-0.iam.gserviceaccount.com
       iam_email: serviceAccount:gecx-as-0@your-prefix-gf-gecx-as-0.iam.gserviceaccount.com
       id: projects/your-prefix-gf-gecx-as-0/serviceAccounts/gecx-as-0@your-prefix-gf-gecx-as-0.iam.gserviceaccount.com
-    service-01/gecx-as-build-0:
-      email: gecx-as-build-0@your-prefix-gf-gecx-as-0.iam.gserviceaccount.com
-      iam_email: serviceAccount:gecx-as-build-0@your-prefix-gf-gecx-as-0.iam.gserviceaccount.com
-      id: projects/your-prefix-gf-gecx-as-0/serviceAccounts/gecx-as-build-0@your-prefix-gf-gecx-as-0.iam.gserviceaccount.com
     service-01/iac-rw:
       email: iac-rw@your-prefix-gf-gecx-as-0.iam.gserviceaccount.com
       iam_email: serviceAccount:iac-rw@your-prefix-gf-gecx-as-0.iam.gserviceaccount.com
