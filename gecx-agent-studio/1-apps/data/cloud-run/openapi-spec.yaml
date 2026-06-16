@@ -26,6 +26,16 @@ paths:
       summary: Echoes back the incoming POST request data
       description: Takes any JSON payload, parses it, and returns it inside a structured wrapper object along with client network and header metadata.
       operationId: echoPost
+      parameters:
+        - name: format
+          in: query
+          required: true
+          description: Response format query parameter.
+          schema:
+            type: string
+            enum:
+              - json
+            default: json
       requestBody:
         required: true
         content:
