@@ -43,7 +43,7 @@ def _prepare_root_module(path):
   ignore_patterns = shutil.ignore_patterns('*.auto.tfvars',
                                            '*.auto.tfvars.json',
                                            '[0-9]-*-providers.tf',
-                                           'terraform.tfstate*',
+                                           'providers.tf', 'terraform.tfstate*',
                                            '.terraform.lock.hcl',
                                            'terraform.tfvars', '.terraform')
 
