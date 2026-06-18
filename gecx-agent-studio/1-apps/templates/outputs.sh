@@ -7,29 +7,41 @@ export IMPERSONATE_SERVICE_ACCOUNT="${service_account_emails["service-01/iac-rw"
 # Cleanup
 rm -rf ./build
 
-# Build and ingest data stores and agents for each agent defined in configuration map
-%{ for agent_id, agent_config in agents ~}
-echo "=== Commands to deploy Agent: ${agent_id} ==="
+# Ingest data stores
+%{ if length(datastores) > 0 ~}
+echo "Ingesting Data Stores"
+%{ for ds_id, ds_config in datastores ~}
+echo "Ingesting Data Store: ${ds_id}..."
 
-# Build and ingest data store
-mkdir -p ./build/data_store_${agent_id}
+export DS_SOURCE_DIR=$(dirname "${ds_config.schema_path}")
+
+mkdir -p ./build/data_store_${ds_id}
 uv run scripts/agentutil.py data-store ingest \
-  ./data/ds-kb \
-  ./build/data_store_${agent_id} \
+  "$DS_SOURCE_DIR" \
+  ./build/data_store_${ds_id} \
   ${bucket_url_build} \
-  --ingest-to ${agent_config.ds_name} \
+  --ingest-to ${ds_config.name} \
   --impersonate-service-account "$IMPERSONATE_SERVICE_ACCOUNT"
+%{ endfor ~}
+%{ endif ~}
+
+# Create and deploy agents
+echo "Creating and Deploying Agents"
+%{ for agent_id, agent_config in agents ~}
+echo "Creating and Deploying Agent: ${agent_id}..."
 
 # Rebuild agent
 mkdir -p ./build/app/dist/${agent_id}
 cp -r ./data/apps/default ./build/app/dist/${agent_id}/agent
 
-# Update Data Store reference
+# Update Data Store references
+%{ for ds_name in agent_config.datastores ~}
 uv run scripts/agentutil.py ces agent replace-data-store \
   "./build/app/dist/${agent_id}/agent" \
   "kb_data_store" \
-  ${agent_config.ds_name} \
+  ${ds_name} \
   --impersonate-service-account "$IMPERSONATE_SERVICE_ACCOUNT"
+%{ endfor ~}
 
 %{ if length(toolsets) > 0 ~}
 # Setup toolsets

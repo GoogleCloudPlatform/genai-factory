@@ -30,16 +30,16 @@ module "build-bucket" {
   force_destroy = !var.enable_deletion_protection
 }
 
-resource "google_discovery_engine_data_store" "knowledge_base" {
-  for_each                     = var.cx_as_configs
-  data_store_id                = "${each.key}-kb"
-  display_name                 = "${each.key} knowledge base"
+resource "google_discovery_engine_data_store" "datastore" {
+  for_each                     = var.datastores_configs
+  data_store_id                = "${each.key}-ds"
+  display_name                 = "${each.key} datastore"
   project                      = var.project_id
   location                     = var.region_discovery_engine
-  industry_vertical            = "GENERIC"
-  content_config               = "CONTENT_REQUIRED"
-  solution_types               = ["SOLUTION_TYPE_CHAT"]
-  skip_default_schema_creation = true
+  industry_vertical            = each.value.industry_vertical
+  content_config               = each.value.content_config
+  solution_types               = each.value.solution_types
+  skip_default_schema_creation = each.value.skip_default_schema_creation
   deletion_policy = (
     var.enable_deletion_protection
     ? "PREVENT"
@@ -62,13 +62,13 @@ resource "google_discovery_engine_data_store" "knowledge_base" {
   }
 }
 
-resource "google_discovery_engine_schema" "knowledge_base" {
-  for_each      = var.cx_as_configs
+resource "google_discovery_engine_schema" "datastore" {
+  for_each      = var.datastores_configs
   schema_id     = "${each.key}-kb-schema"
   project       = var.project_id
   location      = var.region_discovery_engine
-  data_store_id = google_discovery_engine_data_store.knowledge_base[each.key].data_store_id
-  json_schema   = file("./data/ds-kb/knowledge_base_data_store_schema.json")
+  data_store_id = google_discovery_engine_data_store.datastore[each.key].data_store_id
+  json_schema   = file(each.value.schema_path)
   deletion_policy = (
     var.enable_deletion_protection
     ? "PREVENT"
@@ -77,7 +77,7 @@ resource "google_discovery_engine_schema" "knowledge_base" {
 }
 
 resource "google_ces_app" "gecx_as_app" {
-  for_each            = var.cx_as_configs
+  for_each            = var.agents_configs
   app_id              = each.key
   display_name        = each.key
   project             = var.project_id
