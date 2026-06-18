@@ -56,12 +56,12 @@ values:
     timeouts: null
     tool_execution_mode: PARALLEL
     variable_declarations: []
-  google_discovery_engine_data_store.knowledge_base["cx-as-0"]:
+  google_discovery_engine_data_store.datastore["cx-as-0"]:
     content_config: CONTENT_REQUIRED
     create_advanced_site_search: false
-    data_store_id: cx-as-0-kb
+    data_store_id: cx-as-0-ds
     deletion_policy: PREVENT
-    display_name: cx-as-0 knowledge base
+    display_name: cx-as-0 datastore
     document_processing_config:
     - chunking_config:
       - layout_based_chunking_config:
@@ -86,8 +86,8 @@ values:
     solution_types:
     - SOLUTION_TYPE_CHAT
     timeouts: null
-  google_discovery_engine_schema.knowledge_base["cx-as-0"]:
-    data_store_id: cx-as-0-kb
+  google_discovery_engine_schema.datastore["cx-as-0"]:
+    data_store_id: cx-as-0-ds
     deletion_policy: PREVENT
     json_schema: '{"$schema":"https://json-schema.org/draft/2020-12/schema","properties":{"brand_code":{"dynamicFacetable":false,"indexable":true,"retrievable":true,"searchable":false,"type":"string"},"title":{"keyPropertyMapping":"title","retrievable":true,"type":"string"},"url":{"dynamicFacetable":false,"indexable":false,"retrievable":true,"searchable":false,"type":"string"}},"type":"object"}'
     location: eu
@@ -771,14 +771,12 @@ values:
     metadata: null
     network: projects/123456789012/locations/global/networks/net-0
     port: 443
-    service: projects/ale1-gf-gecx-as-0/locations/europe-west1/namespaces/example-com/services/onprem
     timeouts: null
   module.service_directory["example-com"].google_service_directory_endpoint.default["run/run-01"]:
     endpoint_id: run-01
     metadata: null
     network: projects/123456789012/locations/global/networks/net-0
     port: 443
-    service: projects/ale1-gf-gecx-as-0/locations/europe-west1/namespaces/example-com/services/run
     timeouts: null
   module.service_directory["example-com"].google_service_directory_namespace.default:
     deletion_policy: DELETE
@@ -792,17 +790,11 @@ values:
       goog-terraform-provisioned: 'true'
     timeouts: null
   module.service_directory["example-com"].google_service_directory_service.default["onprem"]:
-    deletion_policy: DELETE
-    id: projects/ale1-gf-gecx-as-0/locations/europe-west1/namespaces/example-com/services/onprem
-    metadata: {}
-    name: projects/ale1-gf-gecx-as-0/locations/europe-west1/namespaces/example-com/services/onprem
+    metadata: null
     service_id: onprem
     timeouts: null
   module.service_directory["example-com"].google_service_directory_service.default["run"]:
-    deletion_policy: DELETE
-    id: projects/ale1-gf-gecx-as-0/locations/europe-west1/namespaces/example-com/services/run
-    metadata: {}
-    name: projects/ale1-gf-gecx-as-0/locations/europe-west1/namespaces/example-com/services/run
+    metadata: null
     service_id: run
     timeouts: null
 

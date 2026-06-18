@@ -686,6 +686,21 @@ def import_documents(full_data_store_name: str, gcs_uri: str) -> None:
   response = requests.post(api_endpoint, headers=headers, json=body)
 
   if response.status_code != 200:
+    try:
+      err_data = response.json()
+      err_message = err_data.get("error", {}).get("message", "")
+      if "Conflicting document import found on branch" in err_message:
+        import sys
+        logger.error(
+            "\n⚠️  An import/ingestion operation is already actively running on this datastore branch in Google Cloud.\n"
+            "   GCP only allows one concurrent import at a time.\n"
+            "   Please wait a few minutes for the active import to finish, then retry your command.\n"
+            f"   Active Operation: {err_message}\n"
+        )
+        sys.exit(1)
+    except Exception as e:
+      logger.debug(f"Could not parse error JSON: {e}")
+
     logger.error(
         f"Import failed with status code {response.status_code}: {response.text}"
     )

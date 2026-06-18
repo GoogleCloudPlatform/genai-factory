@@ -6,7 +6,7 @@
           "dataStoreSources": [
             {
               "dataStore": {
-                "name": "projects/802324843880/locations/eu/collections/default_collection/dataStores/tf-dev-ces-blueprint-kb"
+                "name": "projects/<PROJECT_ID>/locations/<LOCATION>/collections/default_collection/dataStores/<DATASTORE_ID>"
               }
             }
           ]

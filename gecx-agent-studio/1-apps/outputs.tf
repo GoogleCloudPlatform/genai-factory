@@ -49,10 +49,26 @@ locals {
 output "commands" {
   description = "Run these commands to complete the deployment."
   value = templatefile("./templates/outputs.sh", {
+    datastores = {
+      for k, v in google_discovery_engine_data_store.datastore : k => {
+        name        = v.name
+        schema_path = var.datastores_configs[k].schema_path
+      }
+    }
     agents = {
       for k, v in google_ces_app.gecx_as_app : k => {
-        app_id  = v.app_id
-        ds_name = google_discovery_engine_data_store.knowledge_base[k].name
+        app_id = v.app_id
+        datastores = [
+          for ds in (
+            var.agents_configs[k].datastores != null
+            ? var.agents_configs[k].datastores
+            : (contains(keys(var.datastores_configs), k) ? [k] : [])
+          ) : lookup(
+            google_discovery_engine_data_store.datastore,
+            ds,
+            { name = ds }
+          ).name
+        ]
       }
     }
     bucket_url_build        = module.build-bucket.url

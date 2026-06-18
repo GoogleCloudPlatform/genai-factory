@@ -12,6 +12,26 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# By default, these values are overridden when you redeploy the app
+# by using agentutil. Update the ignore_changes in the google_ces_app resource
+# to fully manage and update the resource via terraform.
+variable "agents_configs" {
+  description = "The CX Agent Studio Agents configurations."
+  type = map(object({
+    enable_cloud_logging        = optional(bool, true)
+    enable_conversation_logging = optional(bool, true)
+    speaking_rate               = optional(number, 0)
+    supported_languages         = optional(list(string), ["en-US"])
+    timezone                    = optional(string, "Europe/Rome")
+    tool_execution_mode         = optional(string, "PARALLEL")
+    datastores                  = optional(list(string)) # Try to Lookup in datastores_configs map or ID of existing datastore configured somewhere else
+  }))
+  nullable = false
+  default = {
+    cx-as-0 = {}
+  }
+}
+
 variable "bucket_name" {
   description = "The name for all GCS buckets added after the prefix. If not specified, var.name is used instead."
   type        = string
@@ -48,22 +68,20 @@ variable "cloud_run_config" {
   default  = {}
 }
 
-# By default, these values are overridden when you redeploy the app
-# by using agentutil. Update the ignore_changes in the google_ces_app resource
-# to fully manage and update the resource via terraform.
-variable "cx_as_configs" {
-  description = "The CX Agent Studio configurations."
+variable "datastores_configs" {
+  description = "The CX Agent Studio Datastores configurations."
   type = map(object({
-    enable_cloud_logging        = optional(bool, true)
-    enable_conversation_logging = optional(bool, true)
-    speaking_rate               = optional(number, 0)
-    supported_languages         = optional(list(string), ["en-US"])
-    timezone                    = optional(string, "Europe/Rome")
-    tool_execution_mode         = optional(string, "PARALLEL")
+    industry_vertical            = optional(string, "GENERIC")
+    content_config               = optional(string, "CONTENT_REQUIRED")
+    solution_types               = optional(list(string), ["SOLUTION_TYPE_CHAT"])
+    skip_default_schema_creation = optional(bool, true)
+    schema_path                  = optional(string)
   }))
   nullable = false
   default = {
-    cx-as-0 = {}
+    cx-as-0 = {
+      schema_path = "data/datastores/ds-kb/knowledge_base_data_store_schema.json"
+    }
   }
 }
 
