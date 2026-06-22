@@ -59,11 +59,11 @@ output "commands" {
       for k, v in google_ces_app.gecx_as_app : k => {
         app_id = v.app_id
         datastores = [
-          for ds in (
+          for ds in(
             var.agents_configs[k].datastores != null
             ? var.agents_configs[k].datastores
             : (contains(keys(var.datastores_configs), k) ? [k] : [])
-          ) : lookup(
+            ) : lookup(
             google_discovery_engine_data_store.datastore,
             ds,
             { name = ds }
