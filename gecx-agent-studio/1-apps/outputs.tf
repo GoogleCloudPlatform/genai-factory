@@ -23,34 +23,58 @@ locals {
     for k, v in var.service_account_emails
     : k => lookup(local._service_account_emails, v, v)
   }
+  toolsets = merge(
+    merge([
+      for namespace_name, namespace_config in var.service_directory_configs : {
+        for service_name, service_config in namespace_config.services :
+        "${service_name}-${namespace_name}" => {
+          allowed_ca_certs  = service_config.allowed_ca_certs
+          openapi_spec      = service_config.openapi_spec
+          service_directory = module.service_directory[namespace_name].service_id[service_name]
+          uri               = "${module.service_directory[namespace_name].services[service_name].service_id}.${namespace_config.cloud_dns_domain}"
+        }
+      }
+    ]...),
+    {
+      "run-example-com" = {
+        allowed_ca_certs  = [filebase64("data/cloud-run/cert.der")]
+        openapi_spec      = "data/cloud-run/openapi-spec.yaml"
+        service_directory = module.service_directory["example-com"].service_id["run"]
+        uri               = "${module.service_directory["example-com"].services["run"].service_id}.${var.cloud_run_config.cert_common_name}"
+      }
+    }
+  )
 }
 
 output "commands" {
-  description = "Run the following commands when the deployment completes to update and manage the application."
-  value       = <<EOT
-  # variables.generated.env generated in the scripts directory.
-  # You can now run the following commands:
-
-  # Deploy the CX Agent Studio application
-  bash scripts/deploy_agent.sh
-
-  # Ingest documents in the data store
-  bash scripts/deploy_agent.sh --ingest-kb
-  EOT
-}
-
-resource "local_file" "env_vars" {
-  content  = <<-EOT
-# This file is generated following terraform apply. It can be read by script to interact with the deployed resources
-
-export BUILD_BUCKET="${module.build_bucket.name}"
-export GCP_PROJECT_ID="${var.project_id}"
-export CES_APP_ID="${google_ces_app.gecx_as_app.app_id}"
-export CES_APP_LOCATION="${google_ces_app.gecx_as_app.location}"
-export KNOWLEDGE_BASE_DATA_STORE_ID="${google_discovery_engine_data_store.knowledge_base.data_store_id}"
-export KNOWLEDGE_BASE_DATA_STORE_LOCATION="${google_discovery_engine_data_store.knowledge_base.location}"
-export KNOWLEDGE_BASE_DATA_STORE_NAME="${google_discovery_engine_data_store.knowledge_base.name}"
-export IMPERSONATE_SERVICE_ACCOUNT="${local.service_account_emails["service-01/iac-rw"]}"
-EOT
-  filename = "./scripts/variables.generated.env"
+  description = "Run these commands to complete the deployment."
+  value = templatefile("./templates/outputs.sh", {
+    datastores = {
+      for k, v in google_discovery_engine_data_store.datastore : k => {
+        name        = v.name
+        schema_path = var.datastores_configs[k].schema_path
+      }
+    }
+    agents = {
+      for k, v in google_ces_app.gecx_as_app : k => {
+        app_id = v.app_id
+        datastores = [
+          for ds in(
+            var.agents_configs[k].datastores != null
+            ? var.agents_configs[k].datastores
+            : (contains(keys(var.datastores_configs), k) ? [k] : [])
+            ) : lookup(
+            google_discovery_engine_data_store.datastore,
+            ds,
+            { name = ds }
+          ).name
+        ]
+      }
+    }
+    bucket_url_build        = module.build-bucket.url
+    project_id              = var.project_id
+    region_discovery_engine = var.region_discovery_engine
+    service_account_emails  = local.service_account_emails
+    toolsets                = local.toolsets
+  })
 }

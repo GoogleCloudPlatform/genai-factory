@@ -14,12 +14,27 @@
 
 # variables from 0-prereqs
 
+networking_config = {
+  host_project_number = 123456789012
+  subnet              = "projects/prefix-gf-srun-hp-0/regions/europe-west1/subnetworks/sub-0"
+  vpc                 = "projects/prefix-gf-srun-hp-0/global/networks/net-0"
+}
+
 prefix = "prefix"
 
 project_id = "your-project"
+number     = "123456789012"
 
 region = "europe-west1"
 
 service_account_emails = {
-  "service-01/iac-rw" = "iac-rw@prefix-gf-ai-apps-df-0.iam.gserviceaccount.com"
+  "service-01/gecx-as-0"       = "gecx-as-0@prefix-gf-ai-apps-as-0.iam.gserviceaccount.com"
+  "service-01/gecx-df-build-0" = "gecx-df-build-0@prefix-gf-ai-apps-as-0.iam.gserviceaccount.com"
+  "service-01/iac-rw"          = "iac-rw@prefix-gf-ai-apps-as-0.iam.gserviceaccount.com"
+}
+
+service_account_ids = {
+  "service-01/gecx-as-0"       = "projects/prefix-gf-ai-apps-as-0/serviceAccounts/gecx-as-0@prefix-gf-ai-apps-as-0.iam.gserviceaccount.com"
+  "service-01/gecx-df-build-0" = "projects/prefix-gf-ai-apps-as-0/serviceAccounts/gecx-df-build-0@prefix-gf-ai-apps-as-0.iam.gserviceaccount.com"
+  "service-01/iac-rw"          = "projects/prefix-gf-ai-apps-as-0/serviceAccounts/iac-rw@prefix-gf-ai-apps-as-0.iam.gserviceaccount.com"
 }

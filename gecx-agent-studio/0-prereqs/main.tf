@@ -34,8 +34,20 @@ module "projects" {
   }
   factories_config = {
     basepath = "./data"
+    exclusions = {
+      projects = var.networking_config.create ? [] : ["host"]
+    }
     paths = {
       projects = "projects"
+    }
+  }
+  context = {
+    condition_vars = {
+      networking_config = {
+        host_project_id = var.networking_config.host_project_id
+        region          = var.region
+        subnet_name     = var.networking_config.subnet.name
+      }
     }
   }
 }

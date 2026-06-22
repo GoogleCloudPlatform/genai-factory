@@ -15,4 +15,5 @@
 module: gecx-agent-studio/0-prereqs
 
 tests:
+  no_host_prj:
   simple:

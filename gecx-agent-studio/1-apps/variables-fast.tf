@@ -15,6 +15,8 @@
 # These variables are automatically populated when using the FAST framework.
 # Ignore if not used.
 
+
+
 variable "service_accounts" {
   # tfdoc:variable:source 2-project-factory
   description = "The service accounts created for this stage."
@@ -25,4 +27,20 @@ variable "service_accounts" {
   }))
   nullable = false
   default  = {}
+}
+
+variable "subnet_self_links" {
+  # tfdoc:variable:source 2-networking
+  description = "Shared VPCs subnet IDs."
+  type        = map(string)
+  nullable    = false
+  default     = {}
+}
+
+variable "vpc_self_links" {
+  # tfdoc:variable:source 2-networking
+  description = "Shared VPC name => self link mappings."
+  type        = map(string)
+  nullable    = false
+  default     = {}
 }

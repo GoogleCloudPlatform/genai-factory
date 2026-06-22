@@ -16,9 +16,17 @@
 
 enable_deletion_protection = ${enable_deletion_protection}
 
+networking_config = {
+  host_project_number = "${try(networking_config.host_project_number, "")}"
+  subnet              = "${try(networking_config.subnet, "")}"
+  vpc                 = "${try(networking_config.vpc, "")}"
+}
+
 prefix = "${prefix}"
 
 project_id = "${project_id}"
+
+region = "${region}"
 
 service_account_emails = {
 %{ for k,v in service_account_emails ~}

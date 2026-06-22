@@ -2,7 +2,13 @@
 
 This stage is part of the `# Gemini Enterprise for Customer Experience (GECX) - CX Agent Studio` factory.
 
-It is responsible for setting up the Google Cloud project, activating the APIs and granting the roles you need to deploy and manage the components enabling the AI use case.
+It performs the following tasks:
+
+- Sets up GCP projects.
+- Activates the required APIs.
+- Creates service accounts.
+- Grants required roles to identities (users, service agents, and service accounts).
+- Creates the required networking stack by default (this can be disabled). The stack typically includes a host project, a Shared VPC, subnets, firewall policies and rules, and DNS response policies.
 
 This stage leverages the Cloud Foundation Fabric [project-factory module](https://github.com/GoogleCloudPlatform/cloud-foundation-fabric/tree/master/modules/project-factory).
 
@@ -16,6 +22,8 @@ To execute this stage, you need these roles:
 - `roles/billing.user` on the billing account you wish to use.
 
 Alternatively, you can use the more permissive `roles/owner` on the organization or folder.
+
+If you create the networking stack using this stage, you must also grant yourself the `roles/compute.xpnAdmin` role on the organization or folder.
 
 ## Deploy the stage
 
@@ -34,18 +42,20 @@ You should now see the `providers.tf` and `terraform.auto.tfvars` files in the [
 
 | name | description | type | required | default |
 |---|---|:---:|:---:|:---:|
-| [prefix](variables.tf#L28) | The name prefix to use for resources with a globally unique name. | <code>string</code> | ✓ |  |
-| [project_config](variables.tf#L34) | The project configuration. | <code title="object&#40;&#123;&#10;  billing_account_id &#61; optional&#40;string&#41;&#10;  parent             &#61; optional&#40;string&#41;&#10;&#125;&#41;">object&#40;&#123;&#8230;&#125;&#41;</code> | ✓ |  |
+| [prefix](variables.tf#L48) | The name prefix to use for resources with a globally unique name. | <code>string</code> | ✓ |  |
+| [project_config](variables.tf#L54) | The project configuration. | <code title="object&#40;&#123;&#10;  billing_account_id &#61; optional&#40;string&#41;&#10;  parent             &#61; optional&#40;string&#41;&#10;&#125;&#41;">object&#40;&#123;&#8230;&#125;&#41;</code> | ✓ |  |
 | [enable_deletion_protection](variables.tf#L15) | Whether deletion protection should be enabled. | <code>bool</code> |  | <code>true</code> |
 | [enable_iac_sa_impersonation](variables.tf#L22) | Whether the user running this module should be granted serviceAccountTokenCreator on the automation service account. | <code>bool</code> |  | <code>true</code> |
-| [region](variables.tf#L50) | The region where to create the buckets. | <code>string</code> |  | <code>&#34;europe-west1&#34;</code> |
+| [networking_config](variables.tf#L28) | The networking configuration. | <code title="object&#40;&#123;&#10;  create          &#61; optional&#40;bool, true&#41;&#10;  host_project_id &#61; optional&#40;string, &#34;prj-host-0&#34;&#41;&#10;  subnet &#61; optional&#40;object&#40;&#123;&#10;    ip_cidr_range &#61; optional&#40;string, &#34;10.0.0.0&#47;24&#34;&#41;&#10;    name          &#61; optional&#40;string, &#34;sub-0&#34;&#41;&#10;  &#125;&#41;, &#123;&#125;&#41;&#10;  subnet_proxy_only &#61; optional&#40;object&#40;&#123;&#10;    ip_cidr_range &#61; optional&#40;string, &#34;10.20.0.0&#47;24&#34;&#41;&#10;    name          &#61; optional&#40;string, &#34;proxy-only-sub-0&#34;&#41;&#10;  &#125;&#41;, &#123;&#125;&#41;&#10;  vpc_name &#61; optional&#40;string, &#34;net-0&#34;&#41;&#10;&#125;&#41;">object&#40;&#123;&#8230;&#125;&#41;</code> |  | <code>&#123;&#125;</code> |
+| [region](variables.tf#L70) | The region where to create the buckets. | <code>string</code> |  | <code>&#34;europe-west1&#34;</code> |
 
 ## Outputs
 
 | name | description | sensitive |
 |---|---|:---:|
-| [buckets](outputs.tf#L50) | Created buckets. |  |
-| [prefix](outputs.tf#L55) | The unique name prefix to be used for all global unique resources. |  |
-| [projects](outputs.tf#L60) | Created projects. |  |
-| [service_accounts](outputs.tf#L65) | Created service accounts. |  |
+| [buckets](outputs.tf#L63) | Created buckets. |  |
+| [networking_config](outputs.tf#L68) | The networking configuration. |  |
+| [prefix](outputs.tf#L73) | The unique name prefix to be used for all global unique resources. |  |
+| [projects](outputs.tf#L78) | Created projects. |  |
+| [service_accounts](outputs.tf#L83) | Created service accounts. |  |
 <!-- END TFDOC -->
