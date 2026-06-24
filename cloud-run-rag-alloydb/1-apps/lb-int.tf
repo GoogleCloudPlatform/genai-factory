@@ -68,7 +68,7 @@ module "address-ilb" {
     var.lbs_configs.internal.ip_address == null
     ? 1 : 0
   )
-  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-address?ref=v56.1.0"
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-address?ref=v56.2.0"
   project_id = var.project_id
   internal_addresses = {
     ilb-01 = {
@@ -84,7 +84,7 @@ module "address-ilb" {
 
 module "lb_internal_redirect" {
   count                = var.lbs_configs.internal.enable ? 1 : 0
-  source               = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-lb-app-int?ref=v56.1.0"
+  source               = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-lb-app-int?ref=v56.2.0"
   name                 = "${var.name}-internal-redirect"
   project_id           = var.project_id
   region               = var.region
@@ -110,7 +110,7 @@ module "lb_internal_redirect" {
 
 module "lb_internal" {
   count                = var.lbs_configs.internal.enable ? 1 : 0
-  source               = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-lb-app-int?ref=v56.1.0"
+  source               = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-lb-app-int?ref=v56.2.0"
   name                 = "${var.name}-internal"
   project_id           = var.project_id
   region               = var.region
@@ -155,7 +155,7 @@ module "lb_internal" {
 # DNS Zone for internal resolution
 module "lb_internal_dns" {
   count      = var.lbs_configs.internal.enable ? 1 : 0
-  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/dns?ref=v56.1.0"
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/dns?ref=v56.2.0"
   project_id = var.project_id
   name       = var.name
   zone_config = {
@@ -178,7 +178,7 @@ module "lb_internal_dns" {
 # LB certificate
 module "certificate_manager" {
   count      = var.lbs_configs.internal.enable ? 1 : 0
-  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/certificate-manager?ref=v56.1.0"
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/certificate-manager?ref=v56.2.0"
   project_id = var.project_id
   certificates = {
     (var.name) = {

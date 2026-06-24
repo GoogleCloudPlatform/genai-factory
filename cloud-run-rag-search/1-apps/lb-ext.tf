@@ -66,7 +66,7 @@ resource "google_compute_global_address" "address_external" {
 
 module "lb_external_redirect" {
   count               = var.lbs_configs.external.enable ? 1 : 0
-  source              = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-lb-app-ext?ref=v56.1.0"
+  source              = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-lb-app-ext?ref=v56.2.0"
   project_id          = var.project_id
   name                = "${var.name}-redirect"
   use_classic_version = false
@@ -90,7 +90,7 @@ module "lb_external_redirect" {
 
 module "lb_external" {
   count               = var.lbs_configs.external.enable ? 1 : 0
-  source              = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-lb-app-ext?ref=v56.1.0"
+  source              = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-lb-app-ext?ref=v56.2.0"
   project_id          = var.project_id
   name                = "${var.name}-external"
   use_classic_version = false
@@ -107,7 +107,7 @@ module "lb_external" {
     default = {
       port_name = ""
       backends = [
-        { backend = "${var.name}-external" }
+        { group = "${var.name}-external" }
       ]
       health_checks   = []
       security_policy = google_compute_security_policy.security_policy_external[0].id

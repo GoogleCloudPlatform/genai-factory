@@ -287,15 +287,16 @@ values:
     uniform_bucket_level_access: true
     versioning:
     - enabled: true
-  module.lbs-int-proxy["default-onprem-01"].google_compute_forwarding_rule.default:
+  module.lbs-int-proxy["default-onprem-01"].google_compute_forwarding_rule.default[""]:
     all_ports: null
-    allow_global_access: null
+    allow_global_access: true
     allow_psc_global_access: null
     backend_service: null
     deletion_policy: DELETE
     description: Terraform managed.
     ip_collection: null
     ip_protocol: TCP
+    ip_version: IPV4
     is_mirroring_collector: null
     labels: null
     load_balancing_scheme: INTERNAL_MANAGED
@@ -378,7 +379,6 @@ values:
       capacity_scaler: 1
       custom_metrics: []
       description: Terraform managed.
-      failover: false
       max_connections: null
       max_connections_per_endpoint: 100
       max_connections_per_instance: null
@@ -391,7 +391,6 @@ values:
       capacity_scaler: 1
       custom_metrics: []
       description: Terraform managed.
-      failover: false
       max_connections: null
       max_connections_per_endpoint: 100
       max_connections_per_instance: null
@@ -404,7 +403,6 @@ values:
       capacity_scaler: 1
       custom_metrics: []
       description: Terraform managed.
-      failover: false
       max_connections: null
       max_connections_per_endpoint: 100
       max_connections_per_instance: null
@@ -473,16 +471,18 @@ values:
     proxy_header: NONE
     region: europe-west1
     timeouts: null
+  module.lbs-int-proxy["default-onprem-01"].terraform_data.neg_trigger:
+    input:
+      internet: {}
+      psc: {}
+      zonal: {}
+    triggers_replace: null
   module.service_directory["default"].google_service_directory_endpoint.default["onprem/onprem-01"]:
-    address: ''
-    deletion_policy: DELETE
+    address: null
     endpoint_id: onprem-01
-    id: projects/lpa-gf-gecx-df-0/locations/europe-west1/namespaces/default/services/onprem/endpoints/onprem-01
-    metadata: {}
-    name: projects/lpa-gf-gecx-df-0/locations/europe-west1/namespaces/default/services/onprem/endpoints/onprem-01
-    network: ''
-    port: 0
-    service: projects/lpa-gf-gecx-df-0/locations/europe-west1/namespaces/default/services/onprem
+    metadata: null
+    network: null
+    port: null
     timeouts: null
   module.service_directory["default"].google_service_directory_namespace.default:
     deletion_policy: DELETE
@@ -496,10 +496,7 @@ values:
       goog-terraform-provisioned: 'true'
     timeouts: null
   module.service_directory["default"].google_service_directory_service.default["onprem"]:
-    deletion_policy: DELETE
-    id: projects/lpa-gf-gecx-df-0/locations/europe-west1/namespaces/default/services/onprem
-    metadata: {}
-    name: projects/lpa-gf-gecx-df-0/locations/europe-west1/namespaces/default/services/onprem
+    metadata: null
     service_id: onprem
     timeouts: null
 
@@ -523,7 +520,8 @@ counts:
   google_storage_bucket: 3
   google_storage_bucket_object: 1
   modules: 8
-  resources: 25
+  resources: 26
+  terraform_data: 1
 
 outputs:
   commands: __missing__
