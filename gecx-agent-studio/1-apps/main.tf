@@ -12,26 +12,34 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# To store agent app src during its deployment
-# when using agentutil
-module "build_bucket" {
+locals {
+  bucket_name = coalesce(var.bucket_name, var.name)
+  iam_principals = {
+    for k, v in var.service_accounts
+    : k => v.email
+  }
+}
+
+module "build-bucket" {
   source        = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/gcs?ref=v56.2.0"
   project_id    = var.project_id
   prefix        = var.prefix
-  name          = "${var.name}-build"
+  name          = "${local.bucket_name}-build"
   location      = var.region
+  versioning    = true
   force_destroy = !var.enable_deletion_protection
 }
 
-resource "google_discovery_engine_data_store" "knowledge_base" {
-  data_store_id                = "${var.name}-kb"
-  display_name                 = "${var.name} knowledge base"
+resource "google_discovery_engine_data_store" "datastore" {
+  for_each                     = var.datastores_configs
+  data_store_id                = "${each.key}-ds"
+  display_name                 = "${each.key} datastore"
   project                      = var.project_id
   location                     = var.region_discovery_engine
-  industry_vertical            = "GENERIC"
-  content_config               = "CONTENT_REQUIRED"
-  solution_types               = ["SOLUTION_TYPE_CHAT"]
-  skip_default_schema_creation = true
+  industry_vertical            = each.value.industry_vertical
+  content_config               = each.value.content_config
+  solution_types               = each.value.solution_types
+  skip_default_schema_creation = each.value.skip_default_schema_creation
   deletion_policy = (
     var.enable_deletion_protection
     ? "PREVENT"
@@ -54,12 +62,13 @@ resource "google_discovery_engine_data_store" "knowledge_base" {
   }
 }
 
-resource "google_discovery_engine_schema" "knowledge_base" {
-  schema_id     = "${var.name}-kb-schema"
+resource "google_discovery_engine_schema" "datastore" {
+  for_each      = var.datastores_configs
+  schema_id     = "${each.key}-kb-schema"
   project       = var.project_id
   location      = var.region_discovery_engine
-  data_store_id = google_discovery_engine_data_store.knowledge_base.data_store_id
-  json_schema   = file("./data/ds-kb/knowledge_base_data_store_schema.json")
+  data_store_id = google_discovery_engine_data_store.datastore[each.key].data_store_id
+  json_schema   = file(each.value.schema_path)
   deletion_policy = (
     var.enable_deletion_protection
     ? "PREVENT"
@@ -68,46 +77,47 @@ resource "google_discovery_engine_schema" "knowledge_base" {
 }
 
 resource "google_ces_app" "gecx_as_app" {
-  app_id              = var.name
-  display_name        = var.name
+  for_each            = var.agents_configs
+  app_id              = each.key
+  display_name        = each.key
   project             = var.project_id
   location            = var.region_discovery_engine
   description         = "A sample Gemini Enterprise for CX application."
-  tool_execution_mode = var.cx_as_configs.tool_execution_mode
+  tool_execution_mode = each.value.tool_execution_mode
 
   language_settings {
-    default_language_code = var.cx_as_configs.supported_languages[0]
+    default_language_code = each.value.supported_languages[0]
     supported_language_codes = (
       slice(
-        var.cx_as_configs.supported_languages,
+        each.value.supported_languages,
         1,
-        length(var.cx_as_configs.supported_languages)
+        length(each.value.supported_languages)
     ))
     enable_multilingual_support = false
   }
 
   audio_processing_config {
     dynamic "synthesize_speech_configs" {
-      for_each = toset(var.cx_as_configs.supported_languages)
+      for_each = toset(each.value.supported_languages)
 
       content {
         language_code = synthesize_speech_configs.value
-        speaking_rate = var.cx_as_configs.speaking_rate
+        speaking_rate = each.value.speaking_rate
       }
     }
   }
 
   logging_settings {
     cloud_logging_settings {
-      enable_cloud_logging = var.cx_as_configs.enable_cloud_logging
+      enable_cloud_logging = each.value.enable_cloud_logging
     }
     conversation_logging_settings {
-      disable_conversation_logging = !var.cx_as_configs.enable_conversation_logging
+      disable_conversation_logging = !each.value.enable_conversation_logging
     }
   }
 
   time_zone_settings {
-    time_zone = var.cx_as_configs.timezone
+    time_zone = each.value.timezone
   }
 
   lifecycle {

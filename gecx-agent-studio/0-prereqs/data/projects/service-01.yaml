@@ -20,6 +20,18 @@ name: gf-gecx-as-0
 services:
   - ces.googleapis.com
   - discoveryengine.googleapis.com
+  # Needed for Cloud Run
+  - artifactregistry.googleapis.com
+  - cloudbuild.googleapis.com
+  - logging.googleapis.com
+  - run.googleapis.com
+  # Needed for Service Directory DNS zone
+  - dns.googleapis.com
+  # Needed for LBs creation
+  - certificatemanager.googleapis.com
+  - compute.googleapis.com
+  # Needed if you define private endpoints to be reached via Service Directory
+  - servicedirectory.googleapis.com
 
 buckets:
   iac-state:
@@ -31,11 +43,39 @@ buckets:
 service_accounts:
   # Automation SAs
   iac-rw:
+    iam_bindings_additive:
+      cloud-run-token-creator:
+        member: $iam_principals:service_agents/_self_/cloudrun
+        role: roles/iam.serviceAccountTokenCreator
+    iam_sa_roles:
+      $service_account_ids:_self_/gecx-as-0:
+        - roles/iam.serviceAccountUser
+  # Cloud Run SAs
+  gecx-as-0: {}
+
 # Grant roles
 iam_by_principals:
   $iam_principals:service_accounts/_self_/iac-rw:
     - roles/ces.admin
     - roles/discoveryengine.admin
-    # For build bucket creation.
-    # Not needed if the application is configured via GUI.
+    - roles/serviceusage.serviceUsageConsumer
     - roles/storage.admin
+    # Needed to create Cloud Run
+    - roles/run.admin
+    # Needed for Service Directory DNS zone
+    - roles/dns.admin
+    # Needed for LBs
+    - roles/certificatemanager.owner
+    - roles/compute.loadBalancerAdmin
+    # Needed if you define private endpoints to be reached
+    # via Service Directory
+    - roles/servicedirectory.admin
+  # The following role assignments are used only if Cloud Run is created
+  $iam_principals:service_accounts/_self_/gecx-as-0:
+    - roles/logging.logWriter
+    - roles/storage.objectViewer
+    - roles/artifactregistry.writer
+  $iam_principals:service_agents/_self_/certificatemanager:
+    - roles/privateca.certificateRequester
+  $iam_principals:service_agents/_self_/ces:
+    - roles/servicedirectory.viewer

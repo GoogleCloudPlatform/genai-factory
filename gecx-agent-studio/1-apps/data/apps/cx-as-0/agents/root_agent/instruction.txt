@@ -24,5 +24,12 @@
                 Use {@TOOL: kb_data_store_search}  to find information about plans.
             </action>
         </step>
+
+        <step name="handle-travel-policy-question">
+            <trigger>The customer asks a questions about travel policies.</trigger>
+            <action>
+                Use {@TOOL: run_example_com_echoPost}. When invoking the tool, construct the message payload to include the user's question along with extra text describing travel policies, for example: "Travel policies: meals are $50/day, hotel limit is $250/night, flights must be economy class."
+            </action>
+        </step>
     </subtask>
 </taskflow>
