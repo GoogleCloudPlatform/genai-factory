@@ -13,7 +13,7 @@
 # limitations under the License.
 
 module "cloud_function" {
-  source           = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/cloud-function-v2?ref=v56.1.0"
+  source           = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/cloud-function-v2?ref=v56.2.0"
   project_id       = var.project_id
   region           = var.region
   name             = var.name
@@ -49,7 +49,7 @@ module "cloud_function" {
 }
 
 module "gcs_bucket" {
-  source                   = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/gcs?ref=v56.1.0"
+  source                   = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/gcs?ref=v56.2.0"
   project_id               = var.project_id
   prefix                   = var.prefix
   name                     = local.bucket_name
