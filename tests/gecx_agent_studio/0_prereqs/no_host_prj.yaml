@@ -16,6 +16,7 @@ values:
   google_service_account_iam_member.me_sa_token_creator[0]:
     condition: []
     role: roles/iam.serviceAccountTokenCreator
+    service_account_id: projects/your-prefix-gf-gecx-as-0/serviceAccounts/iac-rw@your-prefix-gf-gecx-as-0.iam.gserviceaccount.com
   local_file.providers:
     content_base64: null
     directory_permission: '0777'
@@ -373,7 +374,7 @@ outputs:
   buckets:
     service-01/iac-state: your-prefix-gf-gecx-as-0-iac-state
   networking_config:
-    host_project_number: ''
+    host_project_number: null
     subnet: projects/host-prj/regions/europe-west1/subnetworks/sub-0
     vpc: projects/host-prj/global/networks/net-0
   prefix: your-prefix

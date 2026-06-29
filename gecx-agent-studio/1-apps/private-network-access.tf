@@ -38,7 +38,7 @@ locals {
 
 module "service_directory" {
   for_each   = var.service_directory_configs
-  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/service-directory?ref=v56.1.0"
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/service-directory?ref=v56.2.0"
   project_id = var.project_id
   location   = var.region
   name       = each.key
@@ -71,7 +71,7 @@ module "service_directory" {
       : k => {
         address = (
           v.create_lb
-          ? module.lbs-int-proxy["${each.key}-${k}"].address
+          ? module.lbs-int-proxy["${each.key}-${k}"].address[replace("${each.key}-${k}", "/", "-")]
           : v.address
         )
         port     = v.port
@@ -87,7 +87,7 @@ module "dns_service_directory" {
     for k, v in var.service_directory_configs
     : k => v if try(v.cloud_dns_domain, null) != null
   }
-  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/dns?ref=v56.1.0"
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/dns?ref=v56.2.0"
   project_id = var.project_id
   name       = replace(each.value.cloud_dns_domain, ".", "-")
   zone_config = {
@@ -101,11 +101,15 @@ module "dns_service_directory" {
 
 module "lbs-int-proxy" {
   for_each   = local.endpoints_with_lb
-  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-lb-proxy-int?ref=v56.1.0"
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-lb-proxy-int?ref=v56.2.0"
   name       = replace(each.key, "/", "-")
   project_id = var.project_id
   region     = var.region
-  port       = each.value.port
+  forwarding_rules_config = {
+    "" = {
+      port = each.value.port
+    }
+  }
   backend_service_config = {
     backends = [
       for zone in toset(var.zones) : {

@@ -451,7 +451,6 @@ values:
       capacity_scaler: 1
       custom_metrics: []
       description: Terraform managed.
-      failover: false
       max_connections: null
       max_connections_per_endpoint: null
       max_connections_per_instance: null
@@ -580,15 +579,16 @@ values:
     region: europe-west1
     test: []
     timeouts: null
-  module.lbs-int-proxy["example-com-onprem/onprem-01"].google_compute_forwarding_rule.default:
+  module.lbs-int-proxy["example-com-onprem/onprem-01"].google_compute_forwarding_rule.default[""]:
     all_ports: null
-    allow_global_access: null
+    allow_global_access: true
     allow_psc_global_access: null
     backend_service: null
     deletion_policy: DELETE
     description: Terraform managed.
     ip_collection: null
     ip_protocol: TCP
+    ip_version: IPV4
     is_mirroring_collector: null
     labels: null
     load_balancing_scheme: INTERNAL_MANAGED
@@ -671,7 +671,6 @@ values:
       capacity_scaler: 1
       custom_metrics: []
       description: Terraform managed.
-      failover: false
       max_connections: null
       max_connections_per_endpoint: 100
       max_connections_per_instance: null
@@ -684,7 +683,6 @@ values:
       capacity_scaler: 1
       custom_metrics: []
       description: Terraform managed.
-      failover: false
       max_connections: null
       max_connections_per_endpoint: 100
       max_connections_per_instance: null
@@ -697,7 +695,6 @@ values:
       capacity_scaler: 1
       custom_metrics: []
       description: Terraform managed.
-      failover: false
       max_connections: null
       max_connections_per_endpoint: 100
       max_connections_per_instance: null
@@ -766,6 +763,12 @@ values:
     proxy_header: NONE
     region: europe-west1
     timeouts: null
+  module.lbs-int-proxy["example-com-onprem/onprem-01"].terraform_data.neg_trigger:
+    input:
+      internet: {}
+      psc: {}
+      zonal: {}
+    triggers_replace: null
   module.service_directory["example-com"].google_service_directory_endpoint.default["onprem/onprem-01"]:
     endpoint_id: onprem-01
     metadata: null
@@ -822,7 +825,8 @@ counts:
   google_service_directory_service: 2
   google_storage_bucket: 1
   modules: 9
-  resources: 32
+  resources: 33
+  terraform_data: 1
 
 outputs:
   commands: __missing__

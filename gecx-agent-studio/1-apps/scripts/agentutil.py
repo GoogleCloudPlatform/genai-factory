@@ -695,8 +695,7 @@ def import_documents(full_data_store_name: str, gcs_uri: str) -> None:
             "\n⚠️  An import/ingestion operation is already actively running on this datastore branch in Google Cloud.\n"
             "   GCP only allows one concurrent import at a time.\n"
             "   Please wait a few minutes for the active import to finish, then retry your command.\n"
-            f"   Active Operation: {err_message}\n"
-        )
+            f"   Active Operation: {err_message}\n")
         sys.exit(1)
     except Exception as e:
       logger.debug(f"Could not parse error JSON: {e}")

@@ -13,7 +13,7 @@
 # limitations under the License.
 
 module "cloud-run" {
-  source              = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/cloud-run-v2?ref=v56.1.0"
+  source              = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/cloud-run-v2?ref=v56.2.0"
   type                = "SERVICE"
   project_id          = var.project_id
   name                = var.name
