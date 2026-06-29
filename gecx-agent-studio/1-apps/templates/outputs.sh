@@ -9,9 +9,9 @@ rm -rf ./build
 
 # Ingest data stores
 %{ if length(datastores) > 0 ~}
-echo "Ingesting Data Stores"
+echo "Ingesting data stores"
 %{ for ds_id, ds_config in datastores ~}
-echo "Ingesting Data Store: ${ds_id}..."
+echo "Ingesting data store: ${ds_id}..."
 
 export DS_SOURCE_DIR=$(dirname "${ds_config.schema_path}")
 
@@ -26,13 +26,13 @@ uv run scripts/agentutil.py data-store ingest \
 %{ endif ~}
 
 # Create and deploy agents
-echo "Creating and Deploying Agents"
+echo "Creating and deploying agents"
 %{ for agent_id, agent_config in agents ~}
-echo "Creating and Deploying Agent: ${agent_id}..."
+echo "Creating and deploying agent: ${agent_id}..."
 
-# Rebuild agent
+# Build agent
 mkdir -p ./build/app/dist/${agent_id}
-cp -r ./data/apps/default ./build/app/dist/${agent_id}/agent
+cp -r ./data/apps/${agent_id} ./build/app/dist/${agent_id}/agent
 
 # Update Data Store references
 %{ for ds_name in agent_config.datastores ~}
