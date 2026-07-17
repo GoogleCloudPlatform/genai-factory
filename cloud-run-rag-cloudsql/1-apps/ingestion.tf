@@ -13,7 +13,7 @@
 # limitations under the License.
 
 module "cloud_run_ingestion" {
-  source              = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/cloud-run-v2?ref=v56.2.0"
+  source              = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/cloud-run-v2?ref=v56.3.0"
   project_id          = var.project_id
   type                = "JOB"
   name                = "${var.name}-ingestion"
