@@ -17,7 +17,7 @@ locals {
 }
 
 module "bigquery-dataset" {
-  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/bigquery-dataset?ref=v56.2.0"
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/bigquery-dataset?ref=v56.3.0"
   project_id = var.project_id
   id         = local.bigquery_id
   tables = {
@@ -29,7 +29,7 @@ module "bigquery-dataset" {
 }
 
 module "alloydb" {
-  source              = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/alloydb?ref=v56.2.0"
+  source              = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/alloydb?ref=v56.3.0"
   project_id          = var.project_id
   project_number      = var.number
   cluster_name        = "alloydb"
@@ -61,7 +61,7 @@ module "alloydb" {
 
 # Create a PSC endpoint using the AlloyDB PSC attachment
 module "psc_consumer_address" {
-  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-address?ref=v56.2.0"
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-address?ref=v56.3.0"
   project_id = var.project_id
   internal_addresses = {
     (var.name) = {
@@ -87,7 +87,7 @@ resource "google_compute_forwarding_rule" "psc_consumer_fwd_rule" {
 }
 
 module "psc_consumer_dns_zone" {
-  source        = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/dns?ref=v56.2.0"
+  source        = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/dns?ref=v56.3.0"
   project_id    = var.project_id
   name          = "${var.name}-alloydb"
   description   = "DNS Zone for the PSC access to AlloyDB"

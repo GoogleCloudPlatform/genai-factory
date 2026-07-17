@@ -13,7 +13,7 @@
 # limitations under the License.
 
 module "certificate-manager" {
-  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/certificate-manager?ref=v56.2.0"
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/certificate-manager?ref=v56.3.0"
   project_id = var.project_id
   certificates = {
     (var.name) = {
@@ -27,7 +27,7 @@ module "certificate-manager" {
 }
 
 module "address-ilb" {
-  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-address?ref=v56.2.0"
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-address?ref=v56.3.0"
   project_id = var.project_id
   internal_addresses = {
     ilb-01 = {
@@ -42,7 +42,7 @@ module "address-ilb" {
 }
 
 module "lb_internal_redirect" {
-  source               = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-lb-app-int?ref=v56.2.0"
+  source               = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-lb-app-int?ref=v56.3.0"
   name                 = "${var.name}-internal-redirect"
   project_id           = var.project_id
   region               = var.region
@@ -67,7 +67,7 @@ module "lb_internal_redirect" {
 }
 
 module "lb_internal" {
-  source               = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-lb-app-int?ref=v56.2.0"
+  source               = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-lb-app-int?ref=v56.3.0"
   name                 = "${var.name}-internal"
   project_id           = var.project_id
   region               = var.region
