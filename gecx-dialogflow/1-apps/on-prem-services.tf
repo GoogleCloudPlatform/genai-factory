@@ -36,7 +36,7 @@ locals {
 
 module "service_directory" {
   for_each   = var.service_directory_configs
-  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/service-directory?ref=v56.3.0"
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/service-directory?ref=v57.0.0"
   project_id = var.project_id
   location   = var.region
   name       = each.key
@@ -66,7 +66,7 @@ module "dns_service_directory" {
     for k, v in var.service_directory_configs
     : k => v if try(v.cloud_dns_domain, null) != null
   }
-  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/dns?ref=v56.3.0"
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/dns?ref=v57.0.0"
   project_id = var.project_id
   name       = replace(each.value.cloud_dns_domain, ".", "-")
   zone_config = {
@@ -80,7 +80,7 @@ module "dns_service_directory" {
 
 module "lbs-int-proxy" {
   for_each   = local.endpoints_with_lb
-  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-lb-proxy-int?ref=v56.3.0"
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-lb-proxy-int?ref=v57.0.0"
   name       = each.key
   project_id = var.project_id
   region     = var.region
