@@ -35,7 +35,7 @@ data "archive_file" "source" {
 }
 
 module "agent" {
-  source                     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/agent-engine?ref=v56.3.0"
+  source                     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/agent-engine?ref=v57.0.0"
   name                       = var.name
   project_id                 = var.project_id
   region                     = var.region
@@ -100,7 +100,7 @@ module "agent" {
 }
 
 module "firestore" {
-  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/firestore?ref=v56.3.0"
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/firestore?ref=v57.0.0"
   project_id = var.project_id
   database = {
     name        = var.name
