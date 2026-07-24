@@ -22,7 +22,7 @@ dependencies = [
 agentutil = "agentutil.main:main"
 
 [build-system]
-requires = ["setuptools>=61.0"]
+requires = ["setuptools>=83.0.0"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
