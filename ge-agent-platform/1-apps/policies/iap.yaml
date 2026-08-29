@@ -1,0 +1,6 @@
+policy_profile: "REQUEST_AUTHZ"
+service: "iap.googleapis.com"
+timeout: "2s"
+fail_open: true
+metadata:
+  iapPolicyVersion: "V1"

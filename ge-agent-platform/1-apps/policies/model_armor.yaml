@@ -1,0 +1,14 @@
+policy_profile: "CONTENT_AUTHZ"
+service: "modelarmor.${region}.rep.googleapis.com"
+timeout: "2s"
+fail_open: true
+model_armor_settings:
+  request_template_id: "${can(regex("^projects/", model_armor_request_template_id)) ? model_armor_request_template_id : "projects/${project_id}/locations/${region}/templates/${model_armor_request_template_id}"}"
+  response_template_id: "${can(regex("^projects/", model_armor_response_template_id)) ? model_armor_response_template_id : "projects/${project_id}/locations/${region}/templates/${model_armor_response_template_id}"}"
+%{ if length(model_armor_authz_hosts) > 0 ~}
+http_rules:
+  - hosts:
+%{ for host in model_armor_authz_hosts ~}
+      - "${host}"
+%{ endfor ~}
+%{ endif ~}

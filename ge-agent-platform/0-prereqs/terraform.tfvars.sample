@@ -1,0 +1,5 @@
+prefix = "gf-gecx-agentplatform-hp"
+project_config = {
+  billing_account_id = "01FEB7-BC94DC-9F5617"
+  parent             = "organizations/202371627705"
+}
