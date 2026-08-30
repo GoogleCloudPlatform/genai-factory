@@ -17,11 +17,19 @@ locals {
   policy_files = fileset(path.module, "policies/*.yaml")
 
   template_vars = {
-    project_id                        = var.project_id
-    region                            = var.region
-    model_armor_request_template_id  = var.model_armor_request_template_id
-    model_armor_response_template_id = var.model_armor_response_template_id
-    model_armor_authz_hosts           = var.model_armor_authz_hosts
+    project_id = var.project_id
+    region     = var.region
+    model_armor_request_template_id = var.model_armor_request_template_id != null ? (
+      can(regex("^projects/", var.model_armor_request_template_id))
+      ? var.model_armor_request_template_id
+      : "projects/${var.project_id}/locations/${var.region}/templates/${var.model_armor_request_template_id}"
+    ) : ""
+    model_armor_response_template_id = var.model_armor_response_template_id != null ? (
+      can(regex("^projects/", var.model_armor_response_template_id))
+      ? var.model_armor_response_template_id
+      : "projects/${var.project_id}/locations/${var.region}/templates/${var.model_armor_response_template_id}"
+    ) : ""
+    model_armor_authz_hosts = var.model_armor_authz_hosts
   }
 
   policies = {
@@ -30,7 +38,7 @@ locals {
     if !(replace(basename(f), ".yaml", "") == "model_armor" && !var.enable_model_armor)
   }
 
-  service_extensions_sa        = try(module.agent_gateway.agent_gateway.agent_gateway_card[0].service_extensions_service_account, "")
+  service_extensions_sa = try(module.agent_gateway.agent_gateway.agent_gateway_card[0].service_extensions_service_account, "")
   # Flatten each Google API into its endpoint variants (global, mTLS, locational, locational mTLS, and regional REP), keyed by service_id.
   google_api_variants = merge([
     for id, name in var.google_apis : {
@@ -173,12 +181,14 @@ resource "google_network_security_authz_policy" "custom" {
   }
 
   dynamic "http_rules" {
-    for_each = try(each.value.http_rules, null) != null ? each.value.http_rules : []
+    for_each = each.key == "model_armor" && length(var.model_armor_authz_hosts) > 0 ? [var.model_armor_authz_hosts] : (
+      try(each.value.http_rules, null) != null ? each.value.http_rules : []
+    )
     content {
       to {
         operations {
           dynamic "hosts" {
-            for_each = http_rules.value.hosts != null ? http_rules.value.hosts : []
+            for_each = try(http_rules.value.hosts, http_rules.value)
             content {
               exact = hosts.value
             }
@@ -188,7 +198,3 @@ resource "google_network_security_authz_policy" "custom" {
     }
   }
 }
-
-
-
-
