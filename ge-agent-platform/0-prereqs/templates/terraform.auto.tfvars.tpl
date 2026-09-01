@@ -19,9 +19,7 @@ networking_config = {
   vpc    = "${try(networking_config.vpc, "")}"
 }
 
-prefix = "${prefix}"
 
 project_id = "${project_id}"
 
 region = "${region}"
-

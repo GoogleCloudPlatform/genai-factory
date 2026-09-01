@@ -68,11 +68,12 @@ locals {
 
 # Create the Network Attachment in the Service Project pointing to the Host Subnet
 resource "google_compute_network_attachment" "agent_gateway" {
-  name                  = "${var.prefix}-${var.name}-gateway-na"
+  name                  = "${var.name}-gateway-na"
   project               = var.project_id
   region                = var.region
   connection_preference = "ACCEPT_MANUAL"
   subnetworks           = [var.networking_config.subnet]
+  producer_accept_lists = [var.project_id]
 
   lifecycle {
     ignore_changes = [producer_accept_lists]
@@ -84,7 +85,7 @@ module "agent_gateway" {
   source      = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/agent-gateway?ref=v57.0.0"
   project_id  = var.project_id
   region      = var.region
-  name        = "${var.prefix}-${var.name}-gateway"
+  name        = "${var.name}-gateway"
   access_path = "AGENT_TO_ANYWHERE"
   registries  = [local.registry_uri]
   networking_config = {
@@ -131,7 +132,6 @@ resource "google_agent_registry_service" "custom" {
   }
 }
 
-
 # Allow the Agent Gateway control plane / tenant project to stabilize before
 # attaching authz policies. Without this, the backend may return a 400/409
 # 'resource is being created and therefore can not be updated' error.
@@ -145,7 +145,7 @@ resource "google_network_services_authz_extension" "custom" {
   for_each  = local.policies
   provider  = google-beta
   project   = var.project_id
-  name      = "${var.prefix}-${var.name}-${replace(each.key, "_", "-")}-authz"
+  name      = "${var.name}-${replace(each.key, "_", "-")}-authz"
   location  = var.region
   service   = each.value.service
   timeout   = try(each.value.timeout, "2s")
@@ -165,7 +165,7 @@ resource "google_network_security_authz_policy" "custom" {
   depends_on     = [time_sleep.wait_for_gateway]
   provider       = google-beta
   project        = var.project_id
-  name           = "${var.prefix}-${var.name}-${replace(each.key, "_", "-")}-policy"
+  name           = "${var.name}-${replace(each.key, "_", "-")}-policy"
   location       = var.region
   policy_profile = each.value.policy_profile
   action         = "CUSTOM"

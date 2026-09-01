@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: gf-ge-agentplatform-hp
+name: gf-ge-agentp
 
 # Enable APIs
 services:
@@ -23,19 +23,12 @@ services:
   - dns.googleapis.com
   # To orchestrate the private connection pathways and route allocations between Google-managed networks and your Host Project
   - servicenetworking.googleapis.com
-  
 
 # Grant roles
 iam_by_principals:
-  # Grant to Cloud Run (Cloud Function) service agent for Cloud Run Direct Egress on shared vpc
-  $iam_principals:service_agents/service-01/run:
-    - roles/compute.networkUser
-
   $iam_principals:service_accounts/service-01/iac-rw:
     # To allow the creation of LBsin the service project
     - roles/compute.networkUser
-    # To allow creation of DNS zone for SD in service project
-    - roles/dns.reader
     # To allow DNS peering to the host project VPC network
     - roles/dns.peer
     # To allow viewing VPC network resources during provisioning

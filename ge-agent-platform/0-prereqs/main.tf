@@ -63,8 +63,8 @@ resource "google_service_account_iam_member" "me_sa_token_creator" {
   member             = "user:${local.effective_user_identity}"
 }
 
-locals {
-  host_project_id = var.networking_config.create ? module.projects.project_ids["host"] : var.networking_config.host_project_id
+resource "google_project_service_identity" "networkservices" {
+  provider = google-beta
+  project  = module.projects.project_ids["service-01"]
+  service  = "networkservices.googleapis.com"
 }
-
-

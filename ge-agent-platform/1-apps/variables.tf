@@ -30,13 +30,6 @@ variable "networking_config" {
   nullable = false
 }
 
-
-variable "prefix" {
-  description = "The name prefix to use for resources with a globally unique name."
-  type        = string
-  nullable    = false
-}
-
 variable "project_id" {
   description = "The id of the project where to create the resources."
   type        = string
@@ -98,9 +91,3 @@ variable "custom_services" {
   }))
   default = []
 }
-
-
-
-
-
-

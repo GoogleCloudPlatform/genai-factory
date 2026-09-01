@@ -14,25 +14,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: gf-ge-agentplatform-0
+name: gf-ge-agentp-0
 
 # Enable APIs
 services:
-  - dialogflow.googleapis.com
-  - discoveryengine.googleapis.com
-  # Needed for Cloud Function (function create only)
-  - artifactregistry.googleapis.com
-  - cloudbuild.googleapis.com
-  - cloudfunctions.googleapis.com
   - logging.googleapis.com
-  - run.googleapis.com
-  # Needed for Service Directory DNS zone
   - dns.googleapis.com
-  # Needed for TCP proxy ILB creation (function create only)
-  - certificatemanager.googleapis.com
-  - privateca.googleapis.com
-  # Only needed if you define private endpoints to be reached
-  - servicedirectory.googleapis.com
   - compute.googleapis.com
   - networksecurity.googleapis.com
   - networkservices.googleapis.com
@@ -61,26 +48,22 @@ buckets:
         - $iam_principals:service_accounts/_self_/iac-rw
 
 service_accounts:
-  # Automation SAs
-  iac-rw:
-    iam_bindings_additive:
-      cloud-run-token-creator:
-        member: $iam_principals:service_agents/_self_/cloudrun
-        role: roles/iam.serviceAccountTokenCreator
-
+  # Automation SA
+  iac-rw: {}
 
 # Grant roles
 iam_by_principals:
   $iam_principals:service_accounts/_self_/iac-rw:
-    - roles/dialogflow.admin
     - roles/discoveryengine.admin
     - roles/serviceusage.serviceUsageConsumer
     - roles/storage.admin
-    # Needed for Service Directory DNS zone
-    - roles/dns.admin
-  # The following role assignments are used to create and manage Agent Gateways 
+    # The following role assignments are used to create and manage Agent Gateways
     - roles/compute.networkAdmin
     - roles/networkservices.admin
     - roles/networksecurity.admin
     - roles/agentregistry.admin
-
+  # Service Extensions Service Agent for Model Armor runtime inspection
+  $iam_principals:service_agents/_self_/dep:
+    - roles/modelarmor.user
+    - roles/modelarmor.calloutUser
+    - roles/serviceusage.serviceUsageConsumer
