@@ -11,7 +11,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+# Configures Model Armor content authorization on the Agent Gateway
+# to scan and filter content in requests and responses based on safety policies.
 policy_profile: "CONTENT_AUTHZ"
 service: "modelarmor.${region}.rep.googleapis.com"
 timeout: "2s"

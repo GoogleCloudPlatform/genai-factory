@@ -18,27 +18,17 @@ name: gf-ge-agentp-0
 
 # Enable APIs
 services:
-  - logging.googleapis.com
-  - dns.googleapis.com
-  - compute.googleapis.com
+  # To create TF state buckets
+  - storage.googleapis.com
+  # Agent Registry
+  - agentregistry.googleapis.com
+  # Gemini Enterprise
+  - aiplatform.googleapis.com
+  - discoveryengine.googleapis.com
+  # Agent Gateway
+  - modelarmor.googleapis.com
   - networksecurity.googleapis.com
   - networkservices.googleapis.com
-  - iam.googleapis.com
-  - aiplatform.googleapis.com
-  - storage.googleapis.com
-  - discoveryengine.googleapis.com
-  - agentregistry.googleapis.com
-  - modelarmor.googleapis.com
-  - observability.googleapis.com
-  - telemetry.googleapis.com
-  - monitoring.googleapis.com
-  - cloudtrace.googleapis.com
-  - apphub.googleapis.com
-  - apptopology.googleapis.com
-  - cloudapiregistry.googleapis.com
-  - notebooks.googleapis.com
-  - texttospeech.googleapis.com
-  - dataform.googleapis.com
 
 buckets:
   iac-state:
@@ -54,13 +44,15 @@ service_accounts:
 # Grant roles
 iam_by_principals:
   $iam_principals:service_accounts/_self_/iac-rw:
-    - roles/discoveryengine.admin
     - roles/serviceusage.serviceUsageConsumer
     - roles/storage.admin
+    # This is for Gemini Enterprise
+    - roles/discoveryengine.admin
     # The following role assignments are used to create and manage Agent Gateways
     - roles/compute.networkAdmin
     - roles/networkservices.admin
     - roles/networksecurity.admin
+    # This following role assignment is used to register agents in Agent Registry
     - roles/agentregistry.admin
   # Service Extensions Service Agent for Model Armor runtime inspection
   $iam_principals:service_agents/_self_/dep:
