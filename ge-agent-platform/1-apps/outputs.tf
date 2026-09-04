@@ -12,12 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
-output "authz_extension_ids" {
-  description = "Map of policy name to authorization service extension ID."
-  value       = { for k, v in google_network_services_authz_extension.custom : k => v.id }
-}
-
 output "authz_policy_ids" {
   description = "Map of policy name to authorization policy ID."
   value       = { for k, v in google_network_security_authz_policy.custom : k => v.id }

@@ -11,6 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 variable "custom_services" {
   description = "List of custom (non-Google) service endpoints to register in Agent Registry."
   type = list(object({
@@ -20,12 +21,6 @@ variable "custom_services" {
     description  = optional(string)
   }))
   default = []
-}
-
-variable "enable_model_armor" {
-  description = "When true, also create the Model Armor CONTENT_AUTHZ extension and policy. Requires both model_armor_request_template_id and model_armor_response_template_id."
-  type        = bool
-  default     = false
 }
 
 variable "google_apis" {
@@ -42,22 +37,15 @@ variable "google_apis" {
   }
 }
 
-variable "model_armor_authz_hosts" {
-  description = "Optional list of Host header values to scope the Model Armor CONTENT_AUTHZ policy to."
-  type        = list(string)
-  default     = []
-}
-
-variable "model_armor_request_template_id" {
-  description = "Model Armor request-side template ID (regional, in this project + region). Required when enable_model_armor = true."
-  type        = string
-  default     = null
-}
-
-variable "model_armor_response_template_id" {
-  description = "Model Armor response-side template ID (regional, in this project + region). Required when enable_model_armor = true."
-  type        = string
-  default     = null
+variable "model_armor_config" {
+  description = "Model Armor configuration."
+  type = object({
+    enable               = optional(bool, false)
+    request_template_id  = optional(string)
+    response_template_id = optional(string)
+    authz_hosts          = optional(list(string), [])
+  })
+  default = {}
 }
 
 variable "name" {
@@ -83,8 +71,8 @@ variable "project_id" {
 }
 
 variable "region" {
-  type        = string
   description = "The GCP region where to deploy the resources."
+  type        = string
   nullable    = false
   default     = "europe-west1"
 }

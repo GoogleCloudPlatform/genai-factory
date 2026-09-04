@@ -11,6 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 # Configures Identity-Aware Proxy (IAP) request authorization on the Agent Gateway
 # to verify user identity and enforce access control policies on incoming requests.
 policy_profile: "REQUEST_AUTHZ"

@@ -11,6 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 locals {
   # Flatten each Google API into its endpoint variants (global, mTLS, locational, locational mTLS, and regional REP), keyed by service_id.
   google_api_variants = merge([
@@ -41,24 +42,24 @@ locals {
   policies = {
     for f in local.policy_files :
     replace(basename(f), ".yaml", "") => yamldecode(templatefile("${path.module}/${f}", local.template_vars))
-    if !(replace(basename(f), ".yaml", "") == "model_armor" && !var.enable_model_armor)
+    if !(replace(basename(f), ".yaml", "") == "model_armor" && !try(var.model_armor_config.enable, false))
   }
   registry_uri          = "//agentregistry.googleapis.com/projects/${var.project_id}/locations/${var.region}"
   service_extensions_sa = try(module.agent_gateway.agent_gateway.agent_gateway_card[0].service_extensions_service_account, "")
   template_vars = {
     project_id = var.project_id
     region     = var.region
-    model_armor_request_template_id = var.model_armor_request_template_id != null ? (
-      can(regex("^projects/", var.model_armor_request_template_id))
-      ? var.model_armor_request_template_id
-      : "projects/${var.project_id}/locations/${var.region}/templates/${var.model_armor_request_template_id}"
+    model_armor_request_template_id = try(var.model_armor_config.request_template_id, null) != null ? (
+      can(regex("^projects/", var.model_armor_config.request_template_id))
+      ? var.model_armor_config.request_template_id
+      : "projects/${var.project_id}/locations/${var.region}/templates/${var.model_armor_config.request_template_id}"
     ) : ""
-    model_armor_response_template_id = var.model_armor_response_template_id != null ? (
-      can(regex("^projects/", var.model_armor_response_template_id))
-      ? var.model_armor_response_template_id
-      : "projects/${var.project_id}/locations/${var.region}/templates/${var.model_armor_response_template_id}"
+    model_armor_response_template_id = try(var.model_armor_config.response_template_id, null) != null ? (
+      can(regex("^projects/", var.model_armor_config.response_template_id))
+      ? var.model_armor_config.response_template_id
+      : "projects/${var.project_id}/locations/${var.region}/templates/${var.model_armor_config.response_template_id}"
     ) : ""
-    model_armor_authz_hosts = var.model_armor_authz_hosts
+    model_armor_authz_hosts = try(var.model_armor_config.authz_hosts, [])
   }
 }
 
@@ -140,7 +141,7 @@ resource "google_network_security_authz_policy" "custom" {
   }
 
   dynamic "http_rules" {
-    for_each = each.key == "model_armor" && length(var.model_armor_authz_hosts) > 0 ? [var.model_armor_authz_hosts] : (
+    for_each = each.key == "model_armor" && length(try(var.model_armor_config.authz_hosts, [])) > 0 ? [var.model_armor_config.authz_hosts] : (
       try(each.value.http_rules, null) != null ? each.value.http_rules : []
     )
     content {
