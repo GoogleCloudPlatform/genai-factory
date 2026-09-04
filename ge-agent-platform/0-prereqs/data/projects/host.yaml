@@ -1,0 +1,35 @@
+---
+
+# Copyright 2026 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+name: gf-ge-agentp
+
+# Enable APIs
+services:
+  - compute.googleapis.com
+  # To create response policies for Private Google APIs
+  - dns.googleapis.com
+  # To orchestrate the private connection pathways and route allocations between Google-managed networks and your Host Project
+  - servicenetworking.googleapis.com
+
+# Grant roles
+iam_by_principals:
+  $iam_principals:service_accounts/service-01/iac-rw:
+    # To allow the creation of LBsin the service project
+    - roles/compute.networkUser
+    # To allow DNS peering to the host project VPC network
+    - roles/dns.peer
+    # To allow viewing VPC network resources during provisioning
+    - roles/compute.networkViewer
