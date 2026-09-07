@@ -1,0 +1,632 @@
+# Copyright 2026 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+values:
+  google_agent_registry_service.google_apis["aiplatform"]:
+    agent_spec: []
+    deletion_policy: DELETE
+    description: null
+    display_name: Vertex AI API
+    endpoint_spec:
+    - type: NO_SPEC
+    interfaces:
+    - protocol_binding: JSONRPC
+      url: https://aiplatform.googleapis.com
+    location: europe-west1
+    mcp_server_spec: []
+    project: test-gf-ge-agentp-0
+    service_id: aiplatform
+    timeouts: null
+  google_agent_registry_service.google_apis["aiplatform-europe-west1-rep"]:
+    agent_spec: []
+    deletion_policy: DELETE
+    description: null
+    display_name: Vertex AI API Regional (REP)
+    endpoint_spec:
+    - type: NO_SPEC
+    interfaces:
+    - protocol_binding: JSONRPC
+      url: https://aiplatform.europe-west1.rep.googleapis.com
+    location: europe-west1
+    mcp_server_spec: []
+    project: test-gf-ge-agentp-0
+    service_id: aiplatform-europe-west1-rep
+    timeouts: null
+  google_agent_registry_service.google_apis["aiplatform-mtls"]:
+    agent_spec: []
+    deletion_policy: DELETE
+    description: null
+    display_name: Vertex AI API mTLS
+    endpoint_spec:
+    - type: NO_SPEC
+    interfaces:
+    - protocol_binding: JSONRPC
+      url: https://aiplatform.mtls.googleapis.com
+    location: europe-west1
+    mcp_server_spec: []
+    project: test-gf-ge-agentp-0
+    service_id: aiplatform-mtls
+    timeouts: null
+  google_agent_registry_service.google_apis["dialogflow"]:
+    agent_spec: []
+    deletion_policy: DELETE
+    description: null
+    display_name: Dialogflow API
+    endpoint_spec:
+    - type: NO_SPEC
+    interfaces:
+    - protocol_binding: JSONRPC
+      url: https://dialogflow.googleapis.com
+    location: europe-west1
+    mcp_server_spec: []
+    project: test-gf-ge-agentp-0
+    service_id: dialogflow
+    timeouts: null
+  google_agent_registry_service.google_apis["dialogflow-europe-west1-rep"]:
+    agent_spec: []
+    deletion_policy: DELETE
+    description: null
+    display_name: Dialogflow API Regional (REP)
+    endpoint_spec:
+    - type: NO_SPEC
+    interfaces:
+    - protocol_binding: JSONRPC
+      url: https://dialogflow.europe-west1.rep.googleapis.com
+    location: europe-west1
+    mcp_server_spec: []
+    project: test-gf-ge-agentp-0
+    service_id: dialogflow-europe-west1-rep
+    timeouts: null
+  google_agent_registry_service.google_apis["dialogflow-mtls"]:
+    agent_spec: []
+    deletion_policy: DELETE
+    description: null
+    display_name: Dialogflow API mTLS
+    endpoint_spec:
+    - type: NO_SPEC
+    interfaces:
+    - protocol_binding: JSONRPC
+      url: https://dialogflow.mtls.googleapis.com
+    location: europe-west1
+    mcp_server_spec: []
+    project: test-gf-ge-agentp-0
+    service_id: dialogflow-mtls
+    timeouts: null
+  google_agent_registry_service.google_apis["discoveryengine"]:
+    agent_spec: []
+    deletion_policy: DELETE
+    description: null
+    display_name: Discovery Engine API
+    endpoint_spec:
+    - type: NO_SPEC
+    interfaces:
+    - protocol_binding: JSONRPC
+      url: https://discoveryengine.googleapis.com
+    location: europe-west1
+    mcp_server_spec: []
+    project: test-gf-ge-agentp-0
+    service_id: discoveryengine
+    timeouts: null
+  google_agent_registry_service.google_apis["discoveryengine-europe-west1-rep"]:
+    agent_spec: []
+    deletion_policy: DELETE
+    description: null
+    display_name: Discovery Engine API Regional (REP)
+    endpoint_spec:
+    - type: NO_SPEC
+    interfaces:
+    - protocol_binding: JSONRPC
+      url: https://discoveryengine.europe-west1.rep.googleapis.com
+    location: europe-west1
+    mcp_server_spec: []
+    project: test-gf-ge-agentp-0
+    service_id: discoveryengine-europe-west1-rep
+    timeouts: null
+  google_agent_registry_service.google_apis["discoveryengine-mtls"]:
+    agent_spec: []
+    deletion_policy: DELETE
+    description: null
+    display_name: Discovery Engine API mTLS
+    endpoint_spec:
+    - type: NO_SPEC
+    interfaces:
+    - protocol_binding: JSONRPC
+      url: https://discoveryengine.mtls.googleapis.com
+    location: europe-west1
+    mcp_server_spec: []
+    project: test-gf-ge-agentp-0
+    service_id: discoveryengine-mtls
+    timeouts: null
+  google_agent_registry_service.google_apis["europe-west1-aiplatform"]:
+    agent_spec: []
+    deletion_policy: DELETE
+    description: null
+    display_name: Vertex AI API Locational
+    endpoint_spec:
+    - type: NO_SPEC
+    interfaces:
+    - protocol_binding: JSONRPC
+      url: https://europe-west1-aiplatform.googleapis.com
+    location: europe-west1
+    mcp_server_spec: []
+    project: test-gf-ge-agentp-0
+    service_id: europe-west1-aiplatform
+    timeouts: null
+  google_agent_registry_service.google_apis["europe-west1-aiplatform-mtls"]:
+    agent_spec: []
+    deletion_policy: DELETE
+    description: null
+    display_name: Vertex AI API Locational mTLS
+    endpoint_spec:
+    - type: NO_SPEC
+    interfaces:
+    - protocol_binding: JSONRPC
+      url: https://europe-west1-aiplatform.mtls.googleapis.com
+    location: europe-west1
+    mcp_server_spec: []
+    project: test-gf-ge-agentp-0
+    service_id: europe-west1-aiplatform-mtls
+    timeouts: null
+  google_agent_registry_service.google_apis["europe-west1-dialogflow"]:
+    agent_spec: []
+    deletion_policy: DELETE
+    description: null
+    display_name: Dialogflow API Locational
+    endpoint_spec:
+    - type: NO_SPEC
+    interfaces:
+    - protocol_binding: JSONRPC
+      url: https://europe-west1-dialogflow.googleapis.com
+    location: europe-west1
+    mcp_server_spec: []
+    project: test-gf-ge-agentp-0
+    service_id: europe-west1-dialogflow
+    timeouts: null
+  google_agent_registry_service.google_apis["europe-west1-dialogflow-mtls"]:
+    agent_spec: []
+    deletion_policy: DELETE
+    description: null
+    display_name: Dialogflow API Locational mTLS
+    endpoint_spec:
+    - type: NO_SPEC
+    interfaces:
+    - protocol_binding: JSONRPC
+      url: https://europe-west1-dialogflow.mtls.googleapis.com
+    location: europe-west1
+    mcp_server_spec: []
+    project: test-gf-ge-agentp-0
+    service_id: europe-west1-dialogflow-mtls
+    timeouts: null
+  google_agent_registry_service.google_apis["europe-west1-discoveryengine"]:
+    agent_spec: []
+    deletion_policy: DELETE
+    description: null
+    display_name: Discovery Engine API Locational
+    endpoint_spec:
+    - type: NO_SPEC
+    interfaces:
+    - protocol_binding: JSONRPC
+      url: https://europe-west1-discoveryengine.googleapis.com
+    location: europe-west1
+    mcp_server_spec: []
+    project: test-gf-ge-agentp-0
+    service_id: europe-west1-discoveryengine
+    timeouts: null
+  google_agent_registry_service.google_apis["europe-west1-discoveryengine-mtls"]:
+    agent_spec: []
+    deletion_policy: DELETE
+    description: null
+    display_name: Discovery Engine API Locational mTLS
+    endpoint_spec:
+    - type: NO_SPEC
+    interfaces:
+    - protocol_binding: JSONRPC
+      url: https://europe-west1-discoveryengine.mtls.googleapis.com
+    location: europe-west1
+    mcp_server_spec: []
+    project: test-gf-ge-agentp-0
+    service_id: europe-west1-discoveryengine-mtls
+    timeouts: null
+  google_agent_registry_service.google_apis["europe-west1-logging"]:
+    agent_spec: []
+    deletion_policy: DELETE
+    description: null
+    display_name: Cloud Logging API Locational
+    endpoint_spec:
+    - type: NO_SPEC
+    interfaces:
+    - protocol_binding: JSONRPC
+      url: https://europe-west1-logging.googleapis.com
+    location: europe-west1
+    mcp_server_spec: []
+    project: test-gf-ge-agentp-0
+    service_id: europe-west1-logging
+    timeouts: null
+  google_agent_registry_service.google_apis["europe-west1-logging-mtls"]:
+    agent_spec: []
+    deletion_policy: DELETE
+    description: null
+    display_name: Cloud Logging API Locational mTLS
+    endpoint_spec:
+    - type: NO_SPEC
+    interfaces:
+    - protocol_binding: JSONRPC
+      url: https://europe-west1-logging.mtls.googleapis.com
+    location: europe-west1
+    mcp_server_spec: []
+    project: test-gf-ge-agentp-0
+    service_id: europe-west1-logging-mtls
+    timeouts: null
+  google_agent_registry_service.google_apis["europe-west1-modelarmor"]:
+    agent_spec: []
+    deletion_policy: DELETE
+    description: null
+    display_name: Model Armor API Locational
+    endpoint_spec:
+    - type: NO_SPEC
+    interfaces:
+    - protocol_binding: JSONRPC
+      url: https://europe-west1-modelarmor.googleapis.com
+    location: europe-west1
+    mcp_server_spec: []
+    project: test-gf-ge-agentp-0
+    service_id: europe-west1-modelarmor
+    timeouts: null
+  google_agent_registry_service.google_apis["europe-west1-modelarmor-mtls"]:
+    agent_spec: []
+    deletion_policy: DELETE
+    description: null
+    display_name: Model Armor API Locational mTLS
+    endpoint_spec:
+    - type: NO_SPEC
+    interfaces:
+    - protocol_binding: JSONRPC
+      url: https://europe-west1-modelarmor.mtls.googleapis.com
+    location: europe-west1
+    mcp_server_spec: []
+    project: test-gf-ge-agentp-0
+    service_id: europe-west1-modelarmor-mtls
+    timeouts: null
+  google_agent_registry_service.google_apis["europe-west1-monitoring"]:
+    agent_spec: []
+    deletion_policy: DELETE
+    description: null
+    display_name: Cloud Monitoring API Locational
+    endpoint_spec:
+    - type: NO_SPEC
+    interfaces:
+    - protocol_binding: JSONRPC
+      url: https://europe-west1-monitoring.googleapis.com
+    location: europe-west1
+    mcp_server_spec: []
+    project: test-gf-ge-agentp-0
+    service_id: europe-west1-monitoring
+    timeouts: null
+  google_agent_registry_service.google_apis["europe-west1-monitoring-mtls"]:
+    agent_spec: []
+    deletion_policy: DELETE
+    description: null
+    display_name: Cloud Monitoring API Locational mTLS
+    endpoint_spec:
+    - type: NO_SPEC
+    interfaces:
+    - protocol_binding: JSONRPC
+      url: https://europe-west1-monitoring.mtls.googleapis.com
+    location: europe-west1
+    mcp_server_spec: []
+    project: test-gf-ge-agentp-0
+    service_id: europe-west1-monitoring-mtls
+    timeouts: null
+  google_agent_registry_service.google_apis["europe-west1-storage"]:
+    agent_spec: []
+    deletion_policy: DELETE
+    description: null
+    display_name: Cloud Storage API Locational
+    endpoint_spec:
+    - type: NO_SPEC
+    interfaces:
+    - protocol_binding: JSONRPC
+      url: https://europe-west1-storage.googleapis.com
+    location: europe-west1
+    mcp_server_spec: []
+    project: test-gf-ge-agentp-0
+    service_id: europe-west1-storage
+    timeouts: null
+  google_agent_registry_service.google_apis["europe-west1-storage-mtls"]:
+    agent_spec: []
+    deletion_policy: DELETE
+    description: null
+    display_name: Cloud Storage API Locational mTLS
+    endpoint_spec:
+    - type: NO_SPEC
+    interfaces:
+    - protocol_binding: JSONRPC
+      url: https://europe-west1-storage.mtls.googleapis.com
+    location: europe-west1
+    mcp_server_spec: []
+    project: test-gf-ge-agentp-0
+    service_id: europe-west1-storage-mtls
+    timeouts: null
+  google_agent_registry_service.google_apis["logging"]:
+    agent_spec: []
+    deletion_policy: DELETE
+    description: null
+    display_name: Cloud Logging API
+    endpoint_spec:
+    - type: NO_SPEC
+    interfaces:
+    - protocol_binding: JSONRPC
+      url: https://logging.googleapis.com
+    location: europe-west1
+    mcp_server_spec: []
+    project: test-gf-ge-agentp-0
+    service_id: logging
+    timeouts: null
+  google_agent_registry_service.google_apis["logging-europe-west1-rep"]:
+    agent_spec: []
+    deletion_policy: DELETE
+    description: null
+    display_name: Cloud Logging API Regional (REP)
+    endpoint_spec:
+    - type: NO_SPEC
+    interfaces:
+    - protocol_binding: JSONRPC
+      url: https://logging.europe-west1.rep.googleapis.com
+    location: europe-west1
+    mcp_server_spec: []
+    project: test-gf-ge-agentp-0
+    service_id: logging-europe-west1-rep
+    timeouts: null
+  google_agent_registry_service.google_apis["logging-mtls"]:
+    agent_spec: []
+    deletion_policy: DELETE
+    description: null
+    display_name: Cloud Logging API mTLS
+    endpoint_spec:
+    - type: NO_SPEC
+    interfaces:
+    - protocol_binding: JSONRPC
+      url: https://logging.mtls.googleapis.com
+    location: europe-west1
+    mcp_server_spec: []
+    project: test-gf-ge-agentp-0
+    service_id: logging-mtls
+    timeouts: null
+  google_agent_registry_service.google_apis["modelarmor"]:
+    agent_spec: []
+    deletion_policy: DELETE
+    description: null
+    display_name: Model Armor API
+    endpoint_spec:
+    - type: NO_SPEC
+    interfaces:
+    - protocol_binding: JSONRPC
+      url: https://modelarmor.googleapis.com
+    location: europe-west1
+    mcp_server_spec: []
+    project: test-gf-ge-agentp-0
+    service_id: modelarmor
+    timeouts: null
+  google_agent_registry_service.google_apis["modelarmor-europe-west1-rep"]:
+    agent_spec: []
+    deletion_policy: DELETE
+    description: null
+    display_name: Model Armor API Regional (REP)
+    endpoint_spec:
+    - type: NO_SPEC
+    interfaces:
+    - protocol_binding: JSONRPC
+      url: https://modelarmor.europe-west1.rep.googleapis.com
+    location: europe-west1
+    mcp_server_spec: []
+    project: test-gf-ge-agentp-0
+    service_id: modelarmor-europe-west1-rep
+    timeouts: null
+  google_agent_registry_service.google_apis["modelarmor-mtls"]:
+    agent_spec: []
+    deletion_policy: DELETE
+    description: null
+    display_name: Model Armor API mTLS
+    endpoint_spec:
+    - type: NO_SPEC
+    interfaces:
+    - protocol_binding: JSONRPC
+      url: https://modelarmor.mtls.googleapis.com
+    location: europe-west1
+    mcp_server_spec: []
+    project: test-gf-ge-agentp-0
+    service_id: modelarmor-mtls
+    timeouts: null
+  google_agent_registry_service.google_apis["monitoring"]:
+    agent_spec: []
+    deletion_policy: DELETE
+    description: null
+    display_name: Cloud Monitoring API
+    endpoint_spec:
+    - type: NO_SPEC
+    interfaces:
+    - protocol_binding: JSONRPC
+      url: https://monitoring.googleapis.com
+    location: europe-west1
+    mcp_server_spec: []
+    project: test-gf-ge-agentp-0
+    service_id: monitoring
+    timeouts: null
+  google_agent_registry_service.google_apis["monitoring-europe-west1-rep"]:
+    agent_spec: []
+    deletion_policy: DELETE
+    description: null
+    display_name: Cloud Monitoring API Regional (REP)
+    endpoint_spec:
+    - type: NO_SPEC
+    interfaces:
+    - protocol_binding: JSONRPC
+      url: https://monitoring.europe-west1.rep.googleapis.com
+    location: europe-west1
+    mcp_server_spec: []
+    project: test-gf-ge-agentp-0
+    service_id: monitoring-europe-west1-rep
+    timeouts: null
+  google_agent_registry_service.google_apis["monitoring-mtls"]:
+    agent_spec: []
+    deletion_policy: DELETE
+    description: null
+    display_name: Cloud Monitoring API mTLS
+    endpoint_spec:
+    - type: NO_SPEC
+    interfaces:
+    - protocol_binding: JSONRPC
+      url: https://monitoring.mtls.googleapis.com
+    location: europe-west1
+    mcp_server_spec: []
+    project: test-gf-ge-agentp-0
+    service_id: monitoring-mtls
+    timeouts: null
+  google_agent_registry_service.google_apis["storage"]:
+    agent_spec: []
+    deletion_policy: DELETE
+    description: null
+    display_name: Cloud Storage API
+    endpoint_spec:
+    - type: NO_SPEC
+    interfaces:
+    - protocol_binding: JSONRPC
+      url: https://storage.googleapis.com
+    location: europe-west1
+    mcp_server_spec: []
+    project: test-gf-ge-agentp-0
+    service_id: storage
+    timeouts: null
+  google_agent_registry_service.google_apis["storage-europe-west1-rep"]:
+    agent_spec: []
+    deletion_policy: DELETE
+    description: null
+    display_name: Cloud Storage API Regional (REP)
+    endpoint_spec:
+    - type: NO_SPEC
+    interfaces:
+    - protocol_binding: JSONRPC
+      url: https://storage.europe-west1.rep.googleapis.com
+    location: europe-west1
+    mcp_server_spec: []
+    project: test-gf-ge-agentp-0
+    service_id: storage-europe-west1-rep
+    timeouts: null
+  google_agent_registry_service.google_apis["storage-mtls"]:
+    agent_spec: []
+    deletion_policy: DELETE
+    description: null
+    display_name: Cloud Storage API mTLS
+    endpoint_spec:
+    - type: NO_SPEC
+    interfaces:
+    - protocol_binding: JSONRPC
+      url: https://storage.mtls.googleapis.com
+    location: europe-west1
+    mcp_server_spec: []
+    project: test-gf-ge-agentp-0
+    service_id: storage-mtls
+    timeouts: null
+  google_compute_network_attachment.network_attachment:
+    connection_preference: ACCEPT_MANUAL
+    deletion_policy: DELETE
+    description: null
+    name: agw-geap-gateway-network-attachment
+    producer_accept_lists:
+    - test-gf-ge-agentp-0
+    producer_reject_lists: null
+    project: test-gf-ge-agentp-0
+    region: europe-west1
+    subnetworks:
+    - projects/test-gf-ge-agentp/regions/europe-west1/subnetworks/sub-0
+    timeouts: null
+  google_network_security_authz_policy.iap:
+    action: CUSTOM
+    custom_provider:
+    - authz_extension:
+      - {}
+      cloud_iap: []
+    deletion_policy: DELETE
+    description: null
+    effective_labels:
+      goog-terraform-provisioned: 'true'
+    http_rules: []
+    labels: null
+    location: europe-west1
+    name: agw-geap-iap-policy
+    network_rules: []
+    policy_profile: REQUEST_AUTHZ
+    project: test-gf-ge-agentp-0
+    target:
+    - load_balancing_scheme: null
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
+    timeouts: null
+  google_network_services_authz_extension.iap:
+    authority: null
+    deletion_policy: DELETE
+    description: null
+    effective_labels:
+      goog-terraform-provisioned: 'true'
+    fail_open: true
+    forward_headers: null
+    labels: null
+    load_balancing_scheme: null
+    location: europe-west1
+    metadata:
+      iamEnforcementMode: DRY_RUN
+      iapPolicyVersion: V2
+    name: agw-geap-iap-authz-ext
+    project: test-gf-ge-agentp-0
+    service: iap.googleapis.com
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
+    timeout: 2s
+    timeouts: null
+  module.agent_gateway.google_network_services_agent_gateway.default:
+    deletion_policy: DELETE
+    description: Terraform managed.
+    effective_labels:
+      goog-terraform-provisioned: 'true'
+    google_managed:
+    - governed_access_path: AGENT_TO_ANYWHERE
+    labels: null
+    location: europe-west1
+    name: agw-geap-gateway
+    project: test-gf-ge-agentp-0
+    protocols: null
+    registries:
+    - //agentregistry.googleapis.com/projects/test-gf-ge-agentp-0/locations/europe-west1
+    self_managed: []
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
+    timeouts: null
+  time_sleep.wait_for_gateway:
+    create_duration: 30s
+    destroy_duration: null
+    triggers: {}
+
+counts:
+  google_agent_registry_service: 35
+  google_compute_network_attachment: 1
+  google_network_security_authz_policy: 1
+  google_network_services_agent_gateway: 1
+  google_network_services_authz_extension: 1
+  modules: 1
+  resources: 40
+  time_sleep: 1
+
+outputs:
+  authz_policy_ids: __missing__
+  service_extensions_sa: __missing__

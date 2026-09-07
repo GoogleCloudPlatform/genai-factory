@@ -1,0 +1,163 @@
+# Copyright 2026 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# Model Armor Request Template: RAI + PI/jailbreak + malicious URI + SDP
+resource "google_model_armor_template" "request" {
+  count       = try(var.agent_gateway_config.model_armor.enable, false) ? 1 : 0
+  project     = var.project_id
+  location    = var.region
+  template_id = var.model_armor_template_config.request_template_id
+
+  filter_config {
+    rai_settings {
+      dynamic "rai_filters" {
+        for_each = var.model_armor_template_config.rai_filters
+        content {
+          filter_type      = rai_filters.key
+          confidence_level = rai_filters.value
+        }
+      }
+    }
+
+    sdp_settings {
+      basic_config {
+        filter_enforcement = var.model_armor_template_config.sdp.enabled
+      }
+    }
+
+    pi_and_jailbreak_filter_settings {
+      filter_enforcement = var.model_armor_template_config.pi_and_jailbreak.enabled
+      confidence_level   = var.model_armor_template_config.pi_and_jailbreak.confidence_level
+    }
+
+    malicious_uri_filter_settings {
+      filter_enforcement = var.model_armor_template_config.malicious_uri.enabled
+    }
+  }
+
+  template_metadata {
+    custom_llm_response_safety_error_message = "This is a custom error message for LLM response"
+    log_template_operations                  = var.model_armor_template_config.logging
+    log_sanitize_operations                  = var.model_armor_template_config.logging
+    ignore_partial_invocation_failures       = true
+    custom_prompt_safety_error_code          = 400
+    custom_prompt_safety_error_message       = "This is a custom error message for prompt"
+    custom_llm_response_safety_error_code    = 401
+    enforcement_type                         = var.model_armor_template_config.enforcement_type
+
+    multi_language_detection {
+      enable_multi_language_detection = true
+    }
+  }
+}
+
+# Model Armor Response Template: RAI + PI/jailbreak + malicious URI + SDP
+resource "google_model_armor_template" "response" {
+  count       = try(var.agent_gateway_config.model_armor.enable, false) ? 1 : 0
+  project     = var.project_id
+  location    = var.region
+  template_id = var.model_armor_template_config.response_template_id
+
+  filter_config {
+    rai_settings {
+      dynamic "rai_filters" {
+        for_each = var.model_armor_template_config.rai_filters
+        content {
+          filter_type      = rai_filters.key
+          confidence_level = rai_filters.value
+        }
+      }
+    }
+
+    sdp_settings {
+      basic_config {
+        filter_enforcement = var.model_armor_template_config.sdp.enabled
+      }
+    }
+
+    pi_and_jailbreak_filter_settings {
+      filter_enforcement = var.model_armor_template_config.pi_and_jailbreak.enabled
+      confidence_level   = var.model_armor_template_config.pi_and_jailbreak.confidence_level
+    }
+
+    malicious_uri_filter_settings {
+      filter_enforcement = var.model_armor_template_config.malicious_uri.enabled
+    }
+  }
+
+  template_metadata {
+    custom_llm_response_safety_error_message = "This is a custom error message for LLM response"
+    log_template_operations                  = var.model_armor_template_config.logging
+    log_sanitize_operations                  = var.model_armor_template_config.logging
+    ignore_partial_invocation_failures       = true
+    custom_prompt_safety_error_code          = 400
+    custom_prompt_safety_error_message       = "This is a custom error message for prompt"
+    custom_llm_response_safety_error_code    = 401
+    enforcement_type                         = var.model_armor_template_config.enforcement_type
+
+    multi_language_detection {
+      enable_multi_language_detection = true
+    }
+  }
+}
+
+# Model Armor Floor Setting: Project-level baseline for Vertex AI / AI Platform
+resource "google_model_armor_floorsetting" "floorsetting" {
+  count    = try(var.model_armor_template_config.floor_setting.enabled, false) ? 1 : 0
+  location = "global"
+  parent   = "projects/${var.project_id}"
+
+  filter_config {
+    rai_settings {
+      dynamic "rai_filters" {
+        for_each = var.model_armor_template_config.floor_setting.rai_filters
+        content {
+          filter_type      = rai_filters.key
+          confidence_level = rai_filters.value
+        }
+      }
+    }
+
+    sdp_settings {
+      basic_config {
+        filter_enforcement = var.model_armor_template_config.floor_setting.sdp.enabled
+      }
+    }
+
+    pi_and_jailbreak_filter_settings {
+      filter_enforcement = var.model_armor_template_config.floor_setting.pi_and_jailbreak.enabled
+      confidence_level   = var.model_armor_template_config.floor_setting.pi_and_jailbreak.confidence_level
+    }
+
+    malicious_uri_filter_settings {
+      filter_enforcement = var.model_armor_template_config.floor_setting.malicious_uri.enabled
+    }
+  }
+
+  enable_floor_setting_enforcement = true
+
+  integrated_services = ["AI_PLATFORM"]
+
+  ai_platform_floor_setting {
+    inspect_only         = var.model_armor_template_config.floor_setting.enforcement_type == "INSPECT_ONLY" ? true : null
+    inspect_and_block    = var.model_armor_template_config.floor_setting.enforcement_type == "INSPECT_AND_BLOCK" ? true : null
+    enable_cloud_logging = var.model_armor_template_config.floor_setting.logging
+  }
+
+  floor_setting_metadata {
+    multi_language_detection {
+      enable_multi_language_detection = true
+    }
+  }
+}
