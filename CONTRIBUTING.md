@@ -149,11 +149,6 @@ uv run tools/plan_summary.py cloud-run-single/0-prereqs \
   > tests/cloud_run_single/0_prereqs/simple.yaml
 ```
 
-After you generated the inventory file, remember to:
-
-- Add the copyright at the top of the file. You can copy it from any other yaml file in this repository.
-- Remove the following line, if you are generating the inventory for a `0_prereqs` stage: `.values.google_service_account_iam_member.me_sa_token_creator[0].member`:
-
 ## Add new factories
 
 To add a new factory, follow these steps:
