@@ -14,20 +14,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: gf-ge-agentp-0
+name: gf-geap-0
 
 # Enable APIs
 services:
-  # To create TF state buckets
-  - storage.googleapis.com
   # Agent Registry
   - agentregistry.googleapis.com
-  # Gemini Enterprise
+  # Enable AI platform capabilities
   - aiplatform.googleapis.com
-  - discoveryengine.googleapis.com
-  # Agent Gateway & Networking
+  # Agent Gateway and networking
   - cloudresourcemanager.googleapis.com
   - compute.googleapis.com
+  # To create the custom role for PSC network attachment updates
+  - iam.googleapis.com
   - iamcredentials.googleapis.com
   - iap.googleapis.com
   - modelarmor.googleapis.com
@@ -35,17 +34,30 @@ services:
   - networkservices.googleapis.com
   - orgpolicy.googleapis.com
   - serviceusage.googleapis.com
+  # Gemini Enterprise
+  - discoveryengine.googleapis.com
+  # To create GCS buckets for Terraform state
+  - storage.googleapis.com
 
 org_policies:
   iam.managed.disableAccessPolicyBinding:
     rules:
       - enforce: false
 
+custom_roles:
+  psc_updater:
+    title: PSC updater
+    description: Allows to update PSC network attachments.
+    permissions:
+      - compute.networkAttachments.get
+      - compute.networkAttachments.update
+      - compute.regionOperations.get
+
 buckets:
   iac-state:
     description: Terraform state bucket
     iam:
-      roles/storage.objectAdmin:
+      roles/storage.objectUser:
         - $iam_principals:service_accounts/_self_/iac-rw
 
 service_accounts:
@@ -55,22 +67,29 @@ service_accounts:
 # Grant roles
 iam_by_principals:
   $iam_principals:service_accounts/_self_/iac-rw:
+    # To create GCS bucket for Terraform state
+    - roles/storage.admin
+    # Gemini Enterprise
     - roles/discoveryengine.admin
-    # Model Armor
+    # Agent Registry
+    - roles/agentregistry.admin
+    # Agent Gateway
+    - roles/compute.networkAdmin
+    - roles/networksecurity.admin
+    - roles/networkservices.admin
+    # Model Armor (for Agent Gateway)
     - roles/modelarmor.admin
     - roles/modelarmor.floorSettingsAdmin
     - roles/serviceusage.serviceUsageConsumer
-    - roles/storage.admin
-    # The following role assignments are used to create and manage Agent Gateways
-    - roles/compute.networkAdmin
-    - roles/networkservices.admin
-    - roles/networksecurity.admin
-    - roles/agentregistry.admin
-  # Service Extensions Service Agent for Model Armor runtime inspection
+  # Agent Gateway: update PSC network attachment
+  $iam_principals:service_agents/_self_/agentgateway:
+    - $custom_roles:psc_updater
+  # Agent Gateway: service extensions for Model Armor runtime inspection
   $iam_principals:service_agents/_self_/dep:
     - roles/modelarmor.user
     - roles/modelarmor.calloutUser
     - roles/serviceusage.serviceUsageConsumer
-  # Vertex AI Service Agent to invoke Model Armor for floor setting evaluation
+  # Agent Gateway: Vertex AI service agent to invoke Model Armor
+  # for floor setting evaluation
   $iam_principals:service_agents/_self_/aiplatform:
     - roles/modelarmor.user

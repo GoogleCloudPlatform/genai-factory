@@ -12,13 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name = "agw-geap"
-
-project_id = "test-gf-geap-0"
-
-region = "europe-west1"
-
-networking_config = {
-  subnet = "projects/test-gf-geap-hp-0/regions/europe-west1/subnetworks/sub-0"
-  vpc    = "projects/test-gf-geap-hp-0/global/networks/net-0"
+variable "subnet_self_links" {
+  # tfdoc:variable:source 2-networking
+  description = "Shared VPCs subnet IDs."
+  type        = map(string)
+  nullable    = false
+  default     = {}
 }

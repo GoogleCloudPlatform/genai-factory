@@ -14,22 +14,28 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: gf-ge-agentp
+name: gf-geap-hp-0
 
 # Enable APIs
 services:
   - compute.googleapis.com
   # To create response policies for Private Google APIs
   - dns.googleapis.com
-  # To orchestrate the private connection pathways and route allocations between Google-managed networks and your Host Project
-  - servicenetworking.googleapis.com
 
 # Grant roles
 iam_by_principals:
   $iam_principals:service_accounts/service-01/iac-rw:
-    # To allow the creation of LBsin the service project
+    # Agent Gateway: allows creating the PSC network attachment
+    # in the shared VPC
     - roles/compute.networkUser
-    # To allow DNS peering to the host project VPC network
-    - roles/dns.peer
-    # To allow viewing VPC network resources during provisioning
+    # Agent Gateway: allows backend validation of network resources
     - roles/compute.networkViewer
+    # Agent Gateway: allows validation of DNS resources
+    - roles/dns.reader
+  $iam_principals:service_agents/service-01/agentgateway:
+    # Agent Gateway: allows the service agent to use the host project subnet
+    # for the network attachment and connect the PSC-I to route egress traffic
+    - roles/compute.networkUser
+    # Agent Gateway: allows the service agent peer with private Cloud DNS zones
+    # in the host project.
+    - roles/dns.peer

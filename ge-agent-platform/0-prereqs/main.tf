@@ -19,6 +19,10 @@ locals {
   )
 }
 
+data "google_client_openid_userinfo" "me" {
+  count = var.enable_iac_sa_impersonation ? 1 : 0
+}
+
 module "projects" {
   source = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/project-factory?ref=v58.0.0"
   data_defaults = {
@@ -52,19 +56,9 @@ module "projects" {
   }
 }
 
-data "google_client_openid_userinfo" "me" {
-  count = var.enable_iac_sa_impersonation ? 1 : 0
-}
-
 resource "google_service_account_iam_member" "me_sa_token_creator" {
   count              = var.enable_iac_sa_impersonation ? 1 : 0
   service_account_id = module.projects.service_accounts["service-01/iac-rw"].id
   role               = "roles/iam.serviceAccountTokenCreator"
   member             = "user:${local.effective_user_identity}"
-}
-
-resource "google_project_service_identity" "networkservices" {
-  provider = google-beta
-  project  = module.projects.project_ids["service-01"]
-  service  = "networkservices.googleapis.com"
 }

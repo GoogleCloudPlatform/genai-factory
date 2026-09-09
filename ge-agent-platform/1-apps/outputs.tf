@@ -12,19 +12,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-output "authz_policy_ids" {
-  description = "Map of policy name to authorization policy ID."
-  value = merge(
-    {
-      iap = google_network_security_authz_policy.iap.id
-    },
-    length(google_network_security_authz_policy.model_armor) > 0 ? {
-      model_armor = google_network_security_authz_policy.model_armor[0].id
-    } : {}
-  )
+output "agent_gateway_ids" {
+  description = "The Agent Gateway ids."
+  type = object({
+    egress = string
+  })
+  value = {
+    egress = module.agent_gateway.id
+  }
 }
 
-output "service_extensions_sa" {
-  description = "The Agent Gateway service extensions service account for Model Armor."
-  value       = local.service_extensions_sa
+output "agent_registry_uri" {
+  description = "The Agent Registry URI."
+  type        = string
+  value       = local.registry_uri
 }

@@ -12,9 +12,10 @@ The deployment includes:
 - **Agent Registry**: A centralized service catalog that registers:
   - **Google APIs**: Endpoints for Vertex AI, Dialogflow, Discovery Engine, Model Armor, Cloud Logging, and Cloud Monitoring (including regional, mTLS, and Regional Endpoint Protocol variants) with JSONRPC protocol bindings.
   - **Custom Services**: Configurable custom HTTP/gRPC endpoints registered for agent discovery and tool use.
-- **Dynamic Authorization Policies**:
-  - **Model Armor** (`CONTENT_AUTHZ`): Inspects requests and responses using Model Armor safety templates to sanitize content and prevent data leakage.
+  - **Custom MCP servers** (not yet implemented).
+- **Agent Gateway Authorization Policies**:
   - **Identity-Aware Proxy (IAP)** (`REQUEST_AUTHZ`): Enforces identity verification and access control on incoming requests.
+  - **Model Armor** (`CONTENT_AUTHZ`): Inspects requests and responses using Model Armor safety templates to sanitize content and prevent data leakage.
 - **Networking Stack (by default)**:
   - A **host project** with a Shared VPC, subnet, and proxy-only subnet.
   - Cloud DNS response policies for private Google APIs routing.

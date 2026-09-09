@@ -12,9 +12,72 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Model Armor Request Template: RAI + PI/jailbreak + malicious URI + SDP
+# Model Armor service extension.
+resource "google_network_services_authz_extension" "ma_authz_srv_ext" {
+  count     = var.agent_gateway_config.model_armor_config.enable ? 1 : 0
+  name      = "${var.name}-ma"
+  project   = var.project_id
+  location  = var.region
+  service   = "modelarmor.${var.region}.rep.googleapis.com"
+  timeout   = var.agent_gateway_config.model_armor_config.timeout
+  fail_open = var.agent_gateway_config.model_armor_config.fail_open
+  metadata = {
+    "model_armor_settings" = jsonencode([{
+      request_template_id  = google_model_armor_template.request[0].name
+      response_template_id = google_model_armor_template.response[0].name
+    }])
+  }
+}
+
+# Create a policy to bind the service extension to egress Agent Gateway.
+resource "google_network_security_authz_policy" "ma_authz_policy" {
+  count          = var.agent_gateway_config.model_armor_config.enable ? 1 : 0
+  name           = "${var.name}-ma"
+  project        = var.project_id
+  location       = var.region
+  policy_profile = "CONTENT_AUTHZ"
+  action         = "CUSTOM"
+
+  target {
+    resources = [module.agent_gateway.id]
+  }
+
+  custom_provider {
+    authz_extension {
+      resources = [
+        google_network_services_authz_extension.ma_authz_srv_ext[0].id
+      ]
+    }
+  }
+
+  dynamic "http_rules" {
+    for_each = (
+      length(var.agent_gateway_config.model_armor_config.authz_hosts) > 0
+      ? [1] : []
+    )
+    content {
+      to {
+        operations {
+          dynamic "hosts" {
+            for_each = var.agent_gateway_config.model_armor_config.authz_hosts
+            content {
+              exact = hosts.value
+            }
+          }
+        }
+      }
+    }
+  }
+
+  depends_on = [
+    time_sleep.wait_for_gateway,
+    google_network_security_authz_policy.iap_authz_policy
+  ]
+}
+
+# RAI + PI/jailbreak + malicious URI + SDP
 resource "google_model_armor_template" "request" {
-  count       = try(var.agent_gateway_config.model_armor.enable, false) ? 1 : 0
+  count       = var.agent_gateway_config.model_armor_config.enable ? 1 : 0
   project     = var.project_id
   location    = var.region
   template_id = var.model_armor_template_config.request_template_id
@@ -47,14 +110,14 @@ resource "google_model_armor_template" "request" {
   }
 
   template_metadata {
+    custom_llm_response_safety_error_code    = 401
     custom_llm_response_safety_error_message = "This is a custom error message for LLM response"
-    log_template_operations                  = var.model_armor_template_config.logging
-    log_sanitize_operations                  = var.model_armor_template_config.logging
-    ignore_partial_invocation_failures       = true
     custom_prompt_safety_error_code          = 400
     custom_prompt_safety_error_message       = "This is a custom error message for prompt"
-    custom_llm_response_safety_error_code    = 401
     enforcement_type                         = var.model_armor_template_config.enforcement_type
+    ignore_partial_invocation_failures       = true
+    log_template_operations                  = var.model_armor_template_config.logging
+    log_sanitize_operations                  = var.model_armor_template_config.logging
 
     multi_language_detection {
       enable_multi_language_detection = true
@@ -62,9 +125,9 @@ resource "google_model_armor_template" "request" {
   }
 }
 
-# Model Armor Response Template: RAI + PI/jailbreak + malicious URI + SDP
+# RAI + PI/jailbreak + malicious URI + SDP
 resource "google_model_armor_template" "response" {
-  count       = try(var.agent_gateway_config.model_armor.enable, false) ? 1 : 0
+  count       = var.agent_gateway_config.model_armor_config.enable ? 1 : 0
   project     = var.project_id
   location    = var.region
   template_id = var.model_armor_template_config.response_template_id
@@ -97,14 +160,14 @@ resource "google_model_armor_template" "response" {
   }
 
   template_metadata {
+    custom_llm_response_safety_error_code    = 401
     custom_llm_response_safety_error_message = "This is a custom error message for LLM response"
-    log_template_operations                  = var.model_armor_template_config.logging
-    log_sanitize_operations                  = var.model_armor_template_config.logging
-    ignore_partial_invocation_failures       = true
     custom_prompt_safety_error_code          = 400
     custom_prompt_safety_error_message       = "This is a custom error message for prompt"
-    custom_llm_response_safety_error_code    = 401
     enforcement_type                         = var.model_armor_template_config.enforcement_type
+    ignore_partial_invocation_failures       = true
+    log_sanitize_operations                  = var.model_armor_template_config.logging
+    log_template_operations                  = var.model_armor_template_config.logging
 
     multi_language_detection {
       enable_multi_language_detection = true
@@ -112,11 +175,14 @@ resource "google_model_armor_template" "response" {
   }
 }
 
-# Model Armor Floor Setting: Project-level baseline for Vertex AI / AI Platform
 resource "google_model_armor_floorsetting" "floorsetting" {
-  count    = try(var.model_armor_template_config.floor_setting.enabled, false) ? 1 : 0
-  location = "global"
-  parent   = "projects/${var.project_id}"
+  count = (
+    var.model_armor_template_config.floor_setting.enabled ? 1 : 0
+  )
+  location                         = "global"
+  parent                           = "projects/${var.project_id}"
+  enable_floor_setting_enforcement = true
+  integrated_services              = ["AI_PLATFORM"]
 
   filter_config {
     rai_settings {
@@ -144,10 +210,6 @@ resource "google_model_armor_floorsetting" "floorsetting" {
       filter_enforcement = var.model_armor_template_config.floor_setting.malicious_uri.enabled
     }
   }
-
-  enable_floor_setting_enforcement = true
-
-  integrated_services = ["AI_PLATFORM"]
 
   ai_platform_floor_setting {
     inspect_only         = var.model_armor_template_config.floor_setting.enforcement_type == "INSPECT_ONLY" ? true : null

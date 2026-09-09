@@ -87,7 +87,7 @@ OUT_RE = re.compile(r'''(?smx)
     # anything else
     (?:^(.*?)$)
 ''')
-OUT_TEMPLATE = ('description', 'value', 'sensitive')
+OUT_TEMPLATE = ('description', 'value', 'sensitive', 'type')
 RECIPE_RE = re.compile(r'(?sm)^#\s*(.*?)$')
 REPO_ROOT = os.path.dirname(os.path.dirname(__file__))
 REPO_URL = 'https://github.com/GoogleCloudPlatform/cloud-foundation-fabric/blob/master'

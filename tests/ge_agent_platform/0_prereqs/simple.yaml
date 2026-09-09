@@ -13,14 +13,10 @@
 # limitations under the License.
 
 values:
-  google_project_service_identity.networkservices:
-    project: test-gf-ge-agentp-0
-    service: networkservices.googleapis.com
-    timeouts: null
   google_service_account_iam_member.me_sa_token_creator[0]:
     condition: []
     role: roles/iam.serviceAccountTokenCreator
-    service_account_id: projects/test-gf-ge-agentp-0/serviceAccounts/iac-rw@test-gf-ge-agentp-0.iam.gserviceaccount.com
+    service_account_id: projects/test-gf-geap-0/serviceAccounts/iac-rw@test-gf-geap-0.iam.gserviceaccount.com
   local_file.providers:
     content_base64: null
     directory_permission: '0777'
@@ -41,7 +37,7 @@ values:
     gke_clusters: []
     networks:
     - {}
-    project: test-gf-ge-agentp
+    project: test-gf-geap-hp-0
     response_policy_name: googleapis
     timeouts: null
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["accounts"]:
@@ -55,7 +51,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: test-gf-ge-agentp
+    project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: accounts
     timeouts: null
@@ -70,7 +66,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: test-gf-ge-agentp
+    project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: aiplatform-notebook-cloud-all
     timeouts: null
@@ -85,7 +81,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: test-gf-ge-agentp
+    project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: aiplatform-notebook-gu-all
     timeouts: null
@@ -100,7 +96,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: test-gf-ge-agentp
+    project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: backupdr-cloud
     timeouts: null
@@ -115,7 +111,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: test-gf-ge-agentp
+    project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: backupdr-cloud-all
     timeouts: null
@@ -130,7 +126,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: test-gf-ge-agentp
+    project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: backupdr-gu
     timeouts: null
@@ -145,7 +141,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: test-gf-ge-agentp
+    project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: backupdr-gu-all
     timeouts: null
@@ -160,7 +156,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: test-gf-ge-agentp
+    project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: cloudfunctions
     timeouts: null
@@ -175,7 +171,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: test-gf-ge-agentp
+    project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: cloudproxy
     timeouts: null
@@ -190,7 +186,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: test-gf-ge-agentp
+    project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: composer-cloud-all
     timeouts: null
@@ -205,7 +201,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: test-gf-ge-agentp
+    project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: composer-gu-all
     timeouts: null
@@ -220,7 +216,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: test-gf-ge-agentp
+    project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: datafusion-all
     timeouts: null
@@ -235,7 +231,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: test-gf-ge-agentp
+    project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: datafusion-gu-all
     timeouts: null
@@ -250,7 +246,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: test-gf-ge-agentp
+    project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: dataproc
     timeouts: null
@@ -265,7 +261,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: test-gf-ge-agentp
+    project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: dataproc-all
     timeouts: null
@@ -280,7 +276,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: test-gf-ge-agentp
+    project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: dataproc-gu
     timeouts: null
@@ -295,7 +291,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: test-gf-ge-agentp
+    project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: dataproc-gu-all
     timeouts: null
@@ -310,7 +306,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: test-gf-ge-agentp
+    project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: dl
     timeouts: null
@@ -325,7 +321,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: test-gf-ge-agentp
+    project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: gcr
     timeouts: null
@@ -340,7 +336,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: test-gf-ge-agentp
+    project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: gcr-all
     timeouts: null
@@ -355,7 +351,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: test-gf-ge-agentp
+    project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: gke-all
     timeouts: null
@@ -370,7 +366,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: test-gf-ge-agentp
+    project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: googleapis-all
     timeouts: null
@@ -393,7 +389,7 @@ values:
         - '2600:2d00:2:2000::'
         ttl: null
         type: AAAA
-    project: test-gf-ge-agentp
+    project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: googleapis-private
     timeouts: null
@@ -416,7 +412,7 @@ values:
         - '2600:2d00:2:1000::'
         ttl: null
         type: AAAA
-    project: test-gf-ge-agentp
+    project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: googleapis-restricted
     timeouts: null
@@ -431,7 +427,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: test-gf-ge-agentp
+    project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: gstatic-all
     timeouts: null
@@ -446,7 +442,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: test-gf-ge-agentp
+    project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: kernels-gu
     timeouts: null
@@ -461,7 +457,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: test-gf-ge-agentp
+    project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: kernels-gu-all
     timeouts: null
@@ -476,7 +472,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: test-gf-ge-agentp
+    project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: ltsapis-all
     timeouts: null
@@ -491,7 +487,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: test-gf-ge-agentp
+    project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: notebooks-all
     timeouts: null
@@ -506,7 +502,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: test-gf-ge-agentp
+    project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: notebooks-gu-all
     timeouts: null
@@ -521,7 +517,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: test-gf-ge-agentp
+    project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: packages-cloud
     timeouts: null
@@ -536,7 +532,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: test-gf-ge-agentp
+    project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: packages-cloud-all
     timeouts: null
@@ -551,7 +547,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: test-gf-ge-agentp
+    project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: pkgdev
     timeouts: null
@@ -566,7 +562,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: test-gf-ge-agentp
+    project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: pkgdev-all
     timeouts: null
@@ -581,7 +577,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: test-gf-ge-agentp
+    project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: pkigoog
     timeouts: null
@@ -596,7 +592,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: test-gf-ge-agentp
+    project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: pkigoog-all
     timeouts: null
@@ -611,7 +607,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: test-gf-ge-agentp
+    project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: run-all
     timeouts: null
@@ -626,7 +622,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: test-gf-ge-agentp
+    project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: source
     timeouts: null
@@ -641,7 +637,7 @@ values:
         - private.googleapis.com.
         ttl: null
         type: CNAME
-    project: test-gf-ge-agentp
+    project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: storage
     timeouts: null
@@ -662,8 +658,8 @@ values:
     lifecycle_rule: []
     location: EUROPE-WEST1
     logging: []
-    name: test-gf-ge-agentp-0-iac-state
-    project: test-gf-ge-agentp-0
+    name: test-gf-geap-0-iac-state
+    project: test-gf-geap-0
     requester_pays: null
     retention_policy: []
     storage_class: STANDARD
@@ -673,35 +669,37 @@ values:
     uniform_bucket_level_access: true
     versioning:
     - enabled: false
-  ? module.projects.module.buckets["service-01/iac-state"].google_storage_bucket_iam_binding.authoritative["roles/storage.objectAdmin"]
-  : bucket: test-gf-ge-agentp-0-iac-state
+  ? module.projects.module.buckets["service-01/iac-state"].google_storage_bucket_iam_binding.authoritative["roles/storage.objectUser"]
+  : bucket: test-gf-geap-0-iac-state
     condition: []
     members:
-    - serviceAccount:iac-rw@test-gf-ge-agentp-0.iam.gserviceaccount.com
-    role: roles/storage.objectAdmin
+    - serviceAccount:iac-rw@test-gf-geap-0.iam.gserviceaccount.com
+    role: roles/storage.objectUser
     timeouts: null
   module.projects.module.projects-iam["host"].google_project_iam_binding.authoritative["roles/compute.networkUser"]:
     condition: []
-    members:
-    - serviceAccount:iac-rw@test-gf-ge-agentp-0.iam.gserviceaccount.com
-    project: test-gf-ge-agentp
+    project: test-gf-geap-hp-0
     role: roles/compute.networkUser
   module.projects.module.projects-iam["host"].google_project_iam_binding.authoritative["roles/compute.networkViewer"]:
     condition: []
     members:
-    - serviceAccount:iac-rw@test-gf-ge-agentp-0.iam.gserviceaccount.com
-    project: test-gf-ge-agentp
+    - serviceAccount:iac-rw@test-gf-geap-0.iam.gserviceaccount.com
+    project: test-gf-geap-hp-0
     role: roles/compute.networkViewer
   module.projects.module.projects-iam["host"].google_project_iam_binding.authoritative["roles/dns.peer"]:
     condition: []
-    members:
-    - serviceAccount:iac-rw@test-gf-ge-agentp-0.iam.gserviceaccount.com
-    project: test-gf-ge-agentp
+    project: test-gf-geap-hp-0
     role: roles/dns.peer
+  module.projects.module.projects-iam["host"].google_project_iam_binding.authoritative["roles/dns.reader"]:
+    condition: []
+    members:
+    - serviceAccount:iac-rw@test-gf-geap-0.iam.gserviceaccount.com
+    project: test-gf-geap-hp-0
+    role: roles/dns.reader
   ? module.projects.module.projects-iam["service-01"].google_org_policy_policy.default["iam.managed.disableAccessPolicyBinding"]
   : dry_run_spec: []
-    name: projects/test-gf-ge-agentp-0/policies/iam.managed.disableAccessPolicyBinding
-    parent: projects/test-gf-ge-agentp-0
+    name: projects/test-gf-geap-0/policies/iam.managed.disableAccessPolicyBinding
+    parent: projects/test-gf-geap-0
     spec:
     - inherit_from_parent: null
       reset: null
@@ -713,65 +711,69 @@ values:
         parameters: null
         values: []
     timeouts: null
+  module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["$custom_roles:psc_updater"]:
+    condition: []
+    project: test-gf-geap-0
+    role: projects/test-gf-geap-0/roles/psc_updater
   module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/agentregistry.admin"]:
     condition: []
     members:
-    - serviceAccount:iac-rw@test-gf-ge-agentp-0.iam.gserviceaccount.com
-    project: test-gf-ge-agentp-0
+    - serviceAccount:iac-rw@test-gf-geap-0.iam.gserviceaccount.com
+    project: test-gf-geap-0
     role: roles/agentregistry.admin
   module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/compute.networkAdmin"]:
     condition: []
     members:
-    - serviceAccount:iac-rw@test-gf-ge-agentp-0.iam.gserviceaccount.com
-    project: test-gf-ge-agentp-0
+    - serviceAccount:iac-rw@test-gf-geap-0.iam.gserviceaccount.com
+    project: test-gf-geap-0
     role: roles/compute.networkAdmin
   module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/discoveryengine.admin"]:
     condition: []
     members:
-    - serviceAccount:iac-rw@test-gf-ge-agentp-0.iam.gserviceaccount.com
-    project: test-gf-ge-agentp-0
+    - serviceAccount:iac-rw@test-gf-geap-0.iam.gserviceaccount.com
+    project: test-gf-geap-0
     role: roles/discoveryengine.admin
   module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/modelarmor.admin"]:
     condition: []
     members:
-    - serviceAccount:iac-rw@test-gf-ge-agentp-0.iam.gserviceaccount.com
-    project: test-gf-ge-agentp-0
+    - serviceAccount:iac-rw@test-gf-geap-0.iam.gserviceaccount.com
+    project: test-gf-geap-0
     role: roles/modelarmor.admin
   module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/modelarmor.calloutUser"]:
     condition: []
-    project: test-gf-ge-agentp-0
+    project: test-gf-geap-0
     role: roles/modelarmor.calloutUser
   ? module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/modelarmor.floorSettingsAdmin"]
   : condition: []
     members:
-    - serviceAccount:iac-rw@test-gf-ge-agentp-0.iam.gserviceaccount.com
-    project: test-gf-ge-agentp-0
+    - serviceAccount:iac-rw@test-gf-geap-0.iam.gserviceaccount.com
+    project: test-gf-geap-0
     role: roles/modelarmor.floorSettingsAdmin
   module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/modelarmor.user"]:
     condition: []
-    project: test-gf-ge-agentp-0
+    project: test-gf-geap-0
     role: roles/modelarmor.user
   module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/networksecurity.admin"]:
     condition: []
     members:
-    - serviceAccount:iac-rw@test-gf-ge-agentp-0.iam.gserviceaccount.com
-    project: test-gf-ge-agentp-0
+    - serviceAccount:iac-rw@test-gf-geap-0.iam.gserviceaccount.com
+    project: test-gf-geap-0
     role: roles/networksecurity.admin
   module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/networkservices.admin"]:
     condition: []
     members:
-    - serviceAccount:iac-rw@test-gf-ge-agentp-0.iam.gserviceaccount.com
-    project: test-gf-ge-agentp-0
+    - serviceAccount:iac-rw@test-gf-geap-0.iam.gserviceaccount.com
+    project: test-gf-geap-0
     role: roles/networkservices.admin
   ? module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/serviceusage.serviceUsageConsumer"]
   : condition: []
-    project: test-gf-ge-agentp-0
+    project: test-gf-geap-0
     role: roles/serviceusage.serviceUsageConsumer
   module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/storage.admin"]:
     condition: []
     members:
-    - serviceAccount:iac-rw@test-gf-ge-agentp-0.iam.gserviceaccount.com
-    project: test-gf-ge-agentp-0
+    - serviceAccount:iac-rw@test-gf-geap-0.iam.gserviceaccount.com
+    project: test-gf-geap-0
     role: roles/storage.admin
   module.projects.module.projects["host"].google_project.project[0]:
     auto_create_network: false
@@ -781,56 +783,41 @@ values:
       goog-terraform-provisioned: 'true'
     folder_id: '1234567890'
     labels: null
-    name: test-gf-ge-agentp
+    name: test-gf-geap-hp-0
     org_id: null
-    project_id: test-gf-ge-agentp
+    project_id: test-gf-geap-hp-0
     tags: null
     terraform_labels:
       goog-terraform-provisioned: 'true'
     timeouts: null
   module.projects.module.projects["host"].google_project_iam_member.service_agents["compute-system"]:
     condition: []
-    project: test-gf-ge-agentp
+    project: test-gf-geap-hp-0
     role: roles/compute.serviceAgent
   module.projects.module.projects["host"].google_project_iam_member.service_agents["dns"]:
     condition: []
-    project: test-gf-ge-agentp
+    project: test-gf-geap-hp-0
     role: roles/dns.serviceAgent
-  module.projects.module.projects["host"].google_project_iam_member.service_agents["service-networking"]:
-    condition: []
-    project: test-gf-ge-agentp
-    role: roles/servicenetworking.serviceAgent
   module.projects.module.projects["host"].google_project_service.project_services["compute.googleapis.com"]:
     deletion_policy: DELETE
     disable_dependent_services: false
     disable_on_destroy: false
-    project: test-gf-ge-agentp
+    project: test-gf-geap-hp-0
     service: compute.googleapis.com
     timeouts: null
   module.projects.module.projects["host"].google_project_service.project_services["dns.googleapis.com"]:
     deletion_policy: DELETE
     disable_dependent_services: false
     disable_on_destroy: false
-    project: test-gf-ge-agentp
+    project: test-gf-geap-hp-0
     service: dns.googleapis.com
-    timeouts: null
-  module.projects.module.projects["host"].google_project_service.project_services["servicenetworking.googleapis.com"]:
-    deletion_policy: DELETE
-    disable_dependent_services: false
-    disable_on_destroy: false
-    project: test-gf-ge-agentp
-    service: servicenetworking.googleapis.com
     timeouts: null
   module.projects.module.projects["host"].google_project_service_identity.default["dns.googleapis.com"]:
-    project: test-gf-ge-agentp
+    project: test-gf-geap-hp-0
     service: dns.googleapis.com
     timeouts: null
-  module.projects.module.projects["host"].google_project_service_identity.default["servicenetworking.googleapis.com"]:
-    project: test-gf-ge-agentp
-    service: servicenetworking.googleapis.com
-    timeouts: null
   module.projects.module.projects["service-01"].data.google_storage_project_service_account.gcs_sa[0]:
-    project: test-gf-ge-agentp-0
+    project: test-gf-geap-0
     user_project: null
   module.projects.module.projects["service-01"].google_project.project[0]:
     auto_create_network: false
@@ -840,210 +827,228 @@ values:
       goog-terraform-provisioned: 'true'
     folder_id: '1234567890'
     labels: null
-    name: test-gf-ge-agentp-0
+    name: test-gf-geap-0
     org_id: null
-    project_id: test-gf-ge-agentp-0
+    project_id: test-gf-geap-0
     tags: null
     terraform_labels:
       goog-terraform-provisioned: 'true'
     timeouts: null
+  module.projects.module.projects["service-01"].google_project_iam_custom_role.roles["psc_updater"]:
+    deletion_policy: DELETE
+    description: Allows to update PSC network attachments.
+    permissions:
+    - compute.networkAttachments.get
+    - compute.networkAttachments.update
+    - compute.regionOperations.get
+    project: test-gf-geap-0
+    role_id: psc_updater
+    stage: GA
+    title: PSC updater
   module.projects.module.projects["service-01"].google_project_iam_member.service_agents["aiplatform"]:
     condition: []
-    project: test-gf-ge-agentp-0
+    project: test-gf-geap-0
     role: roles/aiplatform.serviceAgent
   module.projects.module.projects["service-01"].google_project_iam_member.service_agents["aiplatform-cc"]:
     condition: []
-    project: test-gf-ge-agentp-0
+    project: test-gf-geap-0
     role: roles/aiplatform.customCodeServiceAgent
   module.projects.module.projects["service-01"].google_project_iam_member.service_agents["aiplatform-ft"]:
     condition: []
-    project: test-gf-ge-agentp-0
+    project: test-gf-geap-0
     role: roles/aiplatform.serviceAgent
   module.projects.module.projects["service-01"].google_project_iam_member.service_agents["aiplatform-pie"]:
     condition: []
-    project: test-gf-ge-agentp-0
+    project: test-gf-geap-0
     role: roles/aiplatform.serviceAgent
   module.projects.module.projects["service-01"].google_project_iam_member.service_agents["aiplatform-re"]:
     condition: []
-    project: test-gf-ge-agentp-0
+    project: test-gf-geap-0
     role: roles/aiplatform.reasoningEngineServiceAgent
   module.projects.module.projects["service-01"].google_project_iam_member.service_agents["aiplatform-vm"]:
     condition: []
-    project: test-gf-ge-agentp-0
+    project: test-gf-geap-0
     role: roles/aiplatform.notebookServiceAgent
   module.projects.module.projects["service-01"].google_project_iam_member.service_agents["compute-system"]:
     condition: []
-    project: test-gf-ge-agentp-0
+    project: test-gf-geap-0
     role: roles/compute.serviceAgent
   module.projects.module.projects["service-01"].google_project_iam_member.service_agents["discoveryengine"]:
     condition: []
-    project: test-gf-ge-agentp-0
+    project: test-gf-geap-0
     role: roles/discoveryengine.serviceAgent
   module.projects.module.projects["service-01"].google_project_iam_member.service_agents["modelarmor"]:
     condition: []
-    project: test-gf-ge-agentp-0
+    project: test-gf-geap-0
     role: roles/modelarmor.serviceAgent
   module.projects.module.projects["service-01"].google_project_iam_member.service_agents["vertex-bp"]:
     condition: []
-    project: test-gf-ge-agentp-0
+    project: test-gf-geap-0
     role: roles/aiplatform.batchPredictionServiceAgent
   module.projects.module.projects["service-01"].google_project_iam_member.service_agents["vertex-eval"]:
     condition: []
-    project: test-gf-ge-agentp-0
+    project: test-gf-geap-0
     role: roles/aiplatform.rapidevalServiceAgent
   module.projects.module.projects["service-01"].google_project_iam_member.service_agents["vertex-ex"]:
     condition: []
-    project: test-gf-ge-agentp-0
+    project: test-gf-geap-0
     role: roles/aiplatform.extensionServiceAgent
   module.projects.module.projects["service-01"].google_project_iam_member.service_agents["vertex-ex-cc"]:
     condition: []
-    project: test-gf-ge-agentp-0
+    project: test-gf-geap-0
     role: roles/aiplatform.extensionCustomCodeServiceAgent
   module.projects.module.projects["service-01"].google_project_iam_member.service_agents["vertex-mm"]:
     condition: []
-    project: test-gf-ge-agentp-0
+    project: test-gf-geap-0
     role: roles/aiplatform.modelMonitoringServiceAgent
   module.projects.module.projects["service-01"].google_project_iam_member.service_agents["vertex-moss-ft"]:
     condition: []
-    project: test-gf-ge-agentp-0
+    project: test-gf-geap-0
     role: roles/aiplatform.tuningServiceAgent
   module.projects.module.projects["service-01"].google_project_iam_member.service_agents["vertex-nb"]:
     condition: []
-    project: test-gf-ge-agentp-0
+    project: test-gf-geap-0
     role: roles/aiplatform.colabServiceAgent
   module.projects.module.projects["service-01"].google_project_iam_member.service_agents["vertex-op"]:
     condition: []
-    project: test-gf-ge-agentp-0
+    project: test-gf-geap-0
     role: roles/aiplatform.onlinePredictionServiceAgent
   module.projects.module.projects["service-01"].google_project_iam_member.service_agents["vertex-rag"]:
     condition: []
-    project: test-gf-ge-agentp-0
+    project: test-gf-geap-0
     role: roles/aiplatform.ragServiceAgent
   module.projects.module.projects["service-01"].google_project_iam_member.service_agents["vertex-sandbox"]:
     condition: []
-    project: test-gf-ge-agentp-0
+    project: test-gf-geap-0
     role: roles/aiplatform.agentSandboxServiceAgent
   module.projects.module.projects["service-01"].google_project_iam_member.service_agents["vertex-shtune"]:
     condition: []
-    project: test-gf-ge-agentp-0
+    project: test-gf-geap-0
     role: roles/aiplatform.user
   module.projects.module.projects["service-01"].google_project_iam_member.service_agents["vertex-telemetry"]:
     condition: []
-    project: test-gf-ge-agentp-0
+    project: test-gf-geap-0
     role: roles/aiplatform.telemetryServiceAgent
   module.projects.module.projects["service-01"].google_project_iam_member.service_agents["vertex-tune"]:
     condition: []
-    project: test-gf-ge-agentp-0
+    project: test-gf-geap-0
     role: roles/aiplatform.tuningServiceAgent
   module.projects.module.projects["service-01"].google_project_service.org_policy_service[0]:
     deletion_policy: DELETE
     disable_dependent_services: false
     disable_on_destroy: false
-    project: test-gf-ge-agentp-0
+    project: test-gf-geap-0
     service: orgpolicy.googleapis.com
     timeouts: null
   module.projects.module.projects["service-01"].google_project_service.project_services["agentregistry.googleapis.com"]:
     deletion_policy: DELETE
     disable_dependent_services: false
     disable_on_destroy: false
-    project: test-gf-ge-agentp-0
+    project: test-gf-geap-0
     service: agentregistry.googleapis.com
     timeouts: null
   module.projects.module.projects["service-01"].google_project_service.project_services["aiplatform.googleapis.com"]:
     deletion_policy: DELETE
     disable_dependent_services: false
     disable_on_destroy: false
-    project: test-gf-ge-agentp-0
+    project: test-gf-geap-0
     service: aiplatform.googleapis.com
     timeouts: null
   ? module.projects.module.projects["service-01"].google_project_service.project_services["cloudresourcemanager.googleapis.com"]
   : deletion_policy: DELETE
     disable_dependent_services: false
     disable_on_destroy: false
-    project: test-gf-ge-agentp-0
+    project: test-gf-geap-0
     service: cloudresourcemanager.googleapis.com
     timeouts: null
   module.projects.module.projects["service-01"].google_project_service.project_services["compute.googleapis.com"]:
     deletion_policy: DELETE
     disable_dependent_services: false
     disable_on_destroy: false
-    project: test-gf-ge-agentp-0
+    project: test-gf-geap-0
     service: compute.googleapis.com
     timeouts: null
   module.projects.module.projects["service-01"].google_project_service.project_services["discoveryengine.googleapis.com"]:
     deletion_policy: DELETE
     disable_dependent_services: false
     disable_on_destroy: false
-    project: test-gf-ge-agentp-0
+    project: test-gf-geap-0
     service: discoveryengine.googleapis.com
+    timeouts: null
+  module.projects.module.projects["service-01"].google_project_service.project_services["iam.googleapis.com"]:
+    deletion_policy: DELETE
+    disable_dependent_services: false
+    disable_on_destroy: false
+    project: test-gf-geap-0
+    service: iam.googleapis.com
     timeouts: null
   module.projects.module.projects["service-01"].google_project_service.project_services["iamcredentials.googleapis.com"]:
     deletion_policy: DELETE
     disable_dependent_services: false
     disable_on_destroy: false
-    project: test-gf-ge-agentp-0
+    project: test-gf-geap-0
     service: iamcredentials.googleapis.com
     timeouts: null
   module.projects.module.projects["service-01"].google_project_service.project_services["iap.googleapis.com"]:
     deletion_policy: DELETE
     disable_dependent_services: false
     disable_on_destroy: false
-    project: test-gf-ge-agentp-0
+    project: test-gf-geap-0
     service: iap.googleapis.com
     timeouts: null
   module.projects.module.projects["service-01"].google_project_service.project_services["modelarmor.googleapis.com"]:
     deletion_policy: DELETE
     disable_dependent_services: false
     disable_on_destroy: false
-    project: test-gf-ge-agentp-0
+    project: test-gf-geap-0
     service: modelarmor.googleapis.com
     timeouts: null
   module.projects.module.projects["service-01"].google_project_service.project_services["networksecurity.googleapis.com"]:
     deletion_policy: DELETE
     disable_dependent_services: false
     disable_on_destroy: false
-    project: test-gf-ge-agentp-0
+    project: test-gf-geap-0
     service: networksecurity.googleapis.com
     timeouts: null
   module.projects.module.projects["service-01"].google_project_service.project_services["networkservices.googleapis.com"]:
     deletion_policy: DELETE
     disable_dependent_services: false
     disable_on_destroy: false
-    project: test-gf-ge-agentp-0
+    project: test-gf-geap-0
     service: networkservices.googleapis.com
     timeouts: null
   module.projects.module.projects["service-01"].google_project_service.project_services["serviceusage.googleapis.com"]:
     deletion_policy: DELETE
     disable_dependent_services: false
     disable_on_destroy: false
-    project: test-gf-ge-agentp-0
+    project: test-gf-geap-0
     service: serviceusage.googleapis.com
     timeouts: null
   module.projects.module.projects["service-01"].google_project_service.project_services["storage.googleapis.com"]:
     deletion_policy: DELETE
     disable_dependent_services: false
     disable_on_destroy: false
-    project: test-gf-ge-agentp-0
+    project: test-gf-geap-0
     service: storage.googleapis.com
     timeouts: null
   module.projects.module.projects["service-01"].google_project_service_identity.default["aiplatform.googleapis.com"]:
-    project: test-gf-ge-agentp-0
+    project: test-gf-geap-0
     service: aiplatform.googleapis.com
     timeouts: null
   module.projects.module.projects["service-01"].google_project_service_identity.default["discoveryengine.googleapis.com"]:
-    project: test-gf-ge-agentp-0
+    project: test-gf-geap-0
     service: discoveryengine.googleapis.com
     timeouts: null
   module.projects.module.projects["service-01"].google_project_service_identity.default["iap.googleapis.com"]:
-    project: test-gf-ge-agentp-0
+    project: test-gf-geap-0
     service: iap.googleapis.com
     timeouts: null
   module.projects.module.projects["service-01"].google_project_service_identity.default["modelarmor.googleapis.com"]:
-    project: test-gf-ge-agentp-0
+    project: test-gf-geap-0
     service: modelarmor.googleapis.com
     timeouts: null
   module.projects.module.projects["service-01"].google_project_service_identity.default["networksecurity.googleapis.com"]:
-    project: test-gf-ge-agentp-0
+    project: test-gf-geap-0
     service: networksecurity.googleapis.com
     timeouts: null
   module.projects.module.service-accounts["service-01/iac-rw"].google_service_account.service_account[0]:
@@ -1053,9 +1058,9 @@ values:
     description: null
     disabled: false
     display_name: Terraform-managed.
-    email: iac-rw@test-gf-ge-agentp-0.iam.gserviceaccount.com
-    member: serviceAccount:iac-rw@test-gf-ge-agentp-0.iam.gserviceaccount.com
-    project: test-gf-ge-agentp-0
+    email: iac-rw@test-gf-geap-0.iam.gserviceaccount.com
+    member: serviceAccount:iac-rw@test-gf-geap-0.iam.gserviceaccount.com
+    project: test-gf-geap-0
     timeouts: null
   module.projects.terraform_data.defaults_preconditions:
     input: null
@@ -1076,7 +1081,7 @@ values:
     network_firewall_policy_enforcement_order: AFTER_CLASSIC_FIREWALL
     network_profile: null
     params: []
-    project: test-gf-ge-agentp
+    project: test-gf-geap-hp-0
     routing_mode: GLOBAL
     timeouts: null
   module.vpc[0].google_compute_route.gateway["directpath-googleapis"]:
@@ -1091,7 +1096,7 @@ values:
     next_hop_vpn_tunnel: null
     params: []
     priority: 1000
-    project: test-gf-ge-agentp
+    project: test-gf-geap-hp-0
     tags: null
     timeouts: null
   module.vpc[0].google_compute_route.gateway["private-googleapis"]:
@@ -1106,7 +1111,7 @@ values:
     next_hop_vpn_tunnel: null
     params: []
     priority: 1000
-    project: test-gf-ge-agentp
+    project: test-gf-geap-hp-0
     tags: null
     timeouts: null
   module.vpc[0].google_compute_route.gateway["restricted-googleapis"]:
@@ -1121,17 +1126,17 @@ values:
     next_hop_vpn_tunnel: null
     params: []
     priority: 1000
-    project: test-gf-ge-agentp
+    project: test-gf-geap-hp-0
     tags: null
     timeouts: null
   module.vpc[0].google_compute_shared_vpc_host_project.shared_vpc_host[0]:
     deletion_policy: DELETE
-    project: test-gf-ge-agentp
+    project: test-gf-geap-hp-0
     timeouts: null
-  module.vpc[0].google_compute_shared_vpc_service_project.service_projects["test-gf-ge-agentp-0"]:
+  module.vpc[0].google_compute_shared_vpc_service_project.service_projects["test-gf-geap-0"]:
     deletion_policy: null
-    host_project: test-gf-ge-agentp
-    service_project: test-gf-ge-agentp-0
+    host_project: test-gf-geap-hp-0
+    service_project: test-gf-geap-0
     timeouts: null
   module.vpc[0].google_compute_subnetwork.proxy_only["europe-west1/proxy-only-sub-0"]:
     deletion_policy: DELETE
@@ -1144,7 +1149,7 @@ values:
     name: proxy-only-sub-0
     network: net-0
     params: []
-    project: test-gf-ge-agentp
+    project: test-gf-geap-hp-0
     purpose: REGIONAL_MANAGED_PROXY
     region: europe-west1
     reserved_internal_range: null
@@ -1163,7 +1168,7 @@ values:
     network: net-0
     params: []
     private_ip_google_access: true
-    project: test-gf-ge-agentp
+    project: test-gf-geap-hp-0
     region: europe-west1
     reserved_internal_range: null
     resolve_subnet_mask: null
@@ -1181,10 +1186,11 @@ counts:
   google_dns_response_policy_rule: 39
   google_org_policy_policy: 1
   google_project: 2
-  google_project_iam_binding: 14
-  google_project_iam_member: 25
+  google_project_iam_binding: 16
+  google_project_iam_custom_role: 1
+  google_project_iam_member: 24
   google_project_service: 16
-  google_project_service_identity: 8
+  google_project_service_identity: 6
   google_service_account: 1
   google_service_account_iam_member: 1
   google_storage_bucket: 1
@@ -1197,12 +1203,12 @@ counts:
 
 outputs:
   buckets:
-    service-01/iac-state: test-gf-ge-agentp-0-iac-state
+    service-01/iac-state: test-gf-geap-0-iac-state
   networking_config: __missing__
   projects: __missing__
   region: europe-west1
   service_accounts:
     service-01/iac-rw:
-      email: iac-rw@test-gf-ge-agentp-0.iam.gserviceaccount.com
-      iam_email: serviceAccount:iac-rw@test-gf-ge-agentp-0.iam.gserviceaccount.com
-      id: projects/test-gf-ge-agentp-0/serviceAccounts/iac-rw@test-gf-ge-agentp-0.iam.gserviceaccount.com
+      email: iac-rw@test-gf-geap-0.iam.gserviceaccount.com
+      iam_email: serviceAccount:iac-rw@test-gf-geap-0.iam.gserviceaccount.com
+      id: projects/test-gf-geap-0/serviceAccounts/iac-rw@test-gf-geap-0.iam.gserviceaccount.com
