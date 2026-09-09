@@ -39,7 +39,7 @@ resource "google_network_security_authz_policy" "ma_authz_policy" {
   action         = "CUSTOM"
 
   target {
-    resources = [module.agent_gateway.id]
+    resources = [module.agent_gateway_egress.id]
   }
 
   custom_provider {
@@ -70,7 +70,7 @@ resource "google_network_security_authz_policy" "ma_authz_policy" {
   }
 
   depends_on = [
-    time_sleep.wait_for_gateway,
+    time_sleep.wait_for_gateway_egress,
     google_network_security_authz_policy.iap_authz_policy
   ]
 }

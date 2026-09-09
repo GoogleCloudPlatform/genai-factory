@@ -34,7 +34,7 @@ resource "google_compute_network_attachment" "agw_network_attachment" {
 }
 
 # Create egress Agent Gateway
-module "agent_gateway" {
+module "agent_gateway_egress" {
   source      = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/agent-gateway?ref=v58.0.0"
   project_id  = var.project_id
   region      = var.region
@@ -47,12 +47,12 @@ module "agent_gateway" {
 }
 
 # Wait for Agent Gateway to stabilize before attaching authz policies.
-resource "time_sleep" "wait_for_gateway" {
-  depends_on      = [module.agent_gateway]
+resource "time_sleep" "wait_for_gateway_egress" {
+  depends_on      = [module.agent_gateway_egress]
   create_duration = "30s"
 
   triggers = {
-    gateway_id = module.agent_gateway.id
+    gateway_id = module.agent_gateway_egress.id
   }
 }
 
@@ -82,7 +82,7 @@ resource "google_network_security_authz_policy" "iap_authz_policy" {
   action         = "CUSTOM"
 
   target {
-    resources = [module.agent_gateway.id]
+    resources = [module.agent_gateway_egress.id]
   }
 
   custom_provider {
@@ -93,5 +93,5 @@ resource "google_network_security_authz_policy" "iap_authz_policy" {
     }
   }
 
-  depends_on = [time_sleep.wait_for_gateway]
+  depends_on = [time_sleep.wait_for_gateway_egress]
 }

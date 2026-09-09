@@ -14,16 +14,12 @@
 
 output "agent_gateway_ids" {
   description = "The Agent Gateway ids."
-  type = object({
-    egress = string
-  })
   value = {
-    egress = module.agent_gateway.id
+    egress = module.agent_gateway_egress.id
   }
 }
 
 output "agent_registry_uri" {
   description = "The Agent Registry URI."
-  type        = string
   value       = local.registry_uri
 }

@@ -69,7 +69,7 @@ values:
       goog-terraform-provisioned: 'true'
     timeout: 2s
     timeouts: null
-  module.agent_gateway.google_network_services_agent_gateway.default:
+  module.agent_gateway_egress.google_network_services_agent_gateway.default:
     deletion_policy: DELETE
     description: Terraform managed.
     effective_labels:
@@ -87,7 +87,7 @@ values:
     terraform_labels:
       goog-terraform-provisioned: 'true'
     timeouts: null
-  time_sleep.wait_for_gateway:
+  time_sleep.wait_for_gateway_egress:
     create_duration: 30s
     destroy_duration: null
     triggers: {}

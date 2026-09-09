@@ -106,5 +106,5 @@ You can create your host project and network resources using your FAST networkin
 | name | description | sensitive |
 |---|---|:---:|
 | [agent_gateway_ids](outputs.tf#L15) | The Agent Gateway ids. |  |
-| [agent_registry_uri](outputs.tf#L25) | The Agent Registry URI. |  |
+| [agent_registry_uri](outputs.tf#L22) | The Agent Registry URI. |  |
 <!-- END TFDOC -->
