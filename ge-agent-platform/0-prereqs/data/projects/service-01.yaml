@@ -77,6 +77,8 @@ iam_by_principals:
     - roles/compute.networkAdmin
     - roles/networksecurity.admin
     - roles/networkservices.admin
+    # Agent Registry: IAM policies authorizing agent egress via IAP
+    - roles/iap.admin
     # Model Armor (for Agent Gateway)
     - roles/modelarmor.admin
     - roles/modelarmor.floorSettingsAdmin

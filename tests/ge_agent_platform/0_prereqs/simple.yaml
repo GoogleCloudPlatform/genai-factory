@@ -733,6 +733,12 @@ values:
     - serviceAccount:iac-rw@test-gf-geap-0.iam.gserviceaccount.com
     project: test-gf-geap-0
     role: roles/discoveryengine.admin
+  module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/iap.admin"]:
+    condition: []
+    members:
+    - serviceAccount:iac-rw@test-gf-geap-0.iam.gserviceaccount.com
+    project: test-gf-geap-0
+    role: roles/iap.admin
   module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/modelarmor.admin"]:
     condition: []
     members:
@@ -1186,7 +1192,7 @@ counts:
   google_dns_response_policy_rule: 39
   google_org_policy_policy: 1
   google_project: 2
-  google_project_iam_binding: 16
+  google_project_iam_binding: 17
   google_project_iam_custom_role: 1
   google_project_iam_member: 24
   google_project_service: 16
@@ -1198,7 +1204,7 @@ counts:
   google_storage_project_service_account: 1
   local_file: 2
   modules: 9
-  resources: 123
+  resources: 124
   terraform_data: 2
 
 outputs:

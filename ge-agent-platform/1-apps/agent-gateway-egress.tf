@@ -12,13 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-locals {
-  registry_uri = "//agentregistry.googleapis.com/projects/${var.project_id}/locations/${var.region}"
-  subnetwork = lookup(
-    var.subnet_self_links, var.networking_config.subnet, var.networking_config.subnet
-  )
-}
-
 # Network attachment for Agent Gateway PSC-I
 resource "google_compute_network_attachment" "agw_network_attachment" {
   name                  = var.name
@@ -40,7 +33,11 @@ module "agent_gateway_egress" {
   region      = var.region
   name        = var.name
   access_path = "AGENT_TO_ANYWHERE"
-  registries  = [local.registry_uri]
+  # Registry locations default to global and regional
+  registries = [
+    for registry_type in var.agent_gateway_config.egress.registry_locations
+    : local.agent_registry_uris[registry_type]
+  ]
   networking_config = {
     psc_i_network_attachment_id = google_compute_network_attachment.agw_network_attachment.id
   }
@@ -50,7 +47,6 @@ module "agent_gateway_egress" {
 resource "time_sleep" "wait_for_gateway_egress" {
   depends_on      = [module.agent_gateway_egress]
   create_duration = "30s"
-
   triggers = {
     gateway_id = module.agent_gateway_egress.id
   }
@@ -62,13 +58,12 @@ resource "google_network_services_authz_extension" "iap_auth_srv_ext" {
   project   = var.project_id
   location  = var.region
   service   = "iap.googleapis.com"
-  timeout   = var.agent_gateway_config.iap.timeout
-  fail_open = var.agent_gateway_config.iap.fail_open
-
+  timeout   = var.agent_gateway_config.egress.iap.timeout
+  fail_open = var.agent_gateway_config.egress.iap.fail_open
   metadata = merge(
-    { iapPolicyVersion = var.agent_gateway_config.iap.policy_version },
-    var.agent_gateway_config.iap.iam_enforcement_mode == null ? {} : {
-      iamEnforcementMode = var.agent_gateway_config.iap.iam_enforcement_mode
+    { iapPolicyVersion = var.agent_gateway_config.egress.iap.policy_version },
+    var.agent_gateway_config.egress.iap.iam_enforcement_mode == null ? {} : {
+      iamEnforcementMode = var.agent_gateway_config.egress.iap.iam_enforcement_mode
     }
   )
 }

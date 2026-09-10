@@ -12,33 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-locals {
-  # The spec type is implied by the presence of spec content: each
-  # service type only supports NO_SPEC and the value below.
-  _spec_types = {
-    agent      = "A2A_AGENT_CARD"
-    endpoint   = null
-    mcp_server = "TOOL_SPEC"
-  }
-  # Derive the spec type from the service type and the presence of
-  # spec content, so that the spec blocks in the resource can be
-  # driven by a uniform object.
-  agent_registry_services = {
-    for k, v in var.agent_registry_services : k => merge(v, {
-      spec_type = (
-        v.content == null
-        ? "NO_SPEC"
-        : local._spec_types[v.type]
-      )
-    })
-  }
-}
-
 # Set custom service endpoints in Agent Registry
 resource "google_agent_registry_service" "agent_registry_services" {
   for_each        = local.agent_registry_services
   project         = var.project_id
-  location        = var.region
+  location        = each.value.location
   service_id      = each.key
   display_name    = each.value.display_name
   description     = each.value.description

@@ -2,7 +2,7 @@
 
 ![Architecture Diagram](./diagram.png)
 
-This factory automates the deployment of **Google Cloud Agent Platform** with an **Egress Agent Gateway** (`AGENT_TO_ANYWHERE`), **Agent Registry**, and Service Extensions authorization policies (including **Model Armor** for content inspection and **Identity-Aware Proxy (IAP)** for request authorization).
+This factory automates the deployment of **Google Cloud Agent Platform** with an **Egress Agent Gateway** (`AGENT_TO_ANYWHERE`), **Agent Registry**, and Service Extensions authorization policies (including **Identity-Aware Proxy (IAP)** for request authorization and **Model Armor** for content inspection).
 
 ## Core Components
 

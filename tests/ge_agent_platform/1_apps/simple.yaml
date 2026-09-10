@@ -60,8 +60,7 @@ values:
     load_balancing_scheme: null
     location: europe-west1
     metadata:
-      iamEnforcementMode: DRY_RUN
-      iapPolicyVersion: V2
+      iapPolicyVersion: V1
     name: agw-geap
     project: test-gf-geap-0
     service: iap.googleapis.com
@@ -82,6 +81,7 @@ values:
     project: test-gf-geap-0
     protocols: null
     registries:
+    - //agentregistry.googleapis.com/projects/test-gf-geap-0/locations/global
     - //agentregistry.googleapis.com/projects/test-gf-geap-0/locations/europe-west1
     self_managed: []
     terraform_labels:
@@ -103,4 +103,8 @@ counts:
 
 outputs:
   agent_gateway_ids: __missing__
-  agent_registry_uri: //agentregistry.googleapis.com/projects/test-gf-geap-0/locations/europe-west1
+  agent_registry_uris:
+    eu: //agentregistry.googleapis.com/projects/test-gf-geap-0/locations/eu
+    global: //agentregistry.googleapis.com/projects/test-gf-geap-0/locations/global
+    regional: //agentregistry.googleapis.com/projects/test-gf-geap-0/locations/europe-west1
+    us: //agentregistry.googleapis.com/projects/test-gf-geap-0/locations/us

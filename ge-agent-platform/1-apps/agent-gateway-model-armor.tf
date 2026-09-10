@@ -14,13 +14,13 @@
 
 # Model Armor service extension.
 resource "google_network_services_authz_extension" "ma_authz_srv_ext" {
-  count     = var.agent_gateway_config.model_armor_config.enable ? 1 : 0
+  count     = var.agent_gateway_config.egress.model_armor_config.enable ? 1 : 0
   name      = "${var.name}-ma"
   project   = var.project_id
   location  = var.region
   service   = "modelarmor.${var.region}.rep.googleapis.com"
-  timeout   = var.agent_gateway_config.model_armor_config.timeout
-  fail_open = var.agent_gateway_config.model_armor_config.fail_open
+  timeout   = var.agent_gateway_config.egress.model_armor_config.timeout
+  fail_open = var.agent_gateway_config.egress.model_armor_config.fail_open
   metadata = {
     "model_armor_settings" = jsonencode([{
       request_template_id  = google_model_armor_template.request[0].name
@@ -31,7 +31,7 @@ resource "google_network_services_authz_extension" "ma_authz_srv_ext" {
 
 # Create a policy to bind the service extension to egress Agent Gateway.
 resource "google_network_security_authz_policy" "ma_authz_policy" {
-  count          = var.agent_gateway_config.model_armor_config.enable ? 1 : 0
+  count          = var.agent_gateway_config.egress.model_armor_config.enable ? 1 : 0
   name           = "${var.name}-ma"
   project        = var.project_id
   location       = var.region
@@ -52,14 +52,14 @@ resource "google_network_security_authz_policy" "ma_authz_policy" {
 
   dynamic "http_rules" {
     for_each = (
-      length(var.agent_gateway_config.model_armor_config.authz_hosts) > 0
+      length(var.agent_gateway_config.egress.model_armor_config.authz_hosts) > 0
       ? [1] : []
     )
     content {
       to {
         operations {
           dynamic "hosts" {
-            for_each = var.agent_gateway_config.model_armor_config.authz_hosts
+            for_each = var.agent_gateway_config.egress.model_armor_config.authz_hosts
             content {
               exact = hosts.value
             }
@@ -77,7 +77,7 @@ resource "google_network_security_authz_policy" "ma_authz_policy" {
 
 # RAI + PI/jailbreak + malicious URI + SDP
 resource "google_model_armor_template" "request" {
-  count       = var.agent_gateway_config.model_armor_config.enable ? 1 : 0
+  count       = var.agent_gateway_config.egress.model_armor_config.enable ? 1 : 0
   project     = var.project_id
   location    = var.region
   template_id = var.model_armor_template_config.request_template_id
@@ -127,7 +127,7 @@ resource "google_model_armor_template" "request" {
 
 # RAI + PI/jailbreak + malicious URI + SDP
 resource "google_model_armor_template" "response" {
-  count       = var.agent_gateway_config.model_armor_config.enable ? 1 : 0
+  count       = var.agent_gateway_config.egress.model_armor_config.enable ? 1 : 0
   project     = var.project_id
   location    = var.region
   template_id = var.model_armor_template_config.response_template_id

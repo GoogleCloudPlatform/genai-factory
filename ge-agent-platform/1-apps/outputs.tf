@@ -19,7 +19,7 @@ output "agent_gateway_ids" {
   }
 }
 
-output "agent_registry_uri" {
-  description = "The Agent Registry URI."
-  value       = local.registry_uri
+output "agent_registry_uris" {
+  description = "The Agent Registry URIs."
+  value       = local.agent_registry_uris
 }

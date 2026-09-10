@@ -17,3 +17,4 @@ module: ge-agent-platform/1-apps
 
 tests:
   simple:
+  iam:
