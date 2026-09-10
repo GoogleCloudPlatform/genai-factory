@@ -1,0 +1,110 @@
+# Copyright 2026 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+values:
+  google_compute_network_attachment.agw_network_attachment:
+    connection_preference: ACCEPT_MANUAL
+    deletion_policy: DELETE
+    description: null
+    name: agw-geap
+    producer_accept_lists:
+    - test-gf-geap-0
+    producer_reject_lists: null
+    project: test-gf-geap-0
+    region: europe-west1
+    subnetworks:
+    - projects/test-gf-geap-hp-0/regions/europe-west1/subnetworks/sub-0
+    timeouts: null
+  google_network_security_authz_policy.iap_authz_policy:
+    action: CUSTOM
+    custom_provider:
+    - authz_extension:
+      - {}
+      cloud_iap: []
+    deletion_policy: DELETE
+    description: null
+    effective_labels:
+      goog-terraform-provisioned: 'true'
+    http_rules: []
+    labels: null
+    location: europe-west1
+    name: agw-geap
+    network_rules: []
+    policy_profile: REQUEST_AUTHZ
+    project: test-gf-geap-0
+    target:
+    - load_balancing_scheme: null
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
+    timeouts: null
+  google_network_services_authz_extension.iap_auth_srv_ext:
+    authority: null
+    deletion_policy: DELETE
+    description: null
+    effective_labels:
+      goog-terraform-provisioned: 'true'
+    fail_open: true
+    forward_headers: null
+    labels: null
+    load_balancing_scheme: null
+    location: europe-west1
+    metadata:
+      iapPolicyVersion: V1
+    name: agw-geap
+    project: test-gf-geap-0
+    service: iap.googleapis.com
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
+    timeout: 2s
+    timeouts: null
+  module.agent_gateway_egress.google_network_services_agent_gateway.default:
+    deletion_policy: DELETE
+    description: Terraform managed.
+    effective_labels:
+      goog-terraform-provisioned: 'true'
+    google_managed:
+    - governed_access_path: AGENT_TO_ANYWHERE
+    labels: null
+    location: europe-west1
+    name: agw-geap
+    project: test-gf-geap-0
+    protocols: null
+    registries:
+    - //agentregistry.googleapis.com/projects/test-gf-geap-0/locations/global
+    - //agentregistry.googleapis.com/projects/test-gf-geap-0/locations/europe-west1
+    self_managed: []
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
+    timeouts: null
+  time_sleep.wait_for_gateway_egress:
+    create_duration: 30s
+    destroy_duration: null
+    triggers: {}
+
+counts:
+  google_compute_network_attachment: 1
+  google_network_security_authz_policy: 1
+  google_network_services_agent_gateway: 1
+  google_network_services_authz_extension: 1
+  modules: 1
+  resources: 5
+  time_sleep: 1
+
+outputs:
+  agent_gateway_ids: __missing__
+  agent_registry_uris:
+    eu: //agentregistry.googleapis.com/projects/test-gf-geap-0/locations/eu
+    global: //agentregistry.googleapis.com/projects/test-gf-geap-0/locations/global
+    regional: //agentregistry.googleapis.com/projects/test-gf-geap-0/locations/europe-west1
+    us: //agentregistry.googleapis.com/projects/test-gf-geap-0/locations/us

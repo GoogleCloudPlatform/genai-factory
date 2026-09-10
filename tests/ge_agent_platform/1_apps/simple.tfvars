@@ -12,24 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Fabric release: v58.0.0
+name = "agw-geap"
 
-terraform {
-  required_version = ">= 1.11.0"
-  required_providers {
-    google = {
-      source  = "hashicorp/google"
-      version = ">= 7.40.0, < 8.0.0" # tftest
-    }
-    google-beta = {
-      source  = "hashicorp/google-beta"
-      version = ">= 7.40.0, < 8.0.0" # tftest
-    }
-  }
-  provider_meta "google" {
-    module_name = "google-pso-tool/cloud-foundation-fabric/path:v58.0.0-tofu"
-  }
-  provider_meta "google-beta" {
-    module_name = "google-pso-tool/cloud-foundation-fabric/path:v58.0.0-tofu"
-  }
+project_id = "test-gf-geap-0"
+
+region = "europe-west1"
+
+networking_config = {
+  subnet = "projects/test-gf-geap-hp-0/regions/europe-west1/subnetworks/sub-0"
+  vpc    = "projects/test-gf-geap-hp-0/global/networks/net-0"
 }
