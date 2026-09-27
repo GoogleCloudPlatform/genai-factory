@@ -12,8 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+output "agent_connectivity_template_ids" {
+  description = "The ids of the agent connectivity templates through which the gateways reach the VPC."
+  value = {
+    egress = module.agent_gateway_egress.connectivity_template_id
+  }
+}
+
 output "agent_gateway_ids" {
-  description = "The Agent Gateway ids."
+  description = "The Agent Gateway ids. Pass them to the agent-runtime factory to govern the traffic of an agent."
   value = {
     egress = module.agent_gateway_egress.id
   }

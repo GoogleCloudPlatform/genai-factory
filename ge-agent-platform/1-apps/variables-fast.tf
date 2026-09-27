@@ -19,3 +19,11 @@ variable "subnet_self_links" {
   nullable    = false
   default     = {}
 }
+
+variable "vpc_self_links" {
+  # tfdoc:variable:source 2-networking
+  description = "Shared VPC name => self link mappings."
+  type        = map(string)
+  nullable    = false
+  default     = {}
+}

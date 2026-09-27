@@ -1,0 +1,313 @@
+# Copyright 2026 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+values:
+  google_compute_network_attachment.agw_network_attachment:
+    connection_preference: ACCEPT_MANUAL
+    deletion_policy: DELETE
+    description: null
+    name: agw-geap
+    producer_accept_lists:
+    - test-gf-geap-0
+    producer_reject_lists: null
+    project: test-gf-geap-0
+    region: europe-west1
+    subnetworks:
+    - projects/test-gf-geap-hp-0/regions/europe-west1/subnetworks/sub-0
+    timeouts: null
+  google_model_armor_floorsetting.floorsetting[0]:
+    ai_platform_floor_setting:
+    - enable_cloud_logging: true
+      inspect_and_block: true
+      inspect_only: null
+    enable_floor_setting_enforcement: true
+    filter_config:
+    - malicious_uri_filter_settings:
+      - filter_enforcement: ENABLED
+      pi_and_jailbreak_filter_settings:
+      - confidence_level: HIGH
+        filter_enforcement: ENABLED
+      rai_settings:
+      - rai_filters:
+        - confidence_level: HIGH
+          filter_type: DANGEROUS
+        - confidence_level: HIGH
+          filter_type: HARASSMENT
+        - confidence_level: HIGH
+          filter_type: HATE_SPEECH
+        - confidence_level: HIGH
+          filter_type: SEXUALLY_EXPLICIT
+      sdp_settings:
+      - advanced_config: []
+        basic_config:
+        - filter_enforcement: ENABLED
+    floor_setting_metadata:
+    - multi_language_detection:
+      - enable_multi_language_detection: true
+    google_mcp_server_floor_setting: []
+    integrated_services:
+    - AI_PLATFORM
+    location: global
+    parent: projects/test-gf-geap-0
+    timeouts: null
+  google_model_armor_template.request[0]:
+    deletion_policy: DELETE
+    effective_labels:
+      goog-terraform-provisioned: 'true'
+    filter_config:
+    - malicious_uri_filter_settings:
+      - filter_enforcement: ENABLED
+      pi_and_jailbreak_filter_settings:
+      - confidence_level: HIGH
+        filter_enforcement: ENABLED
+      rai_settings:
+      - rai_filters:
+        - confidence_level: HIGH
+          filter_type: DANGEROUS
+        - confidence_level: HIGH
+          filter_type: HARASSMENT
+        - confidence_level: HIGH
+          filter_type: HATE_SPEECH
+        - confidence_level: HIGH
+          filter_type: SEXUALLY_EXPLICIT
+      sdp_settings:
+      - advanced_config: []
+        basic_config:
+        - filter_enforcement: ENABLED
+    labels: null
+    location: europe-west1
+    project: test-gf-geap-0
+    template_id: agw-request-template
+    template_metadata:
+    - custom_llm_response_safety_error_code: 401
+      custom_llm_response_safety_error_message: This is a custom error message for
+        LLM response
+      custom_prompt_safety_error_code: 400
+      custom_prompt_safety_error_message: This is a custom error message for prompt
+      enforcement_type: INSPECT_AND_BLOCK
+      filter_version_selector: []
+      ignore_partial_invocation_failures: true
+      log_sanitize_operations: true
+      log_template_operations: true
+      multi_language_detection:
+      - enable_multi_language_detection: true
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
+    timeouts: null
+  google_model_armor_template.response[0]:
+    deletion_policy: DELETE
+    effective_labels:
+      goog-terraform-provisioned: 'true'
+    filter_config:
+    - malicious_uri_filter_settings:
+      - filter_enforcement: ENABLED
+      pi_and_jailbreak_filter_settings:
+      - confidence_level: HIGH
+        filter_enforcement: ENABLED
+      rai_settings:
+      - rai_filters:
+        - confidence_level: HIGH
+          filter_type: DANGEROUS
+        - confidence_level: HIGH
+          filter_type: HARASSMENT
+        - confidence_level: HIGH
+          filter_type: HATE_SPEECH
+        - confidence_level: HIGH
+          filter_type: SEXUALLY_EXPLICIT
+      sdp_settings:
+      - advanced_config: []
+        basic_config:
+        - filter_enforcement: ENABLED
+    labels: null
+    location: europe-west1
+    project: test-gf-geap-0
+    template_id: agw-response-template
+    template_metadata:
+    - custom_llm_response_safety_error_code: 401
+      custom_llm_response_safety_error_message: This is a custom error message for
+        LLM response
+      custom_prompt_safety_error_code: 400
+      custom_prompt_safety_error_message: This is a custom error message for prompt
+      enforcement_type: INSPECT_AND_BLOCK
+      filter_version_selector: []
+      ignore_partial_invocation_failures: true
+      log_sanitize_operations: true
+      log_template_operations: true
+      multi_language_detection:
+      - enable_multi_language_detection: true
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
+    timeouts: null
+  module.agent_gateway_egress.google_network_security_authz_policy.iap[0]:
+    action: CUSTOM
+    custom_provider:
+    - authz_extension:
+      - {}
+      cloud_iap: []
+    deletion_policy: DELETE
+    description: null
+    effective_labels:
+      goog-terraform-provisioned: 'true'
+    http_rules: []
+    labels: null
+    location: europe-west1
+    name: agw-geap-iap
+    network_rules: []
+    policy_profile: REQUEST_AUTHZ
+    project: test-gf-geap-0
+    target:
+    - load_balancing_scheme: null
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
+    timeouts: null
+  module.agent_gateway_egress.google_network_security_authz_policy.model_armor[0]:
+    action: CUSTOM
+    custom_provider:
+    - authz_extension:
+      - {}
+      cloud_iap: []
+    deletion_policy: DELETE
+    description: null
+    effective_labels:
+      goog-terraform-provisioned: 'true'
+    http_rules:
+    - from: []
+      to:
+      - not_operations: []
+        operations:
+        - header_set: []
+          hosts:
+          - contains: null
+            exact: api.example.com
+            ignore_case: null
+            prefix: null
+            suffix: null
+          mcp: []
+          methods: null
+          paths: []
+      when: null
+    labels: null
+    location: europe-west1
+    name: agw-geap-ma
+    network_rules: []
+    policy_profile: CONTENT_AUTHZ
+    project: test-gf-geap-0
+    target:
+    - load_balancing_scheme: null
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
+    timeouts: null
+  module.agent_gateway_egress.google_network_services_agent_connectivity_template.default[0]:
+    access_path: AGENT_TO_ANYWHERE
+    access_types:
+    - PRIVATE
+    - PUBLIC
+    agent_connectivity_template_id: agw-geap
+    deletion_policy: DELETE
+    description: Terraform managed.
+    effective_labels:
+      goog-terraform-provisioned: 'true'
+    egress_network_config:
+    - dns_peering_config:
+      - domain: corp.example.com.
+        target_network: projects/test-gf-geap-hp-0/global/networks/net-0
+      vpc_egress: PRIVATE_RANGES_ONLY
+    labels: null
+    location: europe-west1
+    project: test-gf-geap-0
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
+    timeouts: null
+  module.agent_gateway_egress.google_network_services_agent_gateway.default:
+    agent_connectivity_template: projects/1234567890/locations/europe-west1/agentConnectivityTemplates/agw-geap
+    deletion_policy: DELETE
+    description: Terraform managed.
+    effective_labels:
+      goog-terraform-provisioned: 'true'
+    google_managed:
+    - governed_access_path: AGENT_TO_ANYWHERE
+    labels: null
+    location: europe-west1
+    name: agw-geap
+    network_config: []
+    project: test-gf-geap-0
+    protocols: null
+    registries:
+    - //agentregistry.googleapis.com/projects/test-gf-geap-0/locations/global
+    - //agentregistry.googleapis.com/projects/test-gf-geap-0/locations/europe-west1
+    self_managed: []
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
+    timeouts: null
+  module.agent_gateway_egress.google_network_services_authz_extension.iap[0]:
+    authority: null
+    deletion_policy: DELETE
+    description: null
+    effective_labels:
+      goog-terraform-provisioned: 'true'
+    fail_open: true
+    forward_attributes: null
+    forward_headers: null
+    labels: null
+    load_balancing_scheme: null
+    location: europe-west1
+    metadata:
+      iapPolicyVersion: V1
+    name: agw-geap-iap
+    project: test-gf-geap-0
+    service: iap.googleapis.com
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
+    timeout: 2s
+    timeouts: null
+  module.agent_gateway_egress.google_network_services_authz_extension.model_armor[0]:
+    authority: null
+    deletion_policy: DELETE
+    description: null
+    effective_labels:
+      goog-terraform-provisioned: 'true'
+    fail_open: false
+    forward_attributes: null
+    forward_headers: null
+    labels: null
+    load_balancing_scheme: null
+    location: europe-west1
+    name: agw-geap-ma
+    project: test-gf-geap-0
+    service: modelarmor.europe-west1.rep.googleapis.com
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
+    timeout: 2s
+    timeouts: null
+
+counts:
+  google_compute_network_attachment: 1
+  google_model_armor_floorsetting: 1
+  google_model_armor_template: 2
+  google_network_security_authz_policy: 2
+  google_network_services_agent_connectivity_template: 1
+  google_network_services_agent_gateway: 1
+  google_network_services_authz_extension: 2
+  modules: 1
+  resources: 10
+
+outputs:
+  agent_connectivity_template_ids:
+    egress: projects/1234567890/locations/europe-west1/agentConnectivityTemplates/agw-geap
+  agent_gateway_ids: __missing__
+  agent_registry_uris:
+    eu: //agentregistry.googleapis.com/projects/test-gf-geap-0/locations/eu
+    global: //agentregistry.googleapis.com/projects/test-gf-geap-0/locations/global
+    regional: //agentregistry.googleapis.com/projects/test-gf-geap-0/locations/europe-west1
+    us: //agentregistry.googleapis.com/projects/test-gf-geap-0/locations/us

@@ -1,0 +1,100 @@
+# Copyright 2026 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+values:
+  module.agent.google_vertex_ai_reasoning_engine.unmanaged[0]:
+    deletion_policy: DELETE
+    description: Terraform managed.
+    display_name: test-agent
+    effective_labels:
+      goog-terraform-provisioned: 'true'
+    encryption_spec: []
+    labels: null
+    project: test-project
+    region: europe-west1
+    spec:
+    - agent_card: null
+      agent_framework: google-adk
+      build_spec: []
+      class_methods: null
+      container_spec: []
+      deployment_spec:
+      - agent_gateway_config:
+        - agent_to_anywhere_config:
+          - agent_gateway: projects/test-project/locations/europe-west1/agentGateways/egress-gw
+          client_to_agent_config:
+          - agent_gateway: projects/test-project/locations/europe-west1/agentGateways/ingress-gw
+        agent_server_mode: null
+        dedicated_ingress_endpoint_enabled: null
+        env:
+        - name: ENABLE_PSC_I
+          value: 'false'
+        - name: FIRESTORE_DATABASE
+          value: test-agent
+        - name: GOOGLE_CLOUD_AGENT_ENGINE_ENABLE_TELEMETRY
+          value: 'true'
+        - name: OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT
+          value: 'true'
+        - name: PROJECT_ID
+          value: test-project
+        - name: PROXY_ADDRESS
+          value: 10.0.0.100
+        - name: PROXY_PORT
+          value: '443'
+        - name: REGION
+          value: europe-west1
+        keep_alive_probe: []
+        max_instances: 5
+        min_instances: 1
+        psc_interface_config: []
+        secret_env: []
+      example_store: null
+      identity_type: SERVICE_ACCOUNT
+      package_spec: []
+      service_account: agent@test-project.iam.gserviceaccount.com
+      source_code_spec:
+      - agent_config_source: []
+        developer_connect_source: []
+        image_spec: []
+        inline_source:
+        - source_archive: H4sIAAAAAAAA/+w77XLbNpD9jafYozpjKSNTku04N7ph7xRLSX1xrJzltM3kMixEriTUJMACoBRdJu9+AxCkPmzH7SV2c4nwgxKBxWKxu9hdLEB/GiUij9mUC4k/3E9pt9vt46Mj+9tut7d/20dr/219p3N83PkB2vdEz0bJlabyh/Znj7U9uf8npQbPmSb+lOmWfRaKQEgNfmFS5zRBPif+HPm8RYonqcGrpZ4JDhGNZkjCMFvaf2HYIo/8bBnZp7DP2ICf9getQcy0kKAyjNiERcSfq0jE2CI+i5GasTFlnFn0JwabIr7MJ5PQom4RP1tqVLp6TZfZsnwhNRjqGUpiVXmcsyR+5C9pmpBHfhqTR76ZA6lBSqPhiPjhI+L3R+FIm4n+0/z/p8vFoNd/OfDT+B7HuGP9d44ODrfWf/vo+Gi3/h+i1KA3Ra6hj3NMRJaa/y+Yhnqv/6IBiqZZgkCzLGER1UxwmAjpulzkXLMUCbmcbYLEmAqutKQaFegZQoxZIpYWt5jA20+M+K4+0zpT3VZrKsQ0QWOSZvnYZ6JF46v9WESqAdT0VyD4JiE+IbUa/FeOcmlHtWCEvBE5RJSDMR+rehgvIVeMT23VRCSJWJi3SKQp5bFPeqBQKTOdBUsSGCPQXIuUahbRJFlCJJFqjC0/liL3Cfn999/VDJOERLlMYP83eDUcXUI5nx8vBs9Ph+f7lGUJ1RMhU7+YIs2Y8iORtuad1o+954Pzy/C031VaIk2Lyfw3AQDY/xm8Xq5nQrL/sXzuwlOkEiX82Ds5GYxG4eXwxeDcWwM/EVwj1/uXywy76yJq/aEEryBj2PsAHuNZrr0ufAAvRaXoFL0ueL/OqAZWiBHfRzPKpwhGsjCRIoXXI4hFklCpQAsYDV4YqRy0Dx7vt4/224f/7jXByxXKkMUGm/3bOTj04CN83DMcszLriyg3emBpI+SlkAiMT4QVcf+FFd/YSCnnsakzxLwVkwmLGE1ggWPFNK5Ux2iJb32BY7FlrxX7vvUOKN0b8inj2IoLVTQq1vC/L5cQhowzHYZ+try3Me6y/+0nT7bjv8ODw539f4hSgxORLSWbzrRZt8fw3K4YODs7ITVSgzMWIVcYQ85jlHbl9TITdpUtTfgFpbWTB34b6gbAc01e499IzRhHSOkSuNCQKwQ9YwomLLH2BDMNjBurmyWM8ghhwfTMDuOQ+KQGbxwKMdaUcaAQiWxpXMkaHFBtCTalNASLxcKnllpfyGkrKSBV6+z0ZHA+Guwf+G3b5zVPUCmQ+GfOJMbGNzhjOU4QEroAIYFOJWJszBzjsJBMMz5tghITvaASSQ1iprRk41xvcKskj6kNAMGBcvB6IzgdefC0NzodNUkNfj29/Hn4+hJ+7V1c9M4vTwcjGF7AyfC8f3p5OjwfwfAZ9M7fwIvT834TkJmwF/B9Jg39QgIzfMTYMG2EuEGAcVTmvQzBIaF8mtMpwlTMUXLj/TKUKbNeTwHlMalBwlJW2GV1fVLfma38Fov1g/dp/O+2/4ePj4+24//j48c7+/8Q5Zu0/9YB7Oz/A9h/YncBLsqm8ZXv9mYszYTUcJakdotG3Pscpcb3lBXdyreiU1gE41XfXnzVyzJSdjXCQaWVG1LJqASMBJ+waVXtT5hEpYXE0O3gQoVyziIsOzwrAUZF+6hoJqQiyMTEdbs5yqT4AyMdFIP4ry6G/zk4MTu0pm1ORLGhKtuLTV6TNAghMU5gijost02h2TYVWKNcSuTRMjREd0FpCQF4r0d9r7nZrkXVOnh9sd0aU41Ve2K229prkkaXWLrfM1QQwLngSACYJYZqLesFrU3YG5z3np4Nwlejk/B0rwmXMkfbeb37BwKueGZVeV2YeG55fVgx5bc3Ya/fvxiMRh+7m9WvhheXHx3hFRb1WWg+EgCJKhNGrYNKM/wp6nqB1QR/NGP+RFJ+NcmlRunHODdb7A8b3Fun7HrJqKSpCj58AsROyUjR625K9VN4bSct1rto8Qn4j81SIIH7bVgW6FzyihO+2dPXjeJJIXRYZDmCagkWipeKGJNSWV8O+4Oz8Lz3clAQy7jSMo+sPnvG5lKJQGGGSTbJE6BKMaUp145nnKYY7FUzqNTcjrxXwGghEhW8vbYM3q2WyNYiDd0OvW410c3xlhVbdzxzizRk8W3rFCCmmo6pwhLi2enFYHQ5vBiE/d5l72lvZJlgiCo5Vxigun0NVjy9JthbJhDcUt/4qoJm5/NSY7V9/V7fxxh37f8PD7f3/wdHT3bx34OUXfy3i/8+J/6zadaMRVcJBsGh3/bbpIgG92l8FQQd//BwVWWB1zLgbzcCv3c/BR2/c/SvfmcTvorniMiQa0wwRS2X+4W7qvLG+67TFDllQdD2H4/bX5Wp/SqLklHrvnPAfz//e9DpHOzs/0OUb9L+7/K/u/zvrvylYuy/2xHdWxL4Dvt/0H6yff+jc9zZxf8PUr5J+7+L/x82/+uXmdVcs0RVKVuhCFklYiAAoXzkcyYFt7k6b9XoNUiROr0BqmjwGoRcz9ncAH4dyGuCV9z3aBssNbgc9oddI8kxQjTD6ApjM3Um4uJyj1GJLKYaDUxxMXH/0G/DYoYcmIaFkFf2/pHEKROcJoA8zgTjWpFVUu0G2laNhiaH+cB/vD9JqJoZ4tZTshAUDPWVlqEW4ViIpL6Ncr2DQTqhiVl5DbKRTr2Z+at2r4R/Nby4vBXYNJoxjo4Ova8rjbUr/8di/P+tByZfKCS4w/8/aXe2z38fHx/u/P+DlJ3/3/n/z/H/pePPWVz+t5eCbVygl5nBWh7o8mUThpm2HnPz5Ngm+kq4Vb5v+3DZmafqiPgpVVsnQk1w77f29cdU3XoyfMaUdgjUhTtXu4YJ5+tH3IO5vWVMooQqdetB1XVKG11CAGKcQJl+qytMJs21wyx7tNuESCQJ2lO5kNN0deBL46tyHur6MWZ53tWtWP5WafnOHQi7Y14zor8aEIK10VcAWwRAsE3SCrQcFYKKgFVjGI9X59FlXSJEVtYSgP/IpMhQ6qVjTjy2bHH0Op5TteQRK05MtVx23dwdKtdqApdQ5twoth2l3rBwzuq4S+MDKYXcQlBRyCYrwpmy9WaRrRH+L4HtVCJYm2alxX7P0HOSMOS6Xl4n2GL8XYfF16QabHC7sTG8m4X5sfXuDLWkzXDZssjyt7jGXupRfQ1RSdOj8g/NspUClpXucvdGndL2XkKldzGL9Furyj2+fFeqYAXtlqJBcpOq2mNZ2P+pXNlOc622rvpauWhZN4bIN4+jeqNB1vBDUCKoV8xmcaDWmV/OMCj/rJrcPAP3u2qwkw3s09Dw4eOqKaFKh7ndSIRG1wL7lYJ51BsFVEFhLKJQ4sTOx0h1vLbi6jetwIYfuxvzdcXiAknNfc6QihiDvT+U4HvGV0WCz1EaJ6tRmp2KXmaoSKlLKx769mpAGOdpVl/D0YTxMqQJoyqw10NsT7qgTJdk+wp13eBqbGpbYYY3lM2syC+raWu6s1ZdJLTW1Mno3bY6VY1OLd51P18YFTmVYI092uCW2U41SutiYqJYRD6+Z0qr0oo4FlZmyL2PNgQ1pwkzmlU3/bUIzSIzKr/B8ISpiuNqg+XwqHkHm290G4ZxNznJgvQ/7ecqf4NzixlKXK1Hr6TIbDKDwFuRWHGsJM/1KUe0vw5d9cFJicS9VzJRlVCKbiuRVAFGAG//ErttVGXEzLjF/G5dYDcxqtQRVV4PUVsiizHBNYN8i7BuXA03lq0lYiVoRPnltX1Tz4t51LdmR7MMeRzaEMrNzaHplvrdBNvaLSIrS6/913VmLqJJAirPTCgqIHd5GhPYOkPPOKSYCrks3P28uM1TUGf71Rv+Fh3rA5fmNDPbGvfJWGnN1hjqb1t3CGDNvn8p7vqV3t6ntbYT3yV0vsOiZNQqkoz39w3AXef/RwfXvv9/3N59//UgZZf/2eV/Pif/U1zhXTufUHar7nneidt5UNNskEs0ZJbXtaz4ZG6ELezNc0P+M5oo9D3PIwAqTMQCpfF5vsGQ1Ru+rbHO1WzNHQDjUPeWqEy8p2Vug0dtHoKbZ8dzyQPn68xYBACTMmot7xibsXc+cFd2ZVe+m/K/AQAA//9rfY/uAEoAAA==
+        python_spec:
+        - entrypoint_module: agent
+          entrypoint_object: agent
+          requirements_file: requirements.txt
+          version: '3.13'
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
+    timeouts: null
+  module.firestore.google_firestore_database.firestore_database[0]:
+    cmek_config: []
+    deletion_policy: ABANDON
+    location_id: europe-west1
+    name: test-agent
+    point_in_time_recovery_enablement: POINT_IN_TIME_RECOVERY_DISABLED
+    project: test-project
+    tags: null
+    timeouts: null
+    type: FIRESTORE_NATIVE
+
+counts:
+  google_firestore_database: 1
+  google_vertex_ai_reasoning_engine: 1
+  modules: 2
+  resources: 2
+
+outputs:
+  agent_id: __missing__
+  agent_identity: serviceAccount:agent@test-project.iam.gserviceaccount.com
+  commands: __missing__

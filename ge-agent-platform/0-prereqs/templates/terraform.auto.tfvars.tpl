@@ -20,5 +20,6 @@ networking_config = {
 }
 
 project_id = "${project_id}"
+number     = "${project_number}"
 
 region = "${region}"

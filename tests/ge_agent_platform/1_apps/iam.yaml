@@ -73,34 +73,40 @@ values:
     subnetworks:
     - projects/test-gf-geap-hp-0/regions/europe-west1/subnetworks/sub-0
     timeouts: null
-  google_iap_agent_registry_agent_iam_binding.authoritative["test-agent/roles/iap.egressor"]:
-    agent_id: test-agent
+  module.agent_gateway_egress.google_iap_agent_registry_agent_iam_binding.bindings["test-agent/roles/iap.egressor"]:
     condition: []
-    location: europe-west1
+    location: global
     members:
     - principal://goog/subject/user@example.com
     project: test-gf-geap-0
     role: roles/iap.egressor
-  google_iap_agent_registry_endpoint_iam_binding.bindings["test-endpoint/forecast-tool-only"]:
+  module.agent_gateway_egress.google_iap_agent_registry_endpoint_iam_binding.bindings["test-endpoint/forecast-tool-only"]:
     condition:
     - description: null
       expression: api.getAttribute('iap.googleapis.com/mcp.toolName', '') in ['get_forecast',
         '']
       title: forecast-tool-only
-    endpoint_id: test-endpoint
-    location: europe-west1
+    location: global
     members:
     - principal://goog/subject/user@example.com
     project: test-gf-geap-0
     role: roles/iap.egressor
-  google_iap_agent_registry_endpoint_iam_member.members["external-endpoint"]:
+  module.agent_gateway_egress.google_iap_agent_registry_endpoint_iam_member.members["external-endpoint"]:
     condition: []
     endpoint_id: external-endpoint
     location: europe-west1
     member: principal://goog/subject/user@example.com
     project: test-gf-geap-0
     role: roles/iap.egressor
-  google_iap_agent_registry_iam_binding.authoritative["roles/iap.egressor"]:
+  module.agent_gateway_egress.google_iap_agent_registry_iam_binding.authoritative["eu/roles/iap.egressor"]:
+    condition: []
+    location: eu
+    members:
+    - principal://goog/subject/registry@example.com
+    - principalSet://goog/group/agents@example.com
+    project: test-gf-geap-0
+    role: roles/iap.egressor
+  module.agent_gateway_egress.google_iap_agent_registry_iam_binding.authoritative["europe-west1/roles/iap.egressor"]:
     condition: []
     location: europe-west1
     members:
@@ -108,13 +114,13 @@ values:
     - principalSet://goog/group/agents@example.com
     project: test-gf-geap-0
     role: roles/iap.egressor
-  google_iap_agent_registry_iam_member.members["registry-wide"]:
+  module.agent_gateway_egress.google_iap_agent_registry_iam_member.members["registry-wide"]:
     condition: []
     location: europe-west1
     member: principal://goog/subject/other@example.com
     project: test-gf-geap-0
     role: roles/iap.egressor
-  google_iap_agent_registry_mcp_server_iam_binding.bindings["external-mcp"]:
+  module.agent_gateway_egress.google_iap_agent_registry_mcp_server_iam_binding.bindings["external-mcp"]:
     condition: []
     location: europe-west1
     mcp_server_id: external-mcp
@@ -122,14 +128,13 @@ values:
     - principal://goog/subject/user@example.com
     project: test-gf-geap-0
     role: roles/iap.egressor
-  google_iap_agent_registry_mcp_server_iam_member.members["test-mcp/single-agent"]:
+  module.agent_gateway_egress.google_iap_agent_registry_mcp_server_iam_member.members["test-mcp/single-agent"]:
     condition: []
-    location: europe-west1
-    mcp_server_id: test-mcp
+    location: global
     member: principal://goog/subject/user@example.com
     project: test-gf-geap-0
     role: roles/iap.egressor
-  google_network_security_authz_policy.iap_authz_policy:
+  module.agent_gateway_egress.google_network_security_authz_policy.iap[0]:
     action: CUSTOM
     custom_provider:
     - authz_extension:
@@ -142,7 +147,7 @@ values:
     http_rules: []
     labels: null
     location: europe-west1
-    name: agw-geap
+    name: agw-geap-iap
     network_rules: []
     policy_profile: REQUEST_AUTHZ
     project: test-gf-geap-0
@@ -151,28 +156,26 @@ values:
     terraform_labels:
       goog-terraform-provisioned: 'true'
     timeouts: null
-  google_network_services_authz_extension.iap_auth_srv_ext:
-    authority: null
+  module.agent_gateway_egress.google_network_services_agent_connectivity_template.default[0]:
+    access_path: AGENT_TO_ANYWHERE
+    access_types:
+    - PRIVATE
+    agent_connectivity_template_id: agw-geap
     deletion_policy: DELETE
-    description: null
+    description: Terraform managed.
     effective_labels:
       goog-terraform-provisioned: 'true'
-    fail_open: true
-    forward_headers: null
+    egress_network_config:
+    - dns_peering_config: []
+      vpc_egress: ALL_TRAFFIC
     labels: null
-    load_balancing_scheme: null
     location: europe-west1
-    metadata:
-      iamEnforcementMode: DRY_RUN
-      iapPolicyVersion: V1
-    name: agw-geap
     project: test-gf-geap-0
-    service: iap.googleapis.com
     terraform_labels:
       goog-terraform-provisioned: 'true'
-    timeout: 2s
     timeouts: null
   module.agent_gateway_egress.google_network_services_agent_gateway.default:
+    agent_connectivity_template: projects/1234567890/locations/europe-west1/agentConnectivityTemplates/agw-geap
     deletion_policy: DELETE
     description: Terraform managed.
     effective_labels:
@@ -182,6 +185,7 @@ values:
     labels: null
     location: europe-west1
     name: agw-geap
+    network_config: []
     project: test-gf-geap-0
     protocols: null
     registries:
@@ -191,10 +195,28 @@ values:
     terraform_labels:
       goog-terraform-provisioned: 'true'
     timeouts: null
-  time_sleep.wait_for_gateway_egress:
-    create_duration: 30s
-    destroy_duration: null
-    triggers: {}
+  module.agent_gateway_egress.google_network_services_authz_extension.iap[0]:
+    authority: null
+    deletion_policy: DELETE
+    description: null
+    effective_labels:
+      goog-terraform-provisioned: 'true'
+    fail_open: true
+    forward_attributes: null
+    forward_headers: null
+    labels: null
+    load_balancing_scheme: null
+    location: europe-west1
+    metadata:
+      iamEnforcementMode: DRY_RUN
+      iapPolicyVersion: V1
+    name: agw-geap-iap
+    project: test-gf-geap-0
+    service: iap.googleapis.com
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
+    timeout: 2s
+    timeouts: null
 
 counts:
   google_agent_registry_service: 3
@@ -202,18 +224,20 @@ counts:
   google_iap_agent_registry_agent_iam_binding: 1
   google_iap_agent_registry_endpoint_iam_binding: 1
   google_iap_agent_registry_endpoint_iam_member: 1
-  google_iap_agent_registry_iam_binding: 1
+  google_iap_agent_registry_iam_binding: 2
   google_iap_agent_registry_iam_member: 1
   google_iap_agent_registry_mcp_server_iam_binding: 1
   google_iap_agent_registry_mcp_server_iam_member: 1
   google_network_security_authz_policy: 1
+  google_network_services_agent_connectivity_template: 1
   google_network_services_agent_gateway: 1
   google_network_services_authz_extension: 1
   modules: 1
-  resources: 15
-  time_sleep: 1
+  resources: 16
 
 outputs:
+  agent_connectivity_template_ids:
+    egress: projects/1234567890/locations/europe-west1/agentConnectivityTemplates/agw-geap
   agent_gateway_ids: __missing__
   agent_registry_uris:
     eu: //agentregistry.googleapis.com/projects/test-gf-geap-0/locations/eu
