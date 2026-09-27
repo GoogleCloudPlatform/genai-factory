@@ -121,13 +121,13 @@ Tests are defined in the `tests` folder, in the root of this repository.
 
 Each factory has a dedicated test folder under `test` that needs to be named as the factory.
 If the factory name includes dashes (`-`), these need to be substituted with underscores (`_`).
-For example, the `agent-engine` factory has a corresponding `agent_engine` test folder.
+For example, the `agent-runtime` factory has a corresponding `agent_runtime` test folder.
 
 Each factory test folder includes a subfolder for each stage: `0_prereqs` and `1_apps`.
 Inside these folders there must be always a `tftest.yaml` file that declares the tests. For example:
 
 ```yaml
-module: agent-engine/1-apps
+module: agent-runtime/1-apps
 tests:
   simple:
   a2a:

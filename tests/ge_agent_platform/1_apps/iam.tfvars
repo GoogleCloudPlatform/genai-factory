@@ -15,6 +15,7 @@
 name = "agw-geap"
 
 project_id = "test-gf-geap-0"
+number     = "1234567890"
 
 region = "europe-west1"
 

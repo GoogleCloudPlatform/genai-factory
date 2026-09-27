@@ -15,24 +15,6 @@
 locals {
   _agent_registry_uri_prefix = "//agentregistry.googleapis.com/projects/${var.project_id}/locations"
 
-  # Registry-level authoritative bindings. Bindings by principal are
-  # inverted and merged into the role-keyed ones, while the keyed
-  # bindings stay separate as they support conditions.
-  _iam_principal_roles = distinct(flatten(values(
-    var.agent_registry_iam_by_principals
-  )))
-
-  _iam_principals = {
-    for r in local._iam_principal_roles : r => [
-      for k, v in var.agent_registry_iam_by_principals :
-      k if try(index(v, r), null) != null
-    ]
-  }
-
-  # Each registry resource type is governed by a different resource,
-  # so bindings are grouped by the type of their target.
-  _iam_types = ["agent", "endpoint", "mcp_server", "registry"]
-
   # The spec type is implied by the presence of spec content: each
   # service type only supports NO_SPEC and the value below.
   _spec_types = {
@@ -41,83 +23,121 @@ locals {
     mcp_server = "TOOL_SPEC"
   }
 
-  # Bindings declared on the services registered by this stage. The
-  # target type is taken from the service definition itself.
-  _svc_iam = flatten([
-    for k, v in var.agent_registry_services : [
-      for role, members in v.iam : {
-        id      = k
-        members = members
-        role    = role
-        type    = v.type
-      }
-    ]
-  ])
+  # Bindings declared on the services registered by this stage. They
+  # are normalized to the shape the gateway module expects, so that
+  # they can be merged with the stage-level ones.
+  _svc_iam = merge([
+    for k, v in var.agent_registry_services : {
+      for role, members in v.iam : "${k}/${role}" => merge(
+        local._svc_ids[k],
+        {
+          condition = null
+          location  = v.location
+          members   = members
+          role      = role
+        }
+      )
+    }
+  ]...)
 
   _svc_iam_bindings = merge([
     for k, v in var.agent_registry_services : {
-      for bk, bv in v.iam_bindings : "${k}/${bk}" => {
-        condition = bv.condition
-        id        = k
-        members   = bv.members
-        role      = bv.role
-        type      = v.type
-      }
+      for bk, bv in v.iam_bindings : "${k}/${bk}" => merge(
+        local._svc_ids[k],
+        {
+          condition = bv.condition
+          location  = v.location
+          members   = bv.members
+          role      = bv.role
+        }
+      )
     }
   ]...)
 
   _svc_iam_bindings_additive = merge([
     for k, v in var.agent_registry_services : {
-      for bk, bv in v.iam_bindings_additive : "${k}/${bk}" => {
-        condition = bv.condition
-        id        = k
-        member    = bv.member
-        role      = bv.role
-        type      = v.type
-      }
+      for bk, bv in v.iam_bindings_additive : "${k}/${bk}" => merge(
+        local._svc_ids[k],
+        {
+          condition = bv.condition
+          location  = v.location
+          member    = bv.member
+          role      = bv.role
+        }
+      )
     }
   ]...)
 
-  # Top-level bindings target the whole registry, unless one of the
-  # '*_id' attributes narrows them down to a single resource. This
-  # also allows targeting resources registered outside this stage.
+  # The attribute naming the registry resource of a service depends on
+  # its type, and scopes the bindings down from the whole registry.
+  # IAP identifies a service by the id Agent Registry generates for
+  # it, not by its service id, so bindings are keyed on the last
+  # segment of 'registry_resource'. Reading it back from the resource
+  # also orders the bindings after the registration.
+  _svc_ids = {
+    for k, v in var.agent_registry_services : k => {
+      agent_id      = v.type == "agent" ? local._svc_registry_ids[k] : null
+      endpoint_id   = v.type == "endpoint" ? local._svc_registry_ids[k] : null
+      mcp_server_id = v.type == "mcp_server" ? local._svc_registry_ids[k] : null
+    }
+  }
+
+  _svc_registry_ids = {
+    for k, v in var.agent_registry_services : k => basename(
+      google_agent_registry_service.agent_registry_services[k].registry_resource
+    )
+  }
+
+  # Stage-level bindings target the whole registry, unless one of the
+  # '*_id' attributes narrows them down to a single resource. An id
+  # naming a service registered here is resolved to its generated
+  # registry id; anything else is passed through, so that resources
+  # registered outside this stage can be targeted too.
   _top_iam_bindings = {
     for k, v in var.agent_registry_iam_bindings : k => {
+      agent_id = (
+        v.agent_id == null
+        ? null
+        : lookup(local._svc_registry_ids, v.agent_id, v.agent_id)
+      )
       condition = v.condition
-      id = coalesce(
-        v.agent_id, v.endpoint_id, v.mcp_server_id, "registry"
+      endpoint_id = (
+        v.endpoint_id == null
+        ? null
+        : lookup(local._svc_registry_ids, v.endpoint_id, v.endpoint_id)
+      )
+      location = v.location
+      mcp_server_id = (
+        v.mcp_server_id == null
+        ? null
+        : lookup(local._svc_registry_ids, v.mcp_server_id, v.mcp_server_id)
       )
       members = v.members
       role    = v.role
-      type = (
-        v.agent_id != null
-        ? "agent"
-        : (
-          v.endpoint_id != null
-          ? "endpoint"
-          : (v.mcp_server_id != null ? "mcp_server" : "registry")
-        )
-      )
     }
   }
 
   _top_iam_bindings_additive = {
     for k, v in var.agent_registry_iam_bindings_additive : k => {
+      agent_id = (
+        v.agent_id == null
+        ? null
+        : lookup(local._svc_registry_ids, v.agent_id, v.agent_id)
+      )
       condition = v.condition
-      id = coalesce(
-        v.agent_id, v.endpoint_id, v.mcp_server_id, "registry"
+      endpoint_id = (
+        v.endpoint_id == null
+        ? null
+        : lookup(local._svc_registry_ids, v.endpoint_id, v.endpoint_id)
+      )
+      location = v.location
+      mcp_server_id = (
+        v.mcp_server_id == null
+        ? null
+        : lookup(local._svc_registry_ids, v.mcp_server_id, v.mcp_server_id)
       )
       member = v.member
       role   = v.role
-      type = (
-        v.agent_id != null
-        ? "agent"
-        : (
-          v.endpoint_id != null
-          ? "endpoint"
-          : (v.mcp_server_id != null ? "mcp_server" : "registry")
-        )
-      )
     }
   }
 
@@ -141,39 +161,13 @@ locals {
     })
   }
 
-  iam = {
-    for role in distinct(concat(
-      keys(var.agent_registry_iam), keys(local._iam_principals)
-    )) :
-    role => concat(
-      try(var.agent_registry_iam[role], []),
-      try(local._iam_principals[role], [])
-    )
-  }
+  registry_iam_bindings = merge(
+    local._svc_iam, local._svc_iam_bindings, local._top_iam_bindings
+  )
 
-  service_iam = {
-    for t in local._iam_types : t => {
-      for b in local._svc_iam :
-      "${b.id}/${b.role}" => b if b.type == t
-    }
-  }
-
-  service_iam_bindings = {
-    for t in local._iam_types : t => {
-      for k, v in merge(
-        local._svc_iam_bindings, local._top_iam_bindings
-      ) : k => v if v.type == t
-    }
-  }
-
-  service_iam_bindings_additive = {
-    for t in local._iam_types : t => {
-      for k, v in merge(
-        local._svc_iam_bindings_additive,
-        local._top_iam_bindings_additive
-      ) : k => v if v.type == t
-    }
-  }
+  registry_iam_bindings_additive = merge(
+    local._svc_iam_bindings_additive, local._top_iam_bindings_additive
+  )
 
   subnetwork = lookup(
     var.subnet_self_links, var.networking_config.subnet, var.networking_config.subnet

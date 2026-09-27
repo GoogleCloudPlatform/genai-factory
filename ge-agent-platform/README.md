@@ -8,7 +8,7 @@ This factory automates the deployment of **Google Cloud Agent Platform** with an
 
 The deployment includes:
 
-- **Egress Agent Gateway**: An Agent Gateway configured with `AGENT_TO_ANYWHERE` access path, enabling agents to securely and privately communicate with external and internal endpoints via Private Service Connect (PSC).
+- **Egress Agent Gateway**: An Agent Gateway configured with `AGENT_TO_ANYWHERE` access path, enabling agents to securely and privately communicate with external and internal endpoints via Private Service Connect (PSC). It reaches the Shared VPC through an **agent connectivity template**, configured by default to keep every flow inside the network so that the gateway fits a VPC-SC perimeter.
 - **Agent Registry**: A centralized service catalog that registers:
   - **Google APIs**: Endpoints for Vertex AI, Dialogflow, Discovery Engine, Model Armor, Cloud Logging, and Cloud Monitoring (including regional, mTLS, and Regional Endpoint Protocol variants) with JSONRPC protocol bindings.
   - **Custom Services**: Configurable custom HTTP/gRPC endpoints registered for agent discovery and tool use.

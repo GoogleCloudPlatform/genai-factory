@@ -13,7 +13,7 @@
 # limitations under the License.
 
 variable "agent_gateway_config" {
-  description = "Agent Gateway configuration including authorization extensions."
+  description = "Agent Gateway configuration including VPC connectivity and authorization extensions."
   type = object({
     egress = optional(object({
       iap = optional(object({
@@ -30,6 +30,18 @@ variable "agent_gateway_config" {
         enable      = optional(bool, false)
         fail_open   = optional(bool, false)
         timeout     = optional(string, "2s")
+      }), {})
+      # Settings of the agent connectivity template through which the
+      # gateway reaches the VPC. The defaults keep every flow inside
+      # the network, which is what a VPC-SC perimeter requires.
+      networking = optional(object({
+        access_types = optional(list(string), ["PRIVATE"])
+        dns_peering_config = optional(object({
+          domain = string
+          # Defaults to var.networking_config.vpc.
+          target_network = optional(string)
+        }))
+        vpc_egress = optional(string, "ALL_TRAFFIC")
       }), {})
       registry_locations = optional(list(string), ["global", "regional"])
     }), {})
@@ -72,6 +84,22 @@ variable "agent_gateway_config" {
     )
     error_message = "The 'registry_locations' elements must be unique."
   }
+
+  validation {
+    condition = length(setsubtract(
+      var.agent_gateway_config.egress.networking.access_types,
+      ["PRIVATE", "PUBLIC"]
+    )) == 0
+    error_message = "Each 'networking.access_types' element must be one of 'PRIVATE', 'PUBLIC'."
+  }
+
+  validation {
+    condition = contains(
+      ["ALL_TRAFFIC", "PRIVATE_RANGES_ONLY"],
+      var.agent_gateway_config.egress.networking.vpc_egress
+    )
+    error_message = "The 'networking.vpc_egress' must be either 'ALL_TRAFFIC' or 'PRIVATE_RANGES_ONLY'."
+  }
 }
 
 variable "agent_registry_iam" {
@@ -82,12 +110,13 @@ variable "agent_registry_iam" {
 }
 
 variable "agent_registry_iam_bindings" {
-  description = "Authoritative Agent Registry IAM bindings in {KEY => {role = ROLE, members = [], condition = {}}} format. Set at most one of the '*_id' attributes to scope the binding to a single registry resource, or none to target the whole registry. Keys are arbitrary."
+  description = "Authoritative Agent Registry IAM bindings in {KEY => {role = ROLE, members = [], condition = {}}} format. Set at most one of the '*_id' attributes to scope the binding to a single registry resource, or none to target the whole registry. Location defaults to var.region. Keys are arbitrary."
   type = map(object({
     members       = list(string)
     role          = string
     agent_id      = optional(string)
     endpoint_id   = optional(string)
+    location      = optional(string)
     mcp_server_id = optional(string)
     condition = optional(object({
       expression  = string
@@ -107,12 +136,13 @@ variable "agent_registry_iam_bindings" {
 }
 
 variable "agent_registry_iam_bindings_additive" {
-  description = "Additive Agent Registry IAM bindings. Set at most one of the '*_id' attributes to scope the binding to a single registry resource, or none to target the whole registry. Keys are arbitrary."
+  description = "Additive Agent Registry IAM bindings. Set at most one of the '*_id' attributes to scope the binding to a single registry resource, or none to target the whole registry. Location defaults to var.region. Keys are arbitrary."
   type = map(object({
     member        = string
     role          = string
     agent_id      = optional(string)
     endpoint_id   = optional(string)
+    location      = optional(string)
     mcp_server_id = optional(string)
     condition = optional(object({
       expression  = string
@@ -379,6 +409,12 @@ variable "networking_config" {
     vpc    = string
   })
   nullable = false
+}
+
+variable "number" {
+  description = "The number of the project where to create the resources. Agent Gateways reference their connectivity template by project number."
+  type        = string
+  nullable    = false
 }
 
 variable "project_id" {

@@ -1,0 +1,85 @@
+---
+
+# Copyright 2026 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+name: gf-ar-0
+
+# Enable APIs
+services:
+  - aiplatform.googleapis.com
+  - artifactregistry.googleapis.com
+  - cloudbuild.googleapis.com
+  - cloudresourcemanager.googleapis.com
+  - compute.googleapis.com
+  # Used to leverage Firestore to store agent info (sessions, tasks)
+  - firestore.googleapis.com
+  - logging.googleapis.com
+  - monitoring.googleapis.com
+  - serviceusage.googleapis.com
+  - storage.googleapis.com
+  # Needed for SWP configuration
+  - networksecurity.googleapis.com
+  - networkservices.googleapis.com
+
+org_policies:
+  compute.restrictSharedVpcSubnetworks:
+    rules:
+      - allow:
+          values:
+            - projects/${try(projects["host"], networking_config["host_project_id"])}/regions/${networking_config["region"]}/subnetworks/${networking_config["subnet_name"]}
+
+buckets:
+  iac-state:
+    description: Terraform state bucket
+    iam:
+      roles/storage.objectUser:
+        - $iam_principals:service_accounts/_self_/iac-rw
+
+service_accounts:
+  # Automation SAs
+  iac-rw:
+    iam_sa_roles:
+      $service_account_ids:service-01/gf-ar-0:
+        - roles/iam.serviceAccountUser
+  # Agent custom SAs
+  gf-ar-0: {}
+
+# Grant roles
+iam_by_principals:
+  $iam_principals:service_accounts/_self_/iac-rw:
+    - roles/artifactregistry.admin
+    - roles/aiplatform.admin
+    - roles/cloudbuild.builds.editor
+    - roles/serviceusage.serviceUsageConsumer
+    - roles/storage.admin
+    - roles/storage.objectUser
+    - roles/serviceusage.serviceUsageAdmin
+    # Next role used for Firestore
+    - roles/datastore.owner
+  $iam_principals:service_accounts/_self_/gf-ar-0:
+    - roles/logging.logWriter
+    - roles/serviceusage.serviceUsageConsumer
+    - roles/storage.objectViewer
+    # Only if you enable tracing capabilities on the agent
+    - roles/cloudtrace.agent
+    # Next role used for Firestore
+    - roles/datastore.user
+
+# Grant roles/aiplatform.user as additive,
+# as it is authoritatively granted by aiplatform APIs to default SA
+iam_bindings_additive:
+  ar_sa_ai_user:
+    member: $iam_principals:service_accounts/_self_/gf-ar-0
+    role: roles/aiplatform.user

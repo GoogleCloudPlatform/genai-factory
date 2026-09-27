@@ -26,7 +26,7 @@ values:
     subnetworks:
     - projects/test-gf-geap-hp-0/regions/europe-west1/subnetworks/sub-0
     timeouts: null
-  google_network_security_authz_policy.iap_authz_policy:
+  module.agent_gateway_egress.google_network_security_authz_policy.iap[0]:
     action: CUSTOM
     custom_provider:
     - authz_extension:
@@ -39,7 +39,7 @@ values:
     http_rules: []
     labels: null
     location: europe-west1
-    name: agw-geap
+    name: agw-geap-iap
     network_rules: []
     policy_profile: REQUEST_AUTHZ
     project: test-gf-geap-0
@@ -48,27 +48,26 @@ values:
     terraform_labels:
       goog-terraform-provisioned: 'true'
     timeouts: null
-  google_network_services_authz_extension.iap_auth_srv_ext:
-    authority: null
+  module.agent_gateway_egress.google_network_services_agent_connectivity_template.default[0]:
+    access_path: AGENT_TO_ANYWHERE
+    access_types:
+    - PRIVATE
+    agent_connectivity_template_id: agw-geap
     deletion_policy: DELETE
-    description: null
+    description: Terraform managed.
     effective_labels:
       goog-terraform-provisioned: 'true'
-    fail_open: true
-    forward_headers: null
+    egress_network_config:
+    - dns_peering_config: []
+      vpc_egress: ALL_TRAFFIC
     labels: null
-    load_balancing_scheme: null
     location: europe-west1
-    metadata:
-      iapPolicyVersion: V1
-    name: agw-geap
     project: test-gf-geap-0
-    service: iap.googleapis.com
     terraform_labels:
       goog-terraform-provisioned: 'true'
-    timeout: 2s
     timeouts: null
   module.agent_gateway_egress.google_network_services_agent_gateway.default:
+    agent_connectivity_template: projects/1234567890/locations/europe-west1/agentConnectivityTemplates/agw-geap
     deletion_policy: DELETE
     description: Terraform managed.
     effective_labels:
@@ -78,6 +77,7 @@ values:
     labels: null
     location: europe-west1
     name: agw-geap
+    network_config: []
     project: test-gf-geap-0
     protocols: null
     registries:
@@ -87,21 +87,40 @@ values:
     terraform_labels:
       goog-terraform-provisioned: 'true'
     timeouts: null
-  time_sleep.wait_for_gateway_egress:
-    create_duration: 30s
-    destroy_duration: null
-    triggers: {}
+  module.agent_gateway_egress.google_network_services_authz_extension.iap[0]:
+    authority: null
+    deletion_policy: DELETE
+    description: null
+    effective_labels:
+      goog-terraform-provisioned: 'true'
+    fail_open: true
+    forward_attributes: null
+    forward_headers: null
+    labels: null
+    load_balancing_scheme: null
+    location: europe-west1
+    metadata:
+      iapPolicyVersion: V1
+    name: agw-geap-iap
+    project: test-gf-geap-0
+    service: iap.googleapis.com
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
+    timeout: 2s
+    timeouts: null
 
 counts:
   google_compute_network_attachment: 1
   google_network_security_authz_policy: 1
+  google_network_services_agent_connectivity_template: 1
   google_network_services_agent_gateway: 1
   google_network_services_authz_extension: 1
   modules: 1
   resources: 5
-  time_sleep: 1
 
 outputs:
+  agent_connectivity_template_ids:
+    egress: projects/1234567890/locations/europe-west1/agentConnectivityTemplates/agw-geap
   agent_gateway_ids: __missing__
   agent_registry_uris:
     eu: //agentregistry.googleapis.com/projects/test-gf-geap-0/locations/eu
