@@ -54,11 +54,11 @@ gh pr list --state merged --base master --limit 50 \
 
 Choose the bump:
 
-- **major** — factories restructured, variables or `data/projects` YAML interfaces changed in a backwards-incompatible way, or anything that forces users to change their `terraform.tfvars` or recreate state.
-- **minor** — new factories, new sample applications, new features on existing stages.
+- **major** — very important refactoring, which usually involve deep refactoring of the user deployments or that cause lots of recreate states.
+- **minor** — new version of Cloud Foundation Fabric referenced by all modules of the factories, new factories, new sample applications, new features on existing stages.
 - **patch** — fixes, dependency and security upgrades, documentation only.
 
-Read the merged PR bodies for `**Breaking Changes**` sections: those are what the release notes must surface.
+Read the merged PR titles and summarize what's in the bodies: those are what the release notes must surface.
 
 ```bash
 NEW_RELEASE="v2.1.0"   # set to the version you decided on
@@ -67,7 +67,9 @@ echo "New release is: $NEW_RELEASE"
 
 ## 3. Check the Cloud Foundation Fabric Compatibility Statement
 
-Every factory pins the same Fabric tag. Verify the pin and make sure the compatibility statement in the [main README.md](../../README.md) matches it:
+Every factory pins the same Fabric tag.
+
+Verify the pin and make sure the compatibility statement in the [main README.md](../../README.md) matches it:
 
 ```bash
 grep -rho "ref=v[0-9.]*" --include="*.tf" . | sort -u
@@ -94,6 +96,10 @@ Write the notes in the style of the previous releases (`gh release view $LATEST_
 
 <one or two sentences describing the theme of the release>
 
+
+**New Factories**
+* ...
+
 **New Features**
 * ...
 
@@ -103,8 +109,6 @@ Write the notes in the style of the previous releases (`gh release view $LATEST_
 **Fixes, security upgrades**
 * ...
 ```
-
-For a major release, add a `**Breaking Changes**` section at the top with the concrete upgrade steps, taken from the merged PR bodies.
 
 > **CRITICAL:** Show the drafted notes to the user and wait for their approval before creating the release.
 
