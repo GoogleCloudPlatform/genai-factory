@@ -40,8 +40,6 @@ agent_gateway_config = {
   }
 }
 
-model_armor_template_config = {
-  floor_setting = {
-    enabled = true
-  }
+model_armor_floor_setting = {
+  enabled = true
 }

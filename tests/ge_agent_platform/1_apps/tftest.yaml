@@ -19,3 +19,4 @@ tests:
   simple:
   iam:
   model_armor:
+  gemini_enterprise:

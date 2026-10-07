@@ -696,6 +696,33 @@ values:
     - serviceAccount:iac-rw@test-gf-geap-0.iam.gserviceaccount.com
     project: test-gf-geap-hp-0
     role: roles/dns.reader
+  ? module.projects.module.projects-iam["host"].google_project_iam_binding.authoritative["roles/networkconnectivity.consumerNetworkAdmin"]
+  : condition: []
+    members:
+    - serviceAccount:iac-rw@test-gf-geap-0.iam.gserviceaccount.com
+    project: test-gf-geap-hp-0
+    role: roles/networkconnectivity.consumerNetworkAdmin
+  ? module.projects.module.projects-iam["host"].google_project_iam_binding.authoritative["roles/networkconnectivity.regionalEndpointAdmin"]
+  : condition: []
+    members:
+    - serviceAccount:iac-rw@test-gf-geap-0.iam.gserviceaccount.com
+    project: test-gf-geap-hp-0
+    role: roles/networkconnectivity.regionalEndpointAdmin
+  ? module.projects.module.projects-iam["service-01"].google_org_policy_policy.default["discoveryengine.managed.disableCustomMcpServerConnector"]
+  : dry_run_spec: []
+    name: projects/test-gf-geap-0/policies/discoveryengine.managed.disableCustomMcpServerConnector
+    parent: projects/test-gf-geap-0
+    spec:
+    - inherit_from_parent: null
+      reset: null
+      rules:
+      - allow_all: null
+        condition: []
+        deny_all: null
+        enforce: 'FALSE'
+        parameters: null
+        values: []
+    timeouts: null
   ? module.projects.module.projects-iam["service-01"].google_org_policy_policy.default["iam.managed.disableAccessPolicyBinding"]
   : dry_run_spec: []
     name: projects/test-gf-geap-0/policies/iam.managed.disableAccessPolicyBinding
@@ -711,10 +738,10 @@ values:
         parameters: null
         values: []
     timeouts: null
-  module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["$custom_roles:psc_updater"]:
+  module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["$custom_roles:psc_manager"]:
     condition: []
     project: test-gf-geap-0
-    role: projects/test-gf-geap-0/roles/psc_updater
+    role: projects/test-gf-geap-0/roles/psc_manager
   module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/agentregistry.admin"]:
     condition: []
     members:
@@ -771,6 +798,10 @@ values:
     - serviceAccount:iac-rw@test-gf-geap-0.iam.gserviceaccount.com
     project: test-gf-geap-0
     role: roles/networkservices.admin
+  ? module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/secretmanager.secretAccessor"]
+  : condition: []
+    project: test-gf-geap-0
+    role: roles/secretmanager.secretAccessor
   ? module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/serviceusage.serviceUsageConsumer"]
   : condition: []
     project: test-gf-geap-0
@@ -781,6 +812,16 @@ values:
     - serviceAccount:iac-rw@test-gf-geap-0.iam.gserviceaccount.com
     project: test-gf-geap-0
     role: roles/storage.admin
+  module.projects.module.projects-iam["service-01"].google_project_iam_binding.bindings["iac_rw_project_iam_delegated"]:
+    condition:
+    - description: Automation service account delegated grants.
+      expression: api.getAttribute('iam.googleapis.com/modifiedGrantsByRole', []).hasOnly(['roles/discoveryengine.agentspaceRestrictedUser',
+        'projects/test-gf-geap-0/roles/discoveryengineUserBusinessAiCodeOnly'])
+      title: iac_rw_delegated_grants
+    members:
+    - serviceAccount:iac-rw@test-gf-geap-0.iam.gserviceaccount.com
+    project: test-gf-geap-0
+    role: roles/resourcemanager.projectIamAdmin
   module.projects.module.projects["host"].google_project.project[0]:
     auto_create_network: false
     billing_account: 012345-678901-ABCDEF
@@ -840,17 +881,34 @@ values:
     terraform_labels:
       goog-terraform-provisioned: 'true'
     timeouts: null
-  module.projects.module.projects["service-01"].google_project_iam_custom_role.roles["psc_updater"]:
-    deletion_policy: DELETE
-    description: Allows to update PSC network attachments.
+  ? module.projects.module.projects["service-01"].google_project_iam_custom_role.roles["discoveryengineUserBusinessAiCodeOnly"]
+  : deletion_policy: DELETE
+    description: Used to grant Gemini Enterprise users access to Antigravity while
+      maintaining access to single applications (GE user role granted at app level).
     permissions:
+    - businessaicode.locations.fetchQuotaStatus
+    - businessaicode.locations.generateContent
+    - businessaicode.locations.queryConfiguration
+    - businessaicode.locations.selfAssignLicense
+    - businessaicode.locations.sendTelemetry
+    project: test-gf-geap-0
+    role_id: discoveryengineUserBusinessAiCodeOnly
+    stage: GA
+    title: Discovery Engine User Business AI Code Only
+  module.projects.module.projects["service-01"].google_project_iam_custom_role.roles["psc_manager"]:
+    deletion_policy: DELETE
+    description: Allows identities to manage network attachments and accept PSC-I
+      connections.
+    permissions:
+    - compute.networkAttachments.create
+    - compute.networkAttachments.delete
     - compute.networkAttachments.get
     - compute.networkAttachments.update
     - compute.regionOperations.get
     project: test-gf-geap-0
-    role_id: psc_updater
+    role_id: psc_manager
     stage: GA
-    title: PSC updater
+    title: PSC manager
   module.projects.module.projects["service-01"].google_project_iam_member.service_agents["aiplatform"]:
     condition: []
     project: test-gf-geap-0
@@ -887,6 +945,10 @@ values:
     condition: []
     project: test-gf-geap-0
     role: roles/modelarmor.serviceAgent
+  module.projects.module.projects["service-01"].google_project_iam_member.service_agents["observability"]:
+    condition: []
+    project: test-gf-geap-0
+    role: roles/observability.serviceAgent
   module.projects.module.projects["service-01"].google_project_iam_member.service_agents["vertex-bp"]:
     condition: []
     project: test-gf-geap-0
@@ -960,6 +1022,13 @@ values:
     project: test-gf-geap-0
     service: aiplatform.googleapis.com
     timeouts: null
+  module.projects.module.projects["service-01"].google_project_service.project_services["apptopology.googleapis.com"]:
+    deletion_policy: DELETE
+    disable_dependent_services: false
+    disable_on_destroy: false
+    project: test-gf-geap-0
+    service: apptopology.googleapis.com
+    timeouts: null
   ? module.projects.module.projects["service-01"].google_project_service.project_services["cloudresourcemanager.googleapis.com"]
   : deletion_policy: DELETE
     disable_dependent_services: false
@@ -1023,6 +1092,20 @@ values:
     project: test-gf-geap-0
     service: networkservices.googleapis.com
     timeouts: null
+  module.projects.module.projects["service-01"].google_project_service.project_services["observability.googleapis.com"]:
+    deletion_policy: DELETE
+    disable_dependent_services: false
+    disable_on_destroy: false
+    project: test-gf-geap-0
+    service: observability.googleapis.com
+    timeouts: null
+  module.projects.module.projects["service-01"].google_project_service.project_services["secretmanager.googleapis.com"]:
+    deletion_policy: DELETE
+    disable_dependent_services: false
+    disable_on_destroy: false
+    project: test-gf-geap-0
+    service: secretmanager.googleapis.com
+    timeouts: null
   module.projects.module.projects["service-01"].google_project_service.project_services["serviceusage.googleapis.com"]:
     deletion_policy: DELETE
     disable_dependent_services: false
@@ -1056,6 +1139,14 @@ values:
   module.projects.module.projects["service-01"].google_project_service_identity.default["networksecurity.googleapis.com"]:
     project: test-gf-geap-0
     service: networksecurity.googleapis.com
+    timeouts: null
+  module.projects.module.projects["service-01"].google_project_service_identity.default["observability.googleapis.com"]:
+    project: test-gf-geap-0
+    service: observability.googleapis.com
+    timeouts: null
+  module.projects.module.projects["service-01"].google_project_service_identity.default["secretmanager.googleapis.com"]:
+    project: test-gf-geap-0
+    service: secretmanager.googleapis.com
     timeouts: null
   module.projects.module.service-accounts["service-01/iac-rw"].google_service_account.service_account[0]:
     account_id: iac-rw
@@ -1190,13 +1281,13 @@ counts:
   google_compute_subnetwork: 2
   google_dns_response_policy: 1
   google_dns_response_policy_rule: 39
-  google_org_policy_policy: 1
+  google_org_policy_policy: 2
   google_project: 2
-  google_project_iam_binding: 17
-  google_project_iam_custom_role: 1
-  google_project_iam_member: 24
-  google_project_service: 16
-  google_project_service_identity: 6
+  google_project_iam_binding: 21
+  google_project_iam_custom_role: 2
+  google_project_iam_member: 25
+  google_project_service: 19
+  google_project_service_identity: 8
   google_service_account: 1
   google_service_account_iam_member: 1
   google_storage_bucket: 1
@@ -1204,7 +1295,7 @@ counts:
   google_storage_project_service_account: 1
   local_file: 2
   modules: 9
-  resources: 124
+  resources: 136
   terraform_data: 2
 
 outputs:

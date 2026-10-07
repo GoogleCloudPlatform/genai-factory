@@ -21,10 +21,8 @@ values:
     description: null
     display_name: Test Agent
     endpoint_spec: []
-    interfaces:
-    - protocol_binding: HTTP_JSON
-      url: https://agent.example.com
-    location: global
+    interfaces: []
+    location: europe-west1
     mcp_server_spec: []
     project: test-gf-geap-0
     service_id: test-agent
@@ -39,7 +37,7 @@ values:
     interfaces:
     - protocol_binding: HTTP_JSON
       url: https://endpoint.example.com
-    location: global
+    location: europe-west1
     mcp_server_spec: []
     project: test-gf-geap-0
     service_id: test-endpoint
@@ -53,7 +51,7 @@ values:
     interfaces:
     - protocol_binding: HTTP_JSON
       url: https://mcp.example.com
-    location: global
+    location: europe-west1
     mcp_server_spec:
     - content: '{}'
       type: TOOL_SPEC
@@ -75,7 +73,7 @@ values:
     timeouts: null
   module.agent_gateway_egress.google_iap_agent_registry_agent_iam_binding.bindings["test-agent/roles/iap.egressor"]:
     condition: []
-    location: global
+    location: europe-west1
     members:
     - principal://goog/subject/user@example.com
     project: test-gf-geap-0
@@ -86,7 +84,7 @@ values:
       expression: api.getAttribute('iap.googleapis.com/mcp.toolName', '') in ['get_forecast',
         '']
       title: forecast-tool-only
-    location: global
+    location: europe-west1
     members:
     - principal://goog/subject/user@example.com
     project: test-gf-geap-0
@@ -101,14 +99,6 @@ values:
   module.agent_gateway_egress.google_iap_agent_registry_iam_binding.authoritative["eu/roles/iap.egressor"]:
     condition: []
     location: eu
-    members:
-    - principal://goog/subject/registry@example.com
-    - principalSet://goog/group/agents@example.com
-    project: test-gf-geap-0
-    role: roles/iap.egressor
-  module.agent_gateway_egress.google_iap_agent_registry_iam_binding.authoritative["europe-west1/roles/iap.egressor"]:
-    condition: []
-    location: europe-west1
     members:
     - principal://goog/subject/registry@example.com
     - principalSet://goog/group/agents@example.com
@@ -130,7 +120,7 @@ values:
     role: roles/iap.egressor
   module.agent_gateway_egress.google_iap_agent_registry_mcp_server_iam_member.members["test-mcp/single-agent"]:
     condition: []
-    location: global
+    location: europe-west1
     member: principal://goog/subject/user@example.com
     project: test-gf-geap-0
     role: roles/iap.egressor
@@ -167,6 +157,7 @@ values:
       goog-terraform-provisioned: 'true'
     egress_network_config:
     - dns_peering_config: []
+      tls_config: []
       vpc_egress: ALL_TRAFFIC
     labels: null
     location: europe-west1
@@ -190,7 +181,6 @@ values:
     protocols: null
     registries:
     - //agentregistry.googleapis.com/projects/test-gf-geap-0/locations/eu
-    - //agentregistry.googleapis.com/projects/test-gf-geap-0/locations/europe-west1
     self_managed: []
     terraform_labels:
       goog-terraform-provisioned: 'true'
@@ -224,7 +214,7 @@ counts:
   google_iap_agent_registry_agent_iam_binding: 1
   google_iap_agent_registry_endpoint_iam_binding: 1
   google_iap_agent_registry_endpoint_iam_member: 1
-  google_iap_agent_registry_iam_binding: 2
+  google_iap_agent_registry_iam_binding: 1
   google_iap_agent_registry_iam_member: 1
   google_iap_agent_registry_mcp_server_iam_binding: 1
   google_iap_agent_registry_mcp_server_iam_member: 1
@@ -233,14 +223,20 @@ counts:
   google_network_services_agent_gateway: 1
   google_network_services_authz_extension: 1
   modules: 1
-  resources: 16
+  resources: 15
 
 outputs:
   agent_connectivity_template_ids:
     egress: projects/1234567890/locations/europe-west1/agentConnectivityTemplates/agw-geap
   agent_gateway_ids: __missing__
+  agent_registry_service_names: __missing__
   agent_registry_uris:
     eu: //agentregistry.googleapis.com/projects/test-gf-geap-0/locations/eu
     global: //agentregistry.googleapis.com/projects/test-gf-geap-0/locations/global
     regional: //agentregistry.googleapis.com/projects/test-gf-geap-0/locations/europe-west1
     us: //agentregistry.googleapis.com/projects/test-gf-geap-0/locations/us
+  gemini_enterprise_antigravity_principals: []
+  gemini_enterprise_app_names: {}
+  gemini_enterprise_assistant_names: {}
+  gemini_enterprise_data_connector_names: {}
+  model_armor_template_names: {}

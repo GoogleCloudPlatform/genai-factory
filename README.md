@@ -16,7 +16,7 @@ Compatibility with master is not guaranteed.
 
 ## Factories
 
-- [Gemini Enterprise Agent Platform] - A central place where to register and govern your endpoints, MCP servers and agents. It deploys [Agent Registry](https://docs.cloud.google.com/agent-registry/overview) and [Agent Gateway](https://docs.cloud.google.com/gemini-enterprise-agent-platform/govern/gateways/agent-gateway-overview).
+- [Gemini Enterprise Agent Platform](./ge-agent-platform/README.md) - A central place to deploy Gemini Enterprise applications and datastores, and to register and govern your endpoints, custom MCP servers (with OAuth 2.0 support), and agents via [Agent Registry](https://docs.cloud.google.com/agent-registry/overview) and [Agent Gateway](https://docs.cloud.google.com/gemini-enterprise-agent-platform/govern/gateways/agent-gateway-overview).
 - [Agent Runtime](./agent-runtime/README.md) - An instance of Agent Runtime that privately access your VPC resources, accesses Internet via SWP HTTP Proxy, running [ADK](./agent-runtime/1-apps/apps/adk/README.md) or [ADK with A2A support](./agent-runtime/1-apps/apps/adk-a2a/README.md).
 - [Single Cloud Run](./cloud-run-single/README.md) - A secure Cloud Run deployment to interact with Gemini, run an [ADK agent](./cloud-run-single/1-apps/apps/adk/README.md), an [ADK agent exposed via A2A](./cloud-run-single/1-apps/apps/adk-a2a/README.md), a self-hosted [Gemma 3](./cloud-run-single/1-apps/apps/gemma/README.md) model with Nvidia L4 GPUs or a sample [MCP server](./cloud-run-single/1-apps/apps/mcp-server/README.md)
 - [Natural Language to SQL (NL2SQL)](./cloud-run-nl2sql-bq/README.md) - A secure agent on Cloud Run that allows users to securely query data from BigQuery by using a natural language.

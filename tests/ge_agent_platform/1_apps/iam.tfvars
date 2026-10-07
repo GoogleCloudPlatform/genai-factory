@@ -29,14 +29,13 @@ agent_gateway_config = {
     iap = {
       iam_enforcement_mode = "DRY_RUN"
     }
-    registry_locations = ["eu", "regional"]
+    registry_locations = ["eu"]
   }
 }
 
 agent_registry_services = {
   test-agent = {
     display_name = "Test Agent"
-    url          = "https://agent.example.com"
     type         = "agent"
     content      = "{}"
     iam = {

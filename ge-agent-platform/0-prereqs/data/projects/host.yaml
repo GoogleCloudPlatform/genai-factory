@@ -32,6 +32,10 @@ iam_by_principals:
     - roles/compute.networkViewer
     # Agent Gateway: allows validation of DNS resources
     - roles/dns.reader
+    # Agent Gateway: allows the connectivity template to validate the target
+    # VPC, its subnets and the network attachment on create and update
+    - roles/networkconnectivity.consumerNetworkAdmin
+    - roles/networkconnectivity.regionalEndpointAdmin
   $iam_principals:service_agents/service-01/agentgateway:
     # Agent Gateway: allows the service agent to use the host project subnet
     # for the network attachment and connect the PSC-I to route egress traffic
