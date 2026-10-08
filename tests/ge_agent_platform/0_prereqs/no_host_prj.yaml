@@ -66,6 +66,21 @@ values:
     - serviceAccount:iac-rw@your-prefix-gf-geap-0.iam.gserviceaccount.com
     role: roles/storage.objectUser
     timeouts: null
+  ? module.projects.module.projects-iam["service-01"].google_org_policy_policy.default["discoveryengine.managed.disableCustomMcpServerConnector"]
+  : dry_run_spec: []
+    name: projects/your-prefix-gf-geap-0/policies/discoveryengine.managed.disableCustomMcpServerConnector
+    parent: projects/your-prefix-gf-geap-0
+    spec:
+    - inherit_from_parent: null
+      reset: null
+      rules:
+      - allow_all: null
+        condition: []
+        deny_all: null
+        enforce: 'FALSE'
+        parameters: null
+        values: []
+    timeouts: null
   ? module.projects.module.projects-iam["service-01"].google_org_policy_policy.default["iam.managed.disableAccessPolicyBinding"]
   : dry_run_spec: []
     name: projects/your-prefix-gf-geap-0/policies/iam.managed.disableAccessPolicyBinding
@@ -81,10 +96,10 @@ values:
         parameters: null
         values: []
     timeouts: null
-  module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["$custom_roles:psc_updater"]:
+  module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["$custom_roles:psc_manager"]:
     condition: []
     project: your-prefix-gf-geap-0
-    role: projects/your-prefix-gf-geap-0/roles/psc_updater
+    role: projects/your-prefix-gf-geap-0/roles/psc_manager
   module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/agentregistry.admin"]:
     condition: []
     members:
@@ -141,6 +156,10 @@ values:
     - serviceAccount:iac-rw@your-prefix-gf-geap-0.iam.gserviceaccount.com
     project: your-prefix-gf-geap-0
     role: roles/networkservices.admin
+  ? module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/secretmanager.secretAccessor"]
+  : condition: []
+    project: your-prefix-gf-geap-0
+    role: roles/secretmanager.secretAccessor
   ? module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/serviceusage.serviceUsageConsumer"]
   : condition: []
     project: your-prefix-gf-geap-0
@@ -151,6 +170,16 @@ values:
     - serviceAccount:iac-rw@your-prefix-gf-geap-0.iam.gserviceaccount.com
     project: your-prefix-gf-geap-0
     role: roles/storage.admin
+  module.projects.module.projects-iam["service-01"].google_project_iam_binding.bindings["iac_rw_project_iam_delegated"]:
+    condition:
+    - description: Automation service account delegated grants.
+      expression: api.getAttribute('iam.googleapis.com/modifiedGrantsByRole', []).hasOnly(['roles/discoveryengine.agentspaceRestrictedUser',
+        'projects/your-prefix-gf-geap-0/roles/discoveryengineUserBusinessAiCodeOnly'])
+      title: iac_rw_delegated_grants
+    members:
+    - serviceAccount:iac-rw@your-prefix-gf-geap-0.iam.gserviceaccount.com
+    project: your-prefix-gf-geap-0
+    role: roles/resourcemanager.projectIamAdmin
   module.projects.module.projects["service-01"].data.google_storage_project_service_account.gcs_sa[0]:
     project: your-prefix-gf-geap-0
     user_project: null
@@ -169,17 +198,34 @@ values:
     terraform_labels:
       goog-terraform-provisioned: 'true'
     timeouts: null
-  module.projects.module.projects["service-01"].google_project_iam_custom_role.roles["psc_updater"]:
-    deletion_policy: DELETE
-    description: Allows to update PSC network attachments.
+  ? module.projects.module.projects["service-01"].google_project_iam_custom_role.roles["discoveryengineUserBusinessAiCodeOnly"]
+  : deletion_policy: DELETE
+    description: Used to grant Gemini Enterprise users access to Antigravity while
+      maintaining access to single applications (GE user role granted at app level).
     permissions:
+    - businessaicode.locations.fetchQuotaStatus
+    - businessaicode.locations.generateContent
+    - businessaicode.locations.queryConfiguration
+    - businessaicode.locations.selfAssignLicense
+    - businessaicode.locations.sendTelemetry
+    project: your-prefix-gf-geap-0
+    role_id: discoveryengineUserBusinessAiCodeOnly
+    stage: GA
+    title: Discovery Engine User Business AI Code Only
+  module.projects.module.projects["service-01"].google_project_iam_custom_role.roles["psc_manager"]:
+    deletion_policy: DELETE
+    description: Allows identities to manage network attachments and accept PSC-I
+      connections.
+    permissions:
+    - compute.networkAttachments.create
+    - compute.networkAttachments.delete
     - compute.networkAttachments.get
     - compute.networkAttachments.update
     - compute.regionOperations.get
     project: your-prefix-gf-geap-0
-    role_id: psc_updater
+    role_id: psc_manager
     stage: GA
-    title: PSC updater
+    title: PSC manager
   module.projects.module.projects["service-01"].google_project_iam_member.service_agents["aiplatform"]:
     condition: []
     project: your-prefix-gf-geap-0
@@ -216,6 +262,10 @@ values:
     condition: []
     project: your-prefix-gf-geap-0
     role: roles/modelarmor.serviceAgent
+  module.projects.module.projects["service-01"].google_project_iam_member.service_agents["observability"]:
+    condition: []
+    project: your-prefix-gf-geap-0
+    role: roles/observability.serviceAgent
   module.projects.module.projects["service-01"].google_project_iam_member.service_agents["vertex-bp"]:
     condition: []
     project: your-prefix-gf-geap-0
@@ -289,6 +339,13 @@ values:
     project: your-prefix-gf-geap-0
     service: aiplatform.googleapis.com
     timeouts: null
+  module.projects.module.projects["service-01"].google_project_service.project_services["apptopology.googleapis.com"]:
+    deletion_policy: DELETE
+    disable_dependent_services: false
+    disable_on_destroy: false
+    project: your-prefix-gf-geap-0
+    service: apptopology.googleapis.com
+    timeouts: null
   ? module.projects.module.projects["service-01"].google_project_service.project_services["cloudresourcemanager.googleapis.com"]
   : deletion_policy: DELETE
     disable_dependent_services: false
@@ -352,6 +409,20 @@ values:
     project: your-prefix-gf-geap-0
     service: networkservices.googleapis.com
     timeouts: null
+  module.projects.module.projects["service-01"].google_project_service.project_services["observability.googleapis.com"]:
+    deletion_policy: DELETE
+    disable_dependent_services: false
+    disable_on_destroy: false
+    project: your-prefix-gf-geap-0
+    service: observability.googleapis.com
+    timeouts: null
+  module.projects.module.projects["service-01"].google_project_service.project_services["secretmanager.googleapis.com"]:
+    deletion_policy: DELETE
+    disable_dependent_services: false
+    disable_on_destroy: false
+    project: your-prefix-gf-geap-0
+    service: secretmanager.googleapis.com
+    timeouts: null
   module.projects.module.projects["service-01"].google_project_service.project_services["serviceusage.googleapis.com"]:
     deletion_policy: DELETE
     disable_dependent_services: false
@@ -386,6 +457,14 @@ values:
     project: your-prefix-gf-geap-0
     service: networksecurity.googleapis.com
     timeouts: null
+  module.projects.module.projects["service-01"].google_project_service_identity.default["observability.googleapis.com"]:
+    project: your-prefix-gf-geap-0
+    service: observability.googleapis.com
+    timeouts: null
+  module.projects.module.projects["service-01"].google_project_service_identity.default["secretmanager.googleapis.com"]:
+    project: your-prefix-gf-geap-0
+    service: secretmanager.googleapis.com
+    timeouts: null
   module.projects.module.service-accounts["service-01/iac-rw"].google_service_account.service_account[0]:
     account_id: iac-rw
     create_ignore_already_exists: null
@@ -407,13 +486,13 @@ values:
     triggers_replace: null
 
 counts:
-  google_org_policy_policy: 1
+  google_org_policy_policy: 2
   google_project: 1
-  google_project_iam_binding: 13
-  google_project_iam_custom_role: 1
-  google_project_iam_member: 22
-  google_project_service: 14
-  google_project_service_identity: 5
+  google_project_iam_binding: 15
+  google_project_iam_custom_role: 2
+  google_project_iam_member: 23
+  google_project_service: 17
+  google_project_service_identity: 7
   google_service_account: 1
   google_service_account_iam_member: 1
   google_storage_bucket: 1
@@ -421,7 +500,7 @@ counts:
   google_storage_project_service_account: 1
   local_file: 2
   modules: 5
-  resources: 66
+  resources: 76
   terraform_data: 2
 
 outputs:

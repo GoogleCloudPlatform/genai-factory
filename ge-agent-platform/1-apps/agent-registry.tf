@@ -22,9 +22,12 @@ resource "google_agent_registry_service" "agent_registry_services" {
   description     = each.value.description
   deletion_policy = var.enable_deletion_protection ? "PREVENT" : "ABANDON"
 
-  interfaces {
-    url              = each.value.url
-    protocol_binding = each.value.protocol
+  dynamic "interfaces" {
+    for_each = each.value.spec_type == "A2A_AGENT_CARD" ? [] : [""]
+    content {
+      url              = each.value.url
+      protocol_binding = each.value.protocol
+    }
   }
 
   dynamic "agent_spec" {

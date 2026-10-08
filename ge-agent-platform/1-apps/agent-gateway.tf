@@ -59,7 +59,7 @@ module "agent_gateway_egress" {
   region         = var.region
   name           = var.name
   access_path    = "AGENT_TO_ANYWHERE"
-  # Registry locations default to global and regional
+  # Registry locations default to regional
   registries = [
     for registry_type in var.agent_gateway_config.egress.registry_locations
     : local.agent_registry_uris[registry_type]
@@ -88,11 +88,15 @@ module "agent_gateway_egress" {
   model_armor_config = (
     local._agw_model_armor.enable
     ? {
-      authz_hosts          = local._agw_model_armor.authz_hosts
-      fail_open            = local._agw_model_armor.fail_open
-      request_template_id  = google_model_armor_template.request[0].name
-      response_template_id = google_model_armor_template.response[0].name
-      timeout              = local._agw_model_armor.timeout
+      authz_hosts = local._agw_model_armor.authz_hosts
+      fail_open   = local._agw_model_armor.fail_open
+      request_template_id = google_model_armor_template.default[
+        local._agw_model_armor.request_direction
+      ].name
+      response_template_id = google_model_armor_template.default[
+        local._agw_model_armor.response_direction
+      ].name
+      timeout = local._agw_model_armor.timeout
     }
     : null
   )

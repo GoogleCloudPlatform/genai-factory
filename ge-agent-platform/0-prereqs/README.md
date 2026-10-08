@@ -5,9 +5,16 @@ This stage is part of the `Gemini Enterprise Agent Platform` factory.
 It performs the following tasks:
 
 - Sets up GCP projects (a host project and a service project).
-- Activates the required APIs.
+- Activates the required APIs (including Discovery Engine, Agent Registry, Model Armor, and Secret Manager).
+- Creates project-level custom roles:
+  - `psc_manager`: allows managing Private Service Connect network attachments.
+  - `discoveryengineUserBusinessAiCodeOnly`: allows granting Gemini Enterprise users access to Antigravity (`businessaicode.*`).
 - Creates the service accounts.
-- Grants required roles to identities (users, service agents, and service accounts), including Model Armor inspection permissions for the Service Extensions service agent.
+- Configures required organization policies on the service project (`iam.managed.disableAccessPolicyBinding` and `discoveryengine.managed.disableCustomMcpServerConnector`).
+- Grants required roles to identities (users, service agents, and service accounts), including:
+  - Model Armor inspection permissions for the Service Extensions, Network Services, and Vertex AI service agents.
+  - `roles/secretmanager.secretAccessor` and `roles/secretmanager.viewer` for the Discovery Engine service agent to read Custom MCP OAuth 2.0 credentials.
+  - Delegated `roles/resourcemanager.projectIamAdmin` for `iac-rw` (restricted via an IAM condition to granting only `roles/discoveryengine.agentspaceRestrictedUser` and `discoveryengineUserBusinessAiCodeOnly`).
 - Creates the required networking stack by default (this can be disabled). The stack includes a host project, a Shared VPC, subnets, a proxy-only subnet, and Cloud DNS response policies for Private Google Access.
 
 This stage leverages the Cloud Foundation Fabric [project-factory module](https://github.com/GoogleCloudPlatform/cloud-foundation-fabric/tree/master/modules/project-factory).

@@ -22,6 +22,9 @@ services:
   - agentregistry.googleapis.com
   # Enable AI platform capabilities
   - aiplatform.googleapis.com
+  # Application Observability
+  - apptopology.googleapis.com
+  - observability.googleapis.com
   # Agent Gateway and networking
   - cloudresourcemanager.googleapis.com
   - compute.googleapis.com
@@ -33,6 +36,8 @@ services:
   - networksecurity.googleapis.com
   - networkservices.googleapis.com
   - orgpolicy.googleapis.com
+  # To store OAuth 2.0 client credentials for Custom MCP connectors
+  - secretmanager.googleapis.com
   - serviceusage.googleapis.com
   # Gemini Enterprise
   - discoveryengine.googleapis.com
@@ -40,15 +45,32 @@ services:
   - storage.googleapis.com
 
 org_policies:
+  discoveryengine.managed.disableCustomMcpServerConnector:
+    rules:
+      - enforce: false
   iam.managed.disableAccessPolicyBinding:
     rules:
       - enforce: false
 
 custom_roles:
-  psc_updater:
-    title: PSC updater
-    description: Allows to update PSC network attachments.
+  discoveryengineUserBusinessAiCodeOnly:
+    title: Discovery Engine User Business AI Code Only
+    description: >-
+      Used to grant Gemini Enterprise users access to Antigravity while
+      maintaining access to single applications (GE user role granted at
+      app level).
     permissions:
+      - businessaicode.locations.fetchQuotaStatus
+      - businessaicode.locations.generateContent
+      - businessaicode.locations.queryConfiguration
+      - businessaicode.locations.selfAssignLicense
+      - businessaicode.locations.sendTelemetry
+  psc_manager:
+    title: PSC manager
+    description: Allows identities to manage network attachments and accept PSC-I connections.
+    permissions:
+      - compute.networkAttachments.create
+      - compute.networkAttachments.delete
       - compute.networkAttachments.get
       - compute.networkAttachments.update
       - compute.regionOperations.get
@@ -85,7 +107,7 @@ iam_by_principals:
     - roles/serviceusage.serviceUsageConsumer
   # Agent Gateway: update PSC network attachment
   $iam_principals:service_agents/_self_/agentgateway:
-    - $custom_roles:psc_updater
+    - $custom_roles:psc_manager
   # Agent Gateway: service extensions for Model Armor runtime inspection
   $iam_principals:service_agents/_self_/dep:
     - roles/modelarmor.user
@@ -95,3 +117,21 @@ iam_by_principals:
   # for floor setting evaluation
   $iam_principals:service_agents/_self_/aiplatform:
     - roles/modelarmor.user
+  # Gemini Enterprise: access MCP OAuth client credentials in Secret Manager
+  $iam_principals:service_agents/_self_/discoveryengine:
+    - roles/secretmanager.secretAccessor
+
+# Delegated grant: iac-rw can set project IAM, but the condition limits it to
+# granting the Antigravity custom role and the Agentspace Restricted User role.
+iam_bindings:
+  iac_rw_project_iam_delegated:
+    members:
+      - $iam_principals:service_accounts/_self_/iac-rw
+    role: roles/resourcemanager.projectIamAdmin
+    condition:
+      title: iac_rw_delegated_grants
+      description: Automation service account delegated grants.
+      expression: >-
+        api.getAttribute('iam.googleapis.com/modifiedGrantsByRole',
+        []).hasOnly(['roles/discoveryengine.agentspaceRestrictedUser',
+        'projects/${projects["service-01"]}/roles/discoveryengineUserBusinessAiCodeOnly'])

@@ -15,6 +15,11 @@
 locals {
   _agent_registry_uri_prefix = "//agentregistry.googleapis.com/projects/${var.project_id}/locations"
 
+  # Applied to every resource Terraform creates that supports a deletion
+  # policy. The API refuses a destroy unless the policy is DELETE, so that is
+  # what the off state has to be for a destroy to work at all.
+  deletion_policy = var.enable_deletion_protection ? "PREVENT" : "DELETE"
+
   # The spec type is implied by the presence of spec content: each
   # service type only supports NO_SPEC and the value below.
   _spec_types = {
@@ -27,7 +32,7 @@ locals {
   # are normalized to the shape the gateway module expects, so that
   # they can be merged with the stage-level ones.
   _svc_iam = merge([
-    for k, v in var.agent_registry_services : {
+    for k, v in local.agent_registry_services : {
       for role, members in v.iam : "${k}/${role}" => merge(
         local._svc_ids[k],
         {
@@ -41,7 +46,7 @@ locals {
   ]...)
 
   _svc_iam_bindings = merge([
-    for k, v in var.agent_registry_services : {
+    for k, v in local.agent_registry_services : {
       for bk, bv in v.iam_bindings : "${k}/${bk}" => merge(
         local._svc_ids[k],
         {
@@ -55,7 +60,7 @@ locals {
   ]...)
 
   _svc_iam_bindings_additive = merge([
-    for k, v in var.agent_registry_services : {
+    for k, v in local.agent_registry_services : {
       for bk, bv in v.iam_bindings_additive : "${k}/${bk}" => merge(
         local._svc_ids[k],
         {
@@ -150,9 +155,16 @@ locals {
 
   # Derive the spec type from the service type and the presence of
   # spec content, so that the spec blocks in the resource can be
-  # driven by a uniform object.
+  # driven by a uniform object. If content is a path to an existing
+  # file, load it; otherwise treat it as an inline JSON string.
   agent_registry_services = {
     for k, v in var.agent_registry_services : k => merge(v, {
+      content = v.content == null ? null : (
+        fileexists("${path.module}/${v.content}")
+        ? file("${path.module}/${v.content}")
+        : (fileexists(v.content) ? file(v.content) : v.content)
+      )
+      location = coalesce(v.location, var.region)
       spec_type = (
         v.content == null
         ? "NO_SPEC"
