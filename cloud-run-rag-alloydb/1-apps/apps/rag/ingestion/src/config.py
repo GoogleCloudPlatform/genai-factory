@@ -32,8 +32,8 @@ LLM_MAX_OUTPUT_TOKENS = int(os.environ.get("MAX_OUTPUT_TOKENS", 2048))
 
 # Embedding Model Configuration
 EMBEDDING_MODEL_NAME = os.environ.get("EMBEDDING_MODEL_NAME",
-                                      "text-multilingual-embedding-002")
-EMBEDDING_DIMENSIONS = int(os.environ.get("EMBEDDING_DIMENSIONS", 768))
+                                      "gemini-embedding-001")
+EMBEDDING_DIMENSIONS = int(os.environ.get("EMBEDDING_DIMENSIONS", 3072))
 EMBEDDING_BATCH_SIZE = int(os.environ.get("BATCH_SIZE_EMBEDDING", 200))
 
 # Database configuration

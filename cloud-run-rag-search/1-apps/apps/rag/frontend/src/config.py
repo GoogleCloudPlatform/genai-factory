@@ -27,7 +27,7 @@ LLM_MAX_OUTPUT_TOKENS = int(os.environ.get("MAX_OUTPUT_TOKENS", 1024))
 
 # Embedding Model Configuration
 EMBEDDING_MODEL_NAME = os.environ.get("EMBEDDING_MODEL_NAME",
-                                      "text-multilingual-embedding-002")
+                                      "gemini-embedding-001")
 EMBEDDING_TASK_TYPE = "RETRIEVAL_QUERY"
 
 # Vertex AI Vector Search Configuration

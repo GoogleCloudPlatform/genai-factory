@@ -205,7 +205,7 @@ values:
           - leaf_node_embedding_count: 500
             leaf_nodes_to_search_percent: 7
         approximate_neighbors_count: 150
-        dimensions: 768
+        dimensions: 3072
         distance_measure_type: DOT_PRODUCT_DISTANCE
         feature_norm_type: NONE
         shard_size: SHARD_SIZE_SMALL
