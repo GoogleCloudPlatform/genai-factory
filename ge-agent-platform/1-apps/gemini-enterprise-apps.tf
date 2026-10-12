@@ -39,6 +39,16 @@ locals {
     for id, app in var.gemini_enterprise_apps : id => app
     if app.engine != null
   }
+  gemini_enterprise_engine_data_store_ids = {
+    for id, app in local.gemini_enterprise_engines : id => distinct(concat(
+      app.engine.data_store_ids,
+      [
+        for k, dc in local.gemini_enterprise_mcp_data_connectors :
+        "${google_discovery_engine_data_connector.mcp[k].collection_id}_mcp_data"
+        if dc.app_id == id
+      ]
+    ))
+  }
   # Anyone holding a role on an app also needs the restricted user role on the
   # project to reach it. Principals that cannot hold a project-level grant
   # (allUsers, allAuthenticatedUsers, deleted:) are skipped.
@@ -51,6 +61,22 @@ locals {
   gemini_enterprise_restricted_user_role = "roles/discoveryengine.agentspaceRestrictedUser"
 }
 
+# Discovery Engine's UpdateEngine API rejects data_store_ids of length 1 (only
+# 0 or >= 2 are allowed). This empty NO_CONTENT companion data store is linked
+# whenever an engine has exactly 1 configured data store.
+resource "google_discovery_engine_data_store" "companion" {
+  for_each                     = local.gemini_enterprise_engines
+  project                      = var.project_id
+  location                     = var.location
+  data_store_id                = "${replace(each.key, "_", "-")}-companion"
+  display_name                 = "${each.value.engine.display_name}-companion"
+  industry_vertical            = each.value.engine.industry_vertical
+  content_config               = "NO_CONTENT"
+  solution_types               = ["SOLUTION_TYPE_SEARCH"]
+  create_advanced_site_search  = false
+  skip_default_schema_creation = false
+}
+
 # A Gemini Enterprise app is a generic search engine with
 # app_type set to APP_TYPE_INTRANET.
 resource "google_discovery_engine_search_engine" "default" {
@@ -60,14 +86,14 @@ resource "google_discovery_engine_search_engine" "default" {
   collection_id = each.value.collection_id
   engine_id     = each.key
   display_name  = each.value.engine.display_name
-  data_store_ids = distinct(concat(
-    each.value.engine.data_store_ids,
-    [
-      for k, dc in local.gemini_enterprise_mcp_data_connectors :
-      "${google_discovery_engine_data_connector.mcp[k].collection_id}_mcp_data"
-      if dc.app_id == each.key
-    ]
-  ))
+  data_store_ids = (
+    length(local.gemini_enterprise_engine_data_store_ids[each.key]) == 1
+    ? concat(
+      local.gemini_enterprise_engine_data_store_ids[each.key],
+      [google_discovery_engine_data_store.companion[each.key].data_store_id]
+    )
+    : local.gemini_enterprise_engine_data_store_ids[each.key]
+  )
   app_type          = "APP_TYPE_INTRANET"
   industry_vertical = each.value.engine.industry_vertical
   disable_analytics = each.value.engine.disable_analytics

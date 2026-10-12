@@ -96,12 +96,29 @@ values:
     sync_mode: null
     tag: weather-mcp-ge-app-main
     timeouts: null
+  google_discovery_engine_data_store.companion["ge-app-main"]:
+    acl_enabled: null
+    content_config: NO_CONTENT
+    create_advanced_site_search: false
+    data_store_id: ge-app-main-companion
+    deletion_policy: DELETE
+    display_name: Gemini Enterprise Main-companion
+    document_processing_config: []
+    industry_vertical: GENERIC
+    kms_key_name: null
+    location: eu
+    project: test-gf-geap-0
+    skip_default_schema_creation: false
+    solution_types:
+    - SOLUTION_TYPE_SEARCH
+    timeouts: null
   google_discovery_engine_search_engine.default["ge-app-main"]:
     app_type: APP_TYPE_INTRANET
     collection_id: default_collection
     common_config: []
     data_store_ids:
     - weather-mcp-ge-app-main_mcp_data
+    - ge-app-main-companion
     deletion_policy: PREVENT
     disable_analytics: false
     display_name: Gemini Enterprise Main
@@ -353,6 +370,7 @@ counts:
   google_compute_network_attachment: 1
   google_discovery_engine_assistant: 1
   google_discovery_engine_data_connector: 1
+  google_discovery_engine_data_store: 1
   google_discovery_engine_search_engine: 1
   google_discovery_engine_search_engine_iam_binding: 1
   google_iap_agent_registry_mcp_server_iam_binding: 1
@@ -363,7 +381,7 @@ counts:
   google_network_services_authz_extension: 1
   google_project_iam_member: 2
   modules: 1
-  resources: 19
+  resources: 20
   terraform_data: 4
 
 outputs:

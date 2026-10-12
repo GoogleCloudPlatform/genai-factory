@@ -96,6 +96,64 @@ resource "google_discovery_engine_data_connector" "mcp" {
       error_message = "MCP data connector '${each.key}' references app '${each.value.app_id}', which is not in var.gemini_enterprise_apps."
     }
   }
+
+  # Terraform destroys removed data_connector instances before updating
+  # google_discovery_engine_search_engine in-place, and the Discovery Engine
+  # API rejects deleting a DataConnector while its _mcp_data data store is
+  # still listed on an Engine. Detach it from any engine first on destroy.
+  provisioner "local-exec" {
+    when        = destroy
+    interpreter = ["/bin/bash", "-c"]
+    command     = <<-EOT
+      set -euo pipefail
+
+      endpoint="https://${self.location == "global" ? "" : "${self.location}-"}discoveryengine.googleapis.com/v1"
+      ds_id="${self.collection_id}_mcp_data"
+      token="$(gcloud auth print-access-token)"
+      lockdir="/tmp/ge-mcp-detach-${self.project}-${self.location}.lock"
+      body=$(mktemp)
+      resp=$(mktemp)
+
+      while ! mkdir "$lockdir" 2>/dev/null; do
+        sleep 1
+      done
+      trap 'rmdir "$lockdir" 2>/dev/null || true; rm -f "$body" "$resp"' EXIT
+
+      engines_url="$endpoint/projects/${self.project}/locations/${self.location}/collections/default_collection/engines"
+      status=$(curl -sS \
+        -H "Authorization: Bearer $token" \
+        -H "X-Goog-User-Project: ${self.project}" \
+        -o "$body" -w '%%{http_code}' \
+        "$engines_url")
+
+      if [[ "$status" == "404" ]]; then
+        exit 0
+      fi
+      if [[ "$status" != 2* ]]; then
+        echo "Failed to list Discovery Engine apps while detaching $ds_id (HTTP $status)" >&2
+        cat "$body" >&2
+        exit 1
+      fi
+
+      engines=$(jq -r --arg ds "$ds_id" '.engines[]? | select((.dataStoreIds // []) | index($ds)) | .name' "$body")
+      for engine in $engines; do
+        payload=$(jq -c --arg eng "$engine" --arg ds "$ds_id" \
+          '.engines[] | select(.name == $eng) | ((.dataStoreIds // []) - [$ds]) as $rem | {dataStoreIds: (if ($rem | length) == 1 then [] else $rem end)}' "$body")
+        patch_status=$(curl -sS -X PATCH \
+          -H "Authorization: Bearer $token" \
+          -H "Content-Type: application/json" \
+          -H "X-Goog-User-Project: ${self.project}" \
+          -d "$payload" \
+          -o "$resp" -w '%%{http_code}' \
+          "$endpoint/$engine?updateMask=dataStoreIds")
+        if [[ "$patch_status" != 2* && "$patch_status" != "404" ]]; then
+          echo "Failed to detach $ds_id from $engine (HTTP $patch_status)" >&2
+          cat "$resp" >&2
+          exit 1
+        fi
+      done
+    EOT
+  }
 }
 
 # google_discovery_engine_data_connector (provider 8.4.0) types

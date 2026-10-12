@@ -288,7 +288,7 @@ agent_registry_services = {
 
 ### Custom MCP Server Data Connectors and OAuth 2.0
 
-For any `mcp_server` entry in `var.agent_registry_services`, listing Gemini Enterprise app IDs in `agent_gateway_app_ids` creates a federated `custom_mcp` Discovery Engine data connector per listed app, routes its traffic through the Egress Agent Gateway, and attaches the resulting data store (`<collection_id>_mcp_data`) to the app's `data_store_ids`.
+For any `mcp_server` entry in `var.agent_registry_services`, listing Gemini Enterprise app IDs in `agent_gateway_app_ids` creates a federated `custom_mcp` Discovery Engine data connector (`<service_id>-<app_id>` collection and `<collection_id>_mcp_data` data store) per listed app, routes its traffic through the Egress Agent Gateway, and attaches the resulting data store to the app's `data_store_ids`. When an app is removed from `agent_gateway_app_ids`, a destroy-time `local-exec` provisioner detaches the `_mcp_data` data store from the engine before deleting the connector. Because the Discovery Engine `UpdateEngine` API only accepts `0` or `>= 2` linked data stores on an engine, Terraform also provisions an empty `NO_CONTENT` companion data store (`<app_id>-companion`) per app and automatically links it whenever an app has exactly `1` configured data store.
 
 To configure **OAuth 2.0** on Custom MCP data connectors without storing credentials in plaintext in Terraform state:
 
