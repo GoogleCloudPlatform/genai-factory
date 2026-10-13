@@ -21,7 +21,7 @@ A2A_PROTOCOL = os.environ.get("A2A_PROTOCOL", "https")
 INTERNAL_HOST = "0.0.0.0"
 INTERNAL_PORT = int(os.environ.get("PORT", 8003))
 
-MODEL_NAME = os.environ.get("MODEL_NAME", "gemini-3.8-flash")
+MODEL_NAME = os.environ.get("MODEL_NAME", "gemini-4-argon")
 MODEL_ARMOR_TEMPLATE = os.environ.get("MODEL_ARMOR_TEMPLATE", None)
 
 PROJECT_ID = os.environ.get("PROJECT_ID")

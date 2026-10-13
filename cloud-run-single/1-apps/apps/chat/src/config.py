@@ -18,7 +18,7 @@ PROJECT_ID = os.environ.get("PROJECT_ID")
 REGION = os.environ.get("REGION", "europe-west1")
 GOOGLE_CLOUD_LOCATION = os.environ.get("GOOGLE_CLOUD_LOCATION", "eu")
 
-MODEL_NAME = os.environ.get("MODEL_NAME", "gemini-3.8-flash")
+MODEL_NAME = os.environ.get("MODEL_NAME", "gemini-4-argon")
 TEMPERATURE = 0.9
 TOP_P = 1.0
 TOP_K = 32
