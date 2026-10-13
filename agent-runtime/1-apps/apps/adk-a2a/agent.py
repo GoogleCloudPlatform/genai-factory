@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
 import requests
 
 import vertexai
@@ -42,6 +43,8 @@ from a2a.utils import new_agent_text_message
 from a2a.utils.errors import ServerError
 
 from src import config
+
+os.environ["GOOGLE_CLOUD_LOCATION"] = config.GOOGLE_CLOUD_LOCATION
 
 vertexai.init(
     project=config.PROJECT_ID,
@@ -81,6 +84,7 @@ class CurrencyAgentExecutorWithRunner(AgentExecutor):
     self.runner = None
 
   def _init_adk(self):
+    os.environ["GOOGLE_CLOUD_LOCATION"] = config.GOOGLE_CLOUD_LOCATION
     # Initialize the ADK Runner
     if not self.runner:
       self.runner = Runner(

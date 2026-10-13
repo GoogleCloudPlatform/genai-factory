@@ -16,10 +16,13 @@ from google.adk.agents import LlmAgent
 import vertexai
 from vertexai.agent_engines import AdkApp
 
+import os
 import requests
 
 from src import config
 from src.firestore_session_service import FirestoreSessionService
+
+os.environ["GOOGLE_CLOUD_LOCATION"] = config.GOOGLE_CLOUD_LOCATION
 
 vertexai.init(
     project=config.PROJECT_ID,
@@ -55,6 +58,7 @@ root_agent = LlmAgent(
 
 
 def session_service_builder():
+  os.environ["GOOGLE_CLOUD_LOCATION"] = config.GOOGLE_CLOUD_LOCATION
   return FirestoreSessionService(
       project_id=config.PROJECT_ID,
       database=config.FIRESTORE_DATABASE,

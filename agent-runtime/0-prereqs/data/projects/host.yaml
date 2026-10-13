@@ -22,6 +22,8 @@ services:
   - aiplatform.googleapis.com
   - compute.googleapis.com
   - dns.googleapis.com
+  # To create regional PSC endpoints for Google APIs
+  - networkconnectivity.googleapis.com
   # Needed for SWP
   - networksecurity.googleapis.com
   - networkservices.googleapis.com

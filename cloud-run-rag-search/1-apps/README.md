@@ -1,6 +1,6 @@
 # Cloud Run - RAG with Vector Search / Platform and Agent Deployment
 
-This stage is part of the `Cloud Run RAG - Cloud SQL` factory.
+This stage is part of the `Cloud Run RAG - Vector Search` factory.
 
 It performs the following tasks:
 
@@ -74,5 +74,5 @@ Do not edit the `variables-fast.tf` file, as it needs to reflect FAST standard v
 | name | description | sensitive |
 |---|---|:---:|
 | [commands](outputs.tf#L53) | Run the following commands when the deployment completes to deploy the app. |  |
-| [ip_addresses](outputs.tf#L103) | The load balancers IP addresses. |  |
+| [ip_addresses](outputs.tf#L113) | The load balancers IP addresses. |  |
 <!-- END TFDOC -->

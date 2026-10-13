@@ -56,6 +56,10 @@ output "commands" {
   # Run the following commands to deploy the application.
   # Alternatively, deploy the application through your CI/CD pipeline.
 
+  # Upload sample data to GCS
+  gcloud storage cp ./data/data.jsonl gs://${module.index-bucket.name}/data.jsonl \
+    --impersonate-service-account=${local.service_account_emails["service-01/iac-rw"]}
+
   gcloud artifacts repositories create ${var.name} \
     --project=${var.project_id} \
     --location ${var.region} \
@@ -79,6 +83,12 @@ output "commands" {
     --container=ingestion \
     --image=${var.region}-docker.pkg.dev/${var.project_id}/${var.name}/ingestion \
     --set-env-vars ${local.env_vars_ingestion}
+
+  gcloud run jobs execute ${var.name}-ingestion \
+    --impersonate-service-account=${local.service_account_emails["service-01/iac-rw"]} \
+    --project ${var.project_id} \
+    --region ${var.region} \
+    --wait
 
   # Frontend Cloud Run
   gcloud builds submit ./apps/rag/frontend \

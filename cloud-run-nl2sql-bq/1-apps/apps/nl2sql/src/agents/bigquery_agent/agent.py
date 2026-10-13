@@ -34,7 +34,7 @@ from src.agents.bigquery_agent.utils import (
 )
 
 os.environ["GOOGLE_CLOUD_PROJECT"] = os.environ["PROJECT_ID"]
-os.environ["GOOGLE_CLOUD_LOCATION"] = os.environ["REGION"]
+os.environ["GOOGLE_CLOUD_LOCATION"] = config.GOOGLE_CLOUD_LOCATION
 os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = "1"
 
 # Set up logging

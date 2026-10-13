@@ -23,7 +23,7 @@ from src import config
 from src.agents.capital_agent.agent import root_agent
 
 os.environ["GOOGLE_CLOUD_PROJECT"] = config.PROJECT_ID
-os.environ["GOOGLE_CLOUD_LOCATION"] = config.REGION
+os.environ["GOOGLE_CLOUD_LOCATION"] = config.GOOGLE_CLOUD_LOCATION
 os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = config.GOOGLE_GENAI_USE_VERTEXAI
 
 logging.basicConfig(level=logging.INFO)
@@ -37,8 +37,8 @@ logging.debug(f"A2A_PROTOCOL: {config.A2A_PROTOCOL}")
 logging.debug(f"INTERNAL_HOST: {config.INTERNAL_HOST}")
 logging.debug(f"INTERNAL_PORT: {config.INTERNAL_PORT}")
 
-app = to_a2a(agent=root_agent, protocol=config.A2A_PROTOCOL,
-             host=config.A2A_HOST, port=config.A2A_PORT)
+app = to_a2a(agent=root_agent, protocol=config.A2A_PROTOCOL, host=A2A_HOST,
+             port=config.A2A_PORT)
 
 if __name__ == "__main__":
   uvicorn.run(app, host=config.INTERNAL_HOST, port=config.INTERNAL_PORT)

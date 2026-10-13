@@ -22,8 +22,6 @@ WORKDIR /app
 # Enable bytecode compilation
 ENV UV_COMPILE_BYTECODE=1
 
-# Prevents python from writing .pyc files to disc
-ENV PYTHONDONTWRITEBYTECODE 1
 # Prevents python from buffering stdout and stderr (good for logging)
 ENV PYTHONUNBUFFERED 1
 
@@ -31,4 +29,7 @@ ENV PYTHONUNBUFFERED 1
 COPY . /app
 RUN uv sync --locked
 
-CMD ["uv", "run", "main.py"]
+# Place executables in the environment at the front of the path
+ENV PATH="/app/.venv/bin:$PATH"
+
+CMD ["python", "main.py"]

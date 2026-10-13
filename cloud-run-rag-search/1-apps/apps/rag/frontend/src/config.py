@@ -16,9 +16,10 @@ import os
 
 PROJECT_ID = os.environ.get("PROJECT_ID")
 REGION = os.environ.get("REGION", "europe-west1")
+GOOGLE_CLOUD_LOCATION = os.environ.get("GOOGLE_CLOUD_LOCATION", "eu")
 
 # Generative Model Configuration
-LLM_MODEL_NAME = os.environ.get("MODEL_NAME", "gemini-2.5-flash")
+LLM_MODEL_NAME = os.environ.get("MODEL_NAME", "gemini-3.8-flash")
 LLM_TEMPERATURE = float(os.environ.get("TEMPERATURE", 0.2))
 LLM_TOP_P = float(os.environ.get("TOP_P", 1.0))
 LLM_TOP_K = int(os.environ.get("TOP_K", 40))

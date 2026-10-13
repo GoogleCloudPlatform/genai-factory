@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+enable_deletion_protection = ${enable_deletion_protection}
+
 network_attachment_id = "${network_attachment_id}"
 
 networking_config = {
@@ -34,12 +36,6 @@ region = "${region}"
 
 service_account_emails = {
 %{ for k,v in service_account_emails ~}
-  "${k}" = "${v}"
-%{ endfor ~}
-}
-
-service_account_ids = {
-%{ for k,v in service_account_ids ~}
   "${k}" = "${v}"
 %{ endfor ~}
 }

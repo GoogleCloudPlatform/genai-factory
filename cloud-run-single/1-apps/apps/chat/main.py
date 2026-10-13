@@ -15,10 +15,12 @@
 import logging
 import os
 from fastapi import FastAPI, HTTPException
+from google.api_core.client_options import ClientOptions
 import google.api_core.exceptions as exceptions
 from google import genai
 from google.genai import types
 import google.cloud.logging
+from google.cloud import modelarmor_v1
 
 import uvicorn
 from src import config
@@ -34,14 +36,20 @@ logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
 logger.info(
-    "Initializing Google GenAI client for project=%s, region=%s",
+    "Initializing Google GenAI client for project=%s, location=%s",
     config.PROJECT_ID,
-    config.REGION,
+    config.GOOGLE_CLOUD_LOCATION,
 )
 genai_client = genai.Client(vertexai=True, project=config.PROJECT_ID,
-                            location=config.REGION)
+                            location=config.GOOGLE_CLOUD_LOCATION)
 logger.info("Google GenAI client initialized successfully.")
 logger.debug("Model armor template: %s", config.MODEL_ARMOR_TEMPLATE)
+
+model_armor_client = modelarmor_v1.ModelArmorClient(
+    transport="rest",
+    client_options=ClientOptions(
+        api_endpoint=f"modelarmor.{config.REGION}.rep.googleapis.com"),
+)
 
 MODEL_NAME = config.MODEL_NAME
 MODEL_CONFIG = types.GenerateContentConfig(
@@ -50,10 +58,20 @@ MODEL_CONFIG = types.GenerateContentConfig(
     top_k=config.TOP_K,
     candidate_count=config.CANDIDATE_COUNT,
     max_output_tokens=config.MAX_OUTPUT_TOKENS,
-    # (Optional) Model Armor configuration
-    model_armor_config=(types.ModelArmorConfig(
-        prompt_template_name=config.MODEL_ARMOR_TEMPLATE)
-                        if config.MODEL_ARMOR_TEMPLATE else None))
+)
+
+
+def _is_blocked_by_model_armor(text: str) -> bool:
+  """Calls Model Armor API to inspect text if a template is configured."""
+  if not config.MODEL_ARMOR_TEMPLATE or not text:
+    return False
+  sanitize_request = modelarmor_v1.SanitizeUserPromptRequest(
+      name=config.MODEL_ARMOR_TEMPLATE,
+      user_prompt_data=modelarmor_v1.DataItem(text=text),
+  )
+  result = model_armor_client.sanitize_user_prompt(request=sanitize_request)
+  return (result.sanitization_result.filter_match_state ==
+          modelarmor_v1.FilterMatchState.MATCH_FOUND)
 
 
 @app.get("/")
@@ -81,6 +99,13 @@ async def predict_route(request: Prompt):
                request.prompt[:100])
 
   try:
+    if _is_blocked_by_model_armor(request.prompt):
+      logger.warning("User prompt was blocked by Model Armor.")
+      return {
+          "prompt": request.prompt,
+          "prediction": "Prompt was blocked by Model Armor.",
+      }
+
     response = genai_client.models.generate_content(
         model=MODEL_NAME,
         contents=request.prompt,
@@ -90,8 +115,12 @@ async def predict_route(request: Prompt):
     # --- Process Response ---
     prediction_text = response.text
     if prediction_text:
-      logger.debug("Successfully received prediction from Vertex AI: %s",
-                   prediction_text[:100])
+      if _is_blocked_by_model_armor(prediction_text):
+        logger.warning("Model response was blocked by Model Armor.")
+        prediction_text = "Response was blocked by Model Armor."
+      else:
+        logger.debug("Successfully received prediction from Vertex AI: %s",
+                     prediction_text[:100])
     else:
       prediction_text = "Prompt was blocked by Model Armor."
       logger.warning(

@@ -18,12 +18,11 @@ import os
 
 PROJECT_ID = os.environ.get("PROJECT_ID")
 REGION = os.environ.get("REGION")
+GOOGLE_CLOUD_LOCATION = os.environ.get("MODEL_LOCATION", "eu")
 
 FIRESTORE_DATABASE = os.environ.get("FIRESTORE_DATABASE", "agent-0")
 
-# TODO: to be checked periodically
-# Update to gemini-3.0 when it works on regional endpoints
-MODEL_NAME = os.environ.get("MODEL_NAME", "gemini-2.5-flash")
+MODEL_NAME = os.environ.get("MODEL_NAME", "gemini-3.8-flash")
 
 ENABLE_PSC_I = utils.str_to_bool(os.environ.get("ENABLE_PSC_I", "false"))
 PROXY_ADDRESS = os.environ.get("PROXY_ADDRESS")

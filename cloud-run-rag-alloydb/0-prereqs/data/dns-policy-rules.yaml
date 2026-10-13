@@ -12,6 +12,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+# Regional and multi-regional Google APIs (*.rep.googleapis.com.) are resolved
+# in Terraform (networking.tf) via dynamically allocated PSC endpoint IPs.
+
 accounts:
   dns_name: accounts.google.com.
   local_data: {CNAME: {rrdatas: [private.googleapis.com.]}}

@@ -14,13 +14,13 @@ It is responsible for deploying resources inside the service project you created
 This assumes you have created a project by leveraging the [0-prereqs](../0-prereqs) stage.
 
 ```shell
-cp terraform.tfvars.sample terraform.tfvars # Customize if needed
 terraform init
 terraform apply
 
 # If you want to deploy the ADK+A2A agent, run:
 terraform apply \
-  -var='agent_runtime_config={"class_methods": "apps/adk-a2a/class-methods.json"}'
+  -var='agent_runtime_config={"class_methods": "apps/adk-a2a/class-methods.json"}' \
+  -var='source_config={"app_path": "./apps/adk-a2a"}'
 
 # Follow the commands in the output.
 ```

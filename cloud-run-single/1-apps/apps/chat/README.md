@@ -14,5 +14,5 @@ curl -X POST https://YOUR_DOMAIN/predict \
 ## Environment variables
 
 - `GOOGLE_CLOUD_PROJECT`: the project ID where Vertex AI APIs are called.
-- `GOOGLE_CLOUD_LOCATION`: the GCP region (defaults to `europe-west1`).
-- `MODEL`: the Vertex AI model name (defaults to `gemini-2.5-flash`).
+- `GOOGLE_CLOUD_LOCATION`: the GCP location (defaults to `eu`).
+- `MODEL`: the Vertex AI model name (defaults to `gemini-3.8-flash`).

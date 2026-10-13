@@ -26,20 +26,29 @@ services:
   - cloudbuild.googleapis.com
   - cloudresourcemanager.googleapis.com
   - cloudscheduler.googleapis.com
+  - dns.googleapis.com
   - run.googleapis.com
   - servicenetworking.googleapis.com
+  - serviceusage.googleapis.com
   # To create LBs
   - compute.googleapis.com
   # Needed for ILB only
   - certificatemanager.googleapis.com
   - privateca.googleapis.com
 
+org_policies:
+  compute.restrictSharedVpcSubnetworks:
+    rules:
+      - allow:
+          values:
+            - projects/${try(projects["host"], networking_config["host_project_id"])}/regions/${networking_config["region"]}/subnetworks/${networking_config["subnet_name"]}
+
 buckets:
   iac-state:
     description: Terraform state bucket
     iam:
       roles/storage.objectAdmin:
-        - $iam_principals:service_accounts/project/iac-rw
+        - $iam_principals:service_accounts/_self_/iac-rw
 
 service_accounts:
   # Automation SAs
@@ -74,8 +83,11 @@ iam_by_principals:
     - roles/cloudscheduler.admin
     - roles/alloydb.admin
     - roles/compute.loadBalancerAdmin
+    - roles/compute.networkAdmin
+    - roles/dns.admin
     - roles/run.admin
     - roles/secretmanager.admin
+    - roles/serviceusage.serviceUsageConsumer
     - roles/storage.admin
     # Needed for ILB only
     - roles/certificatemanager.owner
@@ -85,6 +97,7 @@ iam_by_principals:
   $iam_principals:service_accounts/_self_/gf-rrag-fe-0:
     - roles/alloydb.client
     - roles/alloydb.databaseUser
+    - roles/logging.logWriter
     - roles/serviceusage.serviceUsageConsumer
   $iam_principals:service_accounts/_self_/gf-rrag-fe-build-0:
     - roles/artifactregistry.writer
@@ -97,6 +110,7 @@ iam_by_principals:
     - roles/bigquery.jobUser
     - roles/alloydb.client
     - roles/alloydb.databaseUser
+    - roles/logging.logWriter
     - roles/serviceusage.serviceUsageConsumer
   $iam_principals:service_accounts/_self_/gf-rrag-ing-build-0:
     - roles/artifactregistry.writer

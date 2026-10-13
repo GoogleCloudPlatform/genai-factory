@@ -22,6 +22,7 @@ services:
   - artifactregistry.googleapis.com
   - cloudbuild.googleapis.com
   - cloudresourcemanager.googleapis.com
+  - cloudtrace.googleapis.com
   - compute.googleapis.com
   # Used to leverage Firestore to store agent info (sessions, tasks)
   - firestore.googleapis.com
@@ -29,6 +30,7 @@ services:
   - monitoring.googleapis.com
   - serviceusage.googleapis.com
   - storage.googleapis.com
+  - telemetry.googleapis.com
   # Needed for SWP configuration
   - networksecurity.googleapis.com
   - networkservices.googleapis.com
@@ -74,6 +76,7 @@ iam_by_principals:
     - roles/storage.objectViewer
     # Only if you enable tracing capabilities on the agent
     - roles/cloudtrace.agent
+    - roles/telemetry.tracesWriter
     # Next role used for Firestore
     - roles/datastore.user
 

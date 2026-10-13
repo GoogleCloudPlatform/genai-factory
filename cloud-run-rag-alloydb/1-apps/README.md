@@ -73,5 +73,5 @@ Do not edit the `variables-fast.tf` file, as it needs to reflect FAST standard v
 | name | description | sensitive |
 |---|---|:---:|
 | [commands](outputs.tf#L46) | Run the following commands when the deployment completes to deploy the app. |  |
-| [ip_addresses](outputs.tf#L121) | The load balancers IP addresses. |  |
+| [ip_addresses](outputs.tf#L113) | The load balancers IP addresses. |  |
 <!-- END TFDOC -->

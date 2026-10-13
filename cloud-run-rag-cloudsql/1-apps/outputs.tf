@@ -49,19 +49,6 @@ output "commands" {
   # Run the following commands to deploy the application.
   # Alternatively, deploy the application through your CI/CD pipeline.
 
-  # Set the postgres user password
-  -> gcloud sql users set-password postgres \
-      --password your_complex_pwd \
-      --instance ${module.cloudsql.name} \
-      --project ${var.project_id} \
-      --impersonate-service-account=${var.service_account_emails["service-01/iac-rw"]}
-
-  # Install the vector extension in CloudSQL
-  -> # In https://console.cloud.google.com/sql/instances/${var.name}/studio
-     # Select the ${var.name} database and enter with postgres user.
-     # In the Editor 1 tab, run this query: CREATE EXTENSION IF NOT EXISTS vector;
-     # This requires the user to be CloudSQL admin.
-
   # Load sample data into BigQuery
   gcloud config set auth/impersonate_service_account ${var.service_account_emails["service-01/iac-rw"]}
   bq load \
@@ -96,6 +83,12 @@ output "commands" {
     --container=ingestion \
     --image=${var.region}-docker.pkg.dev/${var.project_id}/${var.name}/ingestion \
     --set-env-vars ${local.env_vars_ingestion}
+
+  gcloud run jobs execute ${var.name}-ingestion \
+    --impersonate-service-account=${var.service_account_emails["service-01/iac-rw"]} \
+    --project ${var.project_id} \
+    --region ${var.region} \
+    --wait
 
   # Frontend Cloud Run
   gcloud builds submit ./apps/rag/frontend \

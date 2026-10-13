@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
+enable_deletion_protection = ${enable_deletion_protection}
+
 networking_config = {
   subnet = "${try(networking_config.subnet, "")}"
   vpc    = "${try(networking_config.vpc, "")}"
 }
-
-prefix = "${prefix}"
 
 project_id = "${project_id}"
 number     = "${project_number}"

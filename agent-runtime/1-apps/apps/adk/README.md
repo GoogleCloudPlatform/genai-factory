@@ -8,7 +8,7 @@ You can test the agent by using the following command.
 A session will be automatically created for you.
 
 ```shell
-curl -X POST https://$REGION-aiplatform.googleapis.com/v1/$AGENT_ID:streamQuery \
+curl -X POST https://$REGION-aiplatform.googleapis.com/v1/${AGENT_ID}:streamQuery \
     -H "Authorization: Bearer $ACCESS_TOKEN" \
     -H "Content-Type: application/json" \
     -d '{ "input": { "message": "What is the exchange rate from US dollars to SEK on 2025-04-03?", "user_id": "user_123" } }'

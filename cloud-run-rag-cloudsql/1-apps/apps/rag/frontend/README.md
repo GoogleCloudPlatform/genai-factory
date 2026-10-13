@@ -1,6 +1,6 @@
 # Frontend for RAG on Cloud Run
 
-The application answers users prompts by leveraging Gemini and embeddings stored in Vertex AI Vector Search.
+The application answers users prompts by leveraging Gemini and embeddings stored in Cloud SQL.
 
 ## Use the application
 

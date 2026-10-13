@@ -17,8 +17,9 @@ import os
 PROJECT_ID = os.environ.get("PROJECT_ID")
 
 REGION = os.environ.get("REGION", "europe-west1")
+GOOGLE_CLOUD_LOCATION = os.environ.get("GOOGLE_CLOUD_LOCATION", "eu")
 
-ROOT_AGENT_MODEL = os.environ.get("MODEL_NAME", "gemini-2.5-flash")
+ROOT_AGENT_MODEL = os.environ.get("MODEL_NAME", "gemini-3.8-flash")
 BQ_COMPUTE_PROJECT_ID = os.environ.get("BQ_COMPUTE_PROJECT_ID", PROJECT_ID)
 BQ_DATA_PROJECT_ID = os.environ.get("BQ_DATA_PROJECT_ID")
 BQ_DATASET_ID = os.environ.get("BQ_DATASET_ID")

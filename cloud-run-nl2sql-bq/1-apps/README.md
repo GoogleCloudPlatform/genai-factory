@@ -1,6 +1,6 @@
 # NL2SQL with BigQuery / Platform and Apps Deployment
 
-This stage is part of the `Cloud Run - Single` factory.
+This stage is part of the `Natural Language to SQL (NL2SQL) for BigQuery` factory.
 
 It is responsible for deploying resources inside the service project you created in the [0-prereqs stage](../0-prereqs/README.md) or in an existing project.
 
@@ -69,5 +69,5 @@ Do not edit the `variables-fast.tf` file, as it needs to reflect FAST standard v
 | name | description | sensitive |
 |---|---|:---:|
 | [commands](outputs.tf#L49) | Run the following commands when the deployment completes to deploy the app. |  |
-| [ip_addresses](outputs.tf#L81) | The load balancers IP addresses. |  |
+| [ip_addresses](outputs.tf#L80) | The load balancers IP addresses. |  |
 <!-- END TFDOC -->
