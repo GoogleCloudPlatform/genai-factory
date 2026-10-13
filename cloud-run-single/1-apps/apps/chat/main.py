@@ -58,6 +58,7 @@ MODEL_CONFIG = types.GenerateContentConfig(
     top_k=config.TOP_K,
     candidate_count=config.CANDIDATE_COUNT,
     max_output_tokens=config.MAX_OUTPUT_TOKENS,
+    thinking_config=types.ThinkingConfig(thinking_level=config.THINKING_LEVEL),
 )
 
 

@@ -202,12 +202,17 @@ def get_exchange_rate(
 from src.firestore_task_store import FirestoreTaskStore
 
 llm_agent = LlmAgent(
-    model=config.MODEL_NAME, name='currency_exchange_agent',
+    model=config.MODEL_NAME,
+    name='currency_exchange_agent',
     description='An agent that can provide currency exchange rates.',
     instruction="""You are a helpful currency exchange assistant.
                    Use the get_exchange_rate tool to answer user questions.
                    If the tool returns an error, inform the user about the error.""",
-    tools=[get_exchange_rate])
+    tools=[get_exchange_rate],
+    generate_content_config=types.GenerateContentConfig(
+        thinking_config=types.ThinkingConfig(
+            thinking_level=config.THINKING_LEVEL),),
+)
 
 agent = A2aAgent(
     agent_card=agent_card,

@@ -20,6 +20,7 @@ GOOGLE_CLOUD_LOCATION = os.environ.get("GOOGLE_CLOUD_LOCATION", "eu")
 
 # Generative Model Configuration
 LLM_MODEL_NAME = os.environ.get("MODEL_NAME", "gemini-4-argon")
+LLM_THINKING_LEVEL = os.environ.get("THINKING_LEVEL", "MEDIUM")
 LLM_TEMPERATURE = float(os.environ.get("TEMPERATURE", 0.2))
 LLM_TOP_P = float(os.environ.get("TOP_P", 1.0))
 LLM_TOP_K = int(os.environ.get("TOP_K", 40))

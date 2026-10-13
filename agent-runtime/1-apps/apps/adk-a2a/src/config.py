@@ -23,6 +23,7 @@ GOOGLE_CLOUD_LOCATION = os.environ.get("MODEL_LOCATION", "eu")
 FIRESTORE_DATABASE = os.environ.get("FIRESTORE_DATABASE", "agent-0")
 
 MODEL_NAME = os.environ.get("MODEL_NAME", "gemini-4-argon")
+THINKING_LEVEL = os.environ.get("THINKING_LEVEL", "MEDIUM")
 
 ENABLE_PSC_I = utils.str_to_bool(os.environ.get("ENABLE_PSC_I", "false"))
 PROXY_ADDRESS = os.environ.get("PROXY_ADDRESS")

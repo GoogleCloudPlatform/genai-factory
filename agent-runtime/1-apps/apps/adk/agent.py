@@ -13,6 +13,7 @@
 # limitations under the License.
 
 from google.adk.agents import LlmAgent
+from google.genai import types
 import vertexai
 from vertexai.agent_engines import AdkApp
 
@@ -54,6 +55,9 @@ root_agent = LlmAgent(
     instruction="You are a helpful assistant",
     name='currency_exchange_agent',
     tools=[get_exchange_rate],
+    generate_content_config=types.GenerateContentConfig(
+        thinking_config=types.ThinkingConfig(
+            thinking_level=config.THINKING_LEVEL),),
 )
 
 
