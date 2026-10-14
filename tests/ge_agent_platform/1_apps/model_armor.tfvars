@@ -33,7 +33,7 @@ agent_gateway_config = {
     networking = {
       access_types = ["PRIVATE", "PUBLIC"]
       dns_peering_config = {
-        domain = "corp.example.com."
+        domains = ["corp.example.com."]
       }
       vpc_egress = "PRIVATE_RANGES_ONLY"
     }

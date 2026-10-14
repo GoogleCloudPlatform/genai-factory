@@ -224,8 +224,9 @@ values:
       goog-terraform-provisioned: 'true'
     egress_network_config:
     - dns_peering_config:
-      - domain: corp.example.com.
-        domains: null
+      - domain: null
+        domains:
+        - corp.example.com.
         target_network: projects/test-gf-geap-hp-0/global/networks/net-0
       tls_config: []
       vpc_egress: PRIVATE_RANGES_ONLY

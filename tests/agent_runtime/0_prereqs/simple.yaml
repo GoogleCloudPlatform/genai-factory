@@ -840,6 +840,10 @@ values:
     terraform_labels:
       goog-terraform-provisioned: 'true'
     timeouts:
+  module.projects.module.projects["host"].google_project_iam_member.service_agents["agentgateway"]:
+    condition: []
+    project: test-gf-ar-hp-0
+    role: roles/agentgateway.serviceAgent
   module.projects.module.projects["host"].google_project_iam_member.service_agents["aiplatform"]:
     condition: []
     project: test-gf-ar-hp-0
@@ -873,6 +877,10 @@ values:
     condition: []
     project: test-gf-ar-hp-0
     role: roles/dns.serviceAgent
+  module.projects.module.projects["host"].google_project_iam_member.service_agents["networkactions"]:
+    condition: []
+    project: test-gf-ar-hp-0
+    role: roles/networkactions.serviceAgent
   module.projects.module.projects["host"].google_project_iam_member.service_agents["networkconnectivity"]:
     condition: []
     project: test-gf-ar-hp-0
@@ -987,6 +995,10 @@ values:
     project: test-gf-ar-hp-0
     service: networksecurity.googleapis.com
     timeouts:
+  module.projects.module.projects["host"].google_project_service_identity.default["networkservices.googleapis.com"]:
+    project: test-gf-ar-hp-0
+    service: networkservices.googleapis.com
+    timeouts:
   module.projects.module.projects["service-01"].data.google_logging_project_settings.logging_sa[0]:
     project: test-gf-ar-0
   module.projects.module.projects["service-01"].data.google_storage_project_service_account.gcs_sa[0]:
@@ -1007,6 +1019,10 @@ values:
     terraform_labels:
       goog-terraform-provisioned: 'true'
     timeouts:
+  module.projects.module.projects["service-01"].google_project_iam_member.service_agents["agentgateway"]:
+    condition: []
+    project: test-gf-ar-0
+    role: roles/agentgateway.serviceAgent
   module.projects.module.projects["service-01"].google_project_iam_member.service_agents["aiplatform"]:
     condition: []
     project: test-gf-ar-0
@@ -1055,6 +1071,10 @@ values:
     condition: []
     project: test-gf-ar-0
     role: roles/monitoring.notificationServiceAgent
+  module.projects.module.projects["service-01"].google_project_iam_member.service_agents["networkactions"]:
+    condition: []
+    project: test-gf-ar-0
+    role: roles/networkactions.serviceAgent
   module.projects.module.projects["service-01"].google_project_iam_member.service_agents["vertex-bp"]:
     condition: []
     project: test-gf-ar-0
@@ -1228,6 +1248,10 @@ values:
   module.projects.module.projects["service-01"].google_project_service_identity.default["networksecurity.googleapis.com"]:
     project: test-gf-ar-0
     service: networksecurity.googleapis.com
+    timeouts:
+  module.projects.module.projects["service-01"].google_project_service_identity.default["networkservices.googleapis.com"]:
+    project: test-gf-ar-0
+    service: networkservices.googleapis.com
     timeouts:
   ? module.projects.module.service-accounts-iam["service-01/iac-rw"].google_service_account_iam_member.additive["$service_account_ids:service-01/gf-ar-0-roles/iam.serviceAccountUser"]
   : condition: []
@@ -1434,9 +1458,9 @@ counts:
   google_org_policy_policy: 1
   google_project: 2
   google_project_iam_binding: 15
-  google_project_iam_member: 48
+  google_project_iam_member: 52
   google_project_service: 20
-  google_project_service_identity: 10
+  google_project_service_identity: 12
   google_service_account: 2
   google_service_account_iam_member: 2
   google_storage_bucket: 1
@@ -1444,7 +1468,7 @@ counts:
   google_storage_project_service_account: 1
   local_file: 2
   modules: 12
-  resources: 162
+  resources: 168
   terraform_data: 2
 
 outputs:
