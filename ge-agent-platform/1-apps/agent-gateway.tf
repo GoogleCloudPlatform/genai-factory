@@ -22,7 +22,7 @@ locals {
     local._agw_networking.dns_peering_config == null
     ? null
     : {
-      domain = local._agw_networking.dns_peering_config.domain
+      domains = local._agw_networking.dns_peering_config.domains
       target_network = coalesce(
         local._agw_networking.dns_peering_config.target_network,
         local.vpc
@@ -53,7 +53,7 @@ resource "google_compute_network_attachment" "agw_network_attachment" {
 # the IAP and Model Armor authorization policies, and the Agent
 # Registry IAM bindings authorizing agent egress.
 module "agent_gateway_egress" {
-  source         = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/geap-agent-gateway?ref=v59.0.0"
+  source         = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/geap-agent-gateway?ref=v59.1.0"
   project_id     = var.project_id
   project_number = var.number
   region         = var.region

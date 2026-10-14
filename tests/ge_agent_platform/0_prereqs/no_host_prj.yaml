@@ -226,6 +226,10 @@ values:
     role_id: psc_manager
     stage: GA
     title: PSC manager
+  module.projects.module.projects["service-01"].google_project_iam_member.service_agents["agentgateway"]:
+    condition: []
+    project: your-prefix-gf-geap-0
+    role: roles/agentgateway.serviceAgent
   module.projects.module.projects["service-01"].google_project_iam_member.service_agents["aiplatform"]:
     condition: []
     project: your-prefix-gf-geap-0
@@ -262,6 +266,10 @@ values:
     condition: []
     project: your-prefix-gf-geap-0
     role: roles/modelarmor.serviceAgent
+  module.projects.module.projects["service-01"].google_project_iam_member.service_agents["networkactions"]:
+    condition: []
+    project: your-prefix-gf-geap-0
+    role: roles/networkactions.serviceAgent
   module.projects.module.projects["service-01"].google_project_iam_member.service_agents["observability"]:
     condition: []
     project: your-prefix-gf-geap-0
@@ -457,6 +465,10 @@ values:
     project: your-prefix-gf-geap-0
     service: networksecurity.googleapis.com
     timeouts: null
+  module.projects.module.projects["service-01"].google_project_service_identity.default["networkservices.googleapis.com"]:
+    project: your-prefix-gf-geap-0
+    service: networkservices.googleapis.com
+    timeouts: null
   module.projects.module.projects["service-01"].google_project_service_identity.default["observability.googleapis.com"]:
     project: your-prefix-gf-geap-0
     service: observability.googleapis.com
@@ -490,9 +502,9 @@ counts:
   google_project: 1
   google_project_iam_binding: 15
   google_project_iam_custom_role: 2
-  google_project_iam_member: 23
+  google_project_iam_member: 25
   google_project_service: 17
-  google_project_service_identity: 7
+  google_project_service_identity: 8
   google_service_account: 1
   google_service_account_iam_member: 1
   google_storage_bucket: 1
@@ -500,7 +512,7 @@ counts:
   google_storage_project_service_account: 1
   local_file: 2
   modules: 5
-  resources: 76
+  resources: 79
   terraform_data: 2
 
 outputs:

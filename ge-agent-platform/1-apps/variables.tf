@@ -39,7 +39,7 @@ variable "agent_gateway_config" {
       networking = optional(object({
         access_types = optional(list(string), ["PRIVATE"])
         dns_peering_config = optional(object({
-          domain = string
+          domains = list(string)
           # Defaults to var.networking_config.vpc.
           target_network = optional(string)
         }))
@@ -101,6 +101,14 @@ variable "agent_gateway_config" {
       var.agent_gateway_config.egress.networking.vpc_egress
     )
     error_message = "The 'networking.vpc_egress' must be either 'ALL_TRAFFIC' or 'PRIVATE_RANGES_ONLY'."
+  }
+
+  validation {
+    condition = (
+      var.agent_gateway_config.egress.networking.dns_peering_config == null
+      || length(try(var.agent_gateway_config.egress.networking.dns_peering_config.domains, [])) > 0
+    )
+    error_message = "Specify at least one domain in 'networking.dns_peering_config.domains'."
   }
 
   validation {

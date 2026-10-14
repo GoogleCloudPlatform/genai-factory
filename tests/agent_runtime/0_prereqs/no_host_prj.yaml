@@ -189,6 +189,10 @@ values:
     terraform_labels:
       goog-terraform-provisioned: 'true'
     timeouts:
+  module.projects.module.projects["service-01"].google_project_iam_member.service_agents["agentgateway"]:
+    condition: []
+    project: your-prefix-gf-ar-0
+    role: roles/agentgateway.serviceAgent
   module.projects.module.projects["service-01"].google_project_iam_member.service_agents["aiplatform"]:
     condition: []
     project: your-prefix-gf-ar-0
@@ -237,6 +241,10 @@ values:
     condition: []
     project: your-prefix-gf-ar-0
     role: roles/monitoring.notificationServiceAgent
+  module.projects.module.projects["service-01"].google_project_iam_member.service_agents["networkactions"]:
+    condition: []
+    project: your-prefix-gf-ar-0
+    role: roles/networkactions.serviceAgent
   module.projects.module.projects["service-01"].google_project_iam_member.service_agents["vertex-bp"]:
     condition: []
     project: your-prefix-gf-ar-0
@@ -411,6 +419,10 @@ values:
     project: your-prefix-gf-ar-0
     service: networksecurity.googleapis.com
     timeouts:
+  module.projects.module.projects["service-01"].google_project_service_identity.default["networkservices.googleapis.com"]:
+    project: your-prefix-gf-ar-0
+    service: networkservices.googleapis.com
+    timeouts:
   ? module.projects.module.service-accounts-iam["service-01/iac-rw"].google_service_account_iam_member.additive["$service_account_ids:service-01/gf-ar-0-roles/iam.serviceAccountUser"]
   : condition: []
     role: roles/iam.serviceAccountUser
@@ -451,9 +463,9 @@ counts:
   google_org_policy_policy: 1
   google_project: 1
   google_project_iam_binding: 13
-  google_project_iam_member: 26
+  google_project_iam_member: 28
   google_project_service: 14
-  google_project_service_identity: 6
+  google_project_service_identity: 7
   google_service_account: 2
   google_service_account_iam_member: 2
   google_storage_bucket: 1
@@ -461,7 +473,7 @@ counts:
   google_storage_project_service_account: 1
   local_file: 2
   modules: 7
-  resources: 73
+  resources: 76
   terraform_data: 2
 
 outputs:

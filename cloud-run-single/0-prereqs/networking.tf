@@ -22,7 +22,7 @@ locals {
 
 module "vpc" {
   count      = var.networking_config.create ? 1 : 0
-  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-vpc?ref=v59.0.0"
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-vpc?ref=v59.1.0"
   project_id = module.projects.projects["host"].project_id
   name       = var.networking_config.vpc_name
   subnets = [
@@ -54,7 +54,7 @@ resource "google_network_connectivity_regional_endpoint" "rep" {
 # DNS policies for Google APIs
 module "dns_policy_googleapis" {
   count      = var.networking_config.create ? 1 : 0
-  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/dns-response-policy?ref=v59.0.0"
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/dns-response-policy?ref=v59.1.0"
   project_id = module.projects.projects["host"].project_id
   name       = "googleapis"
   factories_config = {
