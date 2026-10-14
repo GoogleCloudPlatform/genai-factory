@@ -2,7 +2,7 @@
 
 ## Audience
 
-This document provides foundational instructions, context, and conventions intended for AI assistants (e.g., Gemini CLI) operating within this repository.
+This document provides foundational instructions, context, and conventions intended for AI coding agents operating within this repository.
 
 Genai-factory is a collection of **end-to-end blueprints to deploy generative AI infrastructures** in GCP, following security best-practices.
 
@@ -46,6 +46,7 @@ Each file contains the definition of a project to be created (and some other res
 
 The stage asks users for a minimum set of values for some mandatory variables, declared in a `variables.tf` file.
 For example, this includes (but is not limited to):
+
 - The parent (either a folder or the organization id) under which the project(s) should be created.
 - The region where regional resources will be deployed.
 
@@ -141,7 +142,7 @@ In short:
 
 - Tests live in the `tests` folder at the root of the repository.
 - When a new factory is added, a corresponding test folder must be created. The folder name must match the factory name but use underscores instead of dashes (e.g., `cloud_run_single` for the `cloud-run-single` factory).
-- Inside the factory test folder, create subfolders for each stage: `0_projects` and `1_apps` (note the underscore).
+- Inside the factory test folder, create subfolders for each stage: `0_prereqs` and `1_apps` (note the underscore).
 - Each stage folder needs a `tftest.yaml` defining the tests. The primary/default test should be named `simple`.
 - Each test defined in `tftest.yaml` requires two corresponding files: a `terraform.tfvars` input file (e.g., `simple.tfvars`) and an expected inventory YAML output file (e.g., `simple.yaml`).
 - They test that a terraform plan (inventory) is consistent and equal to the expected, given a terraform.tfvars in input.
@@ -158,9 +159,19 @@ pytest tests/<factory_test_folder_name>
 
 # Automatically generate an inventory file given a tfvars in input
 uv run tools/plan_summary.py cloud-run-single/0-prereqs \
-  tests/cloud_run_single/0_projects/simple.tfvars \
-  > tests/cloud_run_single/0_projects/simple.yaml
+  tests/cloud_run_single/0_prereqs/simple.tfvars \
+  > tests/cloud_run_single/0_prereqs/simple.yaml
+
+# Format the generated inventory YAML so it passes yamllint
+uv run yamlfix tests/cloud_run_single/0_prereqs/simple.yaml
 ```
+
+> **Note:**
+>
+> - `tools/plan_summary.py` outputs unformatted YAML; always run `uv run yamlfix` on regenerated inventory files before running `pre-commit`.
+> - `agent-runtime/1-apps` packages `apps/adk` and `apps/adk-a2a` into an inline base64-encoded tarball (`inline_source[0].source_archive`) in the Terraform plan. Whenever any file under `agent-runtime/1-apps/apps/` is modified, regenerate or update `tests/agent_runtime/1_apps/{simple,a2a,agent_gateways}.yaml`.
+> - If a local clone of `cloud-foundation-fabric` is available on disk, you can speed up `pytest` (or run offline) by rewriting the git URL via environment variables:
+>   `GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0="url.file:///path/to/cloud-foundation-fabric.insteadOf" GIT_CONFIG_VALUE_0="https://github.com/GoogleCloudPlatform/cloud-foundation-fabric.git" uv run pytest tests`
 
 ### Contributing
 
@@ -171,23 +182,63 @@ uv run tools/plan_summary.py cloud-run-single/0-prereqs \
 ## Architecture & Conventions
 
 - **Variables & Interfaces:**
+
   - Prefer object variables (e.g., `iam = { ... }`) over many individual scalar variables.
   - Design compact variable spaces by leveraging Terraform `optional()` function with defaults extensively.
   - Use maps instead of lists for multiple items to ensure stable keys in state and avoid `for_each` dynamic value issues.
+
 - **Naming:** Never use random strings for resource naming. Always use a variable `name` across all modules/resources in the factory and an optional variable `prefix` for global resources.
+
 - **File Structure:**
+
   - Use standard file division and naming: `main.tf`, `variables.tf`, `outputs.tf`.
   - When `main.tf` becomes too large, split it into multiple files using a descriptive filename. For example, `iam.tf`, `gcs.tf`, `mounts.tf`.
+
 - **Style & Formatting:**
+
   - **Line Length:** Enforce a 79-character line length limit for legibility (relaxed for long resource attributes and descriptions).
   - **Ternary Operators & Functions:** Wrap complex ternary operators in parentheses and break lines to align `?` and `:`. Split function calls with many arguments across multiple lines.
   - **Locals Separation:** Use module-level locals for values referenced directly by resources/outputs. Use block-level "private" locals prefixed with an underscore (`_`) for intermediate transformations.
   - **Complex Transformations:** Move complex data transformations in `for` or `for_each` loops to `locals` to keep resource blocks clean.
 
 - **Dependencies & Fabric Modules:**
+
   - We build factories using existing Cloud Foundation Fabric modules alongside plain Terraform resources.
   - The version of Fabric modules must be kept consistent across all modules used in all factories (usually pinned to the latest tag, e.g., `v45.1.0`).
   - An automated nightly GitHub workflow checks for new tags using `uv run tools/fetch_latest_tag.py`. If a new tag is found, it updates the references with `uv run tools/update_fabric_ref.py`, runs tests, and creates a PR if successful. These scripts can also be executed manually to update dependencies.
+
+## Key Learnings & Best Practices
+
+### Private Networking & Regional/Multi-Regional APIs (`*.rep.googleapis.com`)
+
+- **Private Google Access (`199.36.153.8/30`) Does Not Route `*.rep.googleapis.com`:**
+  - The `private.googleapis.com` VIPs and wildcard DNS rules only route global `*.googleapis.com` traffic. Calls from private VPC workloads (Cloud Run with `PRIVATE_RANGES_ONLY` egress, Agent Engine with PSC-I, etc.) to regional or multi-regional endpoints (`<service>.<location>.rep.googleapis.com`) will fail with TLS certificate mismatch or connection timeouts unless a dedicated regional PSC endpoint (`google_network_connectivity_regional_endpoint`) and Cloud DNS response policy rule exist in the VPC.
+- **Multi-Regional Vertex AI vs. Regional Infrastructure:**
+  - Newer Gemini models (e.g., `gemini-4-argon`) are served on multi-regional Vertex AI endpoints (`eu` / `us`, i.e., `aiplatform.eu.rep.googleapis.com` and `aiplatform.us.rep.googleapis.com`), while infrastructure resources (Cloud Run, AlloyDB, Cloud SQL, Artifact Registry, Model Armor, Agent Engine) remain regional (`var.region`, e.g., `europe-west1`).
+  - In `0-prereqs`, derive `multi_region = startswith(var.region, "europe") ? "eu" : "us"`, pass it to `1-apps` via `templates/terraform.auto.tfvars.tpl` (as `default_location` or `multi_region`), and provision a `google_network_connectivity_regional_endpoint` + Cloud DNS response policy rule for `aiplatform.${local.multi_region}.rep.googleapis.com`.
+  - For strictly regional `.rep.googleapis.com` APIs (such as `modelarmor.${var.region}.rep.googleapis.com`), provision a separate regional PSC endpoint and DNS response policy rule in `0-prereqs/networking.tf`.
+  - Whenever `google_network_connectivity_regional_endpoint` is used in `0-prereqs/networking.tf`, ensure `networkconnectivity.googleapis.com` is listed in `services` and `roles/networkconnectivity.regionalEndpointAdmin` is granted to the `service-01` RW service account in `0-prereqs/data/projects/host.yaml`.
+
+### Models, GenAI SDK (`google-genai`), and ADK (`google-adk`)
+
+- **Separating `REGION` and `GOOGLE_CLOUD_LOCATION`:**
+  - `google-genai` (`genai.Client`) and `google-adk` automatically read `GOOGLE_CLOUD_LOCATION` from the environment. When an app interacts with both regional services (e.g., Model Armor in `europe-west1`) and multi-regional Vertex AI models (in `eu` or `us`), keep `REGION` (`europe-west1`) and `GOOGLE_CLOUD_LOCATION` (`eu` / `us`) as distinct environment variables.
+  - **Vertex AI Agent Engine (`agent-runtime`) Reserved Env Vars:** Agent Engine reserves `GOOGLE_CLOUD_LOCATION` (injecting the regional deployment location, e.g., `europe-west1`) and rejects custom environment variables with that name. Pass the model location via a custom variable (e.g., `MODEL_LOCATION="eu"`) and set `os.environ["GOOGLE_CLOUD_LOCATION"] = MODEL_LOCATION` inside `agent.py` before initializing ADK agents.
+- **Explicit Thinking Level (`THINKING_LEVEL`):**
+  - Always expose `THINKING_LEVEL = os.environ.get("THINKING_LEVEL", "MEDIUM")` (or `LLM_THINKING_LEVEL` in RAG apps) in `src/config.py` and pass `thinking_config=types.ThinkingConfig(thinking_level=...)` inside `types.GenerateContentConfig(...)` so users can easily inspect and tune reasoning depth.
+- **Embeddings (`gemini-embedding-001`):**
+  - RAG factories default to `gemini-embedding-001` with `3072` dimensions.
+  - `client.models.embed_content` enforces a limit of at most **250** inputs per request; always chunk document lists into batches (e.g., `<= 250`) during ingestion.
+  - Standard `pgvector` `ivfflat` and `hnsw` indexes on `vector` columns support at most **2000** dimensions. For `3072`-dimension vectors, use AlloyDB's `scann` index (which supports `3072` dimensions) or exact KNN search on `vector(3072)` in Cloud SQL.
+
+### End-to-End (E2E) Deployment & Application Gotchas
+
+- **Stage 0 Delegation (`0-prereqs/data/projects/*.yaml`):**
+  - Because `1-apps` runs Terraform and deployment commands by impersonating the Stage 0 `service-01` RW service account (`<prefix>-gf-...-01-rw@...`), any API or IAM permission required by `1-apps` resources or `gcloud` deployment commands must be declared in `0-prereqs/data/projects/service-01.yaml` (or `host.yaml` for Shared VPC host project resources).
+- **Python Lockfiles (`uv.lock`) in Container Builds:**
+  - Sample app `Dockerfile`s run `uv sync --frozen`. Whenever `pyproject.toml` is modified in any sample application, run `uv lock` inside that application directory and commit the updated `uv.lock`; otherwise Cloud Build will fail during `gcloud builds submit` / `gcloud run deploy`.
+- **Vertex AI Search (`google_discovery_engine_data_store`):**
+  - Always configure `document_processing_config` (including `default_parsing_config { digital_parsing_config {} }`) directly on the `google_discovery_engine_data_store` Terraform resource in `1-apps` so unstructured document imports (`import_documents`) work immediately after provisioning.
 
 ## Preferred Workflow
 
