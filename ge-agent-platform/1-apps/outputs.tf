@@ -12,6 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+output "access_policy_ids" {
+  description = "The IAM v3 Access Policy resource names, keyed by policy id."
+  value       = module.agent_gateway_egress.access_policy_ids
+}
+
 output "agent_connectivity_template_ids" {
   description = "The ids of the agent connectivity templates through which the gateways reach the VPC."
   value = {
@@ -77,4 +82,9 @@ output "model_armor_template_names" {
     for direction, t in google_model_armor_template.default
     : direction => t.name
   }
+}
+
+output "policy_binding_ids" {
+  description = "The IAM v3 Policy Binding resource names, keyed by policy id."
+  value       = module.agent_gateway_egress.policy_binding_ids
 }

@@ -1,3 +1,4 @@
+---
 # Copyright 2026 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,88 +17,88 @@ values:
   google_agent_registry_service.agent_registry_services["weather-mcp"]:
     agent_spec: []
     deletion_policy: PREVENT
-    description: null
+    description:
     display_name: Weather MCP Server
     endpoint_spec: []
     interfaces:
-    - protocol_binding: JSONRPC
-      url: https://weather-mcp.example.com/mcp
+      - protocol_binding: JSONRPC
+        url: https://weather-mcp.example.com/mcp
     location: europe-west1
     mcp_server_spec:
-    - content: '{}'
-      type: TOOL_SPEC
+      - content: '{}'
+        type: TOOL_SPEC
     project: test-gf-geap-0
     service_id: weather-mcp
-    timeouts: null
+    timeouts:
   google_compute_network_attachment.agw_network_attachment:
     connection_preference: ACCEPT_MANUAL
     deletion_policy: DELETE
-    description: null
+    description:
     name: agw-geap
     producer_accept_lists:
-    - test-gf-geap-0
-    producer_reject_lists: null
+      - test-gf-geap-0
+    producer_reject_lists:
     project: test-gf-geap-0
     region: europe-west1
     subnetworks:
-    - projects/test-gf-geap-hp-0/regions/europe-west1/subnetworks/sub-0
-    timeouts: null
+      - projects/test-gf-geap-hp-0/regions/europe-west1/subnetworks/sub-0
+    timeouts:
   google_discovery_engine_assistant.default["ge-app-main"]:
     assistant_id: default_assistant
     collection_id: default_collection
     customer_policy:
-    - banned_phrases:
-      - ignore_diacritics: true
-        match_type: SIMPLE_STRING_MATCH
-        phrase: competitor-secret
-      model_armor_config:
-      - failure_mode: FAIL_CLOSED
+      - banned_phrases:
+          - ignore_diacritics: true
+            match_type: SIMPLE_STRING_MATCH
+            phrase: competitor-secret
+        model_armor_config:
+          - failure_mode: FAIL_CLOSED
     deletion_policy: ABANDON
-    description: null
+    description:
     display_name: Default Assistant
     engine_id: ge-app-main
     generation_config:
-    - default_language: en
-      system_instruction:
-      - additional_system_instruction: You are a helpful enterprise assistant.
+      - default_language: en
+        system_instruction:
+          - additional_system_instruction: You are a helpful enterprise assistant.
     location: eu
     project: test-gf-geap-0
-    timeouts: null
+    timeouts:
     web_grounding_type: WEB_GROUNDING_TYPE_DISABLED
   google_discovery_engine_data_connector.mcp["weather-mcp/ge-app-main"]:
     action_config:
-    - action_params:
-        auth_type: NO_AUTH
-        instance_uri: https://weather-mcp.example.com/mcp
-        mcp_server_source: BYO_MCP
-      create_bap_connection: true
-    auto_run_disabled: null
+      - action_params:
+          auth_type: NO_AUTH
+          instance_uri: https://weather-mcp.example.com/mcp
+          mcp_server_source: BYO_MCP
+        create_bap_connection: true
+    auto_run_disabled:
     bap_config: []
     collection_display_name: Weather+MCP+Server
     collection_id: weather-mcp-ge-app-main
     connector_modes:
-    - FEDERATED
+      - FEDERATED
     data_source: custom_mcp
     deletion_policy: PREVENT
     destination_configs: []
     entities:
-    - entity_name: mcp_data
-      params: null
-    incremental_refresh_interval: null
-    incremental_sync_disabled: null
-    json_params: null
-    kms_key_name: null
+      - entity_name: mcp_data
+        params:
+    incremental_refresh_interval:
+    incremental_sync_disabled:
+    json_params:
+    kms_key_name:
     location: eu
     params:
       oauth_access_token: none
     project: test-gf-geap-0
     refresh_interval: 86400s
     static_ip_enabled: false
-    sync_mode: null
+    sync_mode:
     tag: weather-mcp-ge-app-main
-    timeouts: null
+    timeouts:
   google_discovery_engine_data_store.companion["ge-app-main"]:
-    acl_enabled: null
+    acl_enabled:
     content_config: NO_CONTENT
     create_advanced_site_search: false
     data_store_id: ge-app-main-companion
@@ -105,20 +106,20 @@ values:
     display_name: Gemini Enterprise Main-companion
     document_processing_config: []
     industry_vertical: GENERIC
-    kms_key_name: null
+    kms_key_name:
     location: eu
     project: test-gf-geap-0
     skip_default_schema_creation: false
     solution_types:
-    - SOLUTION_TYPE_SEARCH
-    timeouts: null
+      - SOLUTION_TYPE_SEARCH
+    timeouts:
   google_discovery_engine_search_engine.default["ge-app-main"]:
     app_type: APP_TYPE_INTRANET
     collection_id: default_collection
     common_config: []
     data_store_ids:
-    - weather-mcp-ge-app-main_mcp_data
-    - ge-app-main-companion
+      - weather-mcp-ge-app-main_mcp_data
+      - ge-app-main-companion
     deletion_policy: PREVENT
     disable_analytics: false
     display_name: Gemini Enterprise Main
@@ -127,27 +128,27 @@ values:
       agent-gallery: FEATURE_STATE_ON
       model-selector: FEATURE_STATE_ON
     industry_vertical: GENERIC
-    kms_key_name: null
+    kms_key_name:
     knowledge_graph_config:
-    - cloud_knowledge_graph_types: []
-      enable_cloud_knowledge_graph: false
-      enable_private_knowledge_graph: false
-      feature_config: []
+      - cloud_knowledge_graph_types: []
+        enable_cloud_knowledge_graph: false
+        enable_private_knowledge_graph: false
+        feature_config: []
     location: eu
     project: test-gf-geap-0
     search_engine_config:
-    - required_subscription_tier: SUBSCRIPTION_TIER_SEARCH_AND_ASSISTANT
-      search_add_ons:
-      - SEARCH_ADD_ON_LLM
-      search_tier: SEARCH_TIER_ENTERPRISE
-    timeouts: null
+      - required_subscription_tier: SUBSCRIPTION_TIER_SEARCH_AND_ASSISTANT
+        search_add_ons:
+          - SEARCH_ADD_ON_LLM
+        search_tier: SEARCH_TIER_ENTERPRISE
+    timeouts:
   google_discovery_engine_search_engine_iam_binding.default["ge-app-main roles/discoveryengine.agentspaceUser"]:
     collection_id: default_collection
     condition: []
     engine_id: ge-app-main
     location: eu
     members:
-    - group:employees@example.com
+      - group:employees@example.com
     project: test-gf-geap-0
     role: roles/discoveryengine.agentspaceUser
   google_model_armor_template.default["ge-to-user"]:
@@ -155,93 +156,93 @@ values:
     effective_labels:
       goog-terraform-provisioned: 'true'
     filter_config:
-    - malicious_uri_filter_settings:
-      - filter_enforcement: ENABLED
-      pi_and_jailbreak_filter_settings:
-      - confidence_level: MEDIUM_AND_ABOVE
-        filter_enforcement: ENABLED
-      rai_settings:
-      - rai_filters:
-        - confidence_level: LOW_AND_ABOVE
-          filter_type: DANGEROUS
-        - confidence_level: LOW_AND_ABOVE
-          filter_type: HARASSMENT
-        - confidence_level: LOW_AND_ABOVE
-          filter_type: HATE_SPEECH
-        - confidence_level: LOW_AND_ABOVE
-          filter_type: SEXUALLY_EXPLICIT
-      sdp_settings:
-      - advanced_config: []
-        basic_config:
-        - filter_enforcement: ENABLED
-    labels: null
+      - malicious_uri_filter_settings:
+          - filter_enforcement: ENABLED
+        pi_and_jailbreak_filter_settings:
+          - confidence_level: MEDIUM_AND_ABOVE
+            filter_enforcement: ENABLED
+        rai_settings:
+          - rai_filters:
+              - confidence_level: LOW_AND_ABOVE
+                filter_type: DANGEROUS
+              - confidence_level: LOW_AND_ABOVE
+                filter_type: HARASSMENT
+              - confidence_level: LOW_AND_ABOVE
+                filter_type: HATE_SPEECH
+              - confidence_level: LOW_AND_ABOVE
+                filter_type: SEXUALLY_EXPLICIT
+        sdp_settings:
+          - advanced_config: []
+            basic_config:
+              - filter_enforcement: ENABLED
+    labels:
     location: eu
     project: test-gf-geap-0
     template_id: ge-to-user
     template_metadata:
-    - custom_llm_response_safety_error_code: 401
-      custom_llm_response_safety_error_message: This is a custom error message for
-        LLM response
-      custom_prompt_safety_error_code: 400
-      custom_prompt_safety_error_message: This is a custom error message for prompt
-      enforcement_type: INSPECT_AND_BLOCK
-      filter_version_selector:
-      - alias: FILTER_VERSION_ALIAS_STABLE
-        version: null
-      ignore_partial_invocation_failures: false
-      log_sanitize_operations: true
-      log_template_operations: true
-      multi_language_detection:
-      - enable_multi_language_detection: true
+      - custom_llm_response_safety_error_code: 401
+        custom_llm_response_safety_error_message: This is a custom error message for
+          LLM response
+        custom_prompt_safety_error_code: 400
+        custom_prompt_safety_error_message: This is a custom error message for prompt
+        enforcement_type: INSPECT_AND_BLOCK
+        filter_version_selector:
+          - alias: FILTER_VERSION_ALIAS_STABLE
+            version:
+        ignore_partial_invocation_failures: false
+        log_sanitize_operations: true
+        log_template_operations: true
+        multi_language_detection:
+          - enable_multi_language_detection: true
     terraform_labels:
       goog-terraform-provisioned: 'true'
-    timeouts: null
+    timeouts:
   google_model_armor_template.default["user-to-ge"]:
     deletion_policy: PREVENT
     effective_labels:
       goog-terraform-provisioned: 'true'
     filter_config:
-    - malicious_uri_filter_settings:
-      - filter_enforcement: ENABLED
-      pi_and_jailbreak_filter_settings:
-      - confidence_level: MEDIUM_AND_ABOVE
-        filter_enforcement: ENABLED
-      rai_settings:
-      - rai_filters:
-        - confidence_level: LOW_AND_ABOVE
-          filter_type: DANGEROUS
-        - confidence_level: LOW_AND_ABOVE
-          filter_type: HARASSMENT
-        - confidence_level: LOW_AND_ABOVE
-          filter_type: HATE_SPEECH
-        - confidence_level: LOW_AND_ABOVE
-          filter_type: SEXUALLY_EXPLICIT
-      sdp_settings:
-      - advanced_config: []
-        basic_config:
-        - filter_enforcement: ENABLED
-    labels: null
+      - malicious_uri_filter_settings:
+          - filter_enforcement: ENABLED
+        pi_and_jailbreak_filter_settings:
+          - confidence_level: MEDIUM_AND_ABOVE
+            filter_enforcement: ENABLED
+        rai_settings:
+          - rai_filters:
+              - confidence_level: LOW_AND_ABOVE
+                filter_type: DANGEROUS
+              - confidence_level: LOW_AND_ABOVE
+                filter_type: HARASSMENT
+              - confidence_level: LOW_AND_ABOVE
+                filter_type: HATE_SPEECH
+              - confidence_level: LOW_AND_ABOVE
+                filter_type: SEXUALLY_EXPLICIT
+        sdp_settings:
+          - advanced_config: []
+            basic_config:
+              - filter_enforcement: ENABLED
+    labels:
     location: eu
     project: test-gf-geap-0
     template_id: user-to-ge
     template_metadata:
-    - custom_llm_response_safety_error_code: 401
-      custom_llm_response_safety_error_message: This is a custom error message for
-        LLM response
-      custom_prompt_safety_error_code: 400
-      custom_prompt_safety_error_message: This is a custom error message for prompt
-      enforcement_type: INSPECT_AND_BLOCK
-      filter_version_selector:
-      - alias: FILTER_VERSION_ALIAS_STABLE
-        version: null
-      ignore_partial_invocation_failures: false
-      log_sanitize_operations: true
-      log_template_operations: true
-      multi_language_detection:
-      - enable_multi_language_detection: true
+      - custom_llm_response_safety_error_code: 401
+        custom_llm_response_safety_error_message: This is a custom error message for
+          LLM response
+        custom_prompt_safety_error_code: 400
+        custom_prompt_safety_error_message: This is a custom error message for prompt
+        enforcement_type: INSPECT_AND_BLOCK
+        filter_version_selector:
+          - alias: FILTER_VERSION_ALIAS_STABLE
+            version:
+        ignore_partial_invocation_failures: false
+        log_sanitize_operations: true
+        log_template_operations: true
+        multi_language_detection:
+          - enable_multi_language_detection: true
     terraform_labels:
       goog-terraform-provisioned: 'true'
-    timeouts: null
+    timeouts:
   google_project_iam_member.agentspace_restricted_user["group:employees@example.com"]:
     condition: []
     member: group:employees@example.com
@@ -252,54 +253,80 @@ values:
     member: group:developers@example.com
     project: test-gf-geap-0
     role: projects/test-gf-geap-0/roles/discoveryengineUserBusinessAiCodeOnly
-  module.agent_gateway_egress.google_iap_agent_registry_mcp_server_iam_binding.bindings["weather-mcp/roles/iap.egressor"]:
-    condition: []
-    location: europe-west1
-    members:
-    - principal://goog/subject/user@example.com
+  module.agent_gateway_egress.google_iam_project_access_policy.default["agw-geap"]:
+    access_policy_id: agw-geap
+    annotations:
+    deletion_policy: DELETE
+    details:
+      - rules:
+          - description: Allow user to call weather-mcp
+            effect: ALLOW
+            excluded_principals: []
+            operation:
+              - excluded_permissions: []
+                permissions:
+                  - iap.googleapis.com/resources.egressViaIAP
+            principals:
+              - principal://goog/subject/user@example.com
+    display_name:
+    location: global
     project: test-gf-geap-0
-    role: roles/iap.egressor
+    timeouts:
+  module.agent_gateway_egress.google_iam_projects_policy_binding.default["agw-geap"]:
+    annotations:
+    condition: []
+    deletion_policy: DELETE
+    display_name:
+    location: global
+    policy: projects/test-gf-geap-0/locations/global/accessPolicies/agw-geap
+    policy_binding_id: agw-geap
+    policy_kind: ACCESS
+    project: test-gf-geap-0
+    target:
+      - principal_set:
+        resource: //cloudresourcemanager.googleapis.com/projects/test-gf-geap-0
+    timeouts:
   module.agent_gateway_egress.google_network_security_authz_policy.iap[0]:
     action: CUSTOM
     custom_provider:
-    - authz_extension:
-      - {}
-      cloud_iap: []
+      - authz_extension:
+          - {}
+        cloud_iap: []
     deletion_policy: DELETE
-    description: null
+    description:
     effective_labels:
       goog-terraform-provisioned: 'true'
     http_rules: []
-    labels: null
+    labels:
     location: europe-west1
     name: agw-geap-iap
     network_rules: []
     policy_profile: REQUEST_AUTHZ
     project: test-gf-geap-0
     target:
-    - load_balancing_scheme: null
+      - load_balancing_scheme:
     terraform_labels:
       goog-terraform-provisioned: 'true'
-    timeouts: null
+    timeouts:
   module.agent_gateway_egress.google_network_services_agent_connectivity_template.default[0]:
     access_path: AGENT_TO_ANYWHERE
     access_types:
-    - PRIVATE
+      - PRIVATE
     agent_connectivity_template_id: agw-geap
     deletion_policy: DELETE
     description: Terraform managed.
     effective_labels:
       goog-terraform-provisioned: 'true'
     egress_network_config:
-    - dns_peering_config: []
-      tls_config: []
-      vpc_egress: ALL_TRAFFIC
-    labels: null
+      - dns_peering_config: []
+        tls_config: []
+        vpc_egress: ALL_TRAFFIC
+    labels:
     location: europe-west1
     project: test-gf-geap-0
     terraform_labels:
       goog-terraform-provisioned: 'true'
-    timeouts: null
+    timeouts:
   module.agent_gateway_egress.google_network_services_agent_gateway.default:
     agent_connectivity_template: projects/1234567890/locations/europe-west1/agentConnectivityTemplates/agw-geap
     deletion_policy: DELETE
@@ -307,61 +334,61 @@ values:
     effective_labels:
       goog-terraform-provisioned: 'true'
     google_managed:
-    - governed_access_path: AGENT_TO_ANYWHERE
-    labels: null
+      - governed_access_path: AGENT_TO_ANYWHERE
+    labels:
     location: europe-west1
     name: agw-geap
     network_config: []
     project: test-gf-geap-0
-    protocols: null
+    protocols:
     registries:
-    - //agentregistry.googleapis.com/projects/test-gf-geap-0/locations/europe-west1
+      - //agentregistry.googleapis.com/projects/test-gf-geap-0/locations/europe-west1
     self_managed: []
     terraform_labels:
       goog-terraform-provisioned: 'true'
-    timeouts: null
+    timeouts:
   module.agent_gateway_egress.google_network_services_authz_extension.iap[0]:
-    authority: null
+    authority:
     deletion_policy: DELETE
-    description: null
+    description:
     effective_labels:
       goog-terraform-provisioned: 'true'
     fail_open: true
-    forward_attributes: null
-    forward_headers: null
-    labels: null
-    load_balancing_scheme: null
+    forward_attributes:
+    forward_headers:
+    labels:
+    load_balancing_scheme:
     location: europe-west1
     metadata:
-      iapPolicyVersion: V1
+      iapPolicyVersion: V2
     name: agw-geap-iap
     project: test-gf-geap-0
     service: iap.googleapis.com
     terraform_labels:
       goog-terraform-provisioned: 'true'
     timeout: 2s
-    timeouts: null
+    timeouts:
   terraform_data.app_agent_gateway_patch["ge-app-main"]:
-    input: null
-    output: null
+    input:
+    output:
     triggers_replace:
       collection_id: default_collection
       engine_config: 5b8c36f2124b5c3503cb8dd6928babd3923f23aaed7782c752ef1a5464a1f864
       engine_id: ge-app-main
   terraform_data.mcp_agent_gateway_patch["weather-mcp/ge-app-main"]:
-    input: null
-    output: null
+    input:
+    output:
     triggers_replace:
       engine_app_id: ge-app-main
       patch_body: 38f80b9552e2ff5447c7b0cbbda38c0b56fc2e11eb9380a01878333508b44110
   terraform_data.template_metadata_patch["ge-to-user"]:
-    input: null
-    output: null
+    input:
+    output:
     triggers_replace:
       config: 98e1dd775c73b2f99d8a2923bb46d4ac257ea85b1fe979c7bbdcf0f544cb7228
   terraform_data.template_metadata_patch["user-to-ge"]:
-    input: null
-    output: null
+    input:
+    output:
     triggers_replace:
       config: 98e1dd775c73b2f99d8a2923bb46d4ac257ea85b1fe979c7bbdcf0f544cb7228
 
@@ -373,7 +400,8 @@ counts:
   google_discovery_engine_data_store: 1
   google_discovery_engine_search_engine: 1
   google_discovery_engine_search_engine_iam_binding: 1
-  google_iap_agent_registry_mcp_server_iam_binding: 1
+  google_iam_project_access_policy: 1
+  google_iam_projects_policy_binding: 1
   google_model_armor_template: 2
   google_network_security_authz_policy: 1
   google_network_services_agent_connectivity_template: 1
@@ -381,10 +409,11 @@ counts:
   google_network_services_authz_extension: 1
   google_project_iam_member: 2
   modules: 1
-  resources: 20
+  resources: 21
   terraform_data: 4
 
 outputs:
+  access_policy_ids: __missing__
   agent_connectivity_template_ids:
     egress: projects/1234567890/locations/europe-west1/agentConnectivityTemplates/agw-geap
   agent_gateway_ids: __missing__
@@ -395,8 +424,9 @@ outputs:
     regional: //agentregistry.googleapis.com/projects/test-gf-geap-0/locations/europe-west1
     us: //agentregistry.googleapis.com/projects/test-gf-geap-0/locations/us
   gemini_enterprise_antigravity_principals:
-  - group:developers@example.com
+    - group:developers@example.com
   gemini_enterprise_app_names: __missing__
   gemini_enterprise_assistant_names: __missing__
   gemini_enterprise_data_connector_names: __missing__
   model_armor_template_names: __missing__
+  policy_binding_ids: __missing__

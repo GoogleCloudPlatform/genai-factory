@@ -14,7 +14,7 @@ It performs the following tasks:
 - Grants required roles to identities (users, service agents, and service accounts), including:
   - Model Armor inspection permissions for the Service Extensions, Network Services, and Vertex AI service agents.
   - `roles/secretmanager.secretAccessor` and `roles/secretmanager.viewer` for the Discovery Engine service agent to read Custom MCP OAuth 2.0 credentials.
-  - Delegated `roles/resourcemanager.projectIamAdmin` for `iac-rw` (restricted via an IAM condition to granting only `roles/discoveryengine.agentspaceRestrictedUser` and `discoveryengineUserBusinessAiCodeOnly`).
+  - `roles/iam.accessPolicyAdmin` and delegated `roles/resourcemanager.projectIamAdmin` for `iac-rw` to manage IAM v3 Unified Access Policies, policy bindings, and restricted project-level grants (`roles/discoveryengine.agentspaceRestrictedUser` and `discoveryengineUserBusinessAiCodeOnly`).
 - Creates the required networking stack by default (this can be disabled). The stack includes a host project, a Shared VPC, subnets, a proxy-only subnet, and Cloud DNS response policies for Private Google Access.
 
 This stage leverages the Cloud Foundation Fabric [project-factory module](https://github.com/GoogleCloudPlatform/cloud-foundation-fabric/tree/master/modules/project-factory).

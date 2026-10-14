@@ -28,57 +28,51 @@ locals {
     mcp_server = "TOOL_SPEC"
   }
 
-  # Bindings declared on the services registered by this stage. They
-  # are normalized to the shape the gateway module expects, so that
-  # they can be merged with the stage-level ones.
-  _svc_iam = merge([
-    for k, v in local.agent_registry_services : {
-      for role, members in v.iam : "${k}/${role}" => merge(
-        local._svc_ids[k],
-        {
-          condition = null
-          location  = v.location
-          members   = members
-          role      = role
-        }
-      )
-    }
-  ]...)
+  # Access policy rules declared directly on services registered by this stage,
+  # flattened with the target policy id (defaulting to var.name).
+  _svc_access_policy_rules = flatten([
+    for k, v in local.agent_registry_services : [
+      for rk, rv in v.access_policy_rules : {
+        policy_id = coalesce(rv.policy_id, var.name)
+        rule_key  = "${k}-${rk}"
+        rule = merge(
+          local._svc_ids[k],
+          {
+            condition            = rv.condition
+            condition_service    = rv.condition_service
+            description          = rv.description
+            effect               = rv.effect
+            excluded_permissions = rv.excluded_permissions
+            excluded_principals  = rv.excluded_principals
+            location             = v.location
+            permissions          = rv.permissions
+            principals           = rv.principals
+            registry             = false
+          }
+        )
+      }
+    ]
+  ])
 
-  _svc_iam_bindings = merge([
-    for k, v in local.agent_registry_services : {
-      for bk, bv in v.iam_bindings : "${k}/${bk}" => merge(
-        local._svc_ids[k],
-        {
-          condition = bv.condition
-          location  = v.location
-          members   = bv.members
-          role      = bv.role
-        }
-      )
+  _svc_rules_by_policy = {
+    for pid in distinct([for r in local._svc_access_policy_rules : r.policy_id]) :
+    pid => {
+      for r in local._svc_access_policy_rules :
+      r.rule_key => r.rule if r.policy_id == pid
     }
-  ]...)
+  }
 
-  _svc_iam_bindings_additive = merge([
-    for k, v in local.agent_registry_services : {
-      for bk, bv in v.iam_bindings_additive : "${k}/${bk}" => merge(
-        local._svc_ids[k],
-        {
-          condition = bv.condition
-          location  = v.location
-          member    = bv.member
-          role      = bv.role
-        }
-      )
-    }
-  ]...)
+  _access_policy_ids = distinct(concat(
+    keys(var.access_policies),
+    keys(local._svc_rules_by_policy)
+  ))
 
   # The attribute naming the registry resource of a service depends on
-  # its type, and scopes the bindings down from the whole registry.
+  # its type, and scopes the rule down from the whole registry.
   # IAP identifies a service by the id Agent Registry generates for
-  # it, not by its service id, so bindings are keyed on the last
+  # it, not by its service id, so rules are keyed on the last
   # segment of 'registry_resource'. Reading it back from the resource
-  # also orders the bindings after the registration.
+  # also orders the access policy after the registration.
   _svc_ids = {
     for k, v in var.agent_registry_services : k => {
       agent_id      = v.type == "agent" ? local._svc_registry_ids[k] : null
@@ -93,56 +87,40 @@ locals {
     )
   }
 
-  # Stage-level bindings target the whole registry, unless one of the
-  # '*_id' attributes narrows them down to a single resource. An id
-  # naming a service registered here is resolved to its generated
-  # registry id; anything else is passed through, so that resources
-  # registered outside this stage can be targeted too.
-  _top_iam_bindings = {
-    for k, v in var.agent_registry_iam_bindings : k => {
-      agent_id = (
-        v.agent_id == null
-        ? null
-        : lookup(local._svc_registry_ids, v.agent_id, v.agent_id)
+  # Merge stage-level access_policies with service-level access_policy_rules,
+  # resolving any '*_id' attribute naming a service registered in this stage
+  # to its generated registry id while passing external ids through unchanged.
+  access_policies = {
+    for pid in local._access_policy_ids : pid => {
+      annotations       = try(var.access_policies[pid].annotations, null)
+      bind              = try(var.access_policies[pid].bind, true)
+      binding_condition = try(var.access_policies[pid].binding_condition, null)
+      binding_id        = try(var.access_policies[pid].binding_id, null)
+      display_name      = try(var.access_policies[pid].display_name, null)
+      policy_reuse      = try(var.access_policies[pid].policy_reuse, null)
+      target_resource   = try(var.access_policies[pid].target_resource, "project")
+      rules = merge(
+        {
+          for rk, rv in try(var.access_policies[pid].rules, {}) : rk => merge(rv, {
+            agent_id = (
+              rv.agent_id == null
+              ? null
+              : lookup(local._svc_registry_ids, rv.agent_id, rv.agent_id)
+            )
+            endpoint_id = (
+              rv.endpoint_id == null
+              ? null
+              : lookup(local._svc_registry_ids, rv.endpoint_id, rv.endpoint_id)
+            )
+            mcp_server_id = (
+              rv.mcp_server_id == null
+              ? null
+              : lookup(local._svc_registry_ids, rv.mcp_server_id, rv.mcp_server_id)
+            )
+          })
+        },
+        lookup(local._svc_rules_by_policy, pid, {})
       )
-      condition = v.condition
-      endpoint_id = (
-        v.endpoint_id == null
-        ? null
-        : lookup(local._svc_registry_ids, v.endpoint_id, v.endpoint_id)
-      )
-      location = v.location
-      mcp_server_id = (
-        v.mcp_server_id == null
-        ? null
-        : lookup(local._svc_registry_ids, v.mcp_server_id, v.mcp_server_id)
-      )
-      members = v.members
-      role    = v.role
-    }
-  }
-
-  _top_iam_bindings_additive = {
-    for k, v in var.agent_registry_iam_bindings_additive : k => {
-      agent_id = (
-        v.agent_id == null
-        ? null
-        : lookup(local._svc_registry_ids, v.agent_id, v.agent_id)
-      )
-      condition = v.condition
-      endpoint_id = (
-        v.endpoint_id == null
-        ? null
-        : lookup(local._svc_registry_ids, v.endpoint_id, v.endpoint_id)
-      )
-      location = v.location
-      mcp_server_id = (
-        v.mcp_server_id == null
-        ? null
-        : lookup(local._svc_registry_ids, v.mcp_server_id, v.mcp_server_id)
-      )
-      member = v.member
-      role   = v.role
     }
   }
 
@@ -172,14 +150,6 @@ locals {
       )
     })
   }
-
-  registry_iam_bindings = merge(
-    local._svc_iam, local._svc_iam_bindings, local._top_iam_bindings
-  )
-
-  registry_iam_bindings_additive = merge(
-    local._svc_iam_bindings_additive, local._top_iam_bindings_additive
-  )
 
   subnetwork = lookup(
     var.subnet_self_links, var.networking_config.subnet, var.networking_config.subnet
