@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
 import requests
 
 import vertexai
@@ -42,6 +43,8 @@ from a2a.utils import new_agent_text_message
 from a2a.utils.errors import ServerError
 
 from src import config
+
+os.environ["GOOGLE_CLOUD_LOCATION"] = config.GOOGLE_CLOUD_LOCATION
 
 vertexai.init(
     project=config.PROJECT_ID,
@@ -81,6 +84,7 @@ class CurrencyAgentExecutorWithRunner(AgentExecutor):
     self.runner = None
 
   def _init_adk(self):
+    os.environ["GOOGLE_CLOUD_LOCATION"] = config.GOOGLE_CLOUD_LOCATION
     # Initialize the ADK Runner
     if not self.runner:
       self.runner = Runner(
@@ -198,12 +202,17 @@ def get_exchange_rate(
 from src.firestore_task_store import FirestoreTaskStore
 
 llm_agent = LlmAgent(
-    model=config.MODEL_NAME, name='currency_exchange_agent',
+    model=config.MODEL_NAME,
+    name='currency_exchange_agent',
     description='An agent that can provide currency exchange rates.',
     instruction="""You are a helpful currency exchange assistant.
                    Use the get_exchange_rate tool to answer user questions.
                    If the tool returns an error, inform the user about the error.""",
-    tools=[get_exchange_rate])
+    tools=[get_exchange_rate],
+    generate_content_config=types.GenerateContentConfig(
+        thinking_config=types.ThinkingConfig(
+            thinking_level=config.THINKING_LEVEL),),
+)
 
 agent = A2aAgent(
     agent_card=agent_card,

@@ -14,18 +14,20 @@
 
 import os
 
-A2A_HOST = os.environ.get("A2A_HOST", "localhost")
+A2A_HOST = os.environ.get("A2A_HOST", os.environ.get("A2A_URL", "localhost"))
 A2A_PORT = int(os.environ.get("A2A_PORT", 443))
 A2A_PROTOCOL = os.environ.get("A2A_PROTOCOL", "https")
 
 INTERNAL_HOST = "0.0.0.0"
 INTERNAL_PORT = int(os.environ.get("PORT", 8003))
 
-MODEL_NAME = os.environ.get("MODEL_NAME", "gemini-2.5-flash")
+MODEL_NAME = os.environ.get("MODEL_NAME", "gemini-4-argon")
+THINKING_LEVEL = os.environ.get("THINKING_LEVEL", "MEDIUM")
 MODEL_ARMOR_TEMPLATE = os.environ.get("MODEL_ARMOR_TEMPLATE", None)
 
 PROJECT_ID = os.environ.get("PROJECT_ID")
 
 REGION = os.environ.get("REGION", "europe-west1")
+GOOGLE_CLOUD_LOCATION = os.environ.get("GOOGLE_CLOUD_LOCATION", "eu")
 
 GOOGLE_GENAI_USE_VERTEXAI = os.environ.get("GOOGLE_GENAI_USE_VERTEXAI", "1")

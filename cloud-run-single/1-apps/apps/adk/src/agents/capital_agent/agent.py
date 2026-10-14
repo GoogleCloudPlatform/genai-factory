@@ -19,6 +19,7 @@ import json
 import os
 
 from google.adk.agents import LlmAgent
+from google.genai import types
 from pydantic import BaseModel, Field
 
 from src import config
@@ -36,7 +37,7 @@ class CapitalInfoOutput(BaseModel):
 
 
 os.environ["GOOGLE_CLOUD_PROJECT"] = os.environ["PROJECT_ID"]
-os.environ["GOOGLE_CLOUD_LOCATION"] = os.environ["REGION"]
+os.environ["GOOGLE_CLOUD_LOCATION"] = config.GOOGLE_CLOUD_LOCATION
 os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = "1"
 
 root_agent = LlmAgent(
@@ -56,4 +57,8 @@ Use your knowledge to determine the capital and estimate the population. Do not 
     output_key="result",
     # Model Armor inspection of the prompt and LLM reply
     before_model_callback=model_armor.sanitize_request,
-    after_model_callback=model_armor.sanitize_response)
+    after_model_callback=model_armor.sanitize_response,
+    generate_content_config=types.GenerateContentConfig(
+        thinking_config=types.ThinkingConfig(
+            thinking_level=config.THINKING_LEVEL),),
+)

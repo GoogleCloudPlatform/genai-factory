@@ -16,9 +16,11 @@ import os
 
 PROJECT_ID = os.environ.get("PROJECT_ID")
 REGION = os.environ.get("REGION", "europe-west1")
+GOOGLE_CLOUD_LOCATION = os.environ.get("GOOGLE_CLOUD_LOCATION", "eu")
 
 # Generative Model Configuration
-LLM_MODEL_NAME = os.environ.get("MODEL_NAME", "gemini-2.5-flash")
+LLM_MODEL_NAME = os.environ.get("MODEL_NAME", "gemini-4-argon")
+LLM_THINKING_LEVEL = os.environ.get("THINKING_LEVEL", "MEDIUM")
 LLM_TEMPERATURE = float(os.environ.get("TEMPERATURE", 0.2))
 LLM_TOP_P = float(os.environ.get("TOP_P", 1.0))
 LLM_TOP_K = int(os.environ.get("TOP_K", 40))
@@ -27,7 +29,7 @@ LLM_MAX_OUTPUT_TOKENS = int(os.environ.get("MAX_OUTPUT_TOKENS", 1024))
 
 # Embedding Model Configuration
 EMBEDDING_MODEL_NAME = os.environ.get("EMBEDDING_MODEL_NAME",
-                                      "text-multilingual-embedding-002")
+                                      "gemini-embedding-001")
 EMBEDDING_TASK_TYPE = "RETRIEVAL_QUERY"
 
 # Vertex AI Vector Search Configuration

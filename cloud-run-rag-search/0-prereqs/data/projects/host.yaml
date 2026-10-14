@@ -21,9 +21,14 @@ services:
   - compute.googleapis.com
   # To create response policies for Private Google APIs
   - dns.googleapis.com
+  # To create regional PSC endpoints for Google APIs
+  - networkconnectivity.googleapis.com
 
 # Grant roles
 iam_by_principals:
+  # Create PSC endpoint in shared VPC
+  $iam_principals:service_accounts/service-01/iac-rw:
+    - roles/compute.networkUser
   # Grant to cloud run service agent for Cloud Run Direct Egress on shared vpc
   $iam_principals:service_agents/service-01/run:
     - roles/compute.networkUser

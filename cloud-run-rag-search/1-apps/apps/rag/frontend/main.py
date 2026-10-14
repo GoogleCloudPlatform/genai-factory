@@ -36,15 +36,20 @@ logging.basicConfig(level=logging.INFO,
                     format='%(name)s - %(levelname)s - %(message)s',
                     handlers=[logging.StreamHandler(sys.stdout)])
 
-logging.info("Initializing Google GenAI client for project=%s, region=%s",
-             config.PROJECT_ID, config.REGION)
+logging.info(
+    "Initializing Google GenAI clients for project=%s, region=%s, location=%s",
+    config.PROJECT_ID, config.REGION, config.GOOGLE_CLOUD_LOCATION)
 try:
   genai_client = genai.Client(vertexai=True, project=config.PROJECT_ID,
-                              location=config.REGION)
+                              location=config.GOOGLE_CLOUD_LOCATION)
+  genai_embedding_client = genai.Client(vertexai=True,
+                                        project=config.PROJECT_ID,
+                                        location=config.REGION)
   logging.info("Vertex AI client initialized successfully.")
 except Exception as e:
   logging.error(f"Failed to initialize GenAI client: {e}", exc_info=True)
   genai_client = None
+  genai_embedding_client = None
 
 MODEL_NAME = config.LLM_MODEL_NAME
 MODEL_CONFIG = types.GenerateContentConfig(
@@ -53,6 +58,8 @@ MODEL_CONFIG = types.GenerateContentConfig(
     top_k=config.LLM_TOP_K,
     candidate_count=config.LLM_CANDIDATE_COUNT,
     max_output_tokens=config.LLM_MAX_OUTPUT_TOKENS,
+    thinking_config=types.ThinkingConfig(
+        thinking_level=config.LLM_THINKING_LEVEL),
 )
 
 
@@ -105,7 +112,7 @@ async def root():
 async def predict_route(request: Prompt):
   """Endpoint to make a prediction using Vertex AI, augmented with context from Vector Search."""
 
-  if not genai_client:
+  if not genai_client or not genai_embedding_client:
     logging.error("GenAI client not initialized.")
     raise HTTPException(status_code=503, detail="GenAI client not available.")
 
@@ -128,7 +135,7 @@ async def predict_route(request: Prompt):
       logging.info(
           f"Generating embedding for prompt using model: {config.EMBEDDING_MODEL_NAME}"
       )
-      embedding_response = genai_client.models.embed_content(
+      embedding_response = genai_embedding_client.models.embed_content(
           model=config.EMBEDDING_MODEL_NAME,
           contents=[request.prompt]).embeddings[0].values
 

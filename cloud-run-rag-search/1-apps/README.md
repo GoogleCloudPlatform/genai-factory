@@ -1,6 +1,6 @@
 # Cloud Run - RAG with Vector Search / Platform and Agent Deployment
 
-This stage is part of the `Cloud Run RAG - Cloud SQL` factory.
+This stage is part of the `Cloud Run RAG - Vector Search` factory.
 
 It performs the following tasks:
 
@@ -66,7 +66,7 @@ Do not edit the `variables-fast.tf` file, as it needs to reflect FAST standard v
 | [name](variables.tf#L114) | The name of the resources. This is also the project suffix if a new project is created. | <code>string</code> |  | <code>&#34;gf-rrag-search-0&#34;</code> |
 | [service_accounts](variables-fast.tf#L18) | The service accounts created for this stage. | <code title="map&#40;object&#40;&#123;&#10;  email     &#61; string&#10;  iam_email &#61; string&#10;  id        &#61; string&#10;&#125;&#41;&#41;">map&#40;object&#40;&#123;&#8230;&#125;&#41;&#41;</code> |  | <code>&#123;&#125;</code> |
 | [subnet_self_links](variables-fast.tf#L30) | Shared VPCs subnet IDs. | <code>map&#40;string&#41;</code> |  | <code>&#123;&#125;</code> |
-| [vector_search_config](variables.tf#L163) | The VertexAI index configuration. | <code title="object&#40;&#123;&#10;  algorithm_config &#61; optional&#40;object&#40;&#123;&#10;    tree_ah_config &#61; optional&#40;object&#40;&#123;&#10;      leaf_node_embedding_count    &#61; optional&#40;number, 500&#41;&#10;      leaf_nodes_to_search_percent &#61; optional&#40;number, 7&#41;&#10;    &#125;&#41;, &#123;&#125;&#41;&#10;  &#125;&#41;, &#123;&#125;&#41;&#10;  approximate_neighbors_count &#61; optional&#40;number, 150&#41;&#10;  dimensions                  &#61; optional&#40;number, 768&#41;&#10;  distance_measure_type       &#61; optional&#40;string, &#34;DOT_PRODUCT_DISTANCE&#34;&#41;&#10;  index_shard_size            &#61; optional&#40;string, &#34;SHARD_SIZE_SMALL&#34;&#41;&#10;  index_update_method         &#61; optional&#40;string, &#34;STREAM_UPDATE&#34;&#41;&#10;  deployment_tier             &#61; optional&#40;string, &#34;STORAGE&#34;&#41;&#10;  machine_type &#61; optional&#40;string, &#34;e2-standard-2&#34;&#41;&#10;  max_replica_count &#61; optional&#40;number, 2&#41;&#10;  min_replica_count &#61; optional&#40;number, 2&#41;&#10;&#125;&#41;">object&#40;&#123;&#8230;&#125;&#41;</code> |  | <code>&#123;&#125;</code> |
+| [vector_search_config](variables.tf#L163) | The VertexAI index configuration. | <code title="object&#40;&#123;&#10;  algorithm_config &#61; optional&#40;object&#40;&#123;&#10;    tree_ah_config &#61; optional&#40;object&#40;&#123;&#10;      leaf_node_embedding_count    &#61; optional&#40;number, 500&#41;&#10;      leaf_nodes_to_search_percent &#61; optional&#40;number, 7&#41;&#10;    &#125;&#41;, &#123;&#125;&#41;&#10;  &#125;&#41;, &#123;&#125;&#41;&#10;  approximate_neighbors_count &#61; optional&#40;number, 150&#41;&#10;  dimensions                  &#61; optional&#40;number, 3072&#41;&#10;  distance_measure_type       &#61; optional&#40;string, &#34;DOT_PRODUCT_DISTANCE&#34;&#41;&#10;  index_shard_size            &#61; optional&#40;string, &#34;SHARD_SIZE_SMALL&#34;&#41;&#10;  index_update_method         &#61; optional&#40;string, &#34;STREAM_UPDATE&#34;&#41;&#10;  deployment_tier             &#61; optional&#40;string, &#34;STORAGE&#34;&#41;&#10;  machine_type &#61; optional&#40;string, &#34;e2-standard-2&#34;&#41;&#10;  max_replica_count &#61; optional&#40;number, 2&#41;&#10;  min_replica_count &#61; optional&#40;number, 2&#41;&#10;&#125;&#41;">object&#40;&#123;&#8230;&#125;&#41;</code> |  | <code>&#123;&#125;</code> |
 | [vpc_self_links](variables-fast.tf#L38) | Shared VPC name => self link mappings. | <code>map&#40;string&#41;</code> |  | <code>&#123;&#125;</code> |
 
 ## Outputs
@@ -74,5 +74,5 @@ Do not edit the `variables-fast.tf` file, as it needs to reflect FAST standard v
 | name | description | sensitive |
 |---|---|:---:|
 | [commands](outputs.tf#L53) | Run the following commands when the deployment completes to deploy the app. |  |
-| [ip_addresses](outputs.tf#L103) | The load balancers IP addresses. |  |
+| [ip_addresses](outputs.tf#L113) | The load balancers IP addresses. |  |
 <!-- END TFDOC -->

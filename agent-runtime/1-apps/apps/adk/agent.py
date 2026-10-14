@@ -13,13 +13,17 @@
 # limitations under the License.
 
 from google.adk.agents import LlmAgent
+from google.genai import types
 import vertexai
 from vertexai.agent_engines import AdkApp
 
+import os
 import requests
 
 from src import config
 from src.firestore_session_service import FirestoreSessionService
+
+os.environ["GOOGLE_CLOUD_LOCATION"] = config.GOOGLE_CLOUD_LOCATION
 
 vertexai.init(
     project=config.PROJECT_ID,
@@ -51,10 +55,14 @@ root_agent = LlmAgent(
     instruction="You are a helpful assistant",
     name='currency_exchange_agent',
     tools=[get_exchange_rate],
+    generate_content_config=types.GenerateContentConfig(
+        thinking_config=types.ThinkingConfig(
+            thinking_level=config.THINKING_LEVEL),),
 )
 
 
 def session_service_builder():
+  os.environ["GOOGLE_CLOUD_LOCATION"] = config.GOOGLE_CLOUD_LOCATION
   return FirestoreSessionService(
       project_id=config.PROJECT_ID,
       database=config.FIRESTORE_DATABASE,

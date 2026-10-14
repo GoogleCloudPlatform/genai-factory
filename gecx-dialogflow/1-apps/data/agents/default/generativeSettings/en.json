@@ -71,7 +71,7 @@
     }
   },
   "llmModelSettings": {
-    "model": "gemini-2.5-flash",
+    "model": "gemini-4-argon",
     "parameters": {
       "temperature": 1,
       "inputTokenLimit": "INPUT_TOKEN_LIMIT_SHORT",

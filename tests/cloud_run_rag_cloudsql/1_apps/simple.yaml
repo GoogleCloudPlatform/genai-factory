@@ -1,3 +1,4 @@
+---
 # Copyright 2026 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,151 +19,151 @@ values:
     attempt_deadline: 60s
     description: Scheduler to periodically trigger the data ingestion.
     http_target:
-    - body: null
-      headers: null
-      http_method: POST
-      oauth_token:
-      - scope: null
-        service_account_email: gf-rrag-ing-sched-0@prefix-gf-rrag-0.iam.gserviceaccount.com
-      oidc_token: []
+      - body:
+        headers:
+        http_method: POST
+        oauth_token:
+          - scope:
+            service_account_email: gf-rrag-ing-sched-0@prefix-gf-rrag-0.iam.gserviceaccount.com
+        oidc_token: []
     name: gf-rrag-0
     project: prefix-gf-rrag-0
     pubsub_target: []
     region: europe-west1
     retry_config:
-    - retry_count: 3
+      - retry_count: 3
     schedule: '*/30 * * * *'
     time_zone: Etc/UTC
-    timeouts: null
+    timeouts:
   google_compute_address.cloudsql_address:
     address_type: INTERNAL
-    description: null
+    description:
     effective_labels:
       goog-terraform-provisioned: 'true'
-    ip_collection: null
-    ip_version: null
-    ipv6_endpoint_type: null
-    labels: null
+    ip_collection:
+    ip_version:
+    ipv6_endpoint_type:
+    labels:
     name: gf-rrag-0
-    network: null
+    network:
     project: prefix-gf-rrag-0
     region: europe-west1
     subnetwork: projects/prefix-gf-rrag-hp-0/regions/europe-west1/subnetworks/sub-0
     terraform_labels:
       goog-terraform-provisioned: 'true'
-    timeouts: null
+    timeouts:
   google_compute_forwarding_rule.cloudsql_psc_endpoint:
-    all_ports: null
-    allow_global_access: null
-    allow_psc_global_access: null
-    backend_service: null
-    description: null
-    ip_collection: null
-    is_mirroring_collector: null
-    labels: null
+    all_ports:
+    allow_global_access:
+    allow_psc_global_access:
+    backend_service:
+    description:
+    ip_collection:
+    is_mirroring_collector:
+    labels:
     load_balancing_scheme: ''
     name: gf-rrag-0
     network: projects/prefix-gf-rrag-hp-0/global/networks/net-0
-    no_automate_dns_zone: null
-    ports: null
+    no_automate_dns_zone:
+    ports:
     project: prefix-gf-rrag-0
     recreate_closed_psc: false
     region: europe-west1
-    service_label: null
-    source_ip_ranges: null
-    timeouts: null
+    service_label:
+    source_ip_ranges:
+    timeouts:
   google_compute_global_address.address_external[0]:
-    address_type: null
-    description: null
+    address_type:
+    description:
     effective_labels:
       goog-terraform-provisioned: 'true'
-    ip_version: null
-    labels: null
+    ip_version:
+    labels:
     name: gf-rrag-0-external
-    network: null
+    network:
     project: prefix-gf-rrag-0
-    purpose: null
+    purpose:
     terraform_labels:
       goog-terraform-provisioned: 'true'
-    timeouts: null
+    timeouts:
   google_compute_region_security_policy.security_policy_internal[0]:
     advanced_options_config: []
     ddos_protection_config: []
-    description: null
+    description:
     name: gf-rrag-0-internal
     project: prefix-gf-rrag-0
     region: europe-west1
     rules:
-    - action: allow
-      description: Allowed source IP ranges.
-      match:
-      - config:
-        - src_ip_ranges:
-          - 0.0.0.0/0
-        expr: []
-        versioned_expr: SRC_IPS_V1
-      network_match: []
-      preconfigured_waf_config: []
-      preview: null
-      priority: 100
-      rate_limit_options: []
-    - action: deny(403)
-      description: Default deny rule.
-      match:
-      - config:
-        - src_ip_ranges:
-          - '*'
-        expr: []
-        versioned_expr: SRC_IPS_V1
-      network_match: []
-      preconfigured_waf_config: []
-      preview: null
-      priority: 2147483647
-      rate_limit_options: []
-    timeouts: null
+      - action: allow
+        description: Allowed source IP ranges.
+        match:
+          - config:
+              - src_ip_ranges:
+                  - 0.0.0.0/0
+            expr: []
+            versioned_expr: SRC_IPS_V1
+        network_match: []
+        preconfigured_waf_config: []
+        preview:
+        priority: 100
+        rate_limit_options: []
+      - action: deny(403)
+        description: Default deny rule.
+        match:
+          - config:
+              - src_ip_ranges:
+                  - '*'
+            expr: []
+            versioned_expr: SRC_IPS_V1
+        network_match: []
+        preconfigured_waf_config: []
+        preview:
+        priority: 2147483647
+        rate_limit_options: []
+    timeouts:
     type: CLOUD_ARMOR
     user_defined_fields: []
   google_compute_security_policy.security_policy_external[0]:
     adaptive_protection_config: []
-    description: null
+    description:
     effective_labels:
       goog-terraform-provisioned: 'true'
-    labels: null
+    labels:
     name: gf-rrag-0-external
     project: prefix-gf-rrag-0
     recaptcha_options_config: []
     rule:
-    - action: allow
-      description: Allowed source IP ranges.
-      header_action: []
-      match:
-      - config:
-        - src_ip_ranges:
-          - 0.0.0.0/0
-        expr: []
-        expr_options: []
-        versioned_expr: SRC_IPS_V1
-      preconfigured_waf_config: []
-      priority: 100
-      rate_limit_options: []
-      redirect_options: []
-    - action: deny(403)
-      description: Default deny rule.
-      header_action: []
-      match:
-      - config:
-        - src_ip_ranges:
-          - '*'
-        expr: []
-        expr_options: []
-        versioned_expr: SRC_IPS_V1
-      preconfigured_waf_config: []
-      priority: 2147483647
-      rate_limit_options: []
-      redirect_options: []
+      - action: allow
+        description: Allowed source IP ranges.
+        header_action: []
+        match:
+          - config:
+              - src_ip_ranges:
+                  - 0.0.0.0/0
+            expr: []
+            expr_options: []
+            versioned_expr: SRC_IPS_V1
+        preconfigured_waf_config: []
+        priority: 100
+        rate_limit_options: []
+        redirect_options: []
+      - action: deny(403)
+        description: Default deny rule.
+        header_action: []
+        match:
+          - config:
+              - src_ip_ranges:
+                  - '*'
+            expr: []
+            expr_options: []
+            versioned_expr: SRC_IPS_V1
+        preconfigured_waf_config: []
+        priority: 2147483647
+        rate_limit_options: []
+        redirect_options: []
     terraform_labels:
       goog-terraform-provisioned: 'true'
-    timeouts: null
+    timeouts:
   google_dns_record_set.cloudsql_dns_record_set:
     managed_zone: gf-rrag-0-cloudsql
     project: prefix-gf-rrag-0
@@ -174,42 +175,42 @@ values:
     description: Terraform managed.
     effective_labels:
       goog-terraform-provisioned: 'true'
-    ip_collection: null
-    ip_version: null
-    ipv6_endpoint_type: null
-    labels: null
+    ip_collection:
+    ip_version:
+    ipv6_endpoint_type:
+    labels:
     name: ilb-01
-    network: null
+    network:
     project: prefix-gf-rrag-0
     purpose: SHARED_LOADBALANCER_VIP
     region: europe-west1
     subnetwork: projects/prefix-gf-rrag-hp-0/regions/europe-west1/subnetworks/sub-0
     terraform_labels:
       goog-terraform-provisioned: 'true'
-    timeouts: null
+    timeouts:
   module.bigquery-dataset.google_bigquery_dataset.default:
     dataset_id: gf_rrag_0
     default_encryption_configuration: []
-    default_partition_expiration_ms: null
-    default_table_expiration_ms: null
+    default_partition_expiration_ms:
+    default_table_expiration_ms:
     delete_contents_on_destroy: false
     description: Terraform managed.
     effective_labels:
       goog-terraform-provisioned: 'true'
     external_catalog_dataset_options: []
     external_dataset_reference: []
-    friendly_name: null
-    labels: null
+    friendly_name:
+    labels:
     location: EU
     max_time_travel_hours: '168'
     project: prefix-gf-rrag-0
-    resource_tags: null
+    resource_tags:
     terraform_labels:
       goog-terraform-provisioned: 'true'
-    timeouts: null
+    timeouts:
   module.bigquery-dataset.google_bigquery_table.default["gf_rrag_0"]:
     biglake_configuration: []
-    clustering: null
+    clustering:
     dataset_id: gf_rrag_0
     deletion_protection: true
     description: Terraform managed.
@@ -220,17 +221,17 @@ values:
     external_data_configuration: []
     friendly_name: gf_rrag_0
     ignore_auto_generated_schema: false
-    ignore_schema_changes: null
-    labels: null
+    ignore_schema_changes:
+    labels:
     materialized_view: []
     project: prefix-gf-rrag-0
     range_partitioning: []
-    require_partition_filter: null
-    resource_tags: null
+    require_partition_filter:
+    resource_tags:
     schema_foreign_type_info: []
     table_constraints: []
     table_id: gf_rrag_0
-    table_metadata_view: null
+    table_metadata_view:
     table_replication_info: []
     terraform_labels:
       goog-terraform-provisioned: 'true'
@@ -241,7 +242,7 @@ values:
       goog-terraform-provisioned: 'true'
     encryption_spec: []
     issuance_policy: []
-    labels: null
+    labels:
     location: europe-west1
     name: gf-rrag-0-ca-pool-0
     project: prefix-gf-rrag-0
@@ -249,98 +250,98 @@ values:
     terraform_labels:
       goog-terraform-provisioned: 'true'
     tier: DEVOPS
-    timeouts: null
+    timeouts:
   module.cas[0].google_privateca_certificate_authority.default["gf-rrag-0"]:
     certificate_authority_id: gf-rrag-0
     config:
-    - subject_config:
-      - subject:
-        - common_name: example.com
-          country_code: null
-          locality: null
-          organization: gf-rrag-0
-          organizational_unit: null
-          postal_code: null
-          province: null
-          street_address: null
-        subject_alt_name: []
-      subject_key_id: []
-      x509_config:
-      - additional_extensions: []
-        aia_ocsp_servers: null
-        ca_options:
-        - is_ca: true
-          max_issuer_path_length: null
-          non_ca: null
-          zero_max_issuer_path_length: null
-        key_usage:
-        - base_key_usage:
-          - cert_sign: true
-            content_commitment: false
-            crl_sign: true
-            data_encipherment: false
-            decipher_only: false
-            digital_signature: false
-            encipher_only: false
-            key_agreement: false
-            key_encipherment: false
-          extended_key_usage:
-          - client_auth: false
-            code_signing: false
-            email_protection: false
-            ocsp_signing: false
-            server_auth: false
-            time_stamping: false
-          unknown_extended_key_usages: []
-        name_constraints: []
-        policy_ids: []
+      - subject_config:
+          - subject:
+              - common_name: example.com
+                country_code:
+                locality:
+                organization: gf-rrag-0
+                organizational_unit:
+                postal_code:
+                province:
+                street_address:
+            subject_alt_name: []
+        subject_key_id: []
+        x509_config:
+          - additional_extensions: []
+            aia_ocsp_servers:
+            ca_options:
+              - is_ca: true
+                max_issuer_path_length:
+                non_ca:
+                zero_max_issuer_path_length:
+            key_usage:
+              - base_key_usage:
+                  - cert_sign: true
+                    content_commitment: false
+                    crl_sign: true
+                    data_encipherment: false
+                    decipher_only: false
+                    digital_signature: false
+                    encipher_only: false
+                    key_agreement: false
+                    key_encipherment: false
+                extended_key_usage:
+                  - client_auth: false
+                    code_signing: false
+                    email_protection: false
+                    ocsp_signing: false
+                    server_auth: false
+                    time_stamping: false
+                unknown_extended_key_usages: []
+            name_constraints: []
+            policy_ids: []
     deletion_protection: true
-    desired_state: null
+    desired_state:
     effective_labels:
       goog-terraform-provisioned: 'true'
-    gcs_bucket: null
+    gcs_bucket:
     ignore_active_certificates_on_deletion: false
     key_spec:
-    - algorithm: RSA_PKCS1_2048_SHA256
-      cloud_kms_key_version: null
-    labels: null
+      - algorithm: RSA_PKCS1_2048_SHA256
+        cloud_kms_key_version:
+    labels:
     lifetime: 315360000s
     location: europe-west1
-    pem_ca_certificate: null
+    pem_ca_certificate:
     project: prefix-gf-rrag-0
     skip_grace_period: true
     subordinate_config: []
     terraform_labels:
       goog-terraform-provisioned: 'true'
-    timeouts: null
+    timeouts:
     type: SELF_SIGNED
     user_defined_access_urls: []
   module.certificate_manager[0].google_certificate_manager_certificate.certificates["gf-rrag-0"]:
-    description: null
+    description:
     effective_labels:
       goog-terraform-provisioned: 'true'
-    labels: null
+    labels:
     location: europe-west1
     managed:
-    - dns_authorizations: null
-      domains:
-      - example.com
+      - dns_authorizations:
+        domains:
+          - example.com
     name: gf-rrag-0
     project: prefix-gf-rrag-0
-    scope: null
+    scope:
     self_managed: []
     terraform_labels:
       goog-terraform-provisioned: 'true'
-    timeouts: null
+    timeouts:
   module.certificate_manager[0].google_certificate_manager_certificate_issuance_config.default["gf-rrag-0"]:
     certificate_authority_config:
-    - certificate_authority_service_config:
-      - {}
-    description: null
+      - certificate_authority_service_config:
+          - {}
+    description:
     effective_labels:
       goog-terraform-provisioned: 'true'
     key_algorithm: ECDSA_P256
-    labels: null
+    labels:
     lifetime: 1814400s
     location: europe-west1
     name: gf-rrag-0
@@ -348,278 +349,279 @@ values:
     rotation_window_percentage: 34
     terraform_labels:
       goog-terraform-provisioned: 'true'
-    timeouts: null
+    timeouts:
   module.cloud_run_frontend.google_cloud_run_v2_service.service_unmanaged[0]:
-    annotations: null
+    annotations:
     binary_authorization: []
     build_config: []
-    client: null
-    client_version: null
-    custom_audiences: null
-    default_uri_disabled: null
+    client:
+    client_version:
+    custom_audiences:
+    default_uri_disabled:
     deletion_protection: true
-    description: null
+    description:
     effective_labels:
       goog-terraform-provisioned: 'true'
     iap_enabled: false
     ingress: INGRESS_TRAFFIC_INTERNAL_LOAD_BALANCER
     invoker_iam_disabled: false
-    labels: null
+    labels:
     location: europe-west1
     multi_region_settings: []
     name: gf-rrag-0-frontend
     project: prefix-gf-rrag-0
     template:
-    - annotations: null
-      containers:
-      - base_image_uri: null
-        command:
-        - /cloud-sql-proxy
-        depends_on: null
-        env: []
-        image: gcr.io/cloud-sql-connectors/cloud-sql-proxy
-        liveness_probe: []
-        name: cloud-sql-proxy
-        readiness_probe: []
-        source_code: []
-        volume_mounts: []
-        working_dir: null
-      - args: null
-        base_image_uri: null
-        command: null
-        depends_on: null
-        env: []
-        image: us-docker.pkg.dev/cloudrun/container/hello
-        liveness_probe: []
-        name: frontend
-        ports:
-        - container_port: 8080
-        readiness_probe: []
-        source_code: []
-        volume_mounts: []
-        working_dir: null
-      encryption_key: null
-      execution_environment: EXECUTION_ENVIRONMENT_GEN2
-      gpu_zonal_redundancy_disabled: null
-      health_check_disabled: null
-      labels: null
-      node_selector: []
-      revision: null
-      scaling:
-      - max_instance_count: 3
-        min_instance_count: 1
-      service_account: gf-rrag-fe-0@prefix-gf-rrag-0.iam.gserviceaccount.com
-      service_mesh: []
-      session_affinity: null
-      volumes: []
-      vpc_access:
-      - connector: null
-        egress: ALL_TRAFFIC
-        network_interfaces:
-        - network: projects/prefix-gf-rrag-hp-0/global/networks/net-0
-          subnetwork: projects/prefix-gf-rrag-hp-0/regions/europe-west1/subnetworks/sub-0
-          tags: []
+      - annotations:
+        containers:
+          - base_image_uri:
+            command:
+              - /cloud-sql-proxy
+            depends_on:
+            env: []
+            image: gcr.io/cloud-sql-connectors/cloud-sql-proxy
+            liveness_probe: []
+            name: cloud-sql-proxy
+            readiness_probe: []
+            source_code: []
+            volume_mounts: []
+            working_dir:
+          - args:
+            base_image_uri:
+            command:
+            depends_on:
+            env: []
+            image: us-docker.pkg.dev/cloudrun/container/hello
+            liveness_probe: []
+            name: frontend
+            ports:
+              - container_port: 8080
+            readiness_probe: []
+            source_code: []
+            volume_mounts: []
+            working_dir:
+        encryption_key:
+        execution_environment: EXECUTION_ENVIRONMENT_GEN2
+        gpu_zonal_redundancy_disabled:
+        health_check_disabled:
+        labels:
+        node_selector: []
+        revision:
+        scaling:
+          - max_instance_count: 3
+            min_instance_count: 1
+        service_account: gf-rrag-fe-0@prefix-gf-rrag-0.iam.gserviceaccount.com
+        service_mesh: []
+        session_affinity:
+        volumes: []
+        vpc_access:
+          - connector:
+            egress: ALL_TRAFFIC
+            network_interfaces:
+              - network: projects/prefix-gf-rrag-hp-0/global/networks/net-0
+                subnetwork: projects/prefix-gf-rrag-hp-0/regions/europe-west1/subnetworks/sub-0
+                tags: []
     terraform_labels:
       goog-terraform-provisioned: 'true'
-    timeouts: null
+    timeouts:
   module.cloud_run_frontend.google_cloud_run_v2_service_iam_binding.binding["roles/run.invoker"]:
     condition: []
-    members: null
+    members:
     role: roles/run.invoker
   module.cloud_run_ingestion.google_cloud_run_v2_job.job_unmanaged[0]:
-    annotations: null
+    annotations:
     binary_authorization: []
-    client: null
-    client_version: null
+    client:
+    client_version:
     deletion_protection: true
     effective_labels:
       goog-terraform-provisioned: 'true'
-    labels: null
+    labels:
     location: europe-west1
     name: gf-rrag-0-ingestion
     project: prefix-gf-rrag-0
-    run_execution_token: null
-    start_execution_token: null
+    run_execution_token:
+    start_execution_token:
     template:
-    - annotations: null
-      labels: null
-      template:
-      - containers:
-        - command:
-          - /cloud-sql-proxy
-          depends_on: null
-          env: []
-          image: gcr.io/cloud-sql-connectors/cloud-sql-proxy
-          name: cloudsql-proxy
-          ports: []
-          volume_mounts: []
-          working_dir: null
-        - args: null
-          command: null
-          depends_on: null
-          env: []
-          image: us-docker.pkg.dev/cloudrun/container/hello
-          name: ingestion
-          ports: []
-          volume_mounts: []
-          working_dir: null
-        encryption_key: null
-        gpu_zonal_redundancy_disabled: null
-        max_retries: 3
-        node_selector: []
-        service_account: gf-rrag-ing-0@prefix-gf-rrag-0.iam.gserviceaccount.com
-        volumes: []
-        vpc_access:
-        - connector: null
-          egress: ALL_TRAFFIC
-          network_interfaces:
-          - network: projects/prefix-gf-rrag-hp-0/global/networks/net-0
-            subnetwork: projects/prefix-gf-rrag-hp-0/regions/europe-west1/subnetworks/sub-0
-            tags: []
+      - annotations:
+        labels:
+        template:
+          - containers:
+              - command:
+                  - /cloud-sql-proxy
+                depends_on:
+                env: []
+                image: gcr.io/cloud-sql-connectors/cloud-sql-proxy
+                name: cloudsql-proxy
+                ports: []
+                volume_mounts: []
+                working_dir:
+              - args:
+                command:
+                depends_on:
+                env: []
+                image: us-docker.pkg.dev/cloudrun/container/hello
+                name: ingestion
+                ports: []
+                volume_mounts: []
+                working_dir:
+            encryption_key:
+            gpu_zonal_redundancy_disabled:
+            max_retries: 3
+            node_selector: []
+            service_account: gf-rrag-ing-0@prefix-gf-rrag-0.iam.gserviceaccount.com
+            volumes: []
+            vpc_access:
+              - connector:
+                egress: ALL_TRAFFIC
+                network_interfaces:
+                  - network: projects/prefix-gf-rrag-hp-0/global/networks/net-0
+                    subnetwork: projects/prefix-gf-rrag-hp-0/regions/europe-west1/subnetworks/sub-0
+                    tags: []
     terraform_labels:
       goog-terraform-provisioned: 'true'
-    timeouts: null
+    timeouts:
   module.cloud_run_ingestion.google_cloud_run_v2_job_iam_binding.binding["roles/run.invoker"]:
     condition: []
     members:
-    - serviceAccount:gf-rrag-ing-sched-0@prefix-gf-rrag-0.iam.gserviceaccount.com
+      - serviceAccount:gf-rrag-ing-sched-0@prefix-gf-rrag-0.iam.gserviceaccount.com
     role: roles/run.invoker
   module.cloudsql.google_sql_database.databases["gf-rrag-0"]:
     deletion_policy: DELETE
     instance: gf-rrag-0
     name: gf-rrag-0
     project: prefix-gf-rrag-0
-    timeouts: null
+    timeouts:
   module.cloudsql.google_sql_database_instance.primary:
-    backupdr_backup: null
+    backupdr_backup:
     clone: []
     database_version: POSTGRES_14
     deletion_protection: true
-    final_backup_description: null
+    final_backup_description:
     name: gf-rrag-0
     point_in_time_restore_context: []
     project: prefix-gf-rrag-0
     region: europe-west1
     restore_backup_context: []
-    root_password: null
-    root_password_wo: null
-    root_password_wo_version: null
+    root_password:
+    root_password_wo:
+    root_password_wo_version:
     settings:
-    - activation_policy: ALWAYS
-      active_directory_config: []
-      advanced_machine_features: []
-      auto_upgrade_enabled: null
-      availability_type: REGIONAL
-      collation: null
-      database_flags:
-      - name: cloudsql.iam_authentication
-        value: 'on'
-      deletion_protection_enabled: true
-      deny_maintenance_period: []
-      disk_autoresize: true
-      disk_autoresize_limit: 0
-      disk_type: PD_SSD
-      edition: ENTERPRISE
-      enable_dataplex_integration: null
-      enable_google_ml_integration: null
-      entraid_config: []
-      final_backup_config: []
-      ip_configuration:
-      - allocated_ip_range: null
-        authorized_networks: []
-        custom_subject_alternative_names: null
-        enable_private_path_for_google_cloud_services: false
-        ipv4_enabled: false
-        private_network: null
-        psc_config:
-        - allowed_consumer_projects:
-          - prefix-gf-rrag-0
-          network_attachment_uri: ''
-          psc_auto_connections: []
-          psc_enabled: true
-        server_ca_pool: null
-        server_certificate_rotation_mode: null
-      maintenance_window: []
-      password_validation_policy: []
-      pricing_plan: PER_USE
-      retain_backups_on_delete: null
-      sql_server_audit_config: []
-      tier: db-f1-micro
-      time_zone: null
-    timeouts: null
+      - activation_policy: ALWAYS
+        active_directory_config: []
+        advanced_machine_features: []
+        auto_upgrade_enabled:
+        availability_type: REGIONAL
+        collation:
+        database_flags:
+          - name: cloudsql.iam_authentication
+            value: 'on'
+        deletion_protection_enabled: true
+        deny_maintenance_period: []
+        disk_autoresize: true
+        disk_autoresize_limit: 0
+        disk_type: PD_SSD
+        edition: ENTERPRISE
+        enable_dataplex_integration:
+        enable_google_ml_integration:
+        entraid_config: []
+        final_backup_config: []
+        ip_configuration:
+          - allocated_ip_range:
+            authorized_networks: []
+            custom_subject_alternative_names:
+            enable_private_path_for_google_cloud_services: false
+            ipv4_enabled: false
+            private_network:
+            psc_config:
+              - allowed_consumer_projects:
+                  - prefix-gf-rrag-0
+                network_attachment_uri: ''
+                psc_auto_connections: []
+                psc_enabled: true
+            server_ca_pool:
+            server_certificate_rotation_mode:
+        maintenance_window: []
+        password_validation_policy: []
+        pricing_plan: PER_USE
+        retain_backups_on_delete:
+        sql_server_audit_config: []
+        tier: db-f1-micro
+        time_zone:
+    timeouts:
   module.cloudsql.google_sql_user.users["gf-rrag-fe-0@prefix-gf-rrag-0.iam.gserviceaccount.com"]:
-    database_roles: null
+    database_roles:
     deletion_policy: DELETE
     instance: gf-rrag-0
     name: gf-rrag-fe-0@prefix-gf-rrag-0.iam
-    password: null
+    password:
     password_policy: []
-    password_wo: null
-    password_wo_version: null
+    password_wo:
+    password_wo_version:
     project: prefix-gf-rrag-0
-    timeouts: null
+    timeouts:
     type: CLOUD_IAM_SERVICE_ACCOUNT
   module.cloudsql.google_sql_user.users["gf-rrag-ing-0@prefix-gf-rrag-0.iam.gserviceaccount.com"]:
-    database_roles: null
+    database_roles:
+      - cloudsqlsuperuser
     deletion_policy: DELETE
     instance: gf-rrag-0
     name: gf-rrag-ing-0@prefix-gf-rrag-0.iam
-    password: null
+    password:
     password_policy: []
-    password_wo: null
-    password_wo_version: null
+    password_wo:
+    password_wo_version:
     project: prefix-gf-rrag-0
-    timeouts: null
+    timeouts:
     type: CLOUD_IAM_SERVICE_ACCOUNT
   module.dns_private_zone_cloudsql.google_dns_managed_zone.dns_managed_zone[0]:
     cloud_logging_config:
-    - enable_logging: false
+      - enable_logging: false
     description: Terraform managed.
     effective_labels:
       goog-terraform-provisioned: 'true'
     force_destroy: false
     forwarding_config: []
-    labels: null
+    labels:
     name: gf-rrag-0-cloudsql
     peering_config: []
     private_visibility_config:
-    - gke_clusters: []
-      networks:
-      - network_url: projects/prefix-gf-rrag-hp-0/global/networks/net-0
+      - gke_clusters: []
+        networks:
+          - network_url: projects/prefix-gf-rrag-hp-0/global/networks/net-0
     project: prefix-gf-rrag-0
     reverse_lookup: false
     service_directory_config: []
     terraform_labels:
       goog-terraform-provisioned: 'true'
-    timeouts: null
+    timeouts:
     visibility: private
   module.lb_external[0].google_compute_backend_service.default["default"]:
-    affinity_cookie_ttl_sec: null
+    affinity_cookie_ttl_sec:
     backend:
-    - balancing_mode: UTILIZATION
-      capacity_scaler: 1
-      custom_metrics: []
-      description: Terraform managed.
-      preference: ''
-      traffic_duration: ''
+      - balancing_mode: UTILIZATION
+        capacity_scaler: 1
+        custom_metrics: []
+        description: Terraform managed.
+        preference: ''
+        traffic_duration: ''
     circuit_breakers: []
-    compression_mode: null
+    compression_mode:
     connection_draining_timeout_sec: 300
     consistent_hash: []
     custom_metrics: []
-    custom_request_headers: null
-    custom_response_headers: null
+    custom_request_headers:
+    custom_response_headers:
     description: Terraform managed.
     dynamic_forwarding: []
-    edge_security_policy: null
-    enable_cdn: null
-    external_managed_migration_state: null
-    external_managed_migration_testing_percentage: null
-    health_checks: null
-    ip_address_selection_policy: null
+    edge_security_policy:
+    enable_cdn:
+    external_managed_migration_state:
+    external_managed_migration_testing_percentage:
+    health_checks:
+    ip_address_selection_policy:
     load_balancing_scheme: EXTERNAL_MANAGED
     locality_lb_policies: []
-    locality_lb_policy: null
+    locality_lb_policy:
     max_stream_duration: []
     name: gf-rrag-0-external-default
     network_pass_through_lb_traffic_policy: []
@@ -628,56 +630,56 @@ values:
     project: prefix-gf-rrag-0
     protocol: HTTP
     security_settings: []
-    service_lb_policy: null
+    service_lb_policy:
     strong_session_affinity_cookie: []
-    timeouts: null
+    timeouts:
     tls_settings: []
   module.lb_external[0].google_compute_global_forwarding_rule.default[""]:
-    allow_psc_global_access: null
+    allow_psc_global_access:
     description: Terraform managed.
-    external_managed_backend_bucket_migration_state: null
-    external_managed_backend_bucket_migration_testing_percentage: null
+    external_managed_backend_bucket_migration_state:
+    external_managed_backend_bucket_migration_testing_percentage:
     ip_protocol: TCP
-    ip_version: null
-    labels: null
+    ip_version:
+    labels:
     load_balancing_scheme: EXTERNAL_MANAGED
     metadata_filters: []
     name: gf-rrag-0-external
-    no_automate_dns_zone: null
+    no_automate_dns_zone:
     port_range: '80'
     project: prefix-gf-rrag-0
-    source_ip_ranges: null
-    timeouts: null
+    source_ip_ranges:
+    timeouts:
   module.lb_external[0].google_compute_managed_ssl_certificate.default["default"]:
-    description: null
+    description:
     managed:
-    - domains:
-      - your-domain.com
+      - domains:
+          - your-domain.com
     name: gf-rrag-0-external-default
     project: prefix-gf-rrag-0
-    timeouts: null
+    timeouts:
     type: MANAGED
   module.lb_external[0].google_compute_region_network_endpoint_group.serverless["gf-rrag-0-external"]:
     app_engine: []
     cloud_function: []
     cloud_run:
-    - tag: null
-      url_mask: null
+      - tag:
+        url_mask:
     description: Terraform managed.
     name: gf-rrag-0-external-gf-rrag-0-external
     network_endpoint_type: SERVERLESS
     project: prefix-gf-rrag-0
-    psc_target_service: null
+    psc_target_service:
     region: europe-west1
     serverless_deployment: []
-    subnetwork: null
-    timeouts: null
+    subnetwork:
+    timeouts:
   module.lb_external[0].google_compute_target_http_proxy.new[0]:
     description: Terraform managed.
-    http_keep_alive_timeout_sec: null
+    http_keep_alive_timeout_sec:
     name: gf-rrag-0-external
     project: prefix-gf-rrag-0
-    timeouts: null
+    timeouts:
   module.lb_external[0].google_compute_url_map.default:
     default_custom_error_response_policy: []
     default_route_action: []
@@ -689,40 +691,40 @@ values:
     path_matcher: []
     project: prefix-gf-rrag-0
     test: []
-    timeouts: null
+    timeouts:
   module.lb_external_redirect[0].google_compute_global_forwarding_rule.default[""]:
-    allow_psc_global_access: null
+    allow_psc_global_access:
     description: Terraform managed.
-    external_managed_backend_bucket_migration_state: null
-    external_managed_backend_bucket_migration_testing_percentage: null
+    external_managed_backend_bucket_migration_state:
+    external_managed_backend_bucket_migration_testing_percentage:
     ip_protocol: TCP
-    ip_version: null
-    labels: null
+    ip_version:
+    labels:
     load_balancing_scheme: EXTERNAL_MANAGED
     metadata_filters: []
     name: gf-rrag-0-redirect
-    no_automate_dns_zone: null
+    no_automate_dns_zone:
     port_range: '80'
     project: prefix-gf-rrag-0
-    source_ip_ranges: null
-    timeouts: null
+    source_ip_ranges:
+    timeouts:
   module.lb_external_redirect[0].google_compute_target_http_proxy.new[0]:
     description: Terraform managed.
-    http_keep_alive_timeout_sec: null
+    http_keep_alive_timeout_sec:
     name: gf-rrag-0-redirect
     project: prefix-gf-rrag-0
-    timeouts: null
+    timeouts:
   module.lb_external_redirect[0].google_compute_url_map.default:
     default_custom_error_response_policy: []
     default_route_action: []
-    default_service: null
+    default_service:
     default_url_redirect:
-    - host_redirect: null
-      https_redirect: true
-      path_redirect: null
-      prefix_redirect: null
-      redirect_response_code: MOVED_PERMANENTLY_DEFAULT
-      strip_query: false
+      - host_redirect:
+        https_redirect: true
+        path_redirect:
+        prefix_redirect:
+        redirect_response_code: MOVED_PERMANENTLY_DEFAULT
+        strip_query: false
     description: HTTP to HTTPS redirect.
     header_action: []
     host_rule: []
@@ -730,47 +732,47 @@ values:
     path_matcher: []
     project: prefix-gf-rrag-0
     test: []
-    timeouts: null
+    timeouts:
   module.lb_internal[0].google_compute_forwarding_rule.default:
-    all_ports: null
-    allow_global_access: null
-    allow_psc_global_access: null
-    backend_service: null
+    all_ports:
+    allow_global_access:
+    allow_psc_global_access:
+    backend_service:
     description: Terraform managed.
-    ip_collection: null
+    ip_collection:
     ip_protocol: TCP
-    is_mirroring_collector: null
-    labels: null
+    is_mirroring_collector:
+    labels:
     load_balancing_scheme: INTERNAL_MANAGED
     name: gf-rrag-0-internal
     network: projects/prefix-gf-rrag-hp-0/global/networks/net-0
     network_tier: PREMIUM
-    no_automate_dns_zone: null
+    no_automate_dns_zone:
     port_range: '443'
-    ports: null
+    ports:
     project: prefix-gf-rrag-0
     recreate_closed_psc: false
     region: europe-west1
-    service_label: null
-    source_ip_ranges: null
+    service_label:
+    source_ip_ranges:
     subnetwork: projects/prefix-gf-rrag-hp-0/regions/europe-west1/subnetworks/sub-0
-    timeouts: null
+    timeouts:
   module.lb_internal[0].google_compute_region_backend_service.default["default"]:
-    affinity_cookie_ttl_sec: null
+    affinity_cookie_ttl_sec:
     backend:
-    - balancing_mode: UTILIZATION
-      capacity_scaler: 1
-      custom_metrics: []
-      description: Terraform managed.
-      failover: false
-      max_connections: null
-      max_connections_per_endpoint: null
-      max_connections_per_instance: null
-      max_rate: null
-      max_rate_per_endpoint: null
-      max_rate_per_instance: null
-      max_utilization: null
-      traffic_duration: ''
+      - balancing_mode: UTILIZATION
+        capacity_scaler: 1
+        custom_metrics: []
+        description: Terraform managed.
+        failover: false
+        max_connections:
+        max_connections_per_endpoint:
+        max_connections_per_instance:
+        max_rate:
+        max_rate_per_endpoint:
+        max_rate_per_instance:
+        max_utilization:
+        traffic_duration: ''
     circuit_breakers: []
     connection_draining_timeout_sec: 300
     connection_tracking_policy: []
@@ -778,15 +780,15 @@ values:
     custom_metrics: []
     description: Terraform managed.
     dynamic_forwarding: []
-    enable_cdn: null
+    enable_cdn:
     failover_policy: []
     ha_policy: []
-    health_checks: null
-    ip_address_selection_policy: null
+    health_checks:
+    ip_address_selection_policy:
     load_balancing_scheme: INTERNAL_MANAGED
-    locality_lb_policy: null
+    locality_lb_policy:
     name: gf-rrag-0-internal-default
-    network: null
+    network:
     network_pass_through_lb_traffic_policy: []
     outlier_detection: []
     params: []
@@ -795,32 +797,32 @@ values:
     region: europe-west1
     strong_session_affinity_cookie: []
     subsetting: []
-    timeouts: null
+    timeouts:
     tls_settings: []
   module.lb_internal[0].google_compute_region_network_endpoint_group.default["gf-rrag-0-internal"]:
     app_engine: []
     cloud_function: []
     cloud_run:
-    - tag: null
-      url_mask: null
+      - tag:
+        url_mask:
     description: Terraform managed.
     name: gf-rrag-0-internal-gf-rrag-0-internal
     network_endpoint_type: SERVERLESS
     project: prefix-gf-rrag-0
-    psc_target_service: null
+    psc_target_service:
     region: europe-west1
-    subnetwork: null
-    timeouts: null
+    subnetwork:
+    timeouts:
   module.lb_internal[0].google_compute_region_target_https_proxy.default[0]:
     description: Terraform managed.
-    http_keep_alive_timeout_sec: null
+    http_keep_alive_timeout_sec:
     name: gf-rrag-0-internal
     project: prefix-gf-rrag-0
     region: europe-west1
-    server_tls_policy: null
-    ssl_certificates: null
-    ssl_policy: null
-    timeouts: null
+    server_tls_policy:
+    ssl_certificates:
+    ssl_policy:
+    timeouts:
   module.lb_internal[0].google_compute_region_url_map.default:
     default_route_action: []
     default_url_redirect: []
@@ -832,29 +834,29 @@ values:
     project: prefix-gf-rrag-0
     region: europe-west1
     test: []
-    timeouts: null
+    timeouts:
   module.lb_internal_dns[0].google_dns_managed_zone.dns_managed_zone[0]:
     cloud_logging_config:
-    - enable_logging: false
+      - enable_logging: false
     description: Terraform managed.
     dns_name: example.com.
     effective_labels:
       goog-terraform-provisioned: 'true'
     force_destroy: false
     forwarding_config: []
-    labels: null
+    labels:
     name: gf-rrag-0
     peering_config: []
     private_visibility_config:
-    - gke_clusters: []
-      networks:
-      - network_url: projects/prefix-gf-rrag-hp-0/global/networks/net-0
+      - gke_clusters: []
+        networks:
+          - network_url: projects/prefix-gf-rrag-hp-0/global/networks/net-0
     project: prefix-gf-rrag-0
     reverse_lookup: false
     service_directory_config: []
     terraform_labels:
       goog-terraform-provisioned: 'true'
-    timeouts: null
+    timeouts:
     visibility: private
   module.lb_internal_dns[0].google_dns_record_set.dns_record_set["A example.com"]:
     managed_zone: gf-rrag-0
@@ -864,46 +866,46 @@ values:
     ttl: 300
     type: A
   module.lb_internal_redirect[0].google_compute_forwarding_rule.default:
-    all_ports: null
-    allow_global_access: null
-    allow_psc_global_access: null
-    backend_service: null
+    all_ports:
+    allow_global_access:
+    allow_psc_global_access:
+    backend_service:
     description: Terraform managed.
-    ip_collection: null
+    ip_collection:
     ip_protocol: TCP
-    is_mirroring_collector: null
-    labels: null
+    is_mirroring_collector:
+    labels:
     load_balancing_scheme: INTERNAL_MANAGED
     name: gf-rrag-0-internal-redirect
     network: projects/prefix-gf-rrag-hp-0/global/networks/net-0
     network_tier: PREMIUM
-    no_automate_dns_zone: null
+    no_automate_dns_zone:
     port_range: '80'
-    ports: null
+    ports:
     project: prefix-gf-rrag-0
     recreate_closed_psc: false
     region: europe-west1
-    service_label: null
-    source_ip_ranges: null
+    service_label:
+    source_ip_ranges:
     subnetwork: projects/prefix-gf-rrag-hp-0/regions/europe-west1/subnetworks/sub-0
-    timeouts: null
+    timeouts:
   module.lb_internal_redirect[0].google_compute_region_target_http_proxy.default[0]:
     description: Terraform managed.
-    http_keep_alive_timeout_sec: null
+    http_keep_alive_timeout_sec:
     name: gf-rrag-0-internal-redirect
     project: prefix-gf-rrag-0
     region: europe-west1
-    timeouts: null
+    timeouts:
   module.lb_internal_redirect[0].google_compute_region_url_map.default:
     default_route_action: []
-    default_service: null
+    default_service:
     default_url_redirect:
-    - host_redirect: null
-      https_redirect: true
-      path_redirect: null
-      prefix_redirect: null
-      redirect_response_code: MOVED_PERMANENTLY_DEFAULT
-      strip_query: false
+      - host_redirect:
+        https_redirect: true
+        path_redirect:
+        prefix_redirect:
+        redirect_response_code: MOVED_PERMANENTLY_DEFAULT
+        strip_query: false
     description: HTTP to HTTPS redirect.
     header_action: []
     host_rule: []
@@ -912,7 +914,7 @@ values:
     project: prefix-gf-rrag-0
     region: europe-west1
     test: []
-    timeouts: null
+    timeouts:
 
 counts:
   google_bigquery_dataset: 1
@@ -951,15 +953,8 @@ counts:
 
 outputs:
   commands: "  # Run the following commands to deploy the application.\n  # Alternatively,\
-    \ deploy the application through your CI/CD pipeline.\n\n  # Set the postgres\
-    \ user password\n  -> gcloud sql users set-password postgres \\\n      --password\
-    \ your_complex_pwd \\\n      --instance gf-rrag-0 \\\n      --project prefix-gf-rrag-0\
-    \ \\\n      --impersonate-service-account=iac-rw@prefix-gf-rrag-0.iam.gserviceaccount.com\n\
-    \n  # Install the vector extension in CloudSQL\n  -> # In https://console.cloud.google.com/sql/instances/gf-rrag-0/studio\n\
-    \     # Select the gf-rrag-0 database and enter with postgres user.\n     # In\
-    \ the Editor 1 tab, run this query: CREATE EXTENSION IF NOT EXISTS vector;\n \
-    \    # This requires the user to be CloudSQL admin.\n\n  # Load sample data into\
-    \ BigQuery\n  gcloud config set auth/impersonate_service_account iac-rw@prefix-gf-rrag-0.iam.gserviceaccount.com\n\
+    \ deploy the application through your CI/CD pipeline.\n\n  # Load sample data\
+    \ into BigQuery\n  gcloud config set auth/impersonate_service_account iac-rw@prefix-gf-rrag-0.iam.gserviceaccount.com\n\
     \  bq load \\\n    --project_id prefix-gf-rrag-0 \\\n    --source_format=CSV \\\
     \n    --skip_leading_rows=1 \\\n    --autodetect \\\n    prefix-gf-rrag-0:gf_rrag_0.gf_rrag_0\
     \ \\\n    ./data/top-100-imdb-movies.csv\n  gcloud config unset auth/impersonate_service_account\n\
@@ -974,7 +969,13 @@ outputs:
     \ \\\n    --project prefix-gf-rrag-0 \\\n    --region europe-west1 \\\n    --container=ingestion\
     \ \\\n    --image=europe-west1-docker.pkg.dev/prefix-gf-rrag-0/gf-rrag-0/ingestion\
     \ \\\n    --set-env-vars BQ_DATASET=gf_rrag_0,BQ_TABLE=gf_rrag_0,DB_NAME=gf-rrag-0,DB_SA=gf-rrag-ing-0@prefix-gf-rrag-0.iam,DB_TABLE=gf-rrag-0,PROJECT_ID=prefix-gf-rrag-0,REGION=europe-west1\n\
-    \n  # Frontend Cloud Run\n  gcloud builds submit ./apps/rag/frontend \\\n    --project prefix-gf-rrag-0 \\\n    --tag europe-west1-docker.pkg.dev/prefix-gf-rrag-0/gf-rrag-0/frontend \\\n    --service-account projects/prefix-gf-rrag-0/serviceAccounts/gf-rrag-fe-build-0@prefix-gf-rrag-0.iam.gserviceaccount.com \\\n    --default-buckets-behavior=REGIONAL_USER_OWNED_BUCKET \\\n    --region europe-west1 \\\n    --quiet \\\n    --impersonate-service-account=iac-rw@prefix-gf-rrag-0.iam.gserviceaccount.com\n\
+    \n  gcloud run jobs execute gf-rrag-0-ingestion \\\n    --impersonate-service-account=iac-rw@prefix-gf-rrag-0.iam.gserviceaccount.com\
+    \ \\\n    --project prefix-gf-rrag-0 \\\n    --region europe-west1 \\\n    --wait\n\
+    \n  # Frontend Cloud Run\n  gcloud builds submit ./apps/rag/frontend \\\n    --project\
+    \ prefix-gf-rrag-0 \\\n    --tag europe-west1-docker.pkg.dev/prefix-gf-rrag-0/gf-rrag-0/frontend\
+    \ \\\n    --service-account projects/prefix-gf-rrag-0/serviceAccounts/gf-rrag-fe-build-0@prefix-gf-rrag-0.iam.gserviceaccount.com\
+    \ \\\n    --default-buckets-behavior=REGIONAL_USER_OWNED_BUCKET \\\n    --region\
+    \ europe-west1 \\\n    --quiet \\\n    --impersonate-service-account=iac-rw@prefix-gf-rrag-0.iam.gserviceaccount.com\n\
     \n  gcloud run deploy gf-rrag-0-frontend \\\n    --impersonate-service-account=iac-rw@prefix-gf-rrag-0.iam.gserviceaccount.com\
     \ \\\n    --project prefix-gf-rrag-0 \\\n    --region europe-west1 \\\n    --container=frontend\
     \ \\\n    --image=europe-west1-docker.pkg.dev/prefix-gf-rrag-0/gf-rrag-0/frontend\

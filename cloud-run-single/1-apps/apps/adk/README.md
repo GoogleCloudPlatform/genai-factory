@@ -29,7 +29,7 @@ curl -X POST ${APP_ADDRESS}/run_sse \
     "new_message": {
         "role": "user",
         "parts": [{
-        "text": "What is the capital of Canada?"
+        "text": "{\"country\": \"Canada\"}"
         }]
     },
     "streaming": false

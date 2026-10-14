@@ -23,10 +23,10 @@ GCS_SOURCE_BLOB_NAME = os.environ.get("GCS_SOURCE_BLOB_NAME", "data.jsonl")
 
 # Embedding Model Configuration
 EMBEDDING_MODEL_NAME = os.environ.get("EMBEDDING_MODEL_NAME",
-                                      "text-multilingual-embedding-002")
-EMBEDDING_DIMENSIONS = int(os.environ.get("EMBEDDING_DIMENSIONS", 768))
+                                      "gemini-embedding-001")
+EMBEDDING_DIMENSIONS = int(os.environ.get("EMBEDDING_DIMENSIONS", 3072))
 EMBEDDING_BATCH_SIZE = int(os.environ.get(
-    "EMBEDDING_BATCH_SIZE", 200))  # Batch for calling the embedding model API
+    "EMBEDDING_BATCH_SIZE", 25))  # Batch for calling the embedding model API
 
 # Vector Search Configuration
 VECTOR_SEARCH_INDEX_NAME = os.environ.get("VECTOR_SEARCH_INDEX_NAME")

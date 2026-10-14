@@ -26,11 +26,19 @@ services:
   - cloudresourcemanager.googleapis.com
   - cloudscheduler.googleapis.com
   - run.googleapis.com
+  - serviceusage.googleapis.com
   # To create LBs
   - compute.googleapis.com
   # Needed for ILB only
   - certificatemanager.googleapis.com
   - privateca.googleapis.com
+
+org_policies:
+  compute.restrictSharedVpcSubnetworks:
+    rules:
+      - allow:
+          values:
+            - projects/${try(projects["host"], networking_config["host_project_id"])}/regions/${networking_config["region"]}/subnetworks/${networking_config["subnet_name"]}
 
 buckets:
   iac-state:
@@ -65,6 +73,7 @@ iam_by_principals:
     - roles/cloudscheduler.admin
     - roles/compute.loadBalancerAdmin
     - roles/run.admin
+    - roles/serviceusage.serviceUsageConsumer
     - roles/storage.admin
     # Needed for ILB only
     - roles/certificatemanager.owner
@@ -80,6 +89,7 @@ iam_by_principals:
   $iam_principals:service_accounts/_self_/nl2sql-0:
     - roles/bigquery.user
     - roles/bigquery.dataViewer
+    - roles/logging.logWriter
 # Grant roles/aiplatform.user as additive,
 # as it is authoritatively granted by aiplatform APIs to default SA
 iam_bindings_additive:

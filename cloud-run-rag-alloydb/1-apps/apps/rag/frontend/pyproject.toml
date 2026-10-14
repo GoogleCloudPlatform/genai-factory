@@ -7,7 +7,7 @@ requires-python = ">=3.12"
 dependencies = [
     "fastapi[standard]>=0.115.12",
     "google-cloud-logging>=3.12.1",
-    "google-genai>=1.19.0",
+    "google-genai>=2.0.0",
     "numpy>=2.3.0",
     "sqlalchemy>=2.0.41",
     "google-cloud-alloydb-connector[pg8000]>=0.11.2"

@@ -68,19 +68,17 @@ locals {
     }
   })
   tfvars = {
-    network_attachment_id = local.network_attachment_id
-    networking_config     = local.networking_config
-    prefix                = var.prefix
-    project_id            = local.projects["service-01"].id
-    project_number        = local.projects["service-01"].number
-    proxy_ip              = var.networking_config.proxy_config.ip_address
-    proxy_port            = var.networking_config.proxy_config.port
-    region                = var.region
+    enable_deletion_protection = var.enable_deletion_protection
+    network_attachment_id      = local.network_attachment_id
+    networking_config          = local.networking_config
+    prefix                     = var.prefix
+    project_id                 = local.projects["service-01"].id
+    project_number             = local.projects["service-01"].number
+    proxy_ip                   = var.networking_config.proxy_config.ip_address
+    proxy_port                 = var.networking_config.proxy_config.port
+    region                     = var.region
     service_account_emails = {
       for k, v in module.projects.service_accounts : k => v.email
-    }
-    service_account_ids = {
-      for k, v in module.projects.service_accounts : k => v.id
     }
   }
 }

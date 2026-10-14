@@ -170,7 +170,7 @@ variable "vector_search_config" {
       }), {})
     }), {})
     approximate_neighbors_count = optional(number, 150)
-    dimensions                  = optional(number, 768)
+    dimensions                  = optional(number, 3072)
     distance_measure_type       = optional(string, "DOT_PRODUCT_DISTANCE")
     index_shard_size            = optional(string, "SHARD_SIZE_SMALL")
     index_update_method         = optional(string, "STREAM_UPDATE")

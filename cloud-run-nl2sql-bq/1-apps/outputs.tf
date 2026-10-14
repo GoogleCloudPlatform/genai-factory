@@ -61,7 +61,7 @@ output "commands" {
   # Cloud Run
   gcloud builds submit ./apps/nl2sql \
     --project ${var.project_id} \
-    --tag ${var.region}-docker.pkg.dev/${var.project_id}/${var.name} \
+    --tag ${var.region}-docker.pkg.dev/${var.project_id}/${var.name}/nl2sql \
     --service-account ${local.service_account_ids["service-01/nl2sql-build-0"]} \
     --default-buckets-behavior=REGIONAL_USER_OWNED_BUCKET \
     --region ${var.region} \
@@ -72,8 +72,7 @@ output "commands" {
     --impersonate-service-account=${local.service_account_emails["service-01/iac-rw"]} \
     --project ${var.project_id} \
     --region ${var.region} \
-    --container=frontend \
-    --image=${var.region}-docker.pkg.dev/${var.project_id}/${var.name} \
+    --image=${var.region}-docker.pkg.dev/${var.project_id}/${var.name}/nl2sql \
     --set-env-vars ${local.env_vars}
   EOT
 }

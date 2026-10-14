@@ -25,7 +25,9 @@ services:
   - cloudbuild.googleapis.com
   - cloudresourcemanager.googleapis.com
   - cloudscheduler.googleapis.com
+  - dns.googleapis.com
   - run.googleapis.com
+  - serviceusage.googleapis.com
   - sqladmin.googleapis.com
   # To create LBs
   - compute.googleapis.com
@@ -79,6 +81,8 @@ iam_by_principals:
     - roles/cloudscheduler.admin
     - roles/cloudsql.admin
     - roles/compute.loadBalancerAdmin
+    - roles/compute.networkAdmin
+    - roles/dns.admin
     - roles/run.admin
     - roles/serviceusage.serviceUsageConsumer
     - roles/storage.admin
@@ -90,6 +94,7 @@ iam_by_principals:
   $iam_principals:service_accounts/_self_/gf-rrag-fe-0:
     - roles/cloudsql.client
     - roles/cloudsql.instanceUser
+    - roles/logging.logWriter
   $iam_principals:service_accounts/_self_/gf-rrag-fe-build-0:
     - roles/artifactregistry.writer
     - roles/cloudbuild.builds.editor
@@ -101,6 +106,7 @@ iam_by_principals:
     - roles/bigquery.jobUser
     - roles/cloudsql.client
     - roles/cloudsql.instanceUser
+    - roles/logging.logWriter
   $iam_principals:service_accounts/_self_/gf-rrag-ing-build-0:
     - roles/artifactregistry.writer
     - roles/cloudbuild.builds.editor

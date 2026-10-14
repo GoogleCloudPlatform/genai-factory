@@ -85,9 +85,9 @@ This is useful if your networking stack (shared VPC, subnet, network attachment,
 
 | name | description | sensitive |
 |---|---|:---:|
-| [buckets](outputs.tf#L88) | Created buckets. |  |
-| [networking_config](outputs.tf#L93) | The networking configuration. |  |
-| [projects](outputs.tf#L98) | Created projects. |  |
-| [region](outputs.tf#L103) | The region where to create the resources. |  |
-| [service_accounts](outputs.tf#L108) | Created service accounts. |  |
+| [buckets](outputs.tf#L86) | Created buckets. |  |
+| [networking_config](outputs.tf#L91) | The networking configuration. |  |
+| [projects](outputs.tf#L96) | Created projects. |  |
+| [region](outputs.tf#L101) | The region where to create the resources. |  |
+| [service_accounts](outputs.tf#L106) | Created service accounts. |  |
 <!-- END TFDOC -->

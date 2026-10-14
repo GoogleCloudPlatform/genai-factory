@@ -98,7 +98,8 @@ module "cloudsql" {
       type = "CLOUD_IAM_SERVICE_ACCOUNT"
     }
     (var.service_account_emails["service-01/gf-rrag-ing-0"]) = {
-      type = "CLOUD_IAM_SERVICE_ACCOUNT"
+      type           = "CLOUD_IAM_SERVICE_ACCOUNT"
+      database_roles = ["cloudsqlsuperuser"]
     }
   }
 }

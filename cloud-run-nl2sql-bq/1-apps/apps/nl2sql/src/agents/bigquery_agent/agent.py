@@ -34,7 +34,7 @@ from src.agents.bigquery_agent.utils import (
 )
 
 os.environ["GOOGLE_CLOUD_PROJECT"] = os.environ["PROJECT_ID"]
-os.environ["GOOGLE_CLOUD_LOCATION"] = os.environ["REGION"]
+os.environ["GOOGLE_CLOUD_LOCATION"] = config.GOOGLE_CLOUD_LOCATION
 os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = "1"
 
 # Set up logging
@@ -97,7 +97,11 @@ def get_root_agent() -> LlmAgent:
       tools=[bigquery_toolset],
       before_agent_callback=load_database_settings_in_context,
       generate_content_config=types.GenerateContentConfig(
-          temperature=0.01, http_options=types.HttpOptions(timeout=120000)),
+          temperature=0.01,
+          thinking_config=types.ThinkingConfig(
+              thinking_level=config.THINKING_LEVEL),
+          http_options=types.HttpOptions(timeout=120000),
+      ),
   )
 
 
