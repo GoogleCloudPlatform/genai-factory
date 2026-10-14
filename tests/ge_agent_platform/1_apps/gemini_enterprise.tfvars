@@ -77,10 +77,13 @@ agent_registry_services = {
     protocol              = "JSONRPC"
     content               = "{}"
     agent_gateway_app_ids = ["ge-app-main"]
-    iam = {
-      "roles/iap.egressor" = [
-        "principal://goog/subject/user@example.com"
-      ]
+    access_policy_rules = {
+      allow-user = {
+        description = "Allow user to call weather-mcp"
+        principals = [
+          "principal://goog/subject/user@example.com"
+        ]
+      }
     }
   }
 }

@@ -53,7 +53,7 @@ resource "google_compute_network_attachment" "agw_network_attachment" {
 # the IAP and Model Armor authorization policies, and the Agent
 # Registry IAM bindings authorizing agent egress.
 module "agent_gateway_egress" {
-  source         = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/geap-agent-gateway?ref=v59.1.0"
+  source         = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/geap-agent-gateway?ref=v59.2.0"
   project_id     = var.project_id
   project_number = var.number
   region         = var.region
@@ -82,7 +82,7 @@ module "agent_gateway_egress" {
   iap_config = {
     fail_open            = var.agent_gateway_config.egress.iap.fail_open
     iam_enforcement_mode = var.agent_gateway_config.egress.iap.iam_enforcement_mode
-    policy_version       = var.agent_gateway_config.egress.iap.policy_version
+    policy_version       = "V2"
     timeout              = var.agent_gateway_config.egress.iap.timeout
   }
   model_armor_config = (
@@ -100,8 +100,5 @@ module "agent_gateway_egress" {
     }
     : null
   )
-  registry_iam                   = var.agent_registry_iam
-  registry_iam_bindings          = local.registry_iam_bindings
-  registry_iam_bindings_additive = local.registry_iam_bindings_additive
-  registry_iam_by_principals     = var.agent_registry_iam_by_principals
+  access_policies = local.access_policies
 }

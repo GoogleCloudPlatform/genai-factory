@@ -1,3 +1,4 @@
+---
 # Copyright 2026 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,84 +19,84 @@ values:
     role: roles/iam.serviceAccountTokenCreator
     service_account_id: projects/your-prefix-gf-geap-0/serviceAccounts/iac-rw@your-prefix-gf-geap-0.iam.gserviceaccount.com
   local_file.providers:
-    content_base64: null
+    content_base64:
     directory_permission: '0777'
     file_permission: '0644'
     filename: ../1-apps/providers.tf
-    sensitive_content: null
-    source: null
+    sensitive_content:
+    source:
   local_file.tfvars:
-    content_base64: null
+    content_base64:
     directory_permission: '0777'
     file_permission: '0644'
     filename: ../1-apps/terraform.auto.tfvars
-    sensitive_content: null
-    source: null
+    sensitive_content:
+    source:
   module.projects.module.buckets["service-01/iac-state"].google_storage_bucket.bucket[0]:
     autoclass: []
     cors: []
     custom_placement_config: []
-    default_event_based_hold: null
+    default_event_based_hold:
     deletion_policy: DELETE
     effective_labels:
       goog-terraform-provisioned: 'true'
-    enable_object_retention: null
+    enable_object_retention:
     encryption: []
     force_destroy: false
     hierarchical_namespace: []
     ip_filter: []
-    labels: null
+    labels:
     lifecycle_rule: []
     location: EUROPE-WEST1
     logging: []
     name: your-prefix-gf-geap-0-iac-state
     project: your-prefix-gf-geap-0
-    requester_pays: null
+    requester_pays:
     retention_policy: []
     storage_class: STANDARD
     terraform_labels:
       goog-terraform-provisioned: 'true'
-    timeouts: null
+    timeouts:
     uniform_bucket_level_access: true
     versioning:
-    - enabled: false
+      - enabled: false
   ? module.projects.module.buckets["service-01/iac-state"].google_storage_bucket_iam_binding.authoritative["roles/storage.objectUser"]
   : bucket: your-prefix-gf-geap-0-iac-state
     condition: []
     members:
-    - serviceAccount:iac-rw@your-prefix-gf-geap-0.iam.gserviceaccount.com
+      - serviceAccount:iac-rw@your-prefix-gf-geap-0.iam.gserviceaccount.com
     role: roles/storage.objectUser
-    timeouts: null
+    timeouts:
   ? module.projects.module.projects-iam["service-01"].google_org_policy_policy.default["discoveryengine.managed.disableCustomMcpServerConnector"]
   : dry_run_spec: []
     name: projects/your-prefix-gf-geap-0/policies/discoveryengine.managed.disableCustomMcpServerConnector
     parent: projects/your-prefix-gf-geap-0
     spec:
-    - inherit_from_parent: null
-      reset: null
-      rules:
-      - allow_all: null
-        condition: []
-        deny_all: null
-        enforce: 'FALSE'
-        parameters: null
-        values: []
-    timeouts: null
+      - inherit_from_parent:
+        reset:
+        rules:
+          - allow_all:
+            condition: []
+            deny_all:
+            enforce: 'FALSE'
+            parameters:
+            values: []
+    timeouts:
   ? module.projects.module.projects-iam["service-01"].google_org_policy_policy.default["iam.managed.disableAccessPolicyBinding"]
   : dry_run_spec: []
     name: projects/your-prefix-gf-geap-0/policies/iam.managed.disableAccessPolicyBinding
     parent: projects/your-prefix-gf-geap-0
     spec:
-    - inherit_from_parent: null
-      reset: null
-      rules:
-      - allow_all: null
-        condition: []
-        deny_all: null
-        enforce: 'FALSE'
-        parameters: null
-        values: []
-    timeouts: null
+      - inherit_from_parent:
+        reset:
+        rules:
+          - allow_all:
+            condition: []
+            deny_all:
+            enforce: 'FALSE'
+            parameters:
+            values: []
+    timeouts:
   module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["$custom_roles:psc_manager"]:
     condition: []
     project: your-prefix-gf-geap-0
@@ -103,31 +104,37 @@ values:
   module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/agentregistry.admin"]:
     condition: []
     members:
-    - serviceAccount:iac-rw@your-prefix-gf-geap-0.iam.gserviceaccount.com
+      - serviceAccount:iac-rw@your-prefix-gf-geap-0.iam.gserviceaccount.com
     project: your-prefix-gf-geap-0
     role: roles/agentregistry.admin
   module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/compute.networkAdmin"]:
     condition: []
     members:
-    - serviceAccount:iac-rw@your-prefix-gf-geap-0.iam.gserviceaccount.com
+      - serviceAccount:iac-rw@your-prefix-gf-geap-0.iam.gserviceaccount.com
     project: your-prefix-gf-geap-0
     role: roles/compute.networkAdmin
   module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/discoveryengine.admin"]:
     condition: []
     members:
-    - serviceAccount:iac-rw@your-prefix-gf-geap-0.iam.gserviceaccount.com
+      - serviceAccount:iac-rw@your-prefix-gf-geap-0.iam.gserviceaccount.com
     project: your-prefix-gf-geap-0
     role: roles/discoveryengine.admin
+  module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/iam.accessPolicyAdmin"]:
+    condition: []
+    members:
+      - serviceAccount:iac-rw@your-prefix-gf-geap-0.iam.gserviceaccount.com
+    project: your-prefix-gf-geap-0
+    role: roles/iam.accessPolicyAdmin
   module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/iap.admin"]:
     condition: []
     members:
-    - serviceAccount:iac-rw@your-prefix-gf-geap-0.iam.gserviceaccount.com
+      - serviceAccount:iac-rw@your-prefix-gf-geap-0.iam.gserviceaccount.com
     project: your-prefix-gf-geap-0
     role: roles/iap.admin
   module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/modelarmor.admin"]:
     condition: []
     members:
-    - serviceAccount:iac-rw@your-prefix-gf-geap-0.iam.gserviceaccount.com
+      - serviceAccount:iac-rw@your-prefix-gf-geap-0.iam.gserviceaccount.com
     project: your-prefix-gf-geap-0
     role: roles/modelarmor.admin
   module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/modelarmor.calloutUser"]:
@@ -137,7 +144,7 @@ values:
   ? module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/modelarmor.floorSettingsAdmin"]
   : condition: []
     members:
-    - serviceAccount:iac-rw@your-prefix-gf-geap-0.iam.gserviceaccount.com
+      - serviceAccount:iac-rw@your-prefix-gf-geap-0.iam.gserviceaccount.com
     project: your-prefix-gf-geap-0
     role: roles/modelarmor.floorSettingsAdmin
   module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/modelarmor.user"]:
@@ -147,13 +154,13 @@ values:
   module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/networksecurity.admin"]:
     condition: []
     members:
-    - serviceAccount:iac-rw@your-prefix-gf-geap-0.iam.gserviceaccount.com
+      - serviceAccount:iac-rw@your-prefix-gf-geap-0.iam.gserviceaccount.com
     project: your-prefix-gf-geap-0
     role: roles/networksecurity.admin
   module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/networkservices.admin"]:
     condition: []
     members:
-    - serviceAccount:iac-rw@your-prefix-gf-geap-0.iam.gserviceaccount.com
+      - serviceAccount:iac-rw@your-prefix-gf-geap-0.iam.gserviceaccount.com
     project: your-prefix-gf-geap-0
     role: roles/networkservices.admin
   ? module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/secretmanager.secretAccessor"]
@@ -167,47 +174,47 @@ values:
   module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/storage.admin"]:
     condition: []
     members:
-    - serviceAccount:iac-rw@your-prefix-gf-geap-0.iam.gserviceaccount.com
+      - serviceAccount:iac-rw@your-prefix-gf-geap-0.iam.gserviceaccount.com
     project: your-prefix-gf-geap-0
     role: roles/storage.admin
   module.projects.module.projects-iam["service-01"].google_project_iam_binding.bindings["iac_rw_project_iam_delegated"]:
     condition:
-    - description: Automation service account delegated grants.
-      expression: api.getAttribute('iam.googleapis.com/modifiedGrantsByRole', []).hasOnly(['roles/discoveryengine.agentspaceRestrictedUser',
-        'projects/your-prefix-gf-geap-0/roles/discoveryengineUserBusinessAiCodeOnly'])
-      title: iac_rw_delegated_grants
+      - description: Automation service account delegated grants.
+        expression: api.getAttribute('iam.googleapis.com/modifiedGrantsByRole', []).hasOnly(['roles/discoveryengine.agentspaceRestrictedUser',
+          'projects/your-prefix-gf-geap-0/roles/discoveryengineUserBusinessAiCodeOnly'])
+        title: iac_rw_delegated_grants
     members:
-    - serviceAccount:iac-rw@your-prefix-gf-geap-0.iam.gserviceaccount.com
+      - serviceAccount:iac-rw@your-prefix-gf-geap-0.iam.gserviceaccount.com
     project: your-prefix-gf-geap-0
     role: roles/resourcemanager.projectIamAdmin
   module.projects.module.projects["service-01"].data.google_storage_project_service_account.gcs_sa[0]:
     project: your-prefix-gf-geap-0
-    user_project: null
+    user_project:
   module.projects.module.projects["service-01"].google_project.project[0]:
     auto_create_network: false
     billing_account: billing-acct-id
     deletion_policy: DELETE
     effective_labels:
       goog-terraform-provisioned: 'true'
-    folder_id: null
-    labels: null
+    folder_id:
+    labels:
     name: your-prefix-gf-geap-0
     org_id: '1122334455'
     project_id: your-prefix-gf-geap-0
-    tags: null
+    tags:
     terraform_labels:
       goog-terraform-provisioned: 'true'
-    timeouts: null
+    timeouts:
   ? module.projects.module.projects["service-01"].google_project_iam_custom_role.roles["discoveryengineUserBusinessAiCodeOnly"]
   : deletion_policy: DELETE
     description: Used to grant Gemini Enterprise users access to Antigravity while
       maintaining access to single applications (GE user role granted at app level).
     permissions:
-    - businessaicode.locations.fetchQuotaStatus
-    - businessaicode.locations.generateContent
-    - businessaicode.locations.queryConfiguration
-    - businessaicode.locations.selfAssignLicense
-    - businessaicode.locations.sendTelemetry
+      - businessaicode.locations.fetchQuotaStatus
+      - businessaicode.locations.generateContent
+      - businessaicode.locations.queryConfiguration
+      - businessaicode.locations.selfAssignLicense
+      - businessaicode.locations.sendTelemetry
     project: your-prefix-gf-geap-0
     role_id: discoveryengineUserBusinessAiCodeOnly
     stage: GA
@@ -217,11 +224,11 @@ values:
     description: Allows identities to manage network attachments and accept PSC-I
       connections.
     permissions:
-    - compute.networkAttachments.create
-    - compute.networkAttachments.delete
-    - compute.networkAttachments.get
-    - compute.networkAttachments.update
-    - compute.regionOperations.get
+      - compute.networkAttachments.create
+      - compute.networkAttachments.delete
+      - compute.networkAttachments.get
+      - compute.networkAttachments.update
+      - compute.regionOperations.get
     project: your-prefix-gf-geap-0
     role_id: psc_manager
     stage: GA
@@ -332,175 +339,175 @@ values:
     disable_on_destroy: false
     project: your-prefix-gf-geap-0
     service: orgpolicy.googleapis.com
-    timeouts: null
+    timeouts:
   module.projects.module.projects["service-01"].google_project_service.project_services["agentregistry.googleapis.com"]:
     deletion_policy: DELETE
     disable_dependent_services: false
     disable_on_destroy: false
     project: your-prefix-gf-geap-0
     service: agentregistry.googleapis.com
-    timeouts: null
+    timeouts:
   module.projects.module.projects["service-01"].google_project_service.project_services["aiplatform.googleapis.com"]:
     deletion_policy: DELETE
     disable_dependent_services: false
     disable_on_destroy: false
     project: your-prefix-gf-geap-0
     service: aiplatform.googleapis.com
-    timeouts: null
+    timeouts:
   module.projects.module.projects["service-01"].google_project_service.project_services["apptopology.googleapis.com"]:
     deletion_policy: DELETE
     disable_dependent_services: false
     disable_on_destroy: false
     project: your-prefix-gf-geap-0
     service: apptopology.googleapis.com
-    timeouts: null
+    timeouts:
   ? module.projects.module.projects["service-01"].google_project_service.project_services["cloudresourcemanager.googleapis.com"]
   : deletion_policy: DELETE
     disable_dependent_services: false
     disable_on_destroy: false
     project: your-prefix-gf-geap-0
     service: cloudresourcemanager.googleapis.com
-    timeouts: null
+    timeouts:
   module.projects.module.projects["service-01"].google_project_service.project_services["compute.googleapis.com"]:
     deletion_policy: DELETE
     disable_dependent_services: false
     disable_on_destroy: false
     project: your-prefix-gf-geap-0
     service: compute.googleapis.com
-    timeouts: null
+    timeouts:
   module.projects.module.projects["service-01"].google_project_service.project_services["discoveryengine.googleapis.com"]:
     deletion_policy: DELETE
     disable_dependent_services: false
     disable_on_destroy: false
     project: your-prefix-gf-geap-0
     service: discoveryengine.googleapis.com
-    timeouts: null
+    timeouts:
   module.projects.module.projects["service-01"].google_project_service.project_services["iam.googleapis.com"]:
     deletion_policy: DELETE
     disable_dependent_services: false
     disable_on_destroy: false
     project: your-prefix-gf-geap-0
     service: iam.googleapis.com
-    timeouts: null
+    timeouts:
   module.projects.module.projects["service-01"].google_project_service.project_services["iamcredentials.googleapis.com"]:
     deletion_policy: DELETE
     disable_dependent_services: false
     disable_on_destroy: false
     project: your-prefix-gf-geap-0
     service: iamcredentials.googleapis.com
-    timeouts: null
+    timeouts:
   module.projects.module.projects["service-01"].google_project_service.project_services["iap.googleapis.com"]:
     deletion_policy: DELETE
     disable_dependent_services: false
     disable_on_destroy: false
     project: your-prefix-gf-geap-0
     service: iap.googleapis.com
-    timeouts: null
+    timeouts:
   module.projects.module.projects["service-01"].google_project_service.project_services["modelarmor.googleapis.com"]:
     deletion_policy: DELETE
     disable_dependent_services: false
     disable_on_destroy: false
     project: your-prefix-gf-geap-0
     service: modelarmor.googleapis.com
-    timeouts: null
+    timeouts:
   module.projects.module.projects["service-01"].google_project_service.project_services["networksecurity.googleapis.com"]:
     deletion_policy: DELETE
     disable_dependent_services: false
     disable_on_destroy: false
     project: your-prefix-gf-geap-0
     service: networksecurity.googleapis.com
-    timeouts: null
+    timeouts:
   module.projects.module.projects["service-01"].google_project_service.project_services["networkservices.googleapis.com"]:
     deletion_policy: DELETE
     disable_dependent_services: false
     disable_on_destroy: false
     project: your-prefix-gf-geap-0
     service: networkservices.googleapis.com
-    timeouts: null
+    timeouts:
   module.projects.module.projects["service-01"].google_project_service.project_services["observability.googleapis.com"]:
     deletion_policy: DELETE
     disable_dependent_services: false
     disable_on_destroy: false
     project: your-prefix-gf-geap-0
     service: observability.googleapis.com
-    timeouts: null
+    timeouts:
   module.projects.module.projects["service-01"].google_project_service.project_services["secretmanager.googleapis.com"]:
     deletion_policy: DELETE
     disable_dependent_services: false
     disable_on_destroy: false
     project: your-prefix-gf-geap-0
     service: secretmanager.googleapis.com
-    timeouts: null
+    timeouts:
   module.projects.module.projects["service-01"].google_project_service.project_services["serviceusage.googleapis.com"]:
     deletion_policy: DELETE
     disable_dependent_services: false
     disable_on_destroy: false
     project: your-prefix-gf-geap-0
     service: serviceusage.googleapis.com
-    timeouts: null
+    timeouts:
   module.projects.module.projects["service-01"].google_project_service.project_services["storage.googleapis.com"]:
     deletion_policy: DELETE
     disable_dependent_services: false
     disable_on_destroy: false
     project: your-prefix-gf-geap-0
     service: storage.googleapis.com
-    timeouts: null
+    timeouts:
   module.projects.module.projects["service-01"].google_project_service_identity.default["aiplatform.googleapis.com"]:
     project: your-prefix-gf-geap-0
     service: aiplatform.googleapis.com
-    timeouts: null
+    timeouts:
   module.projects.module.projects["service-01"].google_project_service_identity.default["discoveryengine.googleapis.com"]:
     project: your-prefix-gf-geap-0
     service: discoveryengine.googleapis.com
-    timeouts: null
+    timeouts:
   module.projects.module.projects["service-01"].google_project_service_identity.default["iap.googleapis.com"]:
     project: your-prefix-gf-geap-0
     service: iap.googleapis.com
-    timeouts: null
+    timeouts:
   module.projects.module.projects["service-01"].google_project_service_identity.default["modelarmor.googleapis.com"]:
     project: your-prefix-gf-geap-0
     service: modelarmor.googleapis.com
-    timeouts: null
+    timeouts:
   module.projects.module.projects["service-01"].google_project_service_identity.default["networksecurity.googleapis.com"]:
     project: your-prefix-gf-geap-0
     service: networksecurity.googleapis.com
-    timeouts: null
+    timeouts:
   module.projects.module.projects["service-01"].google_project_service_identity.default["networkservices.googleapis.com"]:
     project: your-prefix-gf-geap-0
     service: networkservices.googleapis.com
-    timeouts: null
+    timeouts:
   module.projects.module.projects["service-01"].google_project_service_identity.default["observability.googleapis.com"]:
     project: your-prefix-gf-geap-0
     service: observability.googleapis.com
-    timeouts: null
+    timeouts:
   module.projects.module.projects["service-01"].google_project_service_identity.default["secretmanager.googleapis.com"]:
     project: your-prefix-gf-geap-0
     service: secretmanager.googleapis.com
-    timeouts: null
+    timeouts:
   module.projects.module.service-accounts["service-01/iac-rw"].google_service_account.service_account[0]:
     account_id: iac-rw
-    create_ignore_already_exists: null
+    create_ignore_already_exists:
     deletion_policy: DELETE
-    description: null
+    description:
     disabled: false
     display_name: Terraform-managed.
     email: iac-rw@your-prefix-gf-geap-0.iam.gserviceaccount.com
     member: serviceAccount:iac-rw@your-prefix-gf-geap-0.iam.gserviceaccount.com
     project: your-prefix-gf-geap-0
-    timeouts: null
+    timeouts:
   module.projects.terraform_data.defaults_preconditions:
-    input: null
-    output: null
-    triggers_replace: null
+    input:
+    output:
+    triggers_replace:
   module.projects.terraform_data.project_preconditions:
-    input: null
-    output: null
-    triggers_replace: null
+    input:
+    output:
+    triggers_replace:
 
 counts:
   google_org_policy_policy: 2
   google_project: 1
-  google_project_iam_binding: 15
+  google_project_iam_binding: 16
   google_project_iam_custom_role: 2
   google_project_iam_member: 25
   google_project_service: 17
@@ -512,7 +519,7 @@ counts:
   google_storage_project_service_account: 1
   local_file: 2
   modules: 5
-  resources: 79
+  resources: 80
   terraform_data: 2
 
 outputs:

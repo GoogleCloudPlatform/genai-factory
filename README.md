@@ -11,7 +11,7 @@ Genai-factory is a collection of **end-to-end blueprints to deploy generative AI
 
 ## Cloud Foundation Fabric Compatibility
 
-Works with Cloud Foundation Fabric from [v59.1.0](https://github.com/GoogleCloudPlatform/cloud-foundation-fabric/tree/v59.1.0).
+Works with Cloud Foundation Fabric from [v59.2.0](https://github.com/GoogleCloudPlatform/cloud-foundation-fabric/tree/v59.2.0).
 Compatibility with master is not guaranteed.
 
 ## Factories
@@ -76,7 +76,7 @@ If you created the project outside genai-factory (instead of using [0-prereqs](#
 
 # Networking Configuration
 
-By default, the [0-prereqs](#0-prereqs) stages create the networking components that the generative AI  applications need. These include shared VPCs, subnets, routes, firewall policies, DNS zones, Private Google Access (PGA), and more.
+By default, the [0-prereqs](#0-prereqs) stages create the networking components that the generative AI applications need. These include shared VPCs, subnets, routes, firewall policies, DNS zones, Private Google Access (PGA), and more.
 
 You also have the option to still create the service project through [0-prereqs](#0-prereqs) but leverage existing networking infrastructure. To do so, you can set in every [0-prereqs stage](#0-prereqs) `var.networking_config.create = false` and pass the details of your existing infrastructure.
 

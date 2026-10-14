@@ -1,3 +1,4 @@
+---
 # Copyright 2026 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,10 +16,10 @@
 values:
   google_agent_registry_service.agent_registry_services["test-agent"]:
     agent_spec:
-    - content: '{}'
-      type: A2A_AGENT_CARD
+      - content: '{}'
+        type: A2A_AGENT_CARD
     deletion_policy: PREVENT
-    description: null
+    description:
     display_name: Test Agent
     endpoint_spec: []
     interfaces: []
@@ -26,145 +27,193 @@ values:
     mcp_server_spec: []
     project: test-gf-geap-0
     service_id: test-agent
-    timeouts: null
+    timeouts:
   google_agent_registry_service.agent_registry_services["test-endpoint"]:
     agent_spec: []
     deletion_policy: PREVENT
-    description: null
+    description:
     display_name: Test Endpoint
     endpoint_spec:
-    - type: NO_SPEC
+      - type: NO_SPEC
     interfaces:
-    - protocol_binding: HTTP_JSON
-      url: https://endpoint.example.com
+      - protocol_binding: HTTP_JSON
+        url: https://endpoint.example.com
     location: europe-west1
     mcp_server_spec: []
     project: test-gf-geap-0
     service_id: test-endpoint
-    timeouts: null
+    timeouts:
   google_agent_registry_service.agent_registry_services["test-mcp"]:
     agent_spec: []
     deletion_policy: PREVENT
-    description: null
+    description:
     display_name: Test MCP Server
     endpoint_spec: []
     interfaces:
-    - protocol_binding: HTTP_JSON
-      url: https://mcp.example.com
+      - protocol_binding: HTTP_JSON
+        url: https://mcp.example.com
     location: europe-west1
     mcp_server_spec:
-    - content: '{}'
-      type: TOOL_SPEC
+      - content: '{}'
+        type: TOOL_SPEC
     project: test-gf-geap-0
     service_id: test-mcp
-    timeouts: null
+    timeouts:
   google_compute_network_attachment.agw_network_attachment:
     connection_preference: ACCEPT_MANUAL
     deletion_policy: DELETE
-    description: null
+    description:
     name: agw-geap
     producer_accept_lists:
-    - test-gf-geap-0
-    producer_reject_lists: null
+      - test-gf-geap-0
+    producer_reject_lists:
     project: test-gf-geap-0
     region: europe-west1
     subnetworks:
-    - projects/test-gf-geap-hp-0/regions/europe-west1/subnetworks/sub-0
-    timeouts: null
-  module.agent_gateway_egress.google_iap_agent_registry_agent_iam_binding.bindings["test-agent/roles/iap.egressor"]:
+      - projects/test-gf-geap-hp-0/regions/europe-west1/subnetworks/sub-0
+    timeouts:
+  module.agent_gateway_egress.google_iam_project_access_policy.default["agw-geap"]:
+    access_policy_id: agw-geap
+    annotations:
+    deletion_policy: DELETE
+    details:
+      - rules:
+          - conditions:
+              - expression: destination.agent_registry.endpoint.name == 'projects/test-gf-geap-0/locations/europe-west1/endpoints/external-endpoint'
+                service: iap.googleapis.com
+            description: Allow calling external-endpoint
+            effect: ALLOW
+            excluded_principals: []
+            operation:
+              - excluded_permissions: []
+                permissions:
+                  - iap.googleapis.com/resources.egressViaIAP
+            principals:
+              - principal://goog/subject/user@example.com
+          - conditions:
+              - expression: destination.agent_registry.mcp_server.name == 'projects/test-gf-geap-0/locations/europe-west1/mcpServers/external-mcp'
+                service: iap.googleapis.com
+            description: Allow calling external-mcp
+            effect: ALLOW
+            excluded_principals: []
+            operation:
+              - excluded_permissions: []
+                permissions:
+                  - iap.googleapis.com/resources.egressViaIAP
+            principals:
+              - principal://goog/subject/user@example.com
+          - conditions:
+              - expression: destination.is_registered == true && destination.agent_registry.location
+                  == 'eu'
+                service: iap.googleapis.com
+            description: Allow registry-wide egress
+            effect: ALLOW
+            excluded_principals: []
+            operation:
+              - excluded_permissions: []
+                permissions:
+                  - iap.googleapis.com/resources.egressViaIAP
+            principals:
+              - principal://goog/subject/registry@example.com
+          - description: Allow user to call test-agent
+            effect: ALLOW
+            excluded_principals: []
+            operation:
+              - excluded_permissions: []
+                permissions:
+                  - iap.googleapis.com/resources.egressViaIAP
+            principals:
+              - principal://goog/subject/user@example.com
+          - description: Allow user to call test-endpoint
+            effect: ALLOW
+            excluded_principals: []
+            operation:
+              - excluded_permissions: []
+                permissions:
+                  - iap.googleapis.com/resources.egressViaIAP
+            principals:
+              - principal://goog/subject/user@example.com
+          - description: Allow read-only tools on test-mcp
+            effect: ALLOW
+            excluded_principals: []
+            operation:
+              - excluded_permissions: []
+                permissions:
+                  - iap.googleapis.com/resources.egressViaIAP
+            principals:
+              - principal://goog/subject/user@example.com
+          - conditions:
+              - expression: destination.unregistered.host == 'ocr.example.com' &&
+                  destination.unregistered.method == 'POST'
+                service: iap.googleapis.com
+            description: Allow POST to external OCR API
+            effect: ALLOW
+            excluded_principals: []
+            operation:
+              - excluded_permissions: []
+                permissions:
+                  - iap.googleapis.com/resources.egressViaIAP
+            principals:
+              - principalSet://goog/group/agents@example.com
+    display_name: GEAP Egress Access Policy
+    location: global
+    project: test-gf-geap-0
+    timeouts:
+  module.agent_gateway_egress.google_iam_projects_policy_binding.default["agw-geap"]:
+    annotations:
     condition: []
-    location: europe-west1
-    members:
-    - principal://goog/subject/user@example.com
+    deletion_policy: DELETE
+    display_name: GEAP Egress Access Policy
+    location: global
+    policy: projects/test-gf-geap-0/locations/global/accessPolicies/agw-geap
+    policy_binding_id: agw-geap
+    policy_kind: ACCESS
     project: test-gf-geap-0
-    role: roles/iap.egressor
-  module.agent_gateway_egress.google_iap_agent_registry_endpoint_iam_binding.bindings["test-endpoint/forecast-tool-only"]:
-    condition:
-    - description: null
-      expression: api.getAttribute('iap.googleapis.com/mcp.toolName', '') in ['get_forecast',
-        '']
-      title: forecast-tool-only
-    location: europe-west1
-    members:
-    - principal://goog/subject/user@example.com
-    project: test-gf-geap-0
-    role: roles/iap.egressor
-  module.agent_gateway_egress.google_iap_agent_registry_endpoint_iam_member.members["external-endpoint"]:
-    condition: []
-    endpoint_id: external-endpoint
-    location: europe-west1
-    member: principal://goog/subject/user@example.com
-    project: test-gf-geap-0
-    role: roles/iap.egressor
-  module.agent_gateway_egress.google_iap_agent_registry_iam_binding.authoritative["eu/roles/iap.egressor"]:
-    condition: []
-    location: eu
-    members:
-    - principal://goog/subject/registry@example.com
-    - principalSet://goog/group/agents@example.com
-    project: test-gf-geap-0
-    role: roles/iap.egressor
-  module.agent_gateway_egress.google_iap_agent_registry_iam_member.members["registry-wide"]:
-    condition: []
-    location: europe-west1
-    member: principal://goog/subject/other@example.com
-    project: test-gf-geap-0
-    role: roles/iap.egressor
-  module.agent_gateway_egress.google_iap_agent_registry_mcp_server_iam_binding.bindings["external-mcp"]:
-    condition: []
-    location: europe-west1
-    mcp_server_id: external-mcp
-    members:
-    - principal://goog/subject/user@example.com
-    project: test-gf-geap-0
-    role: roles/iap.egressor
-  module.agent_gateway_egress.google_iap_agent_registry_mcp_server_iam_member.members["test-mcp/single-agent"]:
-    condition: []
-    location: europe-west1
-    member: principal://goog/subject/user@example.com
-    project: test-gf-geap-0
-    role: roles/iap.egressor
+    target:
+      - principal_set:
+        resource: //cloudresourcemanager.googleapis.com/projects/test-gf-geap-0
+    timeouts:
   module.agent_gateway_egress.google_network_security_authz_policy.iap[0]:
     action: CUSTOM
     custom_provider:
-    - authz_extension:
-      - {}
-      cloud_iap: []
+      - authz_extension:
+          - {}
+        cloud_iap: []
     deletion_policy: DELETE
-    description: null
+    description:
     effective_labels:
       goog-terraform-provisioned: 'true'
     http_rules: []
-    labels: null
+    labels:
     location: europe-west1
     name: agw-geap-iap
     network_rules: []
     policy_profile: REQUEST_AUTHZ
     project: test-gf-geap-0
     target:
-    - load_balancing_scheme: null
+      - load_balancing_scheme:
     terraform_labels:
       goog-terraform-provisioned: 'true'
-    timeouts: null
+    timeouts:
   module.agent_gateway_egress.google_network_services_agent_connectivity_template.default[0]:
     access_path: AGENT_TO_ANYWHERE
     access_types:
-    - PRIVATE
+      - PRIVATE
     agent_connectivity_template_id: agw-geap
     deletion_policy: DELETE
     description: Terraform managed.
     effective_labels:
       goog-terraform-provisioned: 'true'
     egress_network_config:
-    - dns_peering_config: []
-      tls_config: []
-      vpc_egress: ALL_TRAFFIC
-    labels: null
+      - dns_peering_config: []
+        tls_config: []
+        vpc_egress: ALL_TRAFFIC
+    labels:
     location: europe-west1
     project: test-gf-geap-0
     terraform_labels:
       goog-terraform-provisioned: 'true'
-    timeouts: null
+    timeouts:
   module.agent_gateway_egress.google_network_services_agent_gateway.default:
     agent_connectivity_template: projects/1234567890/locations/europe-west1/agentConnectivityTemplates/agw-geap
     deletion_policy: DELETE
@@ -172,60 +221,56 @@ values:
     effective_labels:
       goog-terraform-provisioned: 'true'
     google_managed:
-    - governed_access_path: AGENT_TO_ANYWHERE
-    labels: null
+      - governed_access_path: AGENT_TO_ANYWHERE
+    labels:
     location: europe-west1
     name: agw-geap
     network_config: []
     project: test-gf-geap-0
-    protocols: null
+    protocols:
     registries:
-    - //agentregistry.googleapis.com/projects/test-gf-geap-0/locations/eu
+      - //agentregistry.googleapis.com/projects/test-gf-geap-0/locations/eu
     self_managed: []
     terraform_labels:
       goog-terraform-provisioned: 'true'
-    timeouts: null
+    timeouts:
   module.agent_gateway_egress.google_network_services_authz_extension.iap[0]:
-    authority: null
+    authority:
     deletion_policy: DELETE
-    description: null
+    description:
     effective_labels:
       goog-terraform-provisioned: 'true'
     fail_open: true
-    forward_attributes: null
-    forward_headers: null
-    labels: null
-    load_balancing_scheme: null
+    forward_attributes:
+    forward_headers:
+    labels:
+    load_balancing_scheme:
     location: europe-west1
     metadata:
       iamEnforcementMode: DRY_RUN
-      iapPolicyVersion: V1
+      iapPolicyVersion: V2
     name: agw-geap-iap
     project: test-gf-geap-0
     service: iap.googleapis.com
     terraform_labels:
       goog-terraform-provisioned: 'true'
     timeout: 2s
-    timeouts: null
+    timeouts:
 
 counts:
   google_agent_registry_service: 3
   google_compute_network_attachment: 1
-  google_iap_agent_registry_agent_iam_binding: 1
-  google_iap_agent_registry_endpoint_iam_binding: 1
-  google_iap_agent_registry_endpoint_iam_member: 1
-  google_iap_agent_registry_iam_binding: 1
-  google_iap_agent_registry_iam_member: 1
-  google_iap_agent_registry_mcp_server_iam_binding: 1
-  google_iap_agent_registry_mcp_server_iam_member: 1
+  google_iam_project_access_policy: 1
+  google_iam_projects_policy_binding: 1
   google_network_security_authz_policy: 1
   google_network_services_agent_connectivity_template: 1
   google_network_services_agent_gateway: 1
   google_network_services_authz_extension: 1
   modules: 1
-  resources: 15
+  resources: 10
 
 outputs:
+  access_policy_ids: __missing__
   agent_connectivity_template_ids:
     egress: projects/1234567890/locations/europe-west1/agentConnectivityTemplates/agw-geap
   agent_gateway_ids: __missing__
@@ -240,3 +285,4 @@ outputs:
   gemini_enterprise_assistant_names: {}
   gemini_enterprise_data_connector_names: {}
   model_armor_template_names: {}
+  policy_binding_ids: __missing__

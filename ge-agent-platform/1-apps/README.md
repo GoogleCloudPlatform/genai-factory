@@ -18,7 +18,7 @@ It performs the following tasks:
 - Configures authorization extensions and safety policies:
   - **Identity-Aware Proxy (IAP)** (`REQUEST_AUTHZ`): enforces identity verification and access control on incoming requests.
   - **Model Armor**: directional safety templates (`user-to-ge`, `ge-to-user`, `agent-gateway-to-external`, `external-to-agent-gateway`) for Gemini Enterprise assistants and Agent Gateway `CONTENT_AUTHZ`, plus optional Vertex AI floor settings.
-- Grants the **IAM bindings authorizing agent egress** through IAP toward the registry, the registered services, or both.
+- Grants the **IAM v3 Unified Access Policies** authorizing agent egress through IAP toward the registry, registered services, or unregistered external HTTPS endpoints.
 
 ## Deploy the stage
 
@@ -221,25 +221,9 @@ At most one can be attached, and the default is `["regional"]` (Gemini Enterpris
 
 Registry location and service location are separate settings: `registry_locations` says which registry the gateway reads, while `agent_registry_services[*].location` (which defaults to `var.region`) says where each service is registered. A service is only reachable through the gateway if its location matches the attached registry.
 
-### Policy model
-
-IAP evaluates agent egress against one of two mutually exclusive policy models, selected by `iapPolicyVersion` on the authorization extension. They check different permissions, so a gateway configured for one model ignores the policies of the other.
-
-| | `V1` | `V2` |
-|---|---|---|
-| Model | IAM allow policies (role bindings) | [IAM Unified Access Policies](https://docs.cloud.google.com/gemini-enterprise-agent-platform/govern/policies/iam-overview-uap) |
-| Permission checked | `iap.webServiceVersions.egressViaIAP` | `iap.googleapis.com/resources.egressViaIAP` |
-| Granted by | `roles/iap.egressor` on the destination | a rule inside an access policy |
-
-**This stage supports `V1` only**, because the Terraform Google provider cannot yet bind the IAM v3 access policies that `V2` evaluates.
-
-`var.agent_gateway_config.egress.iap.policy_version` defaults to `V1`, and the `agent_registry_iam*` variables described in [Authorizing agent egress](#authorizing-agent-egress) create `roles/iap.egressor` bindings, which only a `V1` gateway evaluates.
-
-`V2` is rejected by a variable validation. Terraform can create an access policy with `google_iam_project_access_policy`, but it cannot bind one to a project: binding requires the `target.resource` field of the IAM v3 API, and `google_iam_projects_policy_binding` exposes only `target.principal_set`. An unbound access policy has no effect, so accepting `V2` here would silently disable every egress guardrail. If you need `V2`, manage the access policies and their bindings outside this stage.
-
 ### Enforcement mode
 
-By default, IAP **enforces** the IAM policies described in [Authorizing agent egress](#authorizing-agent-egress): egress that no binding allows is blocked.
+By default, IAP **enforces** the IAM v3 Unified Access Policies described in [Authorizing agent egress](#authorizing-agent-egress): egress that no rule allows is blocked.
 
 Before rolling out policies to live traffic, deploy them in audit-only mode by setting `iam_enforcement_mode` to `DRY_RUN`. In this mode IAP logs the egress it would have denied to Cloud Audit Logs, without blocking it:
 
@@ -312,20 +296,26 @@ oauth_config = {
 
 ## Authorizing agent egress
 
-Registering a service in Agent Registry does not by itself let agents reach it. Agent Gateway checks that the calling agent identity holds the `iap.webServiceVersions.egressViaIAP` permission — granted by `roles/iap.egressor` — on the destination resource. All egress is denied unless a binding allows it, so each destination needs a binding naming the agents allowed to call it.
+Registering a service in Agent Registry does not by itself let agents or users reach it. Agent Gateway evaluates [IAM v3 Unified Access Policies (UAPs)](https://docs.cloud.google.com/gemini-enterprise-agent-platform/govern/policies/iam-overview-uap) (`iapPolicyVersion = "V2"`), checking that the caller holds the `iap.googleapis.com/resources.egressViaIAP` permission on the destination. All egress is denied unless a rule allows it (`effect = "ALLOW"`), and any matching `DENY` rule overrides `ALLOW`.
 
-Agents are identified by their [agent identity](https://docs.cloud.google.com/gemini-enterprise-agent-platform/govern/agent-identity-overview), not by a service account:
+Each access policy (`google_iam_project_access_policy`) is automatically bound to the service project via `google_iam_projects_policy_binding` (`target_resource = "project"` -> `//cloudresourcemanager.googleapis.com/projects/PROJECT_ID`).
 
-- Agent Runtime, Gemini Enterprise and Cloud Run agents use built-in identities, in the form `principal://TRUST_DOMAIN/AGENT_UNIQUE_IDENTIFIER` — for example `principal://agents.global.proj-1234567890.system.id.goog/resources/aiplatform/projects/1234567890/locations/europe-west1/reasoningEngines/support-agent`. The [agent-runtime](../../agent-runtime/README.md) factory returns the identity of the agent it deploys in its `agent_identity` output.
-- Custom and external agents use Workload Identity Federation identities, in the form `principal://iam.googleapis.com/projects/PROJECT_NUMBER/locations/global/workloadIdentityPools/POOL_ID/subject/SUBJECT`.
+### Supported principal formats
 
-Agent identifiers in URN format (`urn:agent:...`) are used for catalog lookups only and are not valid in IAM bindings.
+Rules accept both native IAM v3 principal URIs and standard IAM v1 prefixes (which are automatically converted into IAM v3 URIs):
+
+- **Agent identities:** `principal://agents.global.proj-PROJECT_NUMBER.system.id.goog/resources/aiplatform/projects/PROJECT_NUMBER/locations/REGION/reasoningEngines/REASONING_ENGINE_ID` (returned in the `agent_identity` output of the [agent-runtime](../../agent-runtime/README.md) factory).
+- **All agents in a project:** `principalSet://agents.global.proj-PROJECT_NUMBER.system.id.goog/*`
+- **Workload Identity Federation:** `principal://iam.googleapis.com/projects/PROJECT_NUMBER/locations/global/workloadIdentityPools/POOL_ID/subject/SUBJECT`
+- **Users, groups, service accounts, domains:** Either IAM v3 URIs (`principal://goog/subject/USER`, `principalSet://goog/group/GROUP`, `principal://iam.googleapis.com/projects/-/serviceAccounts/SA_EMAIL`, `principalSet://goog/cloudIdentityCustomerId/DOMAIN`) or standard IAM v1 prefixes (`user:...`, `group:...`, `serviceAccount:...`, `domain:...`, `allUsers`, `allAuthenticatedUsers`).
+
+Agent identifiers in URN format (`urn:agent:...`) are used for catalog lookups only and are not valid in access policy rules.
 
 ### Authorizing access to services registered by this stage
 
-Every entry of `var.agent_registry_services` accepts the `iam`, `iam_bindings` and `iam_bindings_additive` attributes, so grants live next to the service they authorize.
+Every entry of `var.agent_registry_services` accepts the `access_policy_rules` attribute, so rules live directly alongside the service they govern and are automatically merged into the stage's access policy (`var.name` by default, or `policy_id` if specified on the rule).
 
-For example, you can authorize your agent to call an external endpoint, by granting the `iap.egressor` role:
+For example, to authorize an agent to call a registered REST endpoint:
 
 ```hcl
 agent_registry_services = {
@@ -334,115 +324,90 @@ agent_registry_services = {
     description  = "Internal billing service"
     url          = "https://billing.example.com"
     location     = "europe-west1"
-    # Authoritative IAM binding
-    iam = {
-      "roles/iap.egressor" = [
-        "principal://agents.global.proj-1234567890.system.id.goog/resources/aiplatform/projects/1234567890/locations/europe-west1/reasoningEngines/support-agent"
-      ]
-    }
-  }
-}
-```
-
-That single entry does three things: it registers the API in Agent Registry, it creates `google_iap_agent_registry_endpoint_iam_binding` on the resulting endpoint, and — once the gateway is enforcing — it lets `support-agent` reach `https://billing.example.com` while every other agent is denied.
-
-> [!NOTE]
-> IAP identifies a registered service by the id Agent Registry generates for it (`agentregistry-0000...`), not by the service id you choose. The stage resolves that for you: bindings declared on a service, and the `*_id` attributes of the `agent_registry_iam_bindings*` variables, both accept the service id and are translated to the generated one. An id that matches no service registered here is passed through unchanged, which is how you target a resource registered elsewhere.
-
-The same attributes work for MCP servers and agents:
-
-```hcl
-agent_registry_services = {
-  weather-mcp = {
-    display_name = "Weather MCP Server"
-    url          = "https://weather-mcp.example.com"
-    type         = "mcp_server"
-    content      = file("specs/weather-mcp.json")
-    # Authoritative IAM binding
-    iam = {
-      "roles/iap.egressor" = [
-        "principal://agents.global.proj-1234567890.system.id.goog/resources/aiplatform/projects/1234567890/locations/europe-west1/reasoningEngines/support-agent"
-      ]
-    }
-  }
-}
-```
-
-Using `iam_bindings`, you can allow access to specific MCP tools by filtering on the corresponding `iap.googleapis.com/mcp.toolName` attribute.
-
-```hcl
-agent_registry_services = {
-  # Authoritative IAM binding that allows also to express conditions.
-  # This allows allowing access to specific MCP tools.
-  weather-mcp-readonly = {
-    display_name = "Weather MCP Server (read-only tools)"
-    url          = "https://weather-mcp.example.com"
-    type         = "mcp_server"
-    content      = file("specs/weather-mcp.json")
-    iam_bindings = {
-      forecast-tool-only = {
-        members = [
+    access_policy_rules = {
+      allow-support-agent = {
+        description = "Allow support-agent to call billing-api"
+        principals = [
           "principal://agents.global.proj-1234567890.system.id.goog/resources/aiplatform/projects/1234567890/locations/europe-west1/reasoningEngines/support-agent"
         ]
-        role    = "roles/iap.egressor"
-        condition = {
-          title      = "forecast-tool-only"
-          expression = "api.getAttribute('iap.googleapis.com/mcp.toolName', '') in ['get_forecast', '']"
-        }
       }
     }
   }
 }
 ```
 
-The `destination.*` attributes documented for [IAM Access policies](https://docs.cloud.google.com/gemini-enterprise-agent-platform/govern/policies/cel-attributes-uap) belong to the `V2` policy model and do not apply here.
+> [!NOTE]
+> IAP identifies a registered service by the ID Agent Registry generates for it (`agentregistry-0000...`), not by the service ID you choose. The stage resolves that automatically: rules declared in `agent_registry_services[*].access_policy_rules`, as well as `agent_id`, `endpoint_id`, and `mcp_server_id` in stage-level `var.access_policies`, accept the service ID and translate it to the generated registry ID. An ID that matches no service registered in this stage is passed through unchanged to target resources registered elsewhere.
 
-### Authorizing access to the whole registry and to external services
-
-Use the `var.agent_registry_iam*` variables to grant egress across the whole registry, or toward resources that this stage does not register.
+For MCP servers, you can combine `access_policy_rules` with CEL `condition` expressions on [MCP tool attributes](https://docs.cloud.google.com/gemini-enterprise-agent-platform/govern/policies/cel-attributes-uap) (such as `destination.agent_registry.mcp_server.tool.annotations.read_only_hint` or `destination.agent_registry.mcp_server.tool.name`) and `effect = "DENY"` rules:
 
 ```hcl
-# Whole registry, in {ROLE => [MEMBERS]} format.
-agent_registry_iam = {
-  "roles/iap.egressor" = [
-    "principal://agents.global.proj-1234567890.system.id.goog/resources/aiplatform/projects/1234567890/locations/europe-west1/reasoningEngines/support-agent"
-  ]
-}
-
-# Whole registry, in {PRINCIPAL => [ROLES]} format.
-agent_registry_iam_by_principals = {
-  "principalSet://goog/group/agent-platform@example.com" = [
-    "roles/iap.egressor"
-  ]
-}
-
-# A single service registered outside this stage. Set at most one of
-# 'agent_id', 'endpoint_id' or 'mcp_server_id' to narrow the binding
-# down from the whole registry.
-agent_registry_iam_bindings = {
-  support-to-partner = {
-    members = [
-      "principal://agents.global.proj-1234567890.system.id.goog/resources/aiplatform/projects/1234567890/locations/europe-west1/reasoningEngines/support-agent"
-    ]
-    role     = "roles/iap.egressor"
-    agent_id = "partner-agent"
-    # Defaults to var.region
-    location = "global"
-  }
-}
-
-# Additive: leaves members granted outside Terraform untouched.
-agent_registry_iam_bindings_additive = {
-  support-to-legacy-mcp = {
-    member        = "principal://agents.global.proj-1234567890.system.id.goog/resources/aiplatform/projects/1234567890/locations/europe-west1/reasoningEngines/support-agent"
-    role          = "roles/iap.egressor"
-    mcp_server_id = "legacy-mcp"
+agent_registry_services = {
+  weather-mcp = {
+    display_name = "Weather MCP Server"
+    url          = "https://weather-mcp.example.com/mcp"
+    type         = "mcp_server"
+    protocol     = "JSONRPC"
+    content      = "specs/weather-mcp.json"
+    access_policy_rules = {
+      allow-readonly-tools = {
+        description = "Allow analysts to invoke read-only MCP tools"
+        principals  = ["group:analysts@example.com"]
+        condition   = "destination.agent_registry.mcp_server.tool.annotations.read_only_hint == true"
+      }
+      deny-delete-station = {
+        description = "Explicitly block delete_station tool"
+        effect      = "DENY"
+        principals  = ["group:analysts@example.com"]
+        condition   = "destination.agent_registry.mcp_server.tool.name == 'delete_station'"
+      }
+    }
   }
 }
 ```
 
-> [!NOTE]
-> Destinations that are not registered in Agent Registry cannot be targeted by these bindings, since a binding needs a registry resource to attach to. Controlling egress toward unregistered hosts and paths requires the `V2` policy model, which this stage does not support — see [Policy model](#policy-model).
+### Authorizing access across the whole registry, external registry resources, or unregistered HTTPS hosts
+
+Use `var.access_policies` to define stage-level policies and rules targeting the entire governed registry, services registered outside this stage, or unregistered external HTTPS hosts, paths, and HTTP methods:
+
+```hcl
+access_policies = {
+  geap = {
+    display_name = "GEAP Egress Access Policy"
+    rules = {
+      # 1. Whole governed registry
+      allow-all-registered = {
+        description = "Allow platform agents to reach all registered services"
+        principals = [
+          "principalSet://agents.global.proj-1234567890.system.id.goog/*"
+        ]
+        registry = true
+      }
+
+      # 2. A service registered outside this stage
+      allow-partner-agent = {
+        description = "Allow support-agent to call partner-agent"
+        principals = [
+          "principal://agents.global.proj-1234567890.system.id.goog/resources/aiplatform/projects/1234567890/locations/europe-west1/reasoningEngines/support-agent"
+        ]
+        agent_id = "partner-agent"
+        location = "global"
+      }
+
+      # 3. Unregistered external HTTPS destination (host, path, method)
+      allow-external-ocr = {
+        description = "Allow POST requests to external OCR API"
+        principals  = ["group:finance-team@example.com"]
+        condition   = <<-EOT
+          destination.unregistered.host == 'ocr.example.com' &&
+          destination.unregistered.path.startsWith('/v2/process') &&
+          destination.unregistered.method == 'POST'
+        EOT
+      }
+    }
+  }
+}
+```
 
 ## Manage prerequisites independently
 
@@ -459,26 +424,23 @@ You can create your host project and network resources using your FAST networkin
 
 | name | description | type | required | default |
 |---|---|:---:|:---:|:---:|
-| [networking_config](variables.tf#L659) | The networking configuration. Each element is either the id of the resource or the key of the map var.vpc_self_links. | <code title="object&#40;&#123;&#10;  subnet &#61; string&#10;  vpc    &#61; string&#10;&#125;&#41;">object&#40;&#123;&#8230;&#125;&#41;</code> | ✓ |  |
-| [number](variables.tf#L668) | The number of the project where to create the resources. Agent Gateways reference their connectivity template by project number. | <code>string</code> | ✓ |  |
-| [project_id](variables.tf#L719) | The id of the project where to create the resources. | <code>string</code> | ✓ |  |
-| [agent_gateway_config](variables.tf#L15) | Agent Gateway configuration including VPC connectivity and authorization extensions. | <code title="object&#40;&#123;&#10;  egress &#61; optional&#40;object&#40;&#123;&#10;    iap &#61; optional&#40;object&#40;&#123;&#10;      fail_open &#61; optional&#40;bool, true&#41;&#10;      iam_enforcement_mode &#61; optional&#40;string&#41;&#10;      policy_version &#61; optional&#40;string, &#34;V1&#34;&#41;&#10;      timeout        &#61; optional&#40;string, &#34;2s&#34;&#41;&#10;    &#125;&#41;, &#123;&#125;&#41;&#10;    model_armor_config &#61; optional&#40;object&#40;&#123;&#10;      authz_hosts        &#61; optional&#40;list&#40;string&#41;, &#91;&#93;&#41;&#10;      enable             &#61; optional&#40;bool, false&#41;&#10;      fail_open          &#61; optional&#40;bool, false&#41;&#10;      request_direction  &#61; optional&#40;string, &#34;agent-gateway-to-external&#34;&#41;&#10;      response_direction &#61; optional&#40;string, &#34;external-to-agent-gateway&#34;&#41;&#10;      timeout            &#61; optional&#40;string, &#34;2s&#34;&#41;&#10;    &#125;&#41;, &#123;&#125;&#41;&#10;    networking &#61; optional&#40;object&#40;&#123;&#10;      access_types &#61; optional&#40;list&#40;string&#41;, &#91;&#34;PRIVATE&#34;&#93;&#41;&#10;      dns_peering_config &#61; optional&#40;object&#40;&#123;&#10;        domains &#61; list&#40;string&#41;&#10;        target_network &#61; optional&#40;string&#41;&#10;      &#125;&#41;&#41;&#10;      vpc_egress &#61; optional&#40;string, &#34;ALL_TRAFFIC&#34;&#41;&#10;    &#125;&#41;, &#123;&#125;&#41;&#10;    registry_locations &#61; optional&#40;list&#40;string&#41;, &#91;&#34;regional&#34;&#93;&#41;&#10;  &#125;&#41;, &#123;&#125;&#41;&#10;&#125;&#41;">object&#40;&#123;&#8230;&#125;&#41;</code> |  | <code>&#123;&#125;</code> |
-| [agent_registry_iam](variables.tf#L131) | Agent Registry IAM bindings in {ROLE => [MEMBERS]} format. | <code>map&#40;list&#40;string&#41;&#41;</code> |  | <code>&#123;&#125;</code> |
-| [agent_registry_iam_bindings](variables.tf#L138) | Authoritative Agent Registry IAM bindings in {KEY => {role = ROLE, members = [], condition = {}}} format. Set at most one of the '*_id' attributes to scope the binding to a single registry resource, or none to target the whole registry. Location defaults to var.region. Keys are arbitrary. | <code title="map&#40;object&#40;&#123;&#10;  members       &#61; list&#40;string&#41;&#10;  role          &#61; string&#10;  agent_id      &#61; optional&#40;string&#41;&#10;  endpoint_id   &#61; optional&#40;string&#41;&#10;  location      &#61; optional&#40;string&#41;&#10;  mcp_server_id &#61; optional&#40;string&#41;&#10;  condition &#61; optional&#40;object&#40;&#123;&#10;    expression  &#61; string&#10;    title       &#61; string&#10;    description &#61; optional&#40;string&#41;&#10;  &#125;&#41;&#41;&#10;&#125;&#41;&#41;">map&#40;object&#40;&#123;&#8230;&#125;&#41;&#41;</code> |  | <code>&#123;&#125;</code> |
-| [agent_registry_iam_bindings_additive](variables.tf#L164) | Additive Agent Registry IAM bindings. Set at most one of the '*_id' attributes to scope the binding to a single registry resource, or none to target the whole registry. Location defaults to var.region. Keys are arbitrary. | <code title="map&#40;object&#40;&#123;&#10;  member        &#61; string&#10;  role          &#61; string&#10;  agent_id      &#61; optional&#40;string&#41;&#10;  endpoint_id   &#61; optional&#40;string&#41;&#10;  location      &#61; optional&#40;string&#41;&#10;  mcp_server_id &#61; optional&#40;string&#41;&#10;  condition &#61; optional&#40;object&#40;&#123;&#10;    expression  &#61; string&#10;    title       &#61; string&#10;    description &#61; optional&#40;string&#41;&#10;  &#125;&#41;&#41;&#10;&#125;&#41;&#41;">map&#40;object&#40;&#123;&#8230;&#125;&#41;&#41;</code> |  | <code>&#123;&#125;</code> |
-| [agent_registry_iam_by_principals](variables.tf#L190) | Authoritative Agent Registry IAM bindings in {PRINCIPAL => [ROLES]} format. Principals need to be statically defined to avoid errors. Merged internally with the 'agent_registry_iam' variable. | <code>map&#40;list&#40;string&#41;&#41;</code> |  | <code>&#123;&#125;</code> |
-| [agent_registry_services](variables.tf#L197) | Custom service endpoints to register in Agent Registry, keyed by service id. | <code title="map&#40;object&#40;&#123;&#10;  agent_gateway_app_ids &#61; optional&#40;list&#40;string&#41;, &#91;&#93;&#41;&#10;  content               &#61; optional&#40;string&#41;&#10;  description           &#61; optional&#40;string&#41;&#10;  display_name          &#61; optional&#40;string&#41;&#10;  iam                   &#61; optional&#40;map&#40;list&#40;string&#41;&#41;, &#123;&#125;&#41;&#10;  iam_bindings &#61; optional&#40;map&#40;object&#40;&#123;&#10;    members &#61; list&#40;string&#41;&#10;    role    &#61; string&#10;    condition &#61; optional&#40;object&#40;&#123;&#10;      expression  &#61; string&#10;      title       &#61; string&#10;      description &#61; optional&#40;string&#41;&#10;    &#125;&#41;&#41;&#10;  &#125;&#41;&#41;, &#123;&#125;&#41;&#10;  iam_bindings_additive &#61; optional&#40;map&#40;object&#40;&#123;&#10;    member &#61; string&#10;    role   &#61; string&#10;    condition &#61; optional&#40;object&#40;&#123;&#10;      expression  &#61; string&#10;      title       &#61; string&#10;      description &#61; optional&#40;string&#41;&#10;    &#125;&#41;&#41;&#10;  &#125;&#41;&#41;, &#123;&#125;&#41;&#10;  location &#61; optional&#40;string&#41;&#10;  oauth_config &#61; optional&#40;object&#40;&#123;&#10;    auth_uri &#61; string&#10;    client_id       &#61; string&#10;    token_uri       &#61; string&#10;    auth_uri_params &#61; optional&#40;string&#41;&#10;    client_secret                &#61; optional&#40;string&#41;&#10;    client_secret_basic_override &#61; optional&#40;bool, true&#41;&#10;    pkce_support_enabled         &#61; optional&#40;bool, true&#41;&#10;    scopes                       &#61; optional&#40;list&#40;string&#41;, &#91;&#93;&#41;&#10;  &#125;&#41;&#41;&#10;  protocol &#61; optional&#40;string, &#34;HTTP_JSON&#34;&#41;&#10;  type     &#61; optional&#40;string, &#34;endpoint&#34;&#41;&#10;  url      &#61; optional&#40;string&#41;&#10;&#125;&#41;&#41;">map&#40;object&#40;&#123;&#8230;&#125;&#41;&#41;</code> |  | <code>&#123;&#125;</code> |
-| [enable_deletion_protection](variables.tf#L307) | Whether deletion protection is enabled. | <code>bool</code> |  | <code>true</code> |
-| [gemini_enterprise_antigravity_principals](variables.tf#L314) | The principals that also get Antigravity. Granted additively at project level with the custom role. | <code>list&#40;string&#41;</code> |  | <code>&#91;&#93;</code> |
-| [gemini_enterprise_apps](variables.tf#L330) | The Gemini Enterprise apps, keyed by engine id. | <code title="map&#40;object&#40;&#123;&#10;  assistant &#61; optional&#40;object&#40;&#123;&#10;    assistant_id &#61; optional&#40;string, &#34;default_assistant&#34;&#41;&#10;    banned_phrases &#61; optional&#40;list&#40;object&#40;&#123;&#10;      phrase            &#61; string&#10;      ignore_diacritics &#61; optional&#40;bool&#41;&#10;      match_type        &#61; optional&#40;string&#41;&#10;    &#125;&#41;&#41;, &#91;&#93;&#41;&#10;    description  &#61; optional&#40;string&#41;&#10;    display_name &#61; optional&#40;string, &#34;Default Assistant&#34;&#41;&#10;    generation_config &#61; optional&#40;object&#40;&#123;&#10;      default_language   &#61; optional&#40;string&#41;&#10;      system_instruction &#61; optional&#40;string&#41;&#10;    &#125;&#41;&#41;&#10;    model_armor &#61; optional&#40;object&#40;&#123;&#10;      enable                &#61; optional&#40;bool, false&#41;&#10;      failure_mode          &#61; optional&#40;string, &#34;FAIL_CLOSED&#34;&#41;&#10;      response_direction    &#61; optional&#40;string, &#34;ge-to-user&#34;&#41;&#10;      user_prompt_direction &#61; optional&#40;string, &#34;user-to-ge&#34;&#41;&#10;    &#125;&#41;, &#123;&#125;&#41;&#10;    web_grounding_type &#61; optional&#40;string&#41;&#10;  &#125;&#41;, &#123;&#125;&#41;&#10;  collection_id &#61; optional&#40;string, &#34;default_collection&#34;&#41;&#10;  engine &#61; optional&#40;object&#40;&#123;&#10;    display_name      &#61; string&#10;    company_name      &#61; optional&#40;string&#41;&#10;    data_store_ids    &#61; optional&#40;list&#40;string&#41;, &#91;&#93;&#41;&#10;    disable_analytics &#61; optional&#40;bool&#41;&#10;    features          &#61; optional&#40;map&#40;string&#41;, &#123;&#125;&#41;&#10;    industry_vertical &#61; optional&#40;string, &#34;GENERIC&#34;&#41;&#10;    knowledge_graph &#61; optional&#40;object&#40;&#123;&#10;      cloud_knowledge_graph_types    &#61; optional&#40;list&#40;string&#41;, &#91;&#93;&#41;&#10;      enable_cloud_knowledge_graph   &#61; optional&#40;bool, false&#41;&#10;      enable_private_knowledge_graph &#61; optional&#40;bool, false&#41;&#10;      feature_config &#61; optional&#40;object&#40;&#123;&#10;        disable_private_kg_auto_complete       &#61; optional&#40;bool&#41;&#10;        disable_private_kg_enrichment          &#61; optional&#40;bool&#41;&#10;        disable_private_kg_query_ui_chips      &#61; optional&#40;bool&#41;&#10;        disable_private_kg_query_understanding &#61; optional&#40;bool&#41;&#10;      &#125;&#41;&#41;&#10;    &#125;&#41;, &#123;&#125;&#41;&#10;    required_subscription_tier &#61; optional&#40;string&#41;&#10;    search_add_ons             &#61; optional&#40;list&#40;string&#41;&#41;&#10;    search_tier                &#61; optional&#40;string&#41;&#10;  &#125;&#41;&#41;&#10;  iam &#61; optional&#40;map&#40;list&#40;string&#41;&#41;, &#123;&#125;&#41;&#10;&#125;&#41;&#41;">map&#40;object&#40;&#123;&#8230;&#125;&#41;&#41;</code> |  | <code>&#123;&#125;</code> |
-| [gemini_enterprise_iam](variables.tf#L453) | How app IAM is applied. | <code title="object&#40;&#123;&#10;  antigravity_role &#61; optional&#40;string&#41;&#10;  authoritative    &#61; optional&#40;bool, true&#41;&#10;&#125;&#41;">object&#40;&#123;&#8230;&#125;&#41;</code> |  | <code>&#123;&#125;</code> |
-| [location](variables.tf#L472) | The location of the Gemini Enterprise resources. Components that address the app must match the location of the app itself. | <code>string</code> |  | <code>&#34;eu&#34;</code> |
-| [model_armor_floor_setting](variables.tf#L484) | The Model Armor floor setting configuration for Vertex AI. | <code title="object&#40;&#123;&#10;  enabled          &#61; optional&#40;bool, false&#41;&#10;  enforcement_type &#61; optional&#40;string, &#34;INSPECT_AND_BLOCK&#34;&#41;&#10;  logging          &#61; optional&#40;bool, true&#41;&#10;  malicious_uri &#61; optional&#40;object&#40;&#123;&#10;    enabled &#61; optional&#40;string, &#34;ENABLED&#34;&#41;&#10;  &#125;&#41;, &#123;&#125;&#41;&#10;  pi_and_jailbreak &#61; optional&#40;object&#40;&#123;&#10;    confidence_level &#61; optional&#40;string, &#34;HIGH&#34;&#41;&#10;    enabled          &#61; optional&#40;string, &#34;ENABLED&#34;&#41;&#10;  &#125;&#41;, &#123;&#125;&#41;&#10;  rai_filters &#61; optional&#40;object&#40;&#123;&#10;    DANGEROUS         &#61; optional&#40;string, &#34;HIGH&#34;&#41;&#10;    HARASSMENT        &#61; optional&#40;string, &#34;HIGH&#34;&#41;&#10;    HATE_SPEECH       &#61; optional&#40;string, &#34;HIGH&#34;&#41;&#10;    SEXUALLY_EXPLICIT &#61; optional&#40;string, &#34;HIGH&#34;&#41;&#10;  &#125;&#41;, &#123;&#125;&#41;&#10;  sdp &#61; optional&#40;object&#40;&#123;&#10;    enabled &#61; optional&#40;string, &#34;ENABLED&#34;&#41;&#10;  &#125;&#41;, &#123;&#125;&#41;&#10;&#125;&#41;">object&#40;&#123;&#8230;&#125;&#41;</code> |  | <code>&#123;&#125;</code> |
-| [model_armor_template_prefix](variables.tf#L563) | An optional prefix prepended to every Model Armor template id. | <code>string</code> |  | <code>&#34;&#34;</code> |
-| [model_armor_templates](variables.tf#L570) | The Model Armor templates, keyed by interaction direction. Only templates referenced by the Agent Gateway or a Gemini Enterprise assistant are created. | <code title="map&#40;object&#40;&#123;&#10;  custom_llm_response_safety_error_code    &#61; optional&#40;number, 401&#41;&#10;  custom_llm_response_safety_error_message &#61; optional&#40;string, &#34;This is a custom error message for LLM response&#34;&#41;&#10;  custom_prompt_safety_error_code          &#61; optional&#40;number, 400&#41;&#10;  custom_prompt_safety_error_message       &#61; optional&#40;string, &#34;This is a custom error message for prompt&#34;&#41;&#10;  enforcement_type                         &#61; optional&#40;string, &#34;INSPECT_AND_BLOCK&#34;&#41;&#10;  ignore_partial_invocation_failures       &#61; optional&#40;bool, false&#41;&#10;  logging                                  &#61; optional&#40;bool, true&#41;&#10;  malicious_uri &#61; optional&#40;object&#40;&#123;&#10;    enabled &#61; optional&#40;string, &#34;ENABLED&#34;&#41;&#10;  &#125;&#41;, &#123;&#125;&#41;&#10;  modalities &#61; optional&#40;list&#40;string&#41;, &#91;&#34;MODALITY_TEXT&#34;, &#34;MODALITY_IMAGE&#34;&#93;&#41;&#10;  pi_and_jailbreak &#61; optional&#40;object&#40;&#123;&#10;    confidence_level &#61; optional&#40;string, &#34;MEDIUM_AND_ABOVE&#34;&#41;&#10;    enabled          &#61; optional&#40;string, &#34;ENABLED&#34;&#41;&#10;  &#125;&#41;, &#123;&#125;&#41;&#10;  rai_filters &#61; optional&#40;object&#40;&#123;&#10;    DANGEROUS         &#61; optional&#40;string, &#34;LOW_AND_ABOVE&#34;&#41;&#10;    HARASSMENT        &#61; optional&#40;string, &#34;LOW_AND_ABOVE&#34;&#41;&#10;    HATE_SPEECH       &#61; optional&#40;string, &#34;LOW_AND_ABOVE&#34;&#41;&#10;    SEXUALLY_EXPLICIT &#61; optional&#40;string, &#34;LOW_AND_ABOVE&#34;&#41;&#10;  &#125;&#41;, &#123;&#125;&#41;&#10;  sdp &#61; optional&#40;object&#40;&#123;&#10;    enabled &#61; optional&#40;string, &#34;ENABLED&#34;&#41;&#10;  &#125;&#41;, &#123;&#125;&#41;&#10;&#125;&#41;&#41;">map&#40;object&#40;&#123;&#8230;&#125;&#41;&#41;</code> |  | <code title="&#123;&#10;  &#34;user-to-ge&#34; &#61; &#123;&#125;&#10;  &#34;ge-to-user&#34; &#61; &#123;&#125;&#10;  &#34;agent-gateway-to-external&#34; &#61; &#123; modalities &#61; &#91;&#34;MODALITY_TEXT&#34;&#93; &#125;&#10;  &#34;external-to-agent-gateway&#34; &#61; &#123; modalities &#61; &#91;&#34;MODALITY_TEXT&#34;&#93; &#125;&#10;&#125;">&#123;&#8230;&#125;</code> |
-| [name](variables.tf#L652) | The name of the resources. | <code>string</code> |  | <code>&#34;geap&#34;</code> |
-| [oauth_config](variables.tf#L674) | Default OAuth 2.0 configuration for custom MCP server data connectors. Can be overridden per service via agent_registry_services[*].oauth_config. | <code title="object&#40;&#123;&#10;  auth_uri &#61; string&#10;  client_id       &#61; string&#10;  token_uri       &#61; string&#10;  auth_uri_params &#61; optional&#40;string&#41;&#10;  client_secret                &#61; optional&#40;string&#41;&#10;  client_secret_basic_override &#61; optional&#40;bool, true&#41;&#10;  pkce_support_enabled         &#61; optional&#40;bool, true&#41;&#10;  scopes                       &#61; optional&#40;list&#40;string&#41;, &#91;&#93;&#41;&#10;&#125;&#41;">object&#40;&#123;&#8230;&#125;&#41;</code> |  | <code>null</code> |
-| [region](variables.tf#L725) | The GCP region where to deploy the resources. | <code>string</code> |  | <code>&#34;europe-west1&#34;</code> |
+| [networking_config](variables.tf#L666) | The networking configuration. Each element is either the id of the resource or the key of the map var.vpc_self_links. | <code title="object&#40;&#123;&#10;  subnet &#61; string&#10;  vpc    &#61; string&#10;&#125;&#41;">object&#40;&#123;&#8230;&#125;&#41;</code> | ✓ |  |
+| [number](variables.tf#L675) | The number of the project where to create the resources. Agent Gateways reference their connectivity template by project number. | <code>string</code> | ✓ |  |
+| [project_id](variables.tf#L726) | The id of the project where to create the resources. | <code>string</code> | ✓ |  |
+| [access_policies](variables.tf#L15) | IAM v3 Unified Access Policies (UAPs) and their bindings, keyed by policy ID. Set 'rules' to create a project access policy and bind it, or 'policy_reuse' to bind an existing access policy. | <code title="map&#40;object&#40;&#123;&#10;  annotations     &#61; optional&#40;map&#40;string&#41;&#41;&#10;  bind            &#61; optional&#40;bool, true&#41;&#10;  binding_id      &#61; optional&#40;string&#41;&#10;  display_name    &#61; optional&#40;string&#41;&#10;  policy_reuse    &#61; optional&#40;string&#41;&#10;  target_resource &#61; optional&#40;string, &#34;project&#34;&#41;&#10;  binding_condition &#61; optional&#40;object&#40;&#123;&#10;    expression  &#61; string&#10;    title       &#61; optional&#40;string&#41;&#10;    description &#61; optional&#40;string&#41;&#10;    location    &#61; optional&#40;string&#41;&#10;  &#125;&#41;&#41;&#10;  rules &#61; optional&#40;map&#40;object&#40;&#123;&#10;    principals           &#61; list&#40;string&#41;&#10;    agent_id             &#61; optional&#40;string&#41;&#10;    condition            &#61; optional&#40;string&#41;&#10;    condition_service    &#61; optional&#40;string, &#34;iap.googleapis.com&#34;&#41;&#10;    description          &#61; optional&#40;string&#41;&#10;    effect               &#61; optional&#40;string, &#34;ALLOW&#34;&#41;&#10;    endpoint_id          &#61; optional&#40;string&#41;&#10;    excluded_permissions &#61; optional&#40;list&#40;string&#41;, &#91;&#93;&#41;&#10;    excluded_principals  &#61; optional&#40;list&#40;string&#41;, &#91;&#93;&#41;&#10;    location             &#61; optional&#40;string&#41;&#10;    mcp_server_id        &#61; optional&#40;string&#41;&#10;    permissions &#61; optional&#40;&#10;      list&#40;string&#41;, &#91;&#34;iap.googleapis.com&#47;resources.egressViaIAP&#34;&#93;&#10;    &#41;&#10;    registry &#61; optional&#40;bool, false&#41;&#10;  &#125;&#41;&#41;, &#123;&#125;&#41;&#10;&#125;&#41;&#41;">map&#40;object&#40;&#123;&#8230;&#125;&#41;&#41;</code> |  | <code>&#123;&#125;</code> |
+| [agent_gateway_config](variables.tf#L87) | Agent Gateway configuration including VPC connectivity and authorization extensions. | <code title="object&#40;&#123;&#10;  egress &#61; optional&#40;object&#40;&#123;&#10;    iap &#61; optional&#40;object&#40;&#123;&#10;      fail_open &#61; optional&#40;bool, true&#41;&#10;      iam_enforcement_mode &#61; optional&#40;string&#41;&#10;      timeout              &#61; optional&#40;string, &#34;2s&#34;&#41;&#10;    &#125;&#41;, &#123;&#125;&#41;&#10;    model_armor_config &#61; optional&#40;object&#40;&#123;&#10;      authz_hosts        &#61; optional&#40;list&#40;string&#41;, &#91;&#93;&#41;&#10;      enable             &#61; optional&#40;bool, false&#41;&#10;      fail_open          &#61; optional&#40;bool, false&#41;&#10;      request_direction  &#61; optional&#40;string, &#34;agent-gateway-to-external&#34;&#41;&#10;      response_direction &#61; optional&#40;string, &#34;external-to-agent-gateway&#34;&#41;&#10;      timeout            &#61; optional&#40;string, &#34;2s&#34;&#41;&#10;    &#125;&#41;, &#123;&#125;&#41;&#10;    networking &#61; optional&#40;object&#40;&#123;&#10;      access_types &#61; optional&#40;list&#40;string&#41;, &#91;&#34;PRIVATE&#34;&#93;&#41;&#10;      dns_peering_config &#61; optional&#40;object&#40;&#123;&#10;        domains &#61; list&#40;string&#41;&#10;        target_network &#61; optional&#40;string&#41;&#10;      &#125;&#41;&#41;&#10;      vpc_egress &#61; optional&#40;string, &#34;ALL_TRAFFIC&#34;&#41;&#10;    &#125;&#41;, &#123;&#125;&#41;&#10;    registry_locations &#61; optional&#40;list&#40;string&#41;, &#91;&#34;regional&#34;&#93;&#41;&#10;  &#125;&#41;, &#123;&#125;&#41;&#10;&#125;&#41;">object&#40;&#123;&#8230;&#125;&#41;</code> |  | <code>&#123;&#125;</code> |
+| [agent_registry_services](variables.tf#L195) | Custom service endpoints to register in Agent Registry, keyed by service id. | <code title="map&#40;object&#40;&#123;&#10;  access_policy_rules &#61; optional&#40;map&#40;object&#40;&#123;&#10;    principals           &#61; list&#40;string&#41;&#10;    condition            &#61; optional&#40;string&#41;&#10;    condition_service    &#61; optional&#40;string, &#34;iap.googleapis.com&#34;&#41;&#10;    description          &#61; optional&#40;string&#41;&#10;    effect               &#61; optional&#40;string, &#34;ALLOW&#34;&#41;&#10;    excluded_permissions &#61; optional&#40;list&#40;string&#41;, &#91;&#93;&#41;&#10;    excluded_principals  &#61; optional&#40;list&#40;string&#41;, &#91;&#93;&#41;&#10;    permissions          &#61; optional&#40;list&#40;string&#41;, &#91;&#34;iap.googleapis.com&#47;resources.egressViaIAP&#34;&#93;&#41;&#10;    policy_id            &#61; optional&#40;string&#41;&#10;  &#125;&#41;&#41;, &#123;&#125;&#41;&#10;  agent_gateway_app_ids &#61; optional&#40;list&#40;string&#41;, &#91;&#93;&#41;&#10;  content               &#61; optional&#40;string&#41;&#10;  description           &#61; optional&#40;string&#41;&#10;  display_name          &#61; optional&#40;string&#41;&#10;  location              &#61; optional&#40;string&#41;&#10;  oauth_config &#61; optional&#40;object&#40;&#123;&#10;    auth_uri &#61; string&#10;    client_id       &#61; string&#10;    token_uri       &#61; string&#10;    auth_uri_params &#61; optional&#40;string&#41;&#10;    client_secret                &#61; optional&#40;string&#41;&#10;    client_secret_basic_override &#61; optional&#40;bool, true&#41;&#10;    pkce_support_enabled         &#61; optional&#40;bool, true&#41;&#10;    scopes                       &#61; optional&#40;list&#40;string&#41;, &#91;&#93;&#41;&#10;  &#125;&#41;&#41;&#10;  protocol &#61; optional&#40;string, &#34;HTTP_JSON&#34;&#41;&#10;  type     &#61; optional&#40;string, &#34;endpoint&#34;&#41;&#10;  url      &#61; optional&#40;string&#41;&#10;&#125;&#41;&#41;">map&#40;object&#40;&#123;&#8230;&#125;&#41;&#41;</code> |  | <code>&#123;&#125;</code> |
+| [enable_deletion_protection](variables.tf#L314) | Whether deletion protection is enabled. | <code>bool</code> |  | <code>true</code> |
+| [gemini_enterprise_antigravity_principals](variables.tf#L321) | The principals that also get Antigravity. Granted additively at project level with the custom role. | <code>list&#40;string&#41;</code> |  | <code>&#91;&#93;</code> |
+| [gemini_enterprise_apps](variables.tf#L337) | The Gemini Enterprise apps, keyed by engine id. | <code title="map&#40;object&#40;&#123;&#10;  assistant &#61; optional&#40;object&#40;&#123;&#10;    assistant_id &#61; optional&#40;string, &#34;default_assistant&#34;&#41;&#10;    banned_phrases &#61; optional&#40;list&#40;object&#40;&#123;&#10;      phrase            &#61; string&#10;      ignore_diacritics &#61; optional&#40;bool&#41;&#10;      match_type        &#61; optional&#40;string&#41;&#10;    &#125;&#41;&#41;, &#91;&#93;&#41;&#10;    description  &#61; optional&#40;string&#41;&#10;    display_name &#61; optional&#40;string, &#34;Default Assistant&#34;&#41;&#10;    generation_config &#61; optional&#40;object&#40;&#123;&#10;      default_language   &#61; optional&#40;string&#41;&#10;      system_instruction &#61; optional&#40;string&#41;&#10;    &#125;&#41;&#41;&#10;    model_armor &#61; optional&#40;object&#40;&#123;&#10;      enable                &#61; optional&#40;bool, false&#41;&#10;      failure_mode          &#61; optional&#40;string, &#34;FAIL_CLOSED&#34;&#41;&#10;      response_direction    &#61; optional&#40;string, &#34;ge-to-user&#34;&#41;&#10;      user_prompt_direction &#61; optional&#40;string, &#34;user-to-ge&#34;&#41;&#10;    &#125;&#41;, &#123;&#125;&#41;&#10;    web_grounding_type &#61; optional&#40;string&#41;&#10;  &#125;&#41;, &#123;&#125;&#41;&#10;  collection_id &#61; optional&#40;string, &#34;default_collection&#34;&#41;&#10;  engine &#61; optional&#40;object&#40;&#123;&#10;    display_name      &#61; string&#10;    company_name      &#61; optional&#40;string&#41;&#10;    data_store_ids    &#61; optional&#40;list&#40;string&#41;, &#91;&#93;&#41;&#10;    disable_analytics &#61; optional&#40;bool&#41;&#10;    features          &#61; optional&#40;map&#40;string&#41;, &#123;&#125;&#41;&#10;    industry_vertical &#61; optional&#40;string, &#34;GENERIC&#34;&#41;&#10;    knowledge_graph &#61; optional&#40;object&#40;&#123;&#10;      cloud_knowledge_graph_types    &#61; optional&#40;list&#40;string&#41;, &#91;&#93;&#41;&#10;      enable_cloud_knowledge_graph   &#61; optional&#40;bool, false&#41;&#10;      enable_private_knowledge_graph &#61; optional&#40;bool, false&#41;&#10;      feature_config &#61; optional&#40;object&#40;&#123;&#10;        disable_private_kg_auto_complete       &#61; optional&#40;bool&#41;&#10;        disable_private_kg_enrichment          &#61; optional&#40;bool&#41;&#10;        disable_private_kg_query_ui_chips      &#61; optional&#40;bool&#41;&#10;        disable_private_kg_query_understanding &#61; optional&#40;bool&#41;&#10;      &#125;&#41;&#41;&#10;    &#125;&#41;, &#123;&#125;&#41;&#10;    required_subscription_tier &#61; optional&#40;string&#41;&#10;    search_add_ons             &#61; optional&#40;list&#40;string&#41;&#41;&#10;    search_tier                &#61; optional&#40;string&#41;&#10;  &#125;&#41;&#41;&#10;  iam &#61; optional&#40;map&#40;list&#40;string&#41;&#41;, &#123;&#125;&#41;&#10;&#125;&#41;&#41;">map&#40;object&#40;&#123;&#8230;&#125;&#41;&#41;</code> |  | <code>&#123;&#125;</code> |
+| [gemini_enterprise_iam](variables.tf#L460) | How app IAM is applied. | <code title="object&#40;&#123;&#10;  antigravity_role &#61; optional&#40;string&#41;&#10;  authoritative    &#61; optional&#40;bool, true&#41;&#10;&#125;&#41;">object&#40;&#123;&#8230;&#125;&#41;</code> |  | <code>&#123;&#125;</code> |
+| [location](variables.tf#L479) | The location of the Gemini Enterprise resources. Components that address the app must match the location of the app itself. | <code>string</code> |  | <code>&#34;eu&#34;</code> |
+| [model_armor_floor_setting](variables.tf#L491) | The Model Armor floor setting configuration for Vertex AI. | <code title="object&#40;&#123;&#10;  enabled          &#61; optional&#40;bool, false&#41;&#10;  enforcement_type &#61; optional&#40;string, &#34;INSPECT_AND_BLOCK&#34;&#41;&#10;  logging          &#61; optional&#40;bool, true&#41;&#10;  malicious_uri &#61; optional&#40;object&#40;&#123;&#10;    enabled &#61; optional&#40;string, &#34;ENABLED&#34;&#41;&#10;  &#125;&#41;, &#123;&#125;&#41;&#10;  pi_and_jailbreak &#61; optional&#40;object&#40;&#123;&#10;    confidence_level &#61; optional&#40;string, &#34;HIGH&#34;&#41;&#10;    enabled          &#61; optional&#40;string, &#34;ENABLED&#34;&#41;&#10;  &#125;&#41;, &#123;&#125;&#41;&#10;  rai_filters &#61; optional&#40;object&#40;&#123;&#10;    DANGEROUS         &#61; optional&#40;string, &#34;HIGH&#34;&#41;&#10;    HARASSMENT        &#61; optional&#40;string, &#34;HIGH&#34;&#41;&#10;    HATE_SPEECH       &#61; optional&#40;string, &#34;HIGH&#34;&#41;&#10;    SEXUALLY_EXPLICIT &#61; optional&#40;string, &#34;HIGH&#34;&#41;&#10;  &#125;&#41;, &#123;&#125;&#41;&#10;  sdp &#61; optional&#40;object&#40;&#123;&#10;    enabled &#61; optional&#40;string, &#34;ENABLED&#34;&#41;&#10;  &#125;&#41;, &#123;&#125;&#41;&#10;&#125;&#41;">object&#40;&#123;&#8230;&#125;&#41;</code> |  | <code>&#123;&#125;</code> |
+| [model_armor_template_prefix](variables.tf#L570) | An optional prefix prepended to every Model Armor template id. | <code>string</code> |  | <code>&#34;&#34;</code> |
+| [model_armor_templates](variables.tf#L577) | The Model Armor templates, keyed by interaction direction. Only templates referenced by the Agent Gateway or a Gemini Enterprise assistant are created. | <code title="map&#40;object&#40;&#123;&#10;  custom_llm_response_safety_error_code    &#61; optional&#40;number, 401&#41;&#10;  custom_llm_response_safety_error_message &#61; optional&#40;string, &#34;This is a custom error message for LLM response&#34;&#41;&#10;  custom_prompt_safety_error_code          &#61; optional&#40;number, 400&#41;&#10;  custom_prompt_safety_error_message       &#61; optional&#40;string, &#34;This is a custom error message for prompt&#34;&#41;&#10;  enforcement_type                         &#61; optional&#40;string, &#34;INSPECT_AND_BLOCK&#34;&#41;&#10;  ignore_partial_invocation_failures       &#61; optional&#40;bool, false&#41;&#10;  logging                                  &#61; optional&#40;bool, true&#41;&#10;  malicious_uri &#61; optional&#40;object&#40;&#123;&#10;    enabled &#61; optional&#40;string, &#34;ENABLED&#34;&#41;&#10;  &#125;&#41;, &#123;&#125;&#41;&#10;  modalities &#61; optional&#40;list&#40;string&#41;, &#91;&#34;MODALITY_TEXT&#34;, &#34;MODALITY_IMAGE&#34;&#93;&#41;&#10;  pi_and_jailbreak &#61; optional&#40;object&#40;&#123;&#10;    confidence_level &#61; optional&#40;string, &#34;MEDIUM_AND_ABOVE&#34;&#41;&#10;    enabled          &#61; optional&#40;string, &#34;ENABLED&#34;&#41;&#10;  &#125;&#41;, &#123;&#125;&#41;&#10;  rai_filters &#61; optional&#40;object&#40;&#123;&#10;    DANGEROUS         &#61; optional&#40;string, &#34;LOW_AND_ABOVE&#34;&#41;&#10;    HARASSMENT        &#61; optional&#40;string, &#34;LOW_AND_ABOVE&#34;&#41;&#10;    HATE_SPEECH       &#61; optional&#40;string, &#34;LOW_AND_ABOVE&#34;&#41;&#10;    SEXUALLY_EXPLICIT &#61; optional&#40;string, &#34;LOW_AND_ABOVE&#34;&#41;&#10;  &#125;&#41;, &#123;&#125;&#41;&#10;  sdp &#61; optional&#40;object&#40;&#123;&#10;    enabled &#61; optional&#40;string, &#34;ENABLED&#34;&#41;&#10;  &#125;&#41;, &#123;&#125;&#41;&#10;&#125;&#41;&#41;">map&#40;object&#40;&#123;&#8230;&#125;&#41;&#41;</code> |  | <code title="&#123;&#10;  &#34;user-to-ge&#34; &#61; &#123;&#125;&#10;  &#34;ge-to-user&#34; &#61; &#123;&#125;&#10;  &#34;agent-gateway-to-external&#34; &#61; &#123; modalities &#61; &#91;&#34;MODALITY_TEXT&#34;&#93; &#125;&#10;  &#34;external-to-agent-gateway&#34; &#61; &#123; modalities &#61; &#91;&#34;MODALITY_TEXT&#34;&#93; &#125;&#10;&#125;">&#123;&#8230;&#125;</code> |
+| [name](variables.tf#L659) | The name of the resources. | <code>string</code> |  | <code>&#34;geap&#34;</code> |
+| [oauth_config](variables.tf#L681) | Default OAuth 2.0 configuration for custom MCP server data connectors. Can be overridden per service via agent_registry_services[*].oauth_config. | <code title="object&#40;&#123;&#10;  auth_uri &#61; string&#10;  client_id       &#61; string&#10;  token_uri       &#61; string&#10;  auth_uri_params &#61; optional&#40;string&#41;&#10;  client_secret                &#61; optional&#40;string&#41;&#10;  client_secret_basic_override &#61; optional&#40;bool, true&#41;&#10;  pkce_support_enabled         &#61; optional&#40;bool, true&#41;&#10;  scopes                       &#61; optional&#40;list&#40;string&#41;, &#91;&#93;&#41;&#10;&#125;&#41;">object&#40;&#123;&#8230;&#125;&#41;</code> |  | <code>null</code> |
+| [region](variables.tf#L732) | The GCP region where to deploy the resources. | <code>string</code> |  | <code>&#34;europe-west1&#34;</code> |
 | [subnet_self_links](variables-fast.tf#L15) | Shared VPCs subnet IDs. | <code>map&#40;string&#41;</code> |  | <code>&#123;&#125;</code> |
 | [vpc_self_links](variables-fast.tf#L23) | Shared VPC name => self link mappings. | <code>map&#40;string&#41;</code> |  | <code>&#123;&#125;</code> |
 
@@ -486,13 +448,15 @@ You can create your host project and network resources using your FAST networkin
 
 | name | description | sensitive |
 |---|---|:---:|
-| [agent_connectivity_template_ids](outputs.tf#L15) | The ids of the agent connectivity templates through which the gateways reach the VPC. |  |
-| [agent_gateway_ids](outputs.tf#L22) | The Agent Gateway ids. Pass them to the agent-runtime factory to govern the traffic of an agent. |  |
-| [agent_registry_service_names](outputs.tf#L29) | The resource names of the services registered in Agent Registry, keyed by service id. |  |
-| [agent_registry_uris](outputs.tf#L37) | The Agent Registry URIs. |  |
-| [gemini_enterprise_antigravity_principals](outputs.tf#L42) | The principals holding the Antigravity custom role on the project. |  |
-| [gemini_enterprise_app_names](outputs.tf#L47) | The resource names of the Gemini Enterprise apps Terraform creates, keyed by engine id. Apps that already existed are not listed. |  |
-| [gemini_enterprise_assistant_names](outputs.tf#L55) | The resource names of the managed assistants, keyed by engine id. |  |
-| [gemini_enterprise_data_connector_names](outputs.tf#L63) | The resource names of the Gemini Enterprise data connectors, keyed by connector id and app id. |  |
-| [model_armor_template_names](outputs.tf#L74) | The resource names of the Model Armor templates, keyed by interaction direction. |  |
+| [access_policy_ids](outputs.tf#L15) | The IAM v3 Access Policy resource names, keyed by policy id. |  |
+| [agent_connectivity_template_ids](outputs.tf#L20) | The ids of the agent connectivity templates through which the gateways reach the VPC. |  |
+| [agent_gateway_ids](outputs.tf#L27) | The Agent Gateway ids. Pass them to the agent-runtime factory to govern the traffic of an agent. |  |
+| [agent_registry_service_names](outputs.tf#L34) | The resource names of the services registered in Agent Registry, keyed by service id. |  |
+| [agent_registry_uris](outputs.tf#L42) | The Agent Registry URIs. |  |
+| [gemini_enterprise_antigravity_principals](outputs.tf#L47) | The principals holding the Antigravity custom role on the project. |  |
+| [gemini_enterprise_app_names](outputs.tf#L52) | The resource names of the Gemini Enterprise apps Terraform creates, keyed by engine id. Apps that already existed are not listed. |  |
+| [gemini_enterprise_assistant_names](outputs.tf#L60) | The resource names of the managed assistants, keyed by engine id. |  |
+| [gemini_enterprise_data_connector_names](outputs.tf#L68) | The resource names of the Gemini Enterprise data connectors, keyed by connector id and app id. |  |
+| [model_armor_template_names](outputs.tf#L79) | The resource names of the Model Armor templates, keyed by interaction direction. |  |
+| [policy_binding_ids](outputs.tf#L87) | The IAM v3 Policy Binding resource names, keyed by policy id. |  |
 <!-- END TFDOC -->

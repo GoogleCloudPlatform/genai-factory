@@ -12,6 +12,78 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+variable "access_policies" {
+  description = "IAM v3 Unified Access Policies (UAPs) and their bindings, keyed by policy ID. Set 'rules' to create a project access policy and bind it, or 'policy_reuse' to bind an existing access policy."
+  type = map(object({
+    annotations     = optional(map(string))
+    bind            = optional(bool, true)
+    binding_id      = optional(string)
+    display_name    = optional(string)
+    policy_reuse    = optional(string)
+    target_resource = optional(string, "project")
+    binding_condition = optional(object({
+      expression  = string
+      title       = optional(string)
+      description = optional(string)
+      location    = optional(string)
+    }))
+    rules = optional(map(object({
+      principals           = list(string)
+      agent_id             = optional(string)
+      condition            = optional(string)
+      condition_service    = optional(string, "iap.googleapis.com")
+      description          = optional(string)
+      effect               = optional(string, "ALLOW")
+      endpoint_id          = optional(string)
+      excluded_permissions = optional(list(string), [])
+      excluded_principals  = optional(list(string), [])
+      location             = optional(string)
+      mcp_server_id        = optional(string)
+      permissions = optional(
+        list(string), ["iap.googleapis.com/resources.egressViaIAP"]
+      )
+      registry = optional(bool, false)
+    })), {})
+  }))
+  nullable = false
+  default  = {}
+
+  validation {
+    condition = alltrue(flatten([
+      for k, v in var.access_policies : [
+        for rk, rv in v.rules : contains(["ALLOW", "DENY"], rv.effect)
+      ]
+    ]))
+    error_message = "Rule 'effect' must be 'ALLOW' or 'DENY'."
+  }
+
+  validation {
+    condition = alltrue(flatten([
+      for k, v in var.access_policies : [
+        for rk, rv in v.rules : (
+          (rv.registry ? 1 : 0) +
+          length(compact([
+            rv.agent_id,
+            rv.endpoint_id,
+            rv.mcp_server_id,
+          ]))
+        ) <= 1
+      ]
+    ]))
+    error_message = "Set at most one of 'agent_id', 'endpoint_id', 'mcp_server_id', or 'registry' per rule."
+  }
+
+  validation {
+    condition = alltrue(flatten([
+      for k, v in var.access_policies : [
+        for rk, rv in v.rules :
+        length(rv.principals) > 0 && length(rv.permissions) > 0
+      ]
+    ]))
+    error_message = "Each access policy rule must specify at least one principal and one permission."
+  }
+}
+
 variable "agent_gateway_config" {
   description = "Agent Gateway configuration including VPC connectivity and authorization extensions."
   type = object({
@@ -20,10 +92,7 @@ variable "agent_gateway_config" {
         fail_open = optional(bool, true)
         # Null enforces the IAM policies. Set to 'DRY_RUN' otherwise.
         iam_enforcement_mode = optional(string)
-        # Only 'V1' (IAM allow policies) is currently supported.
-        # See 'Policy model' in the README.
-        policy_version = optional(string, "V1")
-        timeout        = optional(string, "2s")
+        timeout              = optional(string, "2s")
       }), {})
       model_armor_config = optional(object({
         authz_hosts        = optional(list(string), [])
@@ -57,11 +126,6 @@ variable "agent_gateway_config" {
       var.agent_gateway_config.egress.iap.iam_enforcement_mode == "DRY_RUN"
     )
     error_message = "The iam_enforcement_mode must be 'DRY_RUN', or null to enforce the policies."
-  }
-
-  validation {
-    condition     = var.agent_gateway_config.egress.iap.policy_version == "V1"
-    error_message = "Only the 'V1' policy version is supported. 'V2' evaluates IAM Unified Access Policies, which Terraform cannot bind to a project yet, so the 'agent_registry_iam*' bindings would not be enforced."
   }
 
   validation {
@@ -128,99 +192,25 @@ variable "agent_gateway_config" {
   }
 }
 
-variable "agent_registry_iam" {
-  description = "Agent Registry IAM bindings in {ROLE => [MEMBERS]} format."
-  type        = map(list(string))
-  nullable    = false
-  default     = {}
-}
-
-variable "agent_registry_iam_bindings" {
-  description = "Authoritative Agent Registry IAM bindings in {KEY => {role = ROLE, members = [], condition = {}}} format. Set at most one of the '*_id' attributes to scope the binding to a single registry resource, or none to target the whole registry. Location defaults to var.region. Keys are arbitrary."
-  type = map(object({
-    members       = list(string)
-    role          = string
-    agent_id      = optional(string)
-    endpoint_id   = optional(string)
-    location      = optional(string)
-    mcp_server_id = optional(string)
-    condition = optional(object({
-      expression  = string
-      title       = string
-      description = optional(string)
-    }))
-  }))
-  nullable = false
-  default  = {}
-  validation {
-    condition = alltrue([
-      for k, v in var.agent_registry_iam_bindings :
-      length(compact([v.agent_id, v.endpoint_id, v.mcp_server_id])) <= 1
-    ])
-    error_message = "Set at most one of 'agent_id', 'endpoint_id', 'mcp_server_id'."
-  }
-}
-
-variable "agent_registry_iam_bindings_additive" {
-  description = "Additive Agent Registry IAM bindings. Set at most one of the '*_id' attributes to scope the binding to a single registry resource, or none to target the whole registry. Location defaults to var.region. Keys are arbitrary."
-  type = map(object({
-    member        = string
-    role          = string
-    agent_id      = optional(string)
-    endpoint_id   = optional(string)
-    location      = optional(string)
-    mcp_server_id = optional(string)
-    condition = optional(object({
-      expression  = string
-      title       = string
-      description = optional(string)
-    }))
-  }))
-  nullable = false
-  default  = {}
-  validation {
-    condition = alltrue([
-      for k, v in var.agent_registry_iam_bindings_additive :
-      length(compact([v.agent_id, v.endpoint_id, v.mcp_server_id])) <= 1
-    ])
-    error_message = "Set at most one of 'agent_id', 'endpoint_id', 'mcp_server_id'."
-  }
-}
-
-variable "agent_registry_iam_by_principals" {
-  description = "Authoritative Agent Registry IAM bindings in {PRINCIPAL => [ROLES]} format. Principals need to be statically defined to avoid errors. Merged internally with the 'agent_registry_iam' variable."
-  type        = map(list(string))
-  nullable    = false
-  default     = {}
-}
-
 variable "agent_registry_services" {
   description = "Custom service endpoints to register in Agent Registry, keyed by service id."
   type = map(object({
+    access_policy_rules = optional(map(object({
+      principals           = list(string)
+      condition            = optional(string)
+      condition_service    = optional(string, "iap.googleapis.com")
+      description          = optional(string)
+      effect               = optional(string, "ALLOW")
+      excluded_permissions = optional(list(string), [])
+      excluded_principals  = optional(list(string), [])
+      permissions          = optional(list(string), ["iap.googleapis.com/resources.egressViaIAP"])
+      policy_id            = optional(string)
+    })), {})
     agent_gateway_app_ids = optional(list(string), [])
     content               = optional(string)
     description           = optional(string)
     display_name          = optional(string)
-    iam                   = optional(map(list(string)), {})
-    iam_bindings = optional(map(object({
-      members = list(string)
-      role    = string
-      condition = optional(object({
-        expression  = string
-        title       = string
-        description = optional(string)
-      }))
-    })), {})
-    iam_bindings_additive = optional(map(object({
-      member = string
-      role   = string
-      condition = optional(object({
-        expression  = string
-        title       = string
-        description = optional(string)
-      }))
-    })), {})
-    location = optional(string)
+    location              = optional(string)
     oauth_config = optional(object({
       auth_uri = string
       # Plaintext value or Secret Manager version (projects/PROJECT/secrets/SECRET/versions/VERSION)
@@ -239,6 +229,23 @@ variable "agent_registry_services" {
   }))
   nullable = false
   default  = {}
+  validation {
+    condition = alltrue(flatten([
+      for k, v in var.agent_registry_services : [
+        for rk, rv in v.access_policy_rules : contains(["ALLOW", "DENY"], rv.effect)
+      ]
+    ]))
+    error_message = "Each service access_policy_rules 'effect' must be 'ALLOW' or 'DENY'."
+  }
+  validation {
+    condition = alltrue(flatten([
+      for k, v in var.agent_registry_services : [
+        for rk, rv in v.access_policy_rules :
+        length(rv.principals) > 0 && length(rv.permissions) > 0
+      ]
+    ]))
+    error_message = "Each service access_policy_rules entry must specify at least one principal and one permission."
+  }
   validation {
     condition = alltrue([
       for k, v in var.agent_registry_services :

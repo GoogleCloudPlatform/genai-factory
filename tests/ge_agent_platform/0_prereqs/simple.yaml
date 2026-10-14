@@ -1,3 +1,4 @@
+---
 # Copyright 2026 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,664 +19,664 @@ values:
     role: roles/iam.serviceAccountTokenCreator
     service_account_id: projects/test-gf-geap-0/serviceAccounts/iac-rw@test-gf-geap-0.iam.gserviceaccount.com
   local_file.providers:
-    content_base64: null
+    content_base64:
     directory_permission: '0777'
     file_permission: '0644'
     filename: ../1-apps/providers.tf
-    sensitive_content: null
-    source: null
+    sensitive_content:
+    source:
   local_file.tfvars:
-    content_base64: null
+    content_base64:
     directory_permission: '0777'
     file_permission: '0644'
     filename: ../1-apps/terraform.auto.tfvars
-    sensitive_content: null
-    source: null
+    sensitive_content:
+    source:
   module.dns_policy_googleapis[0].google_dns_response_policy.default[0]:
     deletion_policy: DELETE
     description: Terraform managed.
     gke_clusters: []
     networks:
-    - {}
+      - {}
     project: test-gf-geap-hp-0
     response_policy_name: googleapis
-    timeouts: null
+    timeouts:
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["accounts"]:
-    behavior: null
+    behavior:
     deletion_policy: DELETE
     dns_name: accounts.google.com.
     local_data:
-    - local_datas:
-      - name: accounts.google.com.
-        rrdatas:
-        - private.googleapis.com.
-        ttl: null
-        type: CNAME
+      - local_datas:
+          - name: accounts.google.com.
+            rrdatas:
+              - private.googleapis.com.
+            ttl:
+            type: CNAME
     project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: accounts
-    timeouts: null
+    timeouts:
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["aiplatform-notebook-cloud-all"]:
-    behavior: null
+    behavior:
     deletion_policy: DELETE
     dns_name: '*.aiplatform-notebook.cloud.google.com.'
     local_data:
-    - local_datas:
-      - name: '*.aiplatform-notebook.cloud.google.com.'
-        rrdatas:
-        - private.googleapis.com.
-        ttl: null
-        type: CNAME
+      - local_datas:
+          - name: '*.aiplatform-notebook.cloud.google.com.'
+            rrdatas:
+              - private.googleapis.com.
+            ttl:
+            type: CNAME
     project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: aiplatform-notebook-cloud-all
-    timeouts: null
+    timeouts:
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["aiplatform-notebook-gu-all"]:
-    behavior: null
+    behavior:
     deletion_policy: DELETE
     dns_name: '*.aiplatform-notebook.googleusercontent.com.'
     local_data:
-    - local_datas:
-      - name: '*.aiplatform-notebook.googleusercontent.com.'
-        rrdatas:
-        - private.googleapis.com.
-        ttl: null
-        type: CNAME
+      - local_datas:
+          - name: '*.aiplatform-notebook.googleusercontent.com.'
+            rrdatas:
+              - private.googleapis.com.
+            ttl:
+            type: CNAME
     project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: aiplatform-notebook-gu-all
-    timeouts: null
+    timeouts:
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["backupdr-cloud"]:
-    behavior: null
+    behavior:
     deletion_policy: DELETE
     dns_name: backupdr.cloud.google.com.
     local_data:
-    - local_datas:
-      - name: backupdr.cloud.google.com.
-        rrdatas:
-        - private.googleapis.com.
-        ttl: null
-        type: CNAME
+      - local_datas:
+          - name: backupdr.cloud.google.com.
+            rrdatas:
+              - private.googleapis.com.
+            ttl:
+            type: CNAME
     project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: backupdr-cloud
-    timeouts: null
+    timeouts:
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["backupdr-cloud-all"]:
-    behavior: null
+    behavior:
     deletion_policy: DELETE
     dns_name: '*.backupdr.cloud.google.com.'
     local_data:
-    - local_datas:
-      - name: '*.backupdr.cloud.google.com.'
-        rrdatas:
-        - private.googleapis.com.
-        ttl: null
-        type: CNAME
+      - local_datas:
+          - name: '*.backupdr.cloud.google.com.'
+            rrdatas:
+              - private.googleapis.com.
+            ttl:
+            type: CNAME
     project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: backupdr-cloud-all
-    timeouts: null
+    timeouts:
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["backupdr-gu"]:
-    behavior: null
+    behavior:
     deletion_policy: DELETE
     dns_name: backupdr.googleusercontent.google.com.
     local_data:
-    - local_datas:
-      - name: backupdr.googleusercontent.google.com.
-        rrdatas:
-        - private.googleapis.com.
-        ttl: null
-        type: CNAME
+      - local_datas:
+          - name: backupdr.googleusercontent.google.com.
+            rrdatas:
+              - private.googleapis.com.
+            ttl:
+            type: CNAME
     project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: backupdr-gu
-    timeouts: null
+    timeouts:
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["backupdr-gu-all"]:
-    behavior: null
+    behavior:
     deletion_policy: DELETE
     dns_name: '*.backupdr.googleusercontent.google.com.'
     local_data:
-    - local_datas:
-      - name: '*.backupdr.googleusercontent.google.com.'
-        rrdatas:
-        - private.googleapis.com.
-        ttl: null
-        type: CNAME
+      - local_datas:
+          - name: '*.backupdr.googleusercontent.google.com.'
+            rrdatas:
+              - private.googleapis.com.
+            ttl:
+            type: CNAME
     project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: backupdr-gu-all
-    timeouts: null
+    timeouts:
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["cloudfunctions"]:
-    behavior: null
+    behavior:
     deletion_policy: DELETE
     dns_name: '*.cloudfunctions.net.'
     local_data:
-    - local_datas:
-      - name: '*.cloudfunctions.net.'
-        rrdatas:
-        - private.googleapis.com.
-        ttl: null
-        type: CNAME
+      - local_datas:
+          - name: '*.cloudfunctions.net.'
+            rrdatas:
+              - private.googleapis.com.
+            ttl:
+            type: CNAME
     project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: cloudfunctions
-    timeouts: null
+    timeouts:
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["cloudproxy"]:
-    behavior: null
+    behavior:
     deletion_policy: DELETE
     dns_name: '*.cloudproxy.app.'
     local_data:
-    - local_datas:
-      - name: '*.cloudproxy.app.'
-        rrdatas:
-        - private.googleapis.com.
-        ttl: null
-        type: CNAME
+      - local_datas:
+          - name: '*.cloudproxy.app.'
+            rrdatas:
+              - private.googleapis.com.
+            ttl:
+            type: CNAME
     project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: cloudproxy
-    timeouts: null
+    timeouts:
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["composer-cloud-all"]:
-    behavior: null
+    behavior:
     deletion_policy: DELETE
     dns_name: '*.composer.cloud.google.com.'
     local_data:
-    - local_datas:
-      - name: '*.composer.cloud.google.com.'
-        rrdatas:
-        - private.googleapis.com.
-        ttl: null
-        type: CNAME
+      - local_datas:
+          - name: '*.composer.cloud.google.com.'
+            rrdatas:
+              - private.googleapis.com.
+            ttl:
+            type: CNAME
     project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: composer-cloud-all
-    timeouts: null
+    timeouts:
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["composer-gu-all"]:
-    behavior: null
+    behavior:
     deletion_policy: DELETE
     dns_name: '*.composer.googleusercontent.com.'
     local_data:
-    - local_datas:
-      - name: '*.composer.googleusercontent.com.'
-        rrdatas:
-        - private.googleapis.com.
-        ttl: null
-        type: CNAME
+      - local_datas:
+          - name: '*.composer.googleusercontent.com.'
+            rrdatas:
+              - private.googleapis.com.
+            ttl:
+            type: CNAME
     project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: composer-gu-all
-    timeouts: null
+    timeouts:
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["datafusion-all"]:
-    behavior: null
+    behavior:
     deletion_policy: DELETE
     dns_name: '*.datafusion.cloud.google.com.'
     local_data:
-    - local_datas:
-      - name: '*.datafusion.cloud.google.com.'
-        rrdatas:
-        - private.googleapis.com.
-        ttl: null
-        type: CNAME
+      - local_datas:
+          - name: '*.datafusion.cloud.google.com.'
+            rrdatas:
+              - private.googleapis.com.
+            ttl:
+            type: CNAME
     project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: datafusion-all
-    timeouts: null
+    timeouts:
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["datafusion-gu-all"]:
-    behavior: null
+    behavior:
     deletion_policy: DELETE
     dns_name: '*.datafusion.googleusercontent.com.'
     local_data:
-    - local_datas:
-      - name: '*.datafusion.googleusercontent.com.'
-        rrdatas:
-        - private.googleapis.com.
-        ttl: null
-        type: CNAME
+      - local_datas:
+          - name: '*.datafusion.googleusercontent.com.'
+            rrdatas:
+              - private.googleapis.com.
+            ttl:
+            type: CNAME
     project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: datafusion-gu-all
-    timeouts: null
+    timeouts:
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["dataproc"]:
-    behavior: null
+    behavior:
     deletion_policy: DELETE
     dns_name: dataproc.cloud.google.com.
     local_data:
-    - local_datas:
-      - name: dataproc.cloud.google.com.
-        rrdatas:
-        - private.googleapis.com.
-        ttl: null
-        type: CNAME
+      - local_datas:
+          - name: dataproc.cloud.google.com.
+            rrdatas:
+              - private.googleapis.com.
+            ttl:
+            type: CNAME
     project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: dataproc
-    timeouts: null
+    timeouts:
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["dataproc-all"]:
-    behavior: null
+    behavior:
     deletion_policy: DELETE
     dns_name: '*.dataproc.cloud.google.com.'
     local_data:
-    - local_datas:
-      - name: '*.dataproc.cloud.google.com.'
-        rrdatas:
-        - private.googleapis.com.
-        ttl: null
-        type: CNAME
+      - local_datas:
+          - name: '*.dataproc.cloud.google.com.'
+            rrdatas:
+              - private.googleapis.com.
+            ttl:
+            type: CNAME
     project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: dataproc-all
-    timeouts: null
+    timeouts:
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["dataproc-gu"]:
-    behavior: null
+    behavior:
     deletion_policy: DELETE
     dns_name: dataproc.googleusercontent.com.
     local_data:
-    - local_datas:
-      - name: dataproc.googleusercontent.com.
-        rrdatas:
-        - private.googleapis.com.
-        ttl: null
-        type: CNAME
+      - local_datas:
+          - name: dataproc.googleusercontent.com.
+            rrdatas:
+              - private.googleapis.com.
+            ttl:
+            type: CNAME
     project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: dataproc-gu
-    timeouts: null
+    timeouts:
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["dataproc-gu-all"]:
-    behavior: null
+    behavior:
     deletion_policy: DELETE
     dns_name: '*.dataproc.googleusercontent.com.'
     local_data:
-    - local_datas:
-      - name: '*.dataproc.googleusercontent.com.'
-        rrdatas:
-        - private.googleapis.com.
-        ttl: null
-        type: CNAME
+      - local_datas:
+          - name: '*.dataproc.googleusercontent.com.'
+            rrdatas:
+              - private.googleapis.com.
+            ttl:
+            type: CNAME
     project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: dataproc-gu-all
-    timeouts: null
+    timeouts:
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["dl"]:
-    behavior: null
+    behavior:
     deletion_policy: DELETE
     dns_name: dl.google.com.
     local_data:
-    - local_datas:
-      - name: dl.google.com.
-        rrdatas:
-        - private.googleapis.com.
-        ttl: null
-        type: CNAME
+      - local_datas:
+          - name: dl.google.com.
+            rrdatas:
+              - private.googleapis.com.
+            ttl:
+            type: CNAME
     project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: dl
-    timeouts: null
+    timeouts:
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["gcr"]:
-    behavior: null
+    behavior:
     deletion_policy: DELETE
     dns_name: gcr.io.
     local_data:
-    - local_datas:
-      - name: gcr.io.
-        rrdatas:
-        - private.googleapis.com.
-        ttl: null
-        type: CNAME
+      - local_datas:
+          - name: gcr.io.
+            rrdatas:
+              - private.googleapis.com.
+            ttl:
+            type: CNAME
     project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: gcr
-    timeouts: null
+    timeouts:
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["gcr-all"]:
-    behavior: null
+    behavior:
     deletion_policy: DELETE
     dns_name: '*.gcr.io.'
     local_data:
-    - local_datas:
-      - name: '*.gcr.io.'
-        rrdatas:
-        - private.googleapis.com.
-        ttl: null
-        type: CNAME
+      - local_datas:
+          - name: '*.gcr.io.'
+            rrdatas:
+              - private.googleapis.com.
+            ttl:
+            type: CNAME
     project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: gcr-all
-    timeouts: null
+    timeouts:
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["gke-all"]:
-    behavior: null
+    behavior:
     deletion_policy: DELETE
     dns_name: '*.gke.goog.'
     local_data:
-    - local_datas:
-      - name: '*.gke.goog.'
-        rrdatas:
-        - private.googleapis.com.
-        ttl: null
-        type: CNAME
+      - local_datas:
+          - name: '*.gke.goog.'
+            rrdatas:
+              - private.googleapis.com.
+            ttl:
+            type: CNAME
     project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: gke-all
-    timeouts: null
+    timeouts:
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["googleapis-all"]:
-    behavior: null
+    behavior:
     deletion_policy: DELETE
     dns_name: '*.googleapis.com.'
     local_data:
-    - local_datas:
-      - name: '*.googleapis.com.'
-        rrdatas:
-        - private.googleapis.com.
-        ttl: null
-        type: CNAME
+      - local_datas:
+          - name: '*.googleapis.com.'
+            rrdatas:
+              - private.googleapis.com.
+            ttl:
+            type: CNAME
     project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: googleapis-all
-    timeouts: null
+    timeouts:
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["googleapis-private"]:
-    behavior: null
+    behavior:
     deletion_policy: DELETE
     dns_name: private.googleapis.com.
     local_data:
-    - local_datas:
-      - name: private.googleapis.com.
-        rrdatas:
-        - 199.36.153.8
-        - 199.36.153.9
-        - 199.36.153.10
-        - 199.36.153.11
-        ttl: null
-        type: A
-      - name: private.googleapis.com.
-        rrdatas:
-        - '2600:2d00:2:2000::'
-        ttl: null
-        type: AAAA
+      - local_datas:
+          - name: private.googleapis.com.
+            rrdatas:
+              - 199.36.153.8
+              - 199.36.153.9
+              - 199.36.153.10
+              - 199.36.153.11
+            ttl:
+            type: A
+          - name: private.googleapis.com.
+            rrdatas:
+              - '2600:2d00:2:2000::'
+            ttl:
+            type: AAAA
     project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: googleapis-private
-    timeouts: null
+    timeouts:
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["googleapis-restricted"]:
-    behavior: null
+    behavior:
     deletion_policy: DELETE
     dns_name: restricted.googleapis.com.
     local_data:
-    - local_datas:
-      - name: restricted.googleapis.com.
-        rrdatas:
-        - 199.36.153.4
-        - 199.36.153.5
-        - 199.36.153.6
-        - 199.36.153.7
-        ttl: null
-        type: A
-      - name: restricted.googleapis.com.
-        rrdatas:
-        - '2600:2d00:2:1000::'
-        ttl: null
-        type: AAAA
+      - local_datas:
+          - name: restricted.googleapis.com.
+            rrdatas:
+              - 199.36.153.4
+              - 199.36.153.5
+              - 199.36.153.6
+              - 199.36.153.7
+            ttl:
+            type: A
+          - name: restricted.googleapis.com.
+            rrdatas:
+              - '2600:2d00:2:1000::'
+            ttl:
+            type: AAAA
     project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: googleapis-restricted
-    timeouts: null
+    timeouts:
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["gstatic-all"]:
-    behavior: null
+    behavior:
     deletion_policy: DELETE
     dns_name: '*.gstatic.com.'
     local_data:
-    - local_datas:
-      - name: '*.gstatic.com.'
-        rrdatas:
-        - private.googleapis.com.
-        ttl: null
-        type: CNAME
+      - local_datas:
+          - name: '*.gstatic.com.'
+            rrdatas:
+              - private.googleapis.com.
+            ttl:
+            type: CNAME
     project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: gstatic-all
-    timeouts: null
+    timeouts:
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["kernels-gu"]:
-    behavior: null
+    behavior:
     deletion_policy: DELETE
     dns_name: kernels.googleusercontent.com.
     local_data:
-    - local_datas:
-      - name: kernels.googleusercontent.com.
-        rrdatas:
-        - private.googleapis.com.
-        ttl: null
-        type: CNAME
+      - local_datas:
+          - name: kernels.googleusercontent.com.
+            rrdatas:
+              - private.googleapis.com.
+            ttl:
+            type: CNAME
     project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: kernels-gu
-    timeouts: null
+    timeouts:
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["kernels-gu-all"]:
-    behavior: null
+    behavior:
     deletion_policy: DELETE
     dns_name: '*.kernels.googleusercontent.com.'
     local_data:
-    - local_datas:
-      - name: '*.kernels.googleusercontent.com.'
-        rrdatas:
-        - private.googleapis.com.
-        ttl: null
-        type: CNAME
+      - local_datas:
+          - name: '*.kernels.googleusercontent.com.'
+            rrdatas:
+              - private.googleapis.com.
+            ttl:
+            type: CNAME
     project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: kernels-gu-all
-    timeouts: null
+    timeouts:
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["ltsapis-all"]:
-    behavior: null
+    behavior:
     deletion_policy: DELETE
     dns_name: '*.ltsapis.goog.'
     local_data:
-    - local_datas:
-      - name: '*.ltsapis.goog.'
-        rrdatas:
-        - private.googleapis.com.
-        ttl: null
-        type: CNAME
+      - local_datas:
+          - name: '*.ltsapis.goog.'
+            rrdatas:
+              - private.googleapis.com.
+            ttl:
+            type: CNAME
     project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: ltsapis-all
-    timeouts: null
+    timeouts:
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["notebooks-all"]:
-    behavior: null
+    behavior:
     deletion_policy: DELETE
     dns_name: '*.notebooks.cloud.google.com.'
     local_data:
-    - local_datas:
-      - name: '*.notebooks.cloud.google.com.'
-        rrdatas:
-        - private.googleapis.com.
-        ttl: null
-        type: CNAME
+      - local_datas:
+          - name: '*.notebooks.cloud.google.com.'
+            rrdatas:
+              - private.googleapis.com.
+            ttl:
+            type: CNAME
     project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: notebooks-all
-    timeouts: null
+    timeouts:
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["notebooks-gu-all"]:
-    behavior: null
+    behavior:
     deletion_policy: DELETE
     dns_name: '*.notebooks.googleusercontent.com.'
     local_data:
-    - local_datas:
-      - name: '*.notebooks.googleusercontent.com.'
-        rrdatas:
-        - private.googleapis.com.
-        ttl: null
-        type: CNAME
+      - local_datas:
+          - name: '*.notebooks.googleusercontent.com.'
+            rrdatas:
+              - private.googleapis.com.
+            ttl:
+            type: CNAME
     project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: notebooks-gu-all
-    timeouts: null
+    timeouts:
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["packages-cloud"]:
-    behavior: null
+    behavior:
     deletion_policy: DELETE
     dns_name: packages.cloud.google.com.
     local_data:
-    - local_datas:
-      - name: packages.cloud.google.com.
-        rrdatas:
-        - private.googleapis.com.
-        ttl: null
-        type: CNAME
+      - local_datas:
+          - name: packages.cloud.google.com.
+            rrdatas:
+              - private.googleapis.com.
+            ttl:
+            type: CNAME
     project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: packages-cloud
-    timeouts: null
+    timeouts:
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["packages-cloud-all"]:
-    behavior: null
+    behavior:
     deletion_policy: DELETE
     dns_name: '*.packages.cloud.google.com.'
     local_data:
-    - local_datas:
-      - name: '*.packages.cloud.google.com.'
-        rrdatas:
-        - private.googleapis.com.
-        ttl: null
-        type: CNAME
+      - local_datas:
+          - name: '*.packages.cloud.google.com.'
+            rrdatas:
+              - private.googleapis.com.
+            ttl:
+            type: CNAME
     project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: packages-cloud-all
-    timeouts: null
+    timeouts:
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["pkgdev"]:
-    behavior: null
+    behavior:
     deletion_policy: DELETE
     dns_name: pkg.dev.
     local_data:
-    - local_datas:
-      - name: pkg.dev.
-        rrdatas:
-        - private.googleapis.com.
-        ttl: null
-        type: CNAME
+      - local_datas:
+          - name: pkg.dev.
+            rrdatas:
+              - private.googleapis.com.
+            ttl:
+            type: CNAME
     project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: pkgdev
-    timeouts: null
+    timeouts:
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["pkgdev-all"]:
-    behavior: null
+    behavior:
     deletion_policy: DELETE
     dns_name: '*.pkg.dev.'
     local_data:
-    - local_datas:
-      - name: '*.pkg.dev.'
-        rrdatas:
-        - private.googleapis.com.
-        ttl: null
-        type: CNAME
+      - local_datas:
+          - name: '*.pkg.dev.'
+            rrdatas:
+              - private.googleapis.com.
+            ttl:
+            type: CNAME
     project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: pkgdev-all
-    timeouts: null
+    timeouts:
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["pkigoog"]:
-    behavior: null
+    behavior:
     deletion_policy: DELETE
     dns_name: pki.goog.
     local_data:
-    - local_datas:
-      - name: pki.goog.
-        rrdatas:
-        - private.googleapis.com.
-        ttl: null
-        type: CNAME
+      - local_datas:
+          - name: pki.goog.
+            rrdatas:
+              - private.googleapis.com.
+            ttl:
+            type: CNAME
     project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: pkigoog
-    timeouts: null
+    timeouts:
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["pkigoog-all"]:
-    behavior: null
+    behavior:
     deletion_policy: DELETE
     dns_name: '*.pki.goog.'
     local_data:
-    - local_datas:
-      - name: '*.pki.goog.'
-        rrdatas:
-        - private.googleapis.com.
-        ttl: null
-        type: CNAME
+      - local_datas:
+          - name: '*.pki.goog.'
+            rrdatas:
+              - private.googleapis.com.
+            ttl:
+            type: CNAME
     project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: pkigoog-all
-    timeouts: null
+    timeouts:
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["run-all"]:
-    behavior: null
+    behavior:
     deletion_policy: DELETE
     dns_name: '*.run.app.'
     local_data:
-    - local_datas:
-      - name: '*.run.app.'
-        rrdatas:
-        - private.googleapis.com.
-        ttl: null
-        type: CNAME
+      - local_datas:
+          - name: '*.run.app.'
+            rrdatas:
+              - private.googleapis.com.
+            ttl:
+            type: CNAME
     project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: run-all
-    timeouts: null
+    timeouts:
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["source"]:
-    behavior: null
+    behavior:
     deletion_policy: DELETE
     dns_name: source.developers.google.com.
     local_data:
-    - local_datas:
-      - name: source.developers.google.com.
-        rrdatas:
-        - private.googleapis.com.
-        ttl: null
-        type: CNAME
+      - local_datas:
+          - name: source.developers.google.com.
+            rrdatas:
+              - private.googleapis.com.
+            ttl:
+            type: CNAME
     project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: source
-    timeouts: null
+    timeouts:
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["storage"]:
-    behavior: null
+    behavior:
     deletion_policy: DELETE
     dns_name: storage.cloud.google.com.
     local_data:
-    - local_datas:
-      - name: storage.cloud.google.com.
-        rrdatas:
-        - private.googleapis.com.
-        ttl: null
-        type: CNAME
+      - local_datas:
+          - name: storage.cloud.google.com.
+            rrdatas:
+              - private.googleapis.com.
+            ttl:
+            type: CNAME
     project: test-gf-geap-hp-0
     response_policy: googleapis
     rule_name: storage
-    timeouts: null
+    timeouts:
   module.projects.module.buckets["service-01/iac-state"].google_storage_bucket.bucket[0]:
     autoclass: []
     cors: []
     custom_placement_config: []
-    default_event_based_hold: null
+    default_event_based_hold:
     deletion_policy: DELETE
     effective_labels:
       goog-terraform-provisioned: 'true'
-    enable_object_retention: null
+    enable_object_retention:
     encryption: []
     force_destroy: false
     hierarchical_namespace: []
     ip_filter: []
-    labels: null
+    labels:
     lifecycle_rule: []
     location: EUROPE-WEST1
     logging: []
     name: test-gf-geap-0-iac-state
     project: test-gf-geap-0
-    requester_pays: null
+    requester_pays:
     retention_policy: []
     storage_class: STANDARD
     terraform_labels:
       goog-terraform-provisioned: 'true'
-    timeouts: null
+    timeouts:
     uniform_bucket_level_access: true
     versioning:
-    - enabled: false
+      - enabled: false
   ? module.projects.module.buckets["service-01/iac-state"].google_storage_bucket_iam_binding.authoritative["roles/storage.objectUser"]
   : bucket: test-gf-geap-0-iac-state
     condition: []
     members:
-    - serviceAccount:iac-rw@test-gf-geap-0.iam.gserviceaccount.com
+      - serviceAccount:iac-rw@test-gf-geap-0.iam.gserviceaccount.com
     role: roles/storage.objectUser
-    timeouts: null
+    timeouts:
   module.projects.module.projects-iam["host"].google_project_iam_binding.authoritative["roles/compute.networkUser"]:
     condition: []
     project: test-gf-geap-hp-0
@@ -683,7 +684,7 @@ values:
   module.projects.module.projects-iam["host"].google_project_iam_binding.authoritative["roles/compute.networkViewer"]:
     condition: []
     members:
-    - serviceAccount:iac-rw@test-gf-geap-0.iam.gserviceaccount.com
+      - serviceAccount:iac-rw@test-gf-geap-0.iam.gserviceaccount.com
     project: test-gf-geap-hp-0
     role: roles/compute.networkViewer
   module.projects.module.projects-iam["host"].google_project_iam_binding.authoritative["roles/dns.peer"]:
@@ -693,19 +694,19 @@ values:
   module.projects.module.projects-iam["host"].google_project_iam_binding.authoritative["roles/dns.reader"]:
     condition: []
     members:
-    - serviceAccount:iac-rw@test-gf-geap-0.iam.gserviceaccount.com
+      - serviceAccount:iac-rw@test-gf-geap-0.iam.gserviceaccount.com
     project: test-gf-geap-hp-0
     role: roles/dns.reader
   ? module.projects.module.projects-iam["host"].google_project_iam_binding.authoritative["roles/networkconnectivity.consumerNetworkAdmin"]
   : condition: []
     members:
-    - serviceAccount:iac-rw@test-gf-geap-0.iam.gserviceaccount.com
+      - serviceAccount:iac-rw@test-gf-geap-0.iam.gserviceaccount.com
     project: test-gf-geap-hp-0
     role: roles/networkconnectivity.consumerNetworkAdmin
   ? module.projects.module.projects-iam["host"].google_project_iam_binding.authoritative["roles/networkconnectivity.regionalEndpointAdmin"]
   : condition: []
     members:
-    - serviceAccount:iac-rw@test-gf-geap-0.iam.gserviceaccount.com
+      - serviceAccount:iac-rw@test-gf-geap-0.iam.gserviceaccount.com
     project: test-gf-geap-hp-0
     role: roles/networkconnectivity.regionalEndpointAdmin
   ? module.projects.module.projects-iam["service-01"].google_org_policy_policy.default["discoveryengine.managed.disableCustomMcpServerConnector"]
@@ -713,31 +714,31 @@ values:
     name: projects/test-gf-geap-0/policies/discoveryengine.managed.disableCustomMcpServerConnector
     parent: projects/test-gf-geap-0
     spec:
-    - inherit_from_parent: null
-      reset: null
-      rules:
-      - allow_all: null
-        condition: []
-        deny_all: null
-        enforce: 'FALSE'
-        parameters: null
-        values: []
-    timeouts: null
+      - inherit_from_parent:
+        reset:
+        rules:
+          - allow_all:
+            condition: []
+            deny_all:
+            enforce: 'FALSE'
+            parameters:
+            values: []
+    timeouts:
   ? module.projects.module.projects-iam["service-01"].google_org_policy_policy.default["iam.managed.disableAccessPolicyBinding"]
   : dry_run_spec: []
     name: projects/test-gf-geap-0/policies/iam.managed.disableAccessPolicyBinding
     parent: projects/test-gf-geap-0
     spec:
-    - inherit_from_parent: null
-      reset: null
-      rules:
-      - allow_all: null
-        condition: []
-        deny_all: null
-        enforce: 'FALSE'
-        parameters: null
-        values: []
-    timeouts: null
+      - inherit_from_parent:
+        reset:
+        rules:
+          - allow_all:
+            condition: []
+            deny_all:
+            enforce: 'FALSE'
+            parameters:
+            values: []
+    timeouts:
   module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["$custom_roles:psc_manager"]:
     condition: []
     project: test-gf-geap-0
@@ -745,31 +746,37 @@ values:
   module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/agentregistry.admin"]:
     condition: []
     members:
-    - serviceAccount:iac-rw@test-gf-geap-0.iam.gserviceaccount.com
+      - serviceAccount:iac-rw@test-gf-geap-0.iam.gserviceaccount.com
     project: test-gf-geap-0
     role: roles/agentregistry.admin
   module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/compute.networkAdmin"]:
     condition: []
     members:
-    - serviceAccount:iac-rw@test-gf-geap-0.iam.gserviceaccount.com
+      - serviceAccount:iac-rw@test-gf-geap-0.iam.gserviceaccount.com
     project: test-gf-geap-0
     role: roles/compute.networkAdmin
   module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/discoveryengine.admin"]:
     condition: []
     members:
-    - serviceAccount:iac-rw@test-gf-geap-0.iam.gserviceaccount.com
+      - serviceAccount:iac-rw@test-gf-geap-0.iam.gserviceaccount.com
     project: test-gf-geap-0
     role: roles/discoveryengine.admin
+  module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/iam.accessPolicyAdmin"]:
+    condition: []
+    members:
+      - serviceAccount:iac-rw@test-gf-geap-0.iam.gserviceaccount.com
+    project: test-gf-geap-0
+    role: roles/iam.accessPolicyAdmin
   module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/iap.admin"]:
     condition: []
     members:
-    - serviceAccount:iac-rw@test-gf-geap-0.iam.gserviceaccount.com
+      - serviceAccount:iac-rw@test-gf-geap-0.iam.gserviceaccount.com
     project: test-gf-geap-0
     role: roles/iap.admin
   module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/modelarmor.admin"]:
     condition: []
     members:
-    - serviceAccount:iac-rw@test-gf-geap-0.iam.gserviceaccount.com
+      - serviceAccount:iac-rw@test-gf-geap-0.iam.gserviceaccount.com
     project: test-gf-geap-0
     role: roles/modelarmor.admin
   module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/modelarmor.calloutUser"]:
@@ -779,7 +786,7 @@ values:
   ? module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/modelarmor.floorSettingsAdmin"]
   : condition: []
     members:
-    - serviceAccount:iac-rw@test-gf-geap-0.iam.gserviceaccount.com
+      - serviceAccount:iac-rw@test-gf-geap-0.iam.gserviceaccount.com
     project: test-gf-geap-0
     role: roles/modelarmor.floorSettingsAdmin
   module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/modelarmor.user"]:
@@ -789,13 +796,13 @@ values:
   module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/networksecurity.admin"]:
     condition: []
     members:
-    - serviceAccount:iac-rw@test-gf-geap-0.iam.gserviceaccount.com
+      - serviceAccount:iac-rw@test-gf-geap-0.iam.gserviceaccount.com
     project: test-gf-geap-0
     role: roles/networksecurity.admin
   module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/networkservices.admin"]:
     condition: []
     members:
-    - serviceAccount:iac-rw@test-gf-geap-0.iam.gserviceaccount.com
+      - serviceAccount:iac-rw@test-gf-geap-0.iam.gserviceaccount.com
     project: test-gf-geap-0
     role: roles/networkservices.admin
   ? module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/secretmanager.secretAccessor"]
@@ -809,17 +816,17 @@ values:
   module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/storage.admin"]:
     condition: []
     members:
-    - serviceAccount:iac-rw@test-gf-geap-0.iam.gserviceaccount.com
+      - serviceAccount:iac-rw@test-gf-geap-0.iam.gserviceaccount.com
     project: test-gf-geap-0
     role: roles/storage.admin
   module.projects.module.projects-iam["service-01"].google_project_iam_binding.bindings["iac_rw_project_iam_delegated"]:
     condition:
-    - description: Automation service account delegated grants.
-      expression: api.getAttribute('iam.googleapis.com/modifiedGrantsByRole', []).hasOnly(['roles/discoveryengine.agentspaceRestrictedUser',
-        'projects/test-gf-geap-0/roles/discoveryengineUserBusinessAiCodeOnly'])
-      title: iac_rw_delegated_grants
+      - description: Automation service account delegated grants.
+        expression: api.getAttribute('iam.googleapis.com/modifiedGrantsByRole', []).hasOnly(['roles/discoveryengine.agentspaceRestrictedUser',
+          'projects/test-gf-geap-0/roles/discoveryengineUserBusinessAiCodeOnly'])
+        title: iac_rw_delegated_grants
     members:
-    - serviceAccount:iac-rw@test-gf-geap-0.iam.gserviceaccount.com
+      - serviceAccount:iac-rw@test-gf-geap-0.iam.gserviceaccount.com
     project: test-gf-geap-0
     role: roles/resourcemanager.projectIamAdmin
   module.projects.module.projects["host"].google_project.project[0]:
@@ -829,14 +836,14 @@ values:
     effective_labels:
       goog-terraform-provisioned: 'true'
     folder_id: '1234567890'
-    labels: null
+    labels:
     name: test-gf-geap-hp-0
-    org_id: null
+    org_id:
     project_id: test-gf-geap-hp-0
-    tags: null
+    tags:
     terraform_labels:
       goog-terraform-provisioned: 'true'
-    timeouts: null
+    timeouts:
   module.projects.module.projects["host"].google_project_iam_member.service_agents["compute-system"]:
     condition: []
     project: test-gf-geap-hp-0
@@ -851,21 +858,21 @@ values:
     disable_on_destroy: false
     project: test-gf-geap-hp-0
     service: compute.googleapis.com
-    timeouts: null
+    timeouts:
   module.projects.module.projects["host"].google_project_service.project_services["dns.googleapis.com"]:
     deletion_policy: DELETE
     disable_dependent_services: false
     disable_on_destroy: false
     project: test-gf-geap-hp-0
     service: dns.googleapis.com
-    timeouts: null
+    timeouts:
   module.projects.module.projects["host"].google_project_service_identity.default["dns.googleapis.com"]:
     project: test-gf-geap-hp-0
     service: dns.googleapis.com
-    timeouts: null
+    timeouts:
   module.projects.module.projects["service-01"].data.google_storage_project_service_account.gcs_sa[0]:
     project: test-gf-geap-0
-    user_project: null
+    user_project:
   module.projects.module.projects["service-01"].google_project.project[0]:
     auto_create_network: false
     billing_account: 012345-678901-ABCDEF
@@ -873,24 +880,24 @@ values:
     effective_labels:
       goog-terraform-provisioned: 'true'
     folder_id: '1234567890'
-    labels: null
+    labels:
     name: test-gf-geap-0
-    org_id: null
+    org_id:
     project_id: test-gf-geap-0
-    tags: null
+    tags:
     terraform_labels:
       goog-terraform-provisioned: 'true'
-    timeouts: null
+    timeouts:
   ? module.projects.module.projects["service-01"].google_project_iam_custom_role.roles["discoveryengineUserBusinessAiCodeOnly"]
   : deletion_policy: DELETE
     description: Used to grant Gemini Enterprise users access to Antigravity while
       maintaining access to single applications (GE user role granted at app level).
     permissions:
-    - businessaicode.locations.fetchQuotaStatus
-    - businessaicode.locations.generateContent
-    - businessaicode.locations.queryConfiguration
-    - businessaicode.locations.selfAssignLicense
-    - businessaicode.locations.sendTelemetry
+      - businessaicode.locations.fetchQuotaStatus
+      - businessaicode.locations.generateContent
+      - businessaicode.locations.queryConfiguration
+      - businessaicode.locations.selfAssignLicense
+      - businessaicode.locations.sendTelemetry
     project: test-gf-geap-0
     role_id: discoveryengineUserBusinessAiCodeOnly
     stage: GA
@@ -900,11 +907,11 @@ values:
     description: Allows identities to manage network attachments and accept PSC-I
       connections.
     permissions:
-    - compute.networkAttachments.create
-    - compute.networkAttachments.delete
-    - compute.networkAttachments.get
-    - compute.networkAttachments.update
-    - compute.regionOperations.get
+      - compute.networkAttachments.create
+      - compute.networkAttachments.delete
+      - compute.networkAttachments.get
+      - compute.networkAttachments.update
+      - compute.regionOperations.get
     project: test-gf-geap-0
     role_id: psc_manager
     stage: GA
@@ -1015,184 +1022,184 @@ values:
     disable_on_destroy: false
     project: test-gf-geap-0
     service: orgpolicy.googleapis.com
-    timeouts: null
+    timeouts:
   module.projects.module.projects["service-01"].google_project_service.project_services["agentregistry.googleapis.com"]:
     deletion_policy: DELETE
     disable_dependent_services: false
     disable_on_destroy: false
     project: test-gf-geap-0
     service: agentregistry.googleapis.com
-    timeouts: null
+    timeouts:
   module.projects.module.projects["service-01"].google_project_service.project_services["aiplatform.googleapis.com"]:
     deletion_policy: DELETE
     disable_dependent_services: false
     disable_on_destroy: false
     project: test-gf-geap-0
     service: aiplatform.googleapis.com
-    timeouts: null
+    timeouts:
   module.projects.module.projects["service-01"].google_project_service.project_services["apptopology.googleapis.com"]:
     deletion_policy: DELETE
     disable_dependent_services: false
     disable_on_destroy: false
     project: test-gf-geap-0
     service: apptopology.googleapis.com
-    timeouts: null
+    timeouts:
   ? module.projects.module.projects["service-01"].google_project_service.project_services["cloudresourcemanager.googleapis.com"]
   : deletion_policy: DELETE
     disable_dependent_services: false
     disable_on_destroy: false
     project: test-gf-geap-0
     service: cloudresourcemanager.googleapis.com
-    timeouts: null
+    timeouts:
   module.projects.module.projects["service-01"].google_project_service.project_services["compute.googleapis.com"]:
     deletion_policy: DELETE
     disable_dependent_services: false
     disable_on_destroy: false
     project: test-gf-geap-0
     service: compute.googleapis.com
-    timeouts: null
+    timeouts:
   module.projects.module.projects["service-01"].google_project_service.project_services["discoveryengine.googleapis.com"]:
     deletion_policy: DELETE
     disable_dependent_services: false
     disable_on_destroy: false
     project: test-gf-geap-0
     service: discoveryengine.googleapis.com
-    timeouts: null
+    timeouts:
   module.projects.module.projects["service-01"].google_project_service.project_services["iam.googleapis.com"]:
     deletion_policy: DELETE
     disable_dependent_services: false
     disable_on_destroy: false
     project: test-gf-geap-0
     service: iam.googleapis.com
-    timeouts: null
+    timeouts:
   module.projects.module.projects["service-01"].google_project_service.project_services["iamcredentials.googleapis.com"]:
     deletion_policy: DELETE
     disable_dependent_services: false
     disable_on_destroy: false
     project: test-gf-geap-0
     service: iamcredentials.googleapis.com
-    timeouts: null
+    timeouts:
   module.projects.module.projects["service-01"].google_project_service.project_services["iap.googleapis.com"]:
     deletion_policy: DELETE
     disable_dependent_services: false
     disable_on_destroy: false
     project: test-gf-geap-0
     service: iap.googleapis.com
-    timeouts: null
+    timeouts:
   module.projects.module.projects["service-01"].google_project_service.project_services["modelarmor.googleapis.com"]:
     deletion_policy: DELETE
     disable_dependent_services: false
     disable_on_destroy: false
     project: test-gf-geap-0
     service: modelarmor.googleapis.com
-    timeouts: null
+    timeouts:
   module.projects.module.projects["service-01"].google_project_service.project_services["networksecurity.googleapis.com"]:
     deletion_policy: DELETE
     disable_dependent_services: false
     disable_on_destroy: false
     project: test-gf-geap-0
     service: networksecurity.googleapis.com
-    timeouts: null
+    timeouts:
   module.projects.module.projects["service-01"].google_project_service.project_services["networkservices.googleapis.com"]:
     deletion_policy: DELETE
     disable_dependent_services: false
     disable_on_destroy: false
     project: test-gf-geap-0
     service: networkservices.googleapis.com
-    timeouts: null
+    timeouts:
   module.projects.module.projects["service-01"].google_project_service.project_services["observability.googleapis.com"]:
     deletion_policy: DELETE
     disable_dependent_services: false
     disable_on_destroy: false
     project: test-gf-geap-0
     service: observability.googleapis.com
-    timeouts: null
+    timeouts:
   module.projects.module.projects["service-01"].google_project_service.project_services["secretmanager.googleapis.com"]:
     deletion_policy: DELETE
     disable_dependent_services: false
     disable_on_destroy: false
     project: test-gf-geap-0
     service: secretmanager.googleapis.com
-    timeouts: null
+    timeouts:
   module.projects.module.projects["service-01"].google_project_service.project_services["serviceusage.googleapis.com"]:
     deletion_policy: DELETE
     disable_dependent_services: false
     disable_on_destroy: false
     project: test-gf-geap-0
     service: serviceusage.googleapis.com
-    timeouts: null
+    timeouts:
   module.projects.module.projects["service-01"].google_project_service.project_services["storage.googleapis.com"]:
     deletion_policy: DELETE
     disable_dependent_services: false
     disable_on_destroy: false
     project: test-gf-geap-0
     service: storage.googleapis.com
-    timeouts: null
+    timeouts:
   module.projects.module.projects["service-01"].google_project_service_identity.default["aiplatform.googleapis.com"]:
     project: test-gf-geap-0
     service: aiplatform.googleapis.com
-    timeouts: null
+    timeouts:
   module.projects.module.projects["service-01"].google_project_service_identity.default["discoveryengine.googleapis.com"]:
     project: test-gf-geap-0
     service: discoveryengine.googleapis.com
-    timeouts: null
+    timeouts:
   module.projects.module.projects["service-01"].google_project_service_identity.default["iap.googleapis.com"]:
     project: test-gf-geap-0
     service: iap.googleapis.com
-    timeouts: null
+    timeouts:
   module.projects.module.projects["service-01"].google_project_service_identity.default["modelarmor.googleapis.com"]:
     project: test-gf-geap-0
     service: modelarmor.googleapis.com
-    timeouts: null
+    timeouts:
   module.projects.module.projects["service-01"].google_project_service_identity.default["networksecurity.googleapis.com"]:
     project: test-gf-geap-0
     service: networksecurity.googleapis.com
-    timeouts: null
+    timeouts:
   module.projects.module.projects["service-01"].google_project_service_identity.default["networkservices.googleapis.com"]:
     project: test-gf-geap-0
     service: networkservices.googleapis.com
-    timeouts: null
+    timeouts:
   module.projects.module.projects["service-01"].google_project_service_identity.default["observability.googleapis.com"]:
     project: test-gf-geap-0
     service: observability.googleapis.com
-    timeouts: null
+    timeouts:
   module.projects.module.projects["service-01"].google_project_service_identity.default["secretmanager.googleapis.com"]:
     project: test-gf-geap-0
     service: secretmanager.googleapis.com
-    timeouts: null
+    timeouts:
   module.projects.module.service-accounts["service-01/iac-rw"].google_service_account.service_account[0]:
     account_id: iac-rw
-    create_ignore_already_exists: null
+    create_ignore_already_exists:
     deletion_policy: DELETE
-    description: null
+    description:
     disabled: false
     display_name: Terraform-managed.
     email: iac-rw@test-gf-geap-0.iam.gserviceaccount.com
     member: serviceAccount:iac-rw@test-gf-geap-0.iam.gserviceaccount.com
     project: test-gf-geap-0
-    timeouts: null
+    timeouts:
   module.projects.terraform_data.defaults_preconditions:
-    input: null
-    output: null
-    triggers_replace: null
+    input:
+    output:
+    triggers_replace:
   module.projects.terraform_data.project_preconditions:
-    input: null
-    output: null
-    triggers_replace: null
+    input:
+    output:
+    triggers_replace:
   module.vpc[0].google_compute_network.network[0]:
     auto_create_subnetworks: false
     delete_bgp_always_compare_med: false
     delete_default_routes_on_create: false
     deletion_policy: DELETE
     description: Terraform-managed.
-    enable_ula_internal_ipv6: null
+    enable_ula_internal_ipv6:
     name: net-0
     network_firewall_policy_enforcement_order: AFTER_CLASSIC_FIREWALL
-    network_profile: null
+    network_profile:
     params: []
     project: test-gf-geap-hp-0
     routing_mode: GLOBAL
-    timeouts: null
+    timeouts:
   module.vpc[0].google_compute_route.gateway["directpath-googleapis"]:
     deletion_policy: DELETE
     description: Terraform-managed.
@@ -1200,14 +1207,14 @@ values:
     name: net-0-directpath-googleapis
     network: net-0
     next_hop_gateway: default-internet-gateway
-    next_hop_ilb: null
-    next_hop_instance: null
-    next_hop_vpn_tunnel: null
+    next_hop_ilb:
+    next_hop_instance:
+    next_hop_vpn_tunnel:
     params: []
     priority: 1000
     project: test-gf-geap-hp-0
-    tags: null
-    timeouts: null
+    tags:
+    timeouts:
   module.vpc[0].google_compute_route.gateway["private-googleapis"]:
     deletion_policy: DELETE
     description: Terraform-managed.
@@ -1215,14 +1222,14 @@ values:
     name: net-0-private-googleapis
     network: net-0
     next_hop_gateway: default-internet-gateway
-    next_hop_ilb: null
-    next_hop_instance: null
-    next_hop_vpn_tunnel: null
+    next_hop_ilb:
+    next_hop_instance:
+    next_hop_vpn_tunnel:
     params: []
     priority: 1000
     project: test-gf-geap-hp-0
-    tags: null
-    timeouts: null
+    tags:
+    timeouts:
   module.vpc[0].google_compute_route.gateway["restricted-googleapis"]:
     deletion_policy: DELETE
     description: Terraform-managed.
@@ -1230,30 +1237,30 @@ values:
     name: net-0-restricted-googleapis
     network: net-0
     next_hop_gateway: default-internet-gateway
-    next_hop_ilb: null
-    next_hop_instance: null
-    next_hop_vpn_tunnel: null
+    next_hop_ilb:
+    next_hop_instance:
+    next_hop_vpn_tunnel:
     params: []
     priority: 1000
     project: test-gf-geap-hp-0
-    tags: null
-    timeouts: null
+    tags:
+    timeouts:
   module.vpc[0].google_compute_shared_vpc_host_project.shared_vpc_host[0]:
     deletion_policy: DELETE
     project: test-gf-geap-hp-0
-    timeouts: null
+    timeouts:
   module.vpc[0].google_compute_shared_vpc_service_project.service_projects["test-gf-geap-0"]:
-    deletion_policy: null
+    deletion_policy:
     host_project: test-gf-geap-hp-0
     service_project: test-gf-geap-0
-    timeouts: null
+    timeouts:
   module.vpc[0].google_compute_subnetwork.proxy_only["europe-west1/proxy-only-sub-0"]:
     deletion_policy: DELETE
     description: Terraform-managed proxy-only subnet for Regional HTTPS, Internal
       HTTPS or Cross-Regional HTTPS Internal LB.
     ip_cidr_range: 10.20.0.0/24
-    ip_collection: null
-    ipv6_access_type: null
+    ip_collection:
+    ipv6_access_type:
     log_config: []
     name: proxy-only-sub-0
     network: net-0
@@ -1261,17 +1268,17 @@ values:
     project: test-gf-geap-hp-0
     purpose: REGIONAL_MANAGED_PROXY
     region: europe-west1
-    reserved_internal_range: null
-    resolve_subnet_mask: null
+    reserved_internal_range:
+    resolve_subnet_mask:
     role: ACTIVE
-    send_secondary_ip_range_if_empty: null
-    timeouts: null
+    send_secondary_ip_range_if_empty:
+    timeouts:
   module.vpc[0].google_compute_subnetwork.subnetwork["europe-west1/sub-0"]:
     deletion_policy: DELETE
     description: Terraform-managed.
     ip_cidr_range: 10.0.0.0/24
-    ip_collection: null
-    ipv6_access_type: null
+    ip_collection:
+    ipv6_access_type:
     log_config: []
     name: sub-0
     network: net-0
@@ -1279,11 +1286,11 @@ values:
     private_ip_google_access: true
     project: test-gf-geap-hp-0
     region: europe-west1
-    reserved_internal_range: null
-    resolve_subnet_mask: null
-    role: null
+    reserved_internal_range:
+    resolve_subnet_mask:
+    role:
     send_secondary_ip_range_if_empty: true
-    timeouts: null
+    timeouts:
 
 counts:
   google_compute_network: 1
@@ -1295,7 +1302,7 @@ counts:
   google_dns_response_policy_rule: 39
   google_org_policy_policy: 2
   google_project: 2
-  google_project_iam_binding: 21
+  google_project_iam_binding: 22
   google_project_iam_custom_role: 2
   google_project_iam_member: 27
   google_project_service: 19
@@ -1307,7 +1314,7 @@ counts:
   google_storage_project_service_account: 1
   local_file: 2
   modules: 9
-  resources: 139
+  resources: 140
   terraform_data: 2
 
 outputs:

@@ -38,21 +38,20 @@ agent_registry_services = {
     display_name = "Test Agent"
     type         = "agent"
     content      = "{}"
-    iam = {
-      "roles/iap.egressor" = ["principal://goog/subject/user@example.com"]
+    access_policy_rules = {
+      allow-user = {
+        description = "Allow user to call test-agent"
+        principals  = ["user:user@example.com"]
+      }
     }
   }
   test-endpoint = {
     display_name = "Test Endpoint"
     url          = "https://endpoint.example.com"
-    iam_bindings = {
-      forecast-tool-only = {
-        members = ["principal://goog/subject/user@example.com"]
-        role    = "roles/iap.egressor"
-        condition = {
-          title      = "forecast-tool-only"
-          expression = "api.getAttribute('iap.googleapis.com/mcp.toolName', '') in ['get_forecast', '']"
-        }
+    access_policy_rules = {
+      allow-user = {
+        description = "Allow user to call test-endpoint"
+        principals  = ["principal://goog/subject/user@example.com"]
       }
     }
   }
@@ -61,39 +60,40 @@ agent_registry_services = {
     url          = "https://mcp.example.com"
     type         = "mcp_server"
     content      = "{}"
-    iam_bindings_additive = {
-      single-agent = {
-        member = "principal://goog/subject/user@example.com"
-        role   = "roles/iap.egressor"
+    access_policy_rules = {
+      readonly-tools = {
+        description = "Allow read-only tools on test-mcp"
+        principals  = ["principal://goog/subject/user@example.com"]
+        condition   = "destination.agent_registry.mcp_server.tool.annotations.read_only_hint == true"
       }
     }
   }
 }
 
-agent_registry_iam = {
-  "roles/iap.egressor" = ["principal://goog/subject/registry@example.com"]
-}
-
-agent_registry_iam_by_principals = {
-  "principalSet://goog/group/agents@example.com" = ["roles/iap.egressor"]
-}
-
-agent_registry_iam_bindings = {
-  external-mcp = {
-    members       = ["principal://goog/subject/user@example.com"]
-    role          = "roles/iap.egressor"
-    mcp_server_id = "external-mcp"
-  }
-}
-
-agent_registry_iam_bindings_additive = {
-  external-endpoint = {
-    member      = "principal://goog/subject/user@example.com"
-    role        = "roles/iap.egressor"
-    endpoint_id = "external-endpoint"
-  }
-  registry-wide = {
-    member = "principal://goog/subject/other@example.com"
-    role   = "roles/iap.egressor"
+access_policies = {
+  agw-geap = {
+    display_name = "GEAP Egress Access Policy"
+    rules = {
+      registry-wide = {
+        description = "Allow registry-wide egress"
+        principals  = ["principal://goog/subject/registry@example.com"]
+        registry    = true
+      }
+      external-mcp = {
+        description   = "Allow calling external-mcp"
+        principals    = ["principal://goog/subject/user@example.com"]
+        mcp_server_id = "external-mcp"
+      }
+      external-endpoint = {
+        description = "Allow calling external-endpoint"
+        principals  = ["principal://goog/subject/user@example.com"]
+        endpoint_id = "external-endpoint"
+      }
+      unregistered-ocr = {
+        description = "Allow POST to external OCR API"
+        principals  = ["group:agents@example.com"]
+        condition   = "destination.unregistered.host == 'ocr.example.com' && destination.unregistered.method == 'POST'"
+      }
+    }
   }
 }
