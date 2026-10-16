@@ -809,6 +809,10 @@ values:
   : condition: []
     project: test-gf-geap-0
     role: roles/secretmanager.secretAccessor
+  ? module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/secretmanager.viewer"]
+  : condition: []
+    project: test-gf-geap-0
+    role: roles/secretmanager.viewer
   ? module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/serviceusage.serviceUsageConsumer"]
   : condition: []
     project: test-gf-geap-0
@@ -1302,7 +1306,7 @@ counts:
   google_dns_response_policy_rule: 39
   google_org_policy_policy: 2
   google_project: 2
-  google_project_iam_binding: 22
+  google_project_iam_binding: 23
   google_project_iam_custom_role: 2
   google_project_iam_member: 27
   google_project_service: 19
@@ -1314,7 +1318,7 @@ counts:
   google_storage_project_service_account: 1
   local_file: 2
   modules: 9
-  resources: 140
+  resources: 141
   terraform_data: 2
 
 outputs:

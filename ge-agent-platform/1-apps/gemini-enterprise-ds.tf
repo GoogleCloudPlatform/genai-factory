@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# tfdoc:file:description Gemini Enterprise Custom MCP data connectors.
+# tfdoc:file:description Gemini Enterprise data connectors.
 
 locals {
   gemini_enterprise_mcp_data_connectors = merge([
@@ -55,6 +55,201 @@ locals {
     }
     if s.type == "mcp_server"
   ]...)
+}
+
+resource "google_discovery_engine_acl_config" "default" {
+  count    = var.gemini_enterprise_iam.idp_type != null ? 1 : 0
+  project  = var.project_id
+  location = var.location
+
+  idp_config {
+    idp_type = var.gemini_enterprise_iam.idp_type
+    dynamic "external_idp_config" {
+      for_each = var.gemini_enterprise_iam.idp_type == "THIRD_PARTY" ? [1] : []
+      content {
+        workforce_pool_name = var.gemini_enterprise_iam.workforce_pool_name
+      }
+    }
+  }
+}
+
+resource "google_discovery_engine_data_connector" "default" {
+  for_each                     = var.gemini_enterprise_data_connectors
+  project                      = var.project_id
+  location                     = var.location
+  collection_id                = each.key
+  collection_display_name      = coalesce(each.value.collection_display_name, each.key)
+  data_source                  = each.value.data_source
+  refresh_interval             = each.value.refresh_interval
+  auto_run_disabled            = each.value.auto_run_disabled
+  connector_modes              = each.value.connector_modes
+  data_source_version          = each.value.data_source_version
+  deletion_policy              = local.deletion_policy
+  incremental_refresh_interval = each.value.incremental_refresh_interval
+  incremental_sync_disabled    = each.value.incremental_sync_disabled
+  json_params = each.value.json_params == null ? null : jsonencode(jsondecode(
+    fileexists("${path.module}/${each.value.json_params}")
+    ? file("${path.module}/${each.value.json_params}")
+    : (fileexists(each.value.json_params) ? file(each.value.json_params) : each.value.json_params)
+  ))
+  kms_key_name      = each.value.kms_key_name
+  params            = each.value.json_params == null ? (each.value.params != null ? each.value.params : {}) : null
+  static_ip_enabled = each.value.static_ip_enabled
+  sync_mode         = each.value.sync_mode
+  tag               = coalesce(each.value.tag, replace(each.key, "_", "-"))
+
+  dynamic "action_config" {
+    for_each = each.value.action_config != null ? [each.value.action_config] : []
+    content {
+      action_params         = action_config.value.action_params
+      create_bap_connection = action_config.value.create_bap_connection
+    }
+  }
+
+  dynamic "bap_config" {
+    for_each = each.value.bap_config != null ? [each.value.bap_config] : []
+    content {
+      enabled_actions           = bap_config.value.enabled_actions
+      supported_connector_modes = bap_config.value.supported_connector_modes
+    }
+  }
+
+  dynamic "destination_configs" {
+    for_each = each.value.destination_configs
+    content {
+      key = destination_configs.value.key
+      params = destination_configs.value.params == null ? null : jsonencode(jsondecode(
+        fileexists("${path.module}/${destination_configs.value.params}")
+        ? file("${path.module}/${destination_configs.value.params}")
+        : (fileexists(destination_configs.value.params) ? file(destination_configs.value.params) : destination_configs.value.params)
+      ))
+      dynamic "destinations" {
+        for_each = coalesce(destination_configs.value.destinations, [])
+        content {
+          host = destinations.value.host
+          port = destinations.value.port
+        }
+      }
+    }
+  }
+
+  dynamic "entities" {
+    for_each = concat(
+      each.value.entities,
+      each.value.data_source == "outlook" && !contains([for e in each.value.entities : e.entity_name], "root") ? [
+        {
+          entity_name           = "root"
+          key_property_mappings = tomap(null)
+          params                = jsonencode({})
+        }
+      ] : [],
+      each.value.data_source == "sharepoint" && !contains([for e in each.value.entities : e.entity_name], "site") ? [
+        {
+          entity_name           = "site"
+          key_property_mappings = tomap(null)
+          params                = jsonencode({})
+        }
+      ] : []
+    )
+    content {
+      entity_name           = entities.value.entity_name
+      key_property_mappings = entities.value.key_property_mappings
+      params = entities.value.params == null ? jsonencode({}) : jsonencode(jsondecode(
+        fileexists("${path.module}/${entities.value.params}")
+        ? file("${path.module}/${entities.value.params}")
+        : (fileexists(entities.value.params) ? file(entities.value.params) : entities.value.params)
+      ))
+    }
+  }
+
+  dynamic "metadata" {
+    for_each = each.value.metadata != null ? [each.value.metadata] : []
+    content {
+      author            = metadata.value.author
+      description       = metadata.value.description
+      note              = metadata.value.note
+      short_description = metadata.value.short_description
+      title             = metadata.value.title
+    }
+  }
+
+  depends_on = [
+    google_discovery_engine_acl_config.default,
+  ]
+
+  lifecycle {
+    # The Discovery Engine GET dataConnector API does not return
+    # collectionDisplayName on import, and the provider marks it ForceNew.
+    ignore_changes = [
+      collection_display_name,
+    ]
+
+    precondition {
+      condition = alltrue([
+        for app_id in each.value.app_ids :
+        contains(keys(var.gemini_enterprise_apps), app_id)
+      ])
+      error_message = "Data connector '${each.key}' references an app_id in app_ids that is not in var.gemini_enterprise_apps."
+    }
+  }
+
+  # Terraform destroys removed data_connector instances before updating
+  # google_discovery_engine_search_engine in-place, and the Discovery Engine
+  # API rejects deleting a DataConnector while any of its <collection_id>_*
+  # entity data stores are still listed on an Engine. Detach them first.
+  provisioner "local-exec" {
+    when        = destroy
+    interpreter = ["/bin/bash", "-c"]
+    command     = <<-EOT
+      set -euo pipefail
+
+      endpoint="https://${self.location == "global" ? "" : "${self.location}-"}discoveryengine.googleapis.com/v1"
+      prefix="${self.collection_id}_"
+      token="$(gcloud auth print-access-token)"
+      lockdir="/tmp/ge-mcp-detach-${self.project}-${self.location}.lock"
+      body=$(mktemp)
+      resp=$(mktemp)
+
+      while ! mkdir "$lockdir" 2>/dev/null; do
+        sleep 1
+      done
+      trap 'rmdir "$lockdir" 2>/dev/null || true; rm -f "$body" "$resp"' EXIT
+
+      engines_url="$endpoint/projects/${self.project}/locations/${self.location}/collections/default_collection/engines"
+      status=$(curl -sS \
+        -H "Authorization: Bearer $token" \
+        -H "X-Goog-User-Project: ${self.project}" \
+        -o "$body" -w '%%{http_code}' \
+        "$engines_url")
+
+      if [[ "$status" == "404" ]]; then
+        exit 0
+      fi
+      if [[ "$status" != 2* ]]; then
+        echo "Failed to list Discovery Engine apps while detaching $${prefix}* (HTTP $status)" >&2
+        cat "$body" >&2
+        exit 1
+      fi
+
+      engines=$(jq -r --arg pfx "$prefix" '.engines[]? | select(any((.dataStoreIds // [])[]; startswith($pfx))) | .name' "$body")
+      for engine in $engines; do
+        payload=$(jq -c --arg eng "$engine" --arg pfx "$prefix" \
+          '.engines[] | select(.name == $eng) | ([(.dataStoreIds // [])[] | select(startswith($pfx) | not)]) as $rem | {dataStoreIds: (if ($rem | length) == 1 then [] else $rem end)}' "$body")
+        patch_status=$(curl -sS -X PATCH \
+          -H "Authorization: Bearer $token" \
+          -H "Content-Type: application/json" \
+          -H "X-Goog-User-Project: ${self.project}" \
+          -d "$payload" \
+          -o "$resp" -w '%%{http_code}' \
+          "$endpoint/$engine?updateMask=dataStoreIds")
+        if [[ "$patch_status" != 2* && "$patch_status" != "404" ]]; then
+          echo "Failed to detach $${prefix}* from $engine (HTTP $patch_status)" >&2
+          cat "$resp" >&2
+          exit 1
+        fi
+      done
+    EOT
+  }
 }
 
 resource "google_discovery_engine_data_connector" "mcp" {
