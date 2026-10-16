@@ -39,15 +39,30 @@ locals {
     for id, app in var.gemini_enterprise_apps : id => app
     if app.engine != null
   }
-  gemini_enterprise_engine_data_store_ids = {
+  gemini_enterprise_engine_raw_data_store_ids = {
     for id, app in local.gemini_enterprise_engines : id => distinct(concat(
       app.engine.data_store_ids,
+      flatten([
+        for dc_id, dc in var.gemini_enterprise_data_connectors : [
+          for e in dc.entities :
+          "${google_discovery_engine_data_connector.default[dc_id].collection_id}_${e.entity_name}"
+          if e.entity_name != null && !contains(["root", "site"], e.entity_name)
+        ]
+        if contains(dc.app_ids, id) && contains(keys(google_discovery_engine_data_connector.default), dc_id)
+      ]),
       [
         for k, dc in local.gemini_enterprise_mcp_data_connectors :
         "${google_discovery_engine_data_connector.mcp[k].collection_id}_mcp_data"
-        if dc.app_id == id
+        if dc.app_id == id && contains(keys(google_discovery_engine_data_connector.mcp), k)
       ]
     ))
+  }
+  gemini_enterprise_engine_data_store_ids = {
+    for id, ds_ids in local.gemini_enterprise_engine_raw_data_store_ids : id => (
+      length(ds_ids) == 1 && contains(keys(google_discovery_engine_data_store.companion), id)
+      ? concat(ds_ids, [google_discovery_engine_data_store.companion[id].data_store_id])
+      : ds_ids
+    )
   }
   # Anyone holding a role on an app also needs the restricted user role on the
   # project to reach it. Principals that cannot hold a project-level grant
@@ -80,20 +95,13 @@ resource "google_discovery_engine_data_store" "companion" {
 # A Gemini Enterprise app is a generic search engine with
 # app_type set to APP_TYPE_INTRANET.
 resource "google_discovery_engine_search_engine" "default" {
-  for_each      = local.gemini_enterprise_engines
-  project       = var.project_id
-  location      = var.location
-  collection_id = each.value.collection_id
-  engine_id     = each.key
-  display_name  = each.value.engine.display_name
-  data_store_ids = (
-    length(local.gemini_enterprise_engine_data_store_ids[each.key]) == 1
-    ? concat(
-      local.gemini_enterprise_engine_data_store_ids[each.key],
-      [google_discovery_engine_data_store.companion[each.key].data_store_id]
-    )
-    : local.gemini_enterprise_engine_data_store_ids[each.key]
-  )
+  for_each          = local.gemini_enterprise_engines
+  project           = var.project_id
+  location          = var.location
+  collection_id     = each.value.collection_id
+  engine_id         = each.key
+  display_name      = each.value.engine.display_name
+  data_store_ids    = []
   app_type          = "APP_TYPE_INTRANET"
   industry_vertical = each.value.engine.industry_vertical
   disable_analytics = each.value.engine.disable_analytics
@@ -130,6 +138,56 @@ resource "google_discovery_engine_search_engine" "default" {
     content {
       company_name = each.value.engine.company_name
     }
+  }
+
+  # Data stores are attached and detached via terraform_data.app_data_stores and
+  # connector destroy provisioners so that google_discovery_engine_search_engine
+  # never depends on google_discovery_engine_data_connector resources.
+  lifecycle {
+    ignore_changes = [
+      data_store_ids,
+    ]
+  }
+}
+
+resource "terraform_data" "app_data_stores" {
+  for_each = local.gemini_enterprise_engines
+
+  triggers_replace = {
+    collection_id  = each.value.collection_id
+    data_store_ids = jsonencode(sort(local.gemini_enterprise_engine_data_store_ids[each.key]))
+    engine_id      = try(google_discovery_engine_search_engine.default[each.key].engine_id, each.key)
+  }
+
+  provisioner "local-exec" {
+    interpreter = ["/bin/bash", "-c"]
+    command     = <<-EOT
+      set -euo pipefail
+
+      endpoint="https://${var.location == "global" ? "" : "${var.location}-"}discoveryengine.googleapis.com/v1"
+      url="$endpoint/projects/${var.project_id}/locations/${var.location}/collections/${each.value.collection_id}/engines/${each.key}"
+      lockdir="/tmp/ge-mcp-detach-${var.project_id}-${var.location}.lock"
+      body=$(mktemp)
+
+      while ! mkdir "$lockdir" 2>/dev/null; do
+        sleep 1
+      done
+      trap 'rmdir "$lockdir" 2>/dev/null || true; rm -f "$body"' EXIT
+
+      status=$(curl -sS -X PATCH \
+        -H "Authorization: Bearer $(gcloud auth print-access-token)" \
+        -H "Content-Type: application/json" \
+        -H "X-Goog-User-Project: ${var.project_id}" \
+        -d '${jsonencode({ dataStoreIds = local.gemini_enterprise_engine_data_store_ids[each.key] })}' \
+        -o "$body" -w '%%{http_code}' \
+        "$url?updateMask=dataStoreIds")
+
+      if [[ "$status" != 2* ]]; then
+        echo "Failed to update dataStoreIds on ${each.key} (HTTP $status)" >&2
+        cat "$body" >&2
+        exit 1
+      fi
+    EOT
   }
 }
 

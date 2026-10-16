@@ -167,6 +167,10 @@ values:
   : condition: []
     project: your-prefix-gf-geap-0
     role: roles/secretmanager.secretAccessor
+  ? module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/secretmanager.viewer"]
+  : condition: []
+    project: your-prefix-gf-geap-0
+    role: roles/secretmanager.viewer
   ? module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/serviceusage.serviceUsageConsumer"]
   : condition: []
     project: your-prefix-gf-geap-0
@@ -507,7 +511,7 @@ values:
 counts:
   google_org_policy_policy: 2
   google_project: 1
-  google_project_iam_binding: 16
+  google_project_iam_binding: 17
   google_project_iam_custom_role: 2
   google_project_iam_member: 25
   google_project_service: 17
@@ -519,7 +523,7 @@ counts:
   google_storage_project_service_account: 1
   local_file: 2
   modules: 5
-  resources: 80
+  resources: 81
   terraform_data: 2
 
 outputs:
