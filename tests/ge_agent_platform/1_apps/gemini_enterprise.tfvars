@@ -29,6 +29,10 @@ gemini_enterprise_antigravity_principals = [
   "group:developers@example.com"
 ]
 
+gemini_enterprise_iam = {
+  idp_type = "GSUITE"
+}
+
 gemini_enterprise_apps = {
   ge-app-main = {
     assistant = {
@@ -66,6 +70,50 @@ gemini_enterprise_apps = {
         "group:employees@example.com"
       ]
     }
+  }
+}
+
+gemini_enterprise_data_connectors = {
+  confluence = {
+    data_source             = "confluence"
+    app_ids                 = ["ge-app-main"]
+    collection_display_name = "Confluence Cloud"
+    connector_modes         = ["DATA_INGESTION"]
+    entities = [
+      { entity_name = "page" },
+      { entity_name = "space" },
+    ]
+    params = {
+      api_token    = "projects/test-gf-geap-0/secrets/confluence-token/versions/1"
+      auth_type    = "BASIC_AUTH"
+      instance_uri = "https://example.atlassian.net"
+      user_account = "admin@example.com"
+    }
+    refresh_interval = "86400s"
+    sync_mode        = "PERIODIC"
+  }
+  onedrive = {
+    data_source             = "onedrive"
+    action_config           = { create_bap_connection = false }
+    app_ids                 = ["ge-app-main"]
+    bap_config              = { supported_connector_modes = ["ACTIONS"] }
+    collection_display_name = "OneDrive"
+    connector_modes         = ["FEDERATED"]
+    destination_configs = [
+      {
+        key = "url"
+        destinations = [
+          { host = "https://example-my.sharepoint.com/" },
+        ]
+      },
+    ]
+    entities = [
+      {
+        entity_name = "file"
+        params      = "{\"exclusion_filters\":{},\"inclusion_filters\":{}}"
+      },
+    ]
+    refresh_interval = "86400s"
   }
 }
 

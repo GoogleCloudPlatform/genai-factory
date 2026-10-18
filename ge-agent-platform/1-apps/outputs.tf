@@ -66,14 +66,21 @@ output "gemini_enterprise_assistant_names" {
 }
 
 output "gemini_enterprise_data_connector_names" {
-  description = "The resource names of the Gemini Enterprise data connectors, keyed by connector id and app id."
-  value = {
-    for service_id, s in var.agent_registry_services : service_id => {
-      for app_id in toset(coalesce(s.agent_gateway_app_ids, [])) :
-      app_id => google_discovery_engine_data_connector.mcp["${service_id}/${app_id}"].name
+  description = "The resource names of the Gemini Enterprise data connectors, keyed by connector id (or service id and app id for MCP connectors)."
+  value = merge(
+    {
+      for id, dc in google_discovery_engine_data_connector.default :
+      id => dc.name
+    },
+    {
+      for service_id, s in var.agent_registry_services : service_id => {
+        for app_id in toset(coalesce(s.agent_gateway_app_ids, [])) :
+        app_id => google_discovery_engine_data_connector.mcp["${service_id}/${app_id}"].name
+        if contains(keys(google_discovery_engine_data_connector.mcp), "${service_id}/${app_id}")
+      }
+      if s.type == "mcp_server" && length(coalesce(s.agent_gateway_app_ids, [])) > 0
     }
-    if s.type == "mcp_server" && length(coalesce(s.agent_gateway_app_ids, [])) > 0
-  }
+  )
 }
 
 output "model_armor_template_names" {

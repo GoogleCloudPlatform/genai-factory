@@ -43,6 +43,13 @@ values:
     subnetworks:
       - projects/test-gf-geap-hp-0/regions/europe-west1/subnetworks/sub-0
     timeouts:
+  google_discovery_engine_acl_config.default[0]:
+    idp_config:
+      - external_idp_config: []
+        idp_type: GSUITE
+    location: eu
+    project: test-gf-geap-0
+    timeouts:
   google_discovery_engine_assistant.default["ge-app-main"]:
     assistant_id: default_assistant
     collection_id: default_collection
@@ -65,6 +72,74 @@ values:
     project: test-gf-geap-0
     timeouts:
     web_grounding_type: WEB_GROUNDING_TYPE_DISABLED
+  google_discovery_engine_data_connector.default["confluence"]:
+    action_config: []
+    auto_run_disabled:
+    bap_config: []
+    collection_display_name: Confluence Cloud
+    collection_id: confluence
+    connector_modes:
+      - DATA_INGESTION
+    data_source: confluence
+    deletion_policy: PREVENT
+    destination_configs: []
+    entities:
+      - entity_name: page
+        params:
+      - entity_name: space
+        params:
+    incremental_refresh_interval:
+    incremental_sync_disabled:
+    json_params:
+    kms_key_name:
+    location: eu
+    params:
+      api_token: projects/test-gf-geap-0/secrets/confluence-token/versions/1
+      auth_type: BASIC_AUTH
+      instance_uri: https://example.atlassian.net
+      user_account: admin@example.com
+    project: test-gf-geap-0
+    refresh_interval: 86400s
+    static_ip_enabled: false
+    sync_mode: PERIODIC
+    tag: confluence
+    timeouts:
+  google_discovery_engine_data_connector.default["onedrive"]:
+    action_config:
+      - action_params:
+        create_bap_connection: false
+    auto_run_disabled:
+    bap_config:
+      - enabled_actions: []
+        supported_connector_modes:
+          - ACTIONS
+    collection_display_name: OneDrive
+    collection_id: onedrive
+    connector_modes:
+      - FEDERATED
+    data_source: onedrive
+    deletion_policy: PREVENT
+    destination_configs:
+      - destinations:
+          - host: https://example-my.sharepoint.com/
+            port:
+        key: url
+        params:
+    entities:
+      - entity_name: file
+        params: '{"exclusion_filters":{},"inclusion_filters":{}}'
+    incremental_refresh_interval:
+    incremental_sync_disabled:
+    json_params:
+    kms_key_name:
+    location: eu
+    params:
+    project: test-gf-geap-0
+    refresh_interval: 86400s
+    static_ip_enabled: false
+    sync_mode:
+    tag: onedrive
+    timeouts:
   google_discovery_engine_data_connector.mcp["weather-mcp/ge-app-main"]:
     action_config:
       - action_params:
@@ -117,9 +192,7 @@ values:
     app_type: APP_TYPE_INTRANET
     collection_id: default_collection
     common_config: []
-    data_store_ids:
-      - weather-mcp-ge-app-main_mcp_data
-      - ge-app-main-companion
+    data_store_ids: []
     deletion_policy: PREVENT
     disable_analytics: false
     display_name: Gemini Enterprise Main
@@ -375,6 +448,13 @@ values:
       collection_id: default_collection
       engine_config: 5b8c36f2124b5c3503cb8dd6928babd3923f23aaed7782c752ef1a5464a1f864
       engine_id: ge-app-main
+  terraform_data.app_data_stores["ge-app-main"]:
+    input:
+    output:
+    triggers_replace:
+      collection_id: default_collection
+      data_store_ids: '["confluence_page","confluence_space","onedrive_file","weather-mcp-ge-app-main_mcp_data"]'
+      engine_id: ge-app-main
   terraform_data.mcp_agent_gateway_patch["weather-mcp/ge-app-main"]:
     input:
     output:
@@ -395,8 +475,9 @@ values:
 counts:
   google_agent_registry_service: 1
   google_compute_network_attachment: 1
+  google_discovery_engine_acl_config: 1
   google_discovery_engine_assistant: 1
-  google_discovery_engine_data_connector: 1
+  google_discovery_engine_data_connector: 3
   google_discovery_engine_data_store: 1
   google_discovery_engine_search_engine: 1
   google_discovery_engine_search_engine_iam_binding: 1
@@ -409,8 +490,8 @@ counts:
   google_network_services_authz_extension: 1
   google_project_iam_member: 2
   modules: 1
-  resources: 21
-  terraform_data: 4
+  resources: 25
+  terraform_data: 5
 
 outputs:
   access_policy_ids: __missing__

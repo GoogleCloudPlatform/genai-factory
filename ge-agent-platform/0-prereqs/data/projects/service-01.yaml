@@ -119,9 +119,10 @@ iam_by_principals:
   # for floor setting evaluation
   $iam_principals:service_agents/_self_/aiplatform:
     - roles/modelarmor.user
-  # Gemini Enterprise: access MCP OAuth client credentials in Secret Manager
+  # Gemini Enterprise: access data connector and MCP OAuth credentials in Secret Manager
   $iam_principals:service_agents/_self_/discoveryengine:
     - roles/secretmanager.secretAccessor
+    - roles/secretmanager.viewer
 
 # Delegated grant: iac-rw can set project IAM, but the condition limits it to
 # granting the Antigravity custom role and the Agentspace Restricted User role.

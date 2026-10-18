@@ -457,12 +457,91 @@ variable "gemini_enterprise_apps" {
   }
 }
 
+variable "gemini_enterprise_data_connectors" {
+  description = "The first-party and third-party Gemini Enterprise data connectors, keyed by collection id."
+  type = map(object({
+    data_source = string
+    action_config = optional(object({
+      action_params         = optional(map(string), {})
+      create_bap_connection = optional(bool)
+    }))
+    app_ids           = optional(list(string), [])
+    auto_run_disabled = optional(bool)
+    bap_config = optional(object({
+      enabled_actions           = optional(list(string), [])
+      supported_connector_modes = optional(list(string))
+    }))
+    collection_display_name = optional(string)
+    connector_modes         = optional(list(string))
+    data_source_version     = optional(number)
+    destination_configs = optional(list(object({
+      destinations = optional(list(object({
+        host = optional(string)
+        port = optional(number)
+      })))
+      key    = optional(string)
+      params = optional(string)
+    })), [])
+    entities = optional(list(object({
+      entity_name           = optional(string)
+      key_property_mappings = optional(map(string))
+      params                = optional(string)
+    })), [])
+    incremental_refresh_interval = optional(string)
+    incremental_sync_disabled    = optional(bool)
+    json_params                  = optional(string)
+    kms_key_name                 = optional(string)
+    metadata = optional(object({
+      author            = optional(string)
+      description       = optional(string)
+      note              = optional(string)
+      short_description = optional(string)
+      title             = optional(string)
+    }))
+    params            = optional(map(string))
+    refresh_interval  = optional(string, "86400s")
+    static_ip_enabled = optional(bool, false)
+    sync_mode         = optional(string)
+    tag               = optional(string)
+  }))
+  nullable = false
+  default  = {}
+
+  validation {
+    condition = alltrue(flatten([
+      for dc in var.gemini_enterprise_data_connectors : [
+        for m in coalesce(dc.connector_modes, []) :
+        contains(["DATA_INGESTION", "ACTIONS", "FEDERATED", "EUA", "FEDERATED_AND_EUA"], m)
+      ]
+    ]))
+    error_message = "Each connector_modes value must be one of 'DATA_INGESTION', 'ACTIONS', 'FEDERATED', 'EUA', 'FEDERATED_AND_EUA'."
+  }
+
+  validation {
+    condition = alltrue([
+      for dc in var.gemini_enterprise_data_connectors :
+      dc.sync_mode == null || contains(["PERIODIC", "STREAMING", "CONNECTOR_SYNC_MODE_UNSPECIFIED"], dc.sync_mode)
+    ])
+    error_message = "The sync_mode must be one of 'PERIODIC', 'STREAMING', 'CONNECTOR_SYNC_MODE_UNSPECIFIED'."
+  }
+
+  validation {
+    condition = alltrue([
+      for dc in var.gemini_enterprise_data_connectors :
+      !(dc.params != null && dc.json_params != null)
+    ])
+    error_message = "Only one of 'params' or 'json_params' may be set on a data connector."
+  }
+}
+
 variable "gemini_enterprise_iam" {
-  description = "How app IAM is applied."
+  description = "How app IAM and Discovery Engine identity provider (IdP) configuration are applied."
   type = object({
     # Defaults to projects/${var.project_id}/roles/discoveryengineUserBusinessAiCodeOnly
-    antigravity_role = optional(string)
-    authoritative    = optional(bool, true)
+    antigravity_role    = optional(string)
+    authoritative       = optional(bool, true)
+    idp_type            = optional(string)
+    workforce_pool_name = optional(string)
   })
   nullable = false
   default  = {}
@@ -473,6 +552,22 @@ variable "gemini_enterprise_iam" {
       || can(regex("^(organizations|projects)/[^/]+/roles/.+$", var.gemini_enterprise_iam.antigravity_role))
     )
     error_message = "The antigravity_role must be a custom role, as organizations/ORG_ID/roles/NAME or projects/PROJECT_ID/roles/NAME."
+  }
+
+  validation {
+    condition = (
+      var.gemini_enterprise_iam.idp_type == null
+      || contains(["GSUITE", "THIRD_PARTY"], var.gemini_enterprise_iam.idp_type)
+    )
+    error_message = "The idp_type must be either 'GSUITE' or 'THIRD_PARTY'."
+  }
+
+  validation {
+    condition = (
+      var.gemini_enterprise_iam.idp_type != "THIRD_PARTY"
+      || var.gemini_enterprise_iam.workforce_pool_name != null
+    )
+    error_message = "The workforce_pool_name must be set when idp_type is 'THIRD_PARTY'."
   }
 }
 
