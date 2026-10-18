@@ -15,6 +15,23 @@ Genai-factory is a collection of **end-to-end blueprints to deploy generative AI
 The repository is composed of multiple factories.
 Each factory is a folder. The only folders that are not factories are `.github`, `tests`, `tools`.
 
+### Factory Index
+
+Each factory has a dedicated `AGENTS.md` file in its root directory containing factory-specific architecture, key files, test inventories, and implementation learnings. Always read the corresponding factory's `AGENTS.md` before modifying a factory:
+
+| Factory | Agent Instructions | Summary |
+| :--- | :--- | :--- |
+| `agent-runtime` | [`agent-runtime/AGENTS.md`](./agent-runtime/AGENTS.md) | Vertex AI Agent Engine runtime (ADK & A2A agents), PSC-I networking, Firestore session/task store, Model Armor, and IAM v3 UAP integration. |
+| `ai-apps-search` | [`ai-apps-search/AGENTS.md`](./ai-apps-search/AGENTS.md) | Vertex AI Search (Discovery Engine) unstructured document search app backed by GCS. |
+| `cloud-run-nl2sql-bq` | [`cloud-run-nl2sql-bq/AGENTS.md`](./cloud-run-nl2sql-bq/AGENTS.md) | Cloud Run NL2SQL ADK agent querying BigQuery behind an external or internal Application Load Balancer. |
+| `cloud-run-rag-alloydb` | [`cloud-run-rag-alloydb/AGENTS.md`](./cloud-run-rag-alloydb/AGENTS.md) | Cloud Run RAG frontend and ingestion job using AlloyDB (`pgvector` + `scann` index) and BigQuery. |
+| `cloud-run-rag-cloudsql` | [`cloud-run-rag-cloudsql/AGENTS.md`](./cloud-run-rag-cloudsql/AGENTS.md) | Cloud Run RAG frontend and ingestion job using Cloud SQL for PostgreSQL (`pgvector`) and BigQuery. |
+| `cloud-run-rag-search` | [`cloud-run-rag-search/AGENTS.md`](./cloud-run-rag-search/AGENTS.md) | Cloud Run RAG frontend and ingestion job using Vertex AI Vector Search and GCS. |
+| `cloud-run-single` | [`cloud-run-single/AGENTS.md`](./cloud-run-single/AGENTS.md) | Single Cloud Run GenAI application (`chat`, `adk`, `adk-a2a`, `gemma`, `mcp-server`) with Load Balancer, Cloud Armor, and Model Armor. |
+| `ge-agent-platform` | [`ge-agent-platform/AGENTS.md`](./ge-agent-platform/AGENTS.md) | Gemini Enterprise & Agent Platform (Discovery Engine Search/Assistant, native & 3rd-party SaaS data connectors, location-level IdP/ACL config, Agent Registry, custom MCP servers, Model Armor, and IAM v3 UAPs). |
+| `gecx-agent-studio` | [`gecx-agent-studio/AGENTS.md`](./gecx-agent-studio/AGENTS.md) | Gemini Enterprise for Customer Experience (CX Agent Studio) with GCS data store and private Cloud Run OpenAPI toolset via Service Directory & Internal TCP Proxy LB. |
+| `gecx-dialogflow` | [`gecx-dialogflow/AGENTS.md`](./gecx-dialogflow/AGENTS.md) | Dialogflow CX Conversational Agent with FAQ/unstructured data stores and private Cloud Run Function webhook via Service Directory & Internal TCP Proxy LB. |
+
 ### Creating a New Factory
 
 When scaffolding a new factory, adhere to these rules:
@@ -25,6 +42,7 @@ When scaffolding a new factory, adhere to these rules:
 - **1-apps Structure:** The `1-apps` stage must always include an architecture diagram named `diagram.png`. This diagram must be linked in the `README.md` of `1-apps`.
 - **Applications:** The `1-apps` stage may contain an `apps` subfolder for application code (e.g., Python) deployed on top of the infrastructure. Commands to deploy these apps must be returned to the user via Terraform outputs in `1-apps`.
 - **Documentation:** The factory root folder, the `0-prereqs` stage, and the `1-apps` stage must all have a `README.md` file. These READMEs follow a standard logical structure consistent across the repository; review existing factories (e.g., `cloud-run-single`) to derive and replicate this structure.
+- **Agent Instructions:** The factory root folder must include an `AGENTS.md` file documenting factory-specific architecture, key files, test commands, and implementation gotchas, and must be linked in the [Factory Index](#factory-index) above.
 
 Each factory (folder) is split into two stages (which correspond to two Terraform modules and two sub-folders):
 
@@ -169,7 +187,6 @@ uv run yamlfix tests/cloud_run_single/0_prereqs/simple.yaml
 > **Note:**
 >
 > - `tools/plan_summary.py` outputs unformatted YAML; always run `uv run yamlfix` on regenerated inventory files before running `pre-commit`.
-> - `agent-runtime/1-apps` packages `apps/adk` and `apps/adk-a2a` into an inline base64-encoded tarball (`inline_source[0].source_archive`) in the Terraform plan. Whenever any file under `agent-runtime/1-apps/apps/` is modified, regenerate or update `tests/agent_runtime/1_apps/{simple,a2a,agent_gateways}.yaml`.
 > - If a local clone of `cloud-foundation-fabric` is available on disk, you can speed up `pytest` (or run offline) by rewriting the git URL via environment variables:
 >   `GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0="url.file:///path/to/cloud-foundation-fabric.insteadOf" GIT_CONFIG_VALUE_0="https://github.com/GoogleCloudPlatform/cloud-foundation-fabric.git" uv run pytest tests`
 
@@ -209,6 +226,8 @@ uv run yamlfix tests/cloud_run_single/0_prereqs/simple.yaml
 
 ## Key Learnings & Best Practices
 
+Cross-cutting learnings that apply across multiple factories are documented below. For factory-specific architecture, workarounds, and operational rules, consult the corresponding file in the [Factory Index](#factory-index).
+
 ### Private Networking & Regional/Multi-Regional APIs (`*.rep.googleapis.com`)
 
 - **Private Google Access (`199.36.153.8/30`) Does Not Route `*.rep.googleapis.com`:**
@@ -223,13 +242,11 @@ uv run yamlfix tests/cloud_run_single/0_prereqs/simple.yaml
 
 - **Separating `REGION` and `GOOGLE_CLOUD_LOCATION`:**
   - `google-genai` (`genai.Client`) and `google-adk` automatically read `GOOGLE_CLOUD_LOCATION` from the environment. When an app interacts with both regional services (e.g., Model Armor in `europe-west1`) and multi-regional Vertex AI models (in `eu` or `us`), keep `REGION` (`europe-west1`) and `GOOGLE_CLOUD_LOCATION` (`eu` / `us`) as distinct environment variables.
-  - **Vertex AI Agent Engine (`agent-runtime`) Reserved Env Vars:** Agent Engine reserves `GOOGLE_CLOUD_LOCATION` (injecting the regional deployment location, e.g., `europe-west1`) and rejects custom environment variables with that name. Pass the model location via a custom variable (e.g., `MODEL_LOCATION="eu"`) and set `os.environ["GOOGLE_CLOUD_LOCATION"] = MODEL_LOCATION` inside `agent.py` before initializing ADK agents.
 - **Explicit Thinking Level (`THINKING_LEVEL`):**
   - Always expose `THINKING_LEVEL = os.environ.get("THINKING_LEVEL", "MEDIUM")` (or `LLM_THINKING_LEVEL` in RAG apps) in `src/config.py` and pass `thinking_config=types.ThinkingConfig(thinking_level=...)` inside `types.GenerateContentConfig(...)` so users can easily inspect and tune reasoning depth.
 - **Embeddings (`gemini-embedding-001`):**
   - RAG factories default to `gemini-embedding-001` with `3072` dimensions.
   - `client.models.embed_content` enforces a limit of at most **250** inputs per request; always chunk document lists into batches (e.g., `<= 250`) during ingestion.
-  - Standard `pgvector` `ivfflat` and `hnsw` indexes on `vector` columns support at most **2000** dimensions. For `3072`-dimension vectors, use AlloyDB's `scann` index (which supports `3072` dimensions) or exact KNN search on `vector(3072)` in Cloud SQL.
 
 ### End-to-End (E2E) Deployment & Application Gotchas
 
@@ -237,8 +254,6 @@ uv run yamlfix tests/cloud_run_single/0_prereqs/simple.yaml
   - Because `1-apps` runs Terraform and deployment commands by impersonating the Stage 0 `service-01` RW service account (`<prefix>-gf-...-01-rw@...`), any API or IAM permission required by `1-apps` resources or `gcloud` deployment commands must be declared in `0-prereqs/data/projects/service-01.yaml` (or `host.yaml` for Shared VPC host project resources).
 - **Python Lockfiles (`uv.lock`) in Container Builds:**
   - Sample app `Dockerfile`s run `uv sync --frozen`. Whenever `pyproject.toml` is modified in any sample application, run `uv lock` inside that application directory and commit the updated `uv.lock`; otherwise Cloud Build will fail during `gcloud builds submit` / `gcloud run deploy`.
-- **Vertex AI Search (`google_discovery_engine_data_store`):**
-  - Always configure `document_processing_config` (including `default_parsing_config { digital_parsing_config {} }`) directly on the `google_discovery_engine_data_store` Terraform resource in `1-apps` so unstructured document imports (`import_documents`) work immediately after provisioning.
 
 ## Preferred Workflow
 
