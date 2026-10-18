@@ -14,81 +14,141 @@
 
 import logging
 import sys
-from typing import List
+from typing import Any
 
-from google.cloud import aiplatform
-import google.api_core.exceptions as exceptions
+from google.api_core import exceptions
+from google.cloud import vectorsearch_v1
 
 from src import config
 
-# Note: You may need to install the library:
-# pip install google-cloud-aiplatform
-
-# Configure logging
 logging.basicConfig(
-    level=logging.INFO,  # Set the default logging level
-    format='%(name)s - %(levelname)s - %(message)s',
-    handlers=[logging.StreamHandler(sys.stdout)])
+    level=logging.INFO,
+    format="%(name)s - %(levelname)s - %(message)s",
+    handlers=[logging.StreamHandler(sys.stdout)],
+)
 
 
-def find_similar_document_ids(query_embedding: List[float],
-                              num_neighbors: int) -> List[str]:
+def _format_value(value: Any) -> str:
+  """Formats a DataObject field value for prompt context."""
+  if value is None:
+    return "None"
+  if isinstance(value, list):
+    return ",".join(str(v_item).strip() for v_item in value)
+  return str(value).strip()
+
+
+def _format_data_object_for_prompt(data_object: Any) -> str:
+  """Converts a Vector Search 2.0 DataObject into a prompt context string."""
+  data_fields = dict(data_object.data) if data_object.data else {}
+  content_parts = [
+      f"{key}: {_format_value(value)}"
+      for key, value in sorted(data_fields.items())
+  ]
+  return "; ".join(content_parts)
+
+
+def search_similar_documents(query_text: str, num_neighbors: int) -> list[str]:
+  """Searches a Vector Search 2.0 collection using Hybrid Search (Semantic + Text + RRF).
+
+  Uses Vector Search 2.0 auto-embeddings for semantic search combined with
+  full-text search over configured text fields, ranked via Reciprocal Rank
+  Fusion (RRF).
+
+  Args:
+      query_text: Natural language query from the user.
+      num_neighbors: Number of top matching documents to return.
+
+  Returns:
+      A list of formatted document strings from the matching DataObjects.
   """
-    Searches for documents with embeddings similar to the query_embedding
-    using Vertex AI Vector Search and returns their IDs.
-
-    Args:
-        query_embedding: A list of floats representing the query embedding.
-        num_neighbors: The number of nearest neighbors to retrieve.
-
-    Returns:
-        A list of strings, where each string is the ID of a similar document.
-    """
   if not all([
-      config.VECTOR_SEARCH_INDEX_ENDPOINT_NAME,
-      config.VECTOR_SEARCH_DEPLOYED_INDEX_ID
+      config.PROJECT_ID,
+      config.VECTOR_SEARCH_LOCATION,
+      config.VECTOR_SEARCH_COLLECTION_ID,
   ]):
     logging.warning(
-        "Vector Search is not configured. Skipping document search.")
+        "Vector Search 2.0 collection is not configured. Skipping document search."
+    )
     return []
 
+  parent = (
+      f"projects/{config.PROJECT_ID}/locations/{config.VECTOR_SEARCH_LOCATION}"
+      f"/collections/{config.VECTOR_SEARCH_COLLECTION_ID}")
+
   try:
-    logging.info("Initializing Vertex AI Platform client.")
-    aiplatform.init(project=config.PROJECT_ID, location=config.REGION)
-
-    index_endpoint = aiplatform.MatchingEngineIndexEndpoint(
-        index_endpoint_name=config.VECTOR_SEARCH_INDEX_ENDPOINT_NAME)
-
-    index_endpoint.private_service_connect_ip_address = config.VECTOR_SEARCH_ENDPOINT_IP_ADDRESS
-    logging.info(
-        f"Using private service connect with IP: {config.VECTOR_SEARCH_ENDPOINT_IP_ADDRESS}"
+    search_client = vectorsearch_v1.DataObjectSearchServiceClient()
+    output_fields = vectorsearch_v1.OutputFields(
+        data_fields=["*"],
+        metadata_fields=["*"],
     )
 
-    logging.info(f"Querying Vector Search index for {num_neighbors} neighbors.")
+    semantic_search = vectorsearch_v1.Search(
+        semantic_search=vectorsearch_v1.SemanticSearch(
+            search_text=query_text,
+            search_field=config.VECTOR_SEARCH_EMBEDDING_FIELD,
+            task_type=getattr(
+                vectorsearch_v1.EmbeddingTaskType,
+                config.VECTOR_SEARCH_TASK_TYPE,
+                vectorsearch_v1.EmbeddingTaskType.QUESTION_ANSWERING,
+            ),
+            top_k=num_neighbors,
+            output_fields=output_fields,
+        ))
 
-    # The match method expects a list of queries.
-    # We are sending a single query.
-    response = index_endpoint.match(
-        deployed_index_id=config.VECTOR_SEARCH_DEPLOYED_INDEX_ID,
-        queries=[query_embedding], num_neighbors=num_neighbors)
+    searches = [semantic_search]
+    weights = [1.0]
 
-    # The response is a list of lists of MatchNeighbor objects.
-    neighbors = response[0] if response else []
-
-    # Return only the IDs of the neighbors.
-    # The calling function will be responsible for looking up the content.
-    document_ids = [neighbor.id for neighbor in neighbors]
+    if config.VECTOR_SEARCH_TEXT_FIELDS:
+      text_search = vectorsearch_v1.Search(
+          text_search=vectorsearch_v1.TextSearch(
+              search_text=query_text,
+              data_field_names=config.VECTOR_SEARCH_TEXT_FIELDS,
+              top_k=num_neighbors,
+              output_fields=output_fields,
+          ))
+      searches.append(text_search)
+      weights.append(1.0)
 
     logging.info(
-        f"Retrieved {len(document_ids)} similar document IDs from Vector Search."
+        "Executing Hybrid Search (Semantic + Text with RRF) on '%s' for top %d neighbors.",
+        parent,
+        num_neighbors,
     )
-    return document_ids
+    request = vectorsearch_v1.BatchSearchDataObjectsRequest(
+        parent=parent,
+        searches=searches,
+        combine=vectorsearch_v1.BatchSearchDataObjectsRequest.
+        CombineResultsOptions(
+            ranker=vectorsearch_v1.Ranker(
+                rrf=vectorsearch_v1.ReciprocalRankFusion(weights=weights)),
+            output_fields=output_fields,
+            top_k=num_neighbors,
+        ),
+    )
+
+    response = search_client.batch_search_data_objects(request)
+    if not response.results:
+      return []
+
+    documents = [
+        _format_data_object_for_prompt(item.data_object)
+        for item in response.results[0].results
+        if item.data_object and item.data_object.data
+    ]
+
+    logging.info(
+        "Retrieved %d matching documents from Vector Search 2.0 collection.",
+        len(documents),
+    )
+    return documents
 
   except exceptions.GoogleAPICallError as e:
-    logging.error(f"Vector Search API call failed: {e}", exc_info=True)
+    logging.error("Vector Search 2.0 API call failed: %s", e, exc_info=True)
     return []
   except Exception as e:
     logging.error(
-        f"An unexpected error occurred during Vector Search query: {e}",
-        exc_info=True)
+        "An unexpected error occurred during Vector Search 2.0 query: %s",
+        e,
+        exc_info=True,
+    )
     return []

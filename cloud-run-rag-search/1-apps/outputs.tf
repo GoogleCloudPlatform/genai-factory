@@ -14,18 +14,17 @@
 
 locals {
   _env_vars_frontend = [
-    "GCS_SOURCE_BUCKET=${module.index-bucket.name}",
     "PROJECT_ID=${var.project_id}",
     "REGION=${var.region}",
-    "VECTOR_SEARCH_INDEX_ENDPOINT_NAME=${google_vertex_ai_index_endpoint.index_endpoint.name}",
-    "VECTOR_SEARCH_DEPLOYED_INDEX_ID=${google_vertex_ai_index_endpoint_deployed_index.index_deployment.deployed_index_id}",
-    "VECTOR_SEARCH_ENDPOINT_IP_ADDRESS=${google_compute_address.vector_search_address.address}"
+    "VECTOR_SEARCH_COLLECTION_ID=${google_vector_search_collection.collection.collection_id}",
+    "VECTOR_SEARCH_LOCATION=${google_vector_search_collection.collection.location}"
   ]
   _env_vars_ingestion = [
     "GCS_SOURCE_BUCKET=${module.index-bucket.name}",
     "PROJECT_ID=${var.project_id}",
     "REGION=${var.region}",
-    "VECTOR_SEARCH_INDEX_NAME=${google_vertex_ai_index.index.id}"
+    "VECTOR_SEARCH_COLLECTION_ID=${google_vector_search_collection.collection.collection_id}",
+    "VECTOR_SEARCH_LOCATION=${google_vector_search_collection.collection.location}"
   ]
   # Extract service account emails and ids from var.service_accounts, if any
   _service_account_emails = {

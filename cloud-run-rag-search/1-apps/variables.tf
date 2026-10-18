@@ -161,28 +161,53 @@ variable "service_account_ids" {
 }
 
 variable "vector_search_config" {
-  description = "The VertexAI index configuration."
+  description = "The Vector Search 2.0 collection and optional index configuration."
   type = object({
-    algorithm_config = optional(object({
-      tree_ah_config = optional(object({
-        leaf_node_embedding_count    = optional(number, 500)
-        leaf_nodes_to_search_percent = optional(number, 7)
-      }), {})
+    data_schema = optional(any, {
+      type = "object"
+      properties = {
+        description = { type = "string" }
+        genre       = { type = "string" }
+        rank        = { type = "integer" }
+        rating      = { type = "number" }
+        title       = { type = "string" }
+        year        = { type = "integer" }
+      }
+    })
+    index_config = optional(object({
+      create            = optional(bool, false)
+      distance_metric   = optional(string, "DOT_PRODUCT")
+      feature_norm_type = optional(string, "UNIT_L2_NORM")
+      filter_fields     = optional(list(string), ["genre", "year", "rating", "rank"])
+      index_field       = optional(string, "text_embedding")
+      max_replica_count = optional(number, 2)
+      min_replica_count = optional(number, 2)
+      mode              = optional(string, "STORAGE_OPTIMIZED")
+      store_fields      = optional(list(string), ["title"])
     }), {})
-    approximate_neighbors_count = optional(number, 150)
-    dimensions                  = optional(number, 3072)
-    distance_measure_type       = optional(string, "DOT_PRODUCT_DISTANCE")
-    index_shard_size            = optional(string, "SHARD_SIZE_SMALL")
-    index_update_method         = optional(string, "STREAM_UPDATE")
-    deployment_tier             = optional(string, "STORAGE")
-    # see https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/vertex_ai_index_endpoint_deployed_index#dedicated_resources-1
-    # for machine_type values and combo with index shard size.
-    machine_type = optional(string, "e2-standard-2")
-    # if not set, max_replica_count is set to min_replica_count
-    max_replica_count = optional(number, 2)
-    # min replica count 2 is set to provide SLA
-    # see https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/vertex_ai_index_endpoint_deployed_index#min_replica_count-1
-    min_replica_count = optional(number, 2)
+    location = optional(string)
+    vector_schema = optional(map(object({
+      dense_vector = optional(object({
+        dimensions = optional(number, 3072)
+        vertex_embedding_config = optional(object({
+          model_id      = optional(string, "gemini-embedding-001")
+          task_type     = optional(string, "RETRIEVAL_DOCUMENT")
+          text_template = string
+        }))
+      }))
+      sparse_vector = optional(bool, false)
+      })), {
+      text_embedding = {
+        dense_vector = {
+          dimensions = 3072
+          vertex_embedding_config = {
+            model_id      = "gemini-embedding-001"
+            task_type     = "RETRIEVAL_DOCUMENT"
+            text_template = "title: {title}; description: {description}; genre: {genre}; year: {year}; rating: {rating}; rank: {rank}"
+          }
+        }
+      }
+    })
   })
   nullable = false
   default  = {}

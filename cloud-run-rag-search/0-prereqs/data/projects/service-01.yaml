@@ -26,6 +26,7 @@ services:
   - cloudscheduler.googleapis.com
   - run.googleapis.com
   - serviceusage.googleapis.com
+  - vectorsearch.googleapis.com
   # To create LBs
   - compute.googleapis.com
   # Needed for ILB only
@@ -81,6 +82,7 @@ iam_by_principals:
     - roles/run.admin
     - roles/serviceusage.serviceUsageConsumer
     - roles/storage.admin
+    - roles/vectorsearch.admin
     # Needed for ILB only
     - roles/certificatemanager.owner
     - roles/privateca.admin
@@ -90,7 +92,7 @@ iam_by_principals:
     - roles/compute.securityAdmin
   $iam_principals:service_accounts/_self_/gf-rrag-fe-0:
     - roles/logging.logWriter
-    - roles/storage.objectViewer
+    - roles/vectorsearch.viewer
   $iam_principals:service_accounts/_self_/gf-rrag-fe-build-0:
     - roles/artifactregistry.writer
     - roles/cloudbuild.builds.editor
@@ -100,6 +102,7 @@ iam_by_principals:
   $iam_principals:service_accounts/_self_/gf-rrag-ing-0:
     - roles/logging.logWriter
     - roles/storage.objectViewer
+    - roles/vectorsearch.dataObjectWriter
   $iam_principals:service_accounts/_self_/gf-rrag-ing-build-0:
     - roles/artifactregistry.writer
     - roles/cloudbuild.builds.editor

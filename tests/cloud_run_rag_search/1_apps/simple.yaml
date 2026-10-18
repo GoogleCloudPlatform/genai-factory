@@ -55,45 +55,6 @@ values:
     terraform_labels:
       goog-terraform-provisioned: 'true'
     timeouts:
-  google_compute_address.vector_search_address:
-    address_type: INTERNAL
-    deletion_policy: DELETE
-    description:
-    effective_labels:
-      goog-terraform-provisioned: 'true'
-    ip_collection:
-    ip_version:
-    ipv6_endpoint_type:
-    labels:
-    name: gf-rrag-search-0
-    network:
-    project: prefix-gf-rrag-search-0
-    region: europe-west1
-    subnetwork: projects/prefix-gf-rrag-src-hp-0/regions/europe-west1/subnetworks/sub-0
-    terraform_labels:
-      goog-terraform-provisioned: 'true'
-    timeouts:
-  google_compute_forwarding_rule.vector_search_psc_endpoint:
-    all_ports:
-    allow_global_access:
-    allow_psc_global_access:
-    backend_service:
-    deletion_policy: DELETE
-    description:
-    ip_collection:
-    is_mirroring_collector:
-    labels:
-    load_balancing_scheme: ''
-    name: gf-rrag-search-0
-    network: projects/prefix-gf-rrag-src-hp-0/global/networks/net-0
-    no_automate_dns_zone:
-    ports:
-    project: prefix-gf-rrag-search-0
-    recreate_closed_psc: false
-    region: europe-west1
-    service_label:
-    source_ip_ranges:
-    timeouts:
   google_compute_global_address.address_external[0]:
     address_type:
     deletion_policy: DELETE
@@ -189,67 +150,31 @@ values:
     terraform_labels:
       goog-terraform-provisioned: 'true'
     timeouts:
-  google_vertex_ai_index.index:
+  google_vector_search_collection.collection:
+    collection_id: gf-rrag-search-0
+    data_schema: '{"properties":{"description":{"type":"string"},"genre":{"type":"string"},"rank":{"type":"integer"},"rating":{"type":"number"},"title":{"type":"string"},"year":{"type":"integer"}},"type":"object"}'
     deletion_policy: DELETE
-    description: VertexAI index.
-    display_name: gf-rrag-search-0
-    effective_labels:
-      goog-terraform-provisioned: 'true'
-    encryption_spec: []
-    index_update_method: STREAM_UPDATE
-    labels:
-    metadata:
-      - config:
-          - algorithm_config:
-              - brute_force_config: []
-                tree_ah_config:
-                  - leaf_node_embedding_count: 500
-                    leaf_nodes_to_search_percent: 7
-            approximate_neighbors_count: 150
-            dimensions: 3072
-            distance_measure_type: DOT_PRODUCT_DISTANCE
-            feature_norm_type: NONE
-            shard_size: SHARD_SIZE_SMALL
-        is_complete_overwrite: false
-    project: prefix-gf-rrag-search-0
-    region: europe-west1
-    terraform_labels:
-      goog-terraform-provisioned: 'true'
-    timeouts:
-  google_vertex_ai_index_endpoint.index_endpoint:
-    deletion_policy: DELETE
-    description: VertexAI index endpoint.
+    description: Vector Search 2.0 collection.
     display_name: gf-rrag-search-0
     effective_labels:
       goog-terraform-provisioned: 'true'
     encryption_spec: []
     labels:
-    network:
-    private_service_connect_config:
-      - enable_private_service_connect: true
-        project_allowlist:
-          - prefix-gf-rrag-search-0
-        psc_automation_configs: []
+    location: europe-west4
     project: prefix-gf-rrag-search-0
-    public_endpoint_enabled:
-    region: europe-west1
     terraform_labels:
       goog-terraform-provisioned: 'true'
     timeouts:
-  google_vertex_ai_index_endpoint_deployed_index.index_deployment:
-    dedicated_resources:
-      - machine_spec:
-          - machine_type: e2-standard-2
-        max_replica_count: 2
-        min_replica_count: 2
-    deployed_index_auth_config: []
-    deployed_index_id: gf_rrag_search_0
-    deployment_group: default
-    display_name: gf-rrag-search-0
-    enable_access_logging: false
-    region: europe-west1
-    reserved_ip_ranges:
-    timeouts:
+    vector_schema:
+      - dense_vector:
+          - dimensions: 3072
+            vertex_embedding_config:
+              - model_id: gemini-embedding-001
+                task_type: RETRIEVAL_DOCUMENT
+                text_template: 'title: {title}; description: {description}; genre:
+                  {genre}; year: {year}; rating: {rating}; rank: {rank}'
+        field_name: text_embedding
+        sparse_vector: []
   module.cas[0].google_privateca_ca_pool.default[0]:
     deletion_policy: DELETE
     effective_labels:
@@ -864,9 +789,9 @@ counts:
   google_cloud_run_v2_service: 1
   google_cloud_run_v2_service_iam_binding: 1
   google_cloud_scheduler_job: 1
-  google_compute_address: 2
+  google_compute_address: 1
   google_compute_backend_service: 1
-  google_compute_forwarding_rule: 3
+  google_compute_forwarding_rule: 2
   google_compute_global_address: 1
   google_compute_global_forwarding_rule: 2
   google_compute_managed_ssl_certificate: 1
@@ -885,12 +810,35 @@ counts:
   google_privateca_ca_pool: 1
   google_privateca_certificate_authority: 1
   google_storage_bucket: 1
-  google_vertex_ai_index: 1
-  google_vertex_ai_index_endpoint: 1
-  google_vertex_ai_index_endpoint_deployed_index: 1
+  google_vector_search_collection: 1
   modules: 10
-  resources: 38
+  resources: 34
 
 outputs:
-  commands: __missing__
+  commands: "  # Run the following commands to deploy the application.\n  # Alternatively,\
+    \ deploy the application through your CI/CD pipeline.\n\n  # Upload sample data\
+    \ to GCS\n  gcloud storage cp ./data/data.jsonl gs://prefix-gf-rrag-search-0/data.jsonl\
+    \ \\\n    --impersonate-service-account=iac-rw@prefix-gf-rrag-search-0.iam.gserviceaccount.com\n\
+    \n  gcloud artifacts repositories create gf-rrag-search-0 \\\n    --project=prefix-gf-rrag-search-0\
+    \ \\\n    --location europe-west1 \\\n    --repository-format docker \\\n    --impersonate-service-account=iac-rw@prefix-gf-rrag-search-0.iam.gserviceaccount.com\n\
+    \n  # Ingestion Cloud Run\n  gcloud builds submit ./apps/rag/ingestion \\\n  \
+    \  --project prefix-gf-rrag-search-0 \\\n    --tag europe-west1-docker.pkg.dev/prefix-gf-rrag-search-0/gf-rrag-search-0/ingestion\
+    \ \\\n    --service-account projects/prefix-gf-rrag-search-0/serviceAccounts/gf-rrag-ing-build-0@prefix-gf-rrag-search-0.iam.gserviceaccount.com\
+    \ \\\n    --default-buckets-behavior=REGIONAL_USER_OWNED_BUCKET \\\n    --region\
+    \ europe-west1 \\\n    --quiet \\\n    --impersonate-service-account=iac-rw@prefix-gf-rrag-search-0.iam.gserviceaccount.com\n\
+    \n  gcloud run jobs deploy gf-rrag-search-0-ingestion \\\n    --impersonate-service-account=iac-rw@prefix-gf-rrag-search-0.iam.gserviceaccount.com\
+    \ \\\n    --project prefix-gf-rrag-search-0 \\\n    --region europe-west1 \\\n\
+    \    --container=ingestion \\\n    --image=europe-west1-docker.pkg.dev/prefix-gf-rrag-search-0/gf-rrag-search-0/ingestion\
+    \ \\\n    --set-env-vars GCS_SOURCE_BUCKET=prefix-gf-rrag-search-0,PROJECT_ID=prefix-gf-rrag-search-0,REGION=europe-west1,VECTOR_SEARCH_COLLECTION_ID=gf-rrag-search-0,VECTOR_SEARCH_LOCATION=europe-west4\n\
+    \n  gcloud run jobs execute gf-rrag-search-0-ingestion \\\n    --impersonate-service-account=iac-rw@prefix-gf-rrag-search-0.iam.gserviceaccount.com\
+    \ \\\n    --project prefix-gf-rrag-search-0 \\\n    --region europe-west1 \\\n\
+    \    --wait\n\n  # Frontend Cloud Run\n  gcloud builds submit ./apps/rag/frontend\
+    \ \\\n    --project prefix-gf-rrag-search-0 \\\n    --tag europe-west1-docker.pkg.dev/prefix-gf-rrag-search-0/gf-rrag-search-0/frontend\
+    \ \\\n    --service-account projects/prefix-gf-rrag-search-0/serviceAccounts/gf-rrag-fe-build-0@prefix-gf-rrag-search-0.iam.gserviceaccount.com\
+    \ \\\n    --default-buckets-behavior=REGIONAL_USER_OWNED_BUCKET \\\n    --region\
+    \ europe-west1 \\\n    --quiet \\\n    --impersonate-service-account=iac-rw@prefix-gf-rrag-search-0.iam.gserviceaccount.com\n\
+    \n  gcloud run deploy gf-rrag-search-0-frontend \\\n    --impersonate-service-account=iac-rw@prefix-gf-rrag-search-0.iam.gserviceaccount.com\
+    \ \\\n    --project prefix-gf-rrag-search-0 \\\n    --region europe-west1 \\\n\
+    \    --container=frontend \\\n    --image=europe-west1-docker.pkg.dev/prefix-gf-rrag-search-0/gf-rrag-search-0/frontend\
+    \ \\\n    --set-env-vars PROJECT_ID=prefix-gf-rrag-search-0,REGION=europe-west1,VECTOR_SEARCH_COLLECTION_ID=gf-rrag-search-0,VECTOR_SEARCH_LOCATION=europe-west4\n"
   ip_addresses: __missing__
