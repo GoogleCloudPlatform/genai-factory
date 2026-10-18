@@ -16,7 +16,10 @@ import os
 
 PROJECT_ID = os.environ.get("PROJECT_ID")
 REGION = os.environ.get("REGION", "europe-west1")
-GOOGLE_CLOUD_LOCATION = os.environ.get("GOOGLE_CLOUD_LOCATION", "eu")
+GOOGLE_CLOUD_LOCATION = os.environ.get(
+    "GOOGLE_CLOUD_LOCATION",
+    "eu" if REGION.startswith("europe") else "us",
+)
 
 # Generative Model Configuration
 LLM_MODEL_NAME = os.environ.get("MODEL_NAME", "gemini-4-argon")
@@ -27,24 +30,19 @@ LLM_TOP_K = int(os.environ.get("TOP_K", 40))
 LLM_CANDIDATE_COUNT = int(os.environ.get("CANDIDATE_COUNT", 1))
 LLM_MAX_OUTPUT_TOKENS = int(os.environ.get("MAX_OUTPUT_TOKENS", 1024))
 
-# Embedding Model Configuration
-EMBEDDING_MODEL_NAME = os.environ.get("EMBEDDING_MODEL_NAME",
-                                      "gemini-embedding-001")
-EMBEDDING_TASK_TYPE = "RETRIEVAL_QUERY"
-
-# Vertex AI Vector Search Configuration
-VECTOR_SEARCH_INDEX_ENDPOINT_NAME = os.environ.get(
-    "VECTOR_SEARCH_INDEX_ENDPOINT_NAME")
-VECTOR_SEARCH_DEPLOYED_INDEX_ID = os.environ.get(
-    "VECTOR_SEARCH_DEPLOYED_INDEX_ID")
-VECTOR_SEARCH_ENDPOINT_IP_ADDRESS = os.environ.get(
-    "VECTOR_SEARCH_ENDPOINT_IP_ADDRESS")
-
-# GCS Source for Document Lookup
-GCS_SOURCE_BUCKET = os.environ.get("GCS_SOURCE_BUCKET")
-GCS_SOURCE_BLOB_NAME = os.environ.get("GCS_SOURCE_BLOB_NAME", "data.jsonl")
-DOCUMENT_CACHE_TTL_SECONDS = int(
-    os.environ.get("DOCUMENT_CACHE_TTL_SECONDS", 600))
+# Vector Search 2.0 Configuration
+VECTOR_SEARCH_COLLECTION_ID = os.environ.get("VECTOR_SEARCH_COLLECTION_ID")
+VECTOR_SEARCH_LOCATION = os.environ.get("VECTOR_SEARCH_LOCATION", REGION)
+VECTOR_SEARCH_EMBEDDING_FIELD = os.environ.get("VECTOR_SEARCH_EMBEDDING_FIELD",
+                                               "text_embedding")
+VECTOR_SEARCH_TASK_TYPE = os.environ.get("VECTOR_SEARCH_TASK_TYPE",
+                                         "QUESTION_ANSWERING")
+VECTOR_SEARCH_TEXT_FIELDS = [
+    field.strip()
+    for field in os.environ.get("VECTOR_SEARCH_TEXT_FIELDS",
+                                "title,description,genre").split(",")
+    if field.strip()
+]
 
 # Retriever Configuration
 RETRIEVER_TOP_K = int(os.environ.get("RETRIEVER_TOP_K", 10))

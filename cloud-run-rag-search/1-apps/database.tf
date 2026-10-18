@@ -13,7 +13,10 @@
 # limitations under the License.
 
 locals {
-  name_to_underscores = replace(var.name, "-", "_")
+  vector_search_location = coalesce(
+    var.vector_search_config.location,
+    var.region == "europe-west1" ? "europe-west4" : var.region
+  )
 }
 
 module "index-bucket" {
@@ -26,81 +29,65 @@ module "index-bucket" {
   force_destroy = !var.enable_deletion_protection
 }
 
-resource "google_vertex_ai_index" "index" {
-  display_name        = var.name
-  project             = var.project_id
-  region              = var.region
-  index_update_method = var.vector_search_config.index_update_method
-  description         = "VertexAI index."
+resource "google_vector_search_collection" "collection" {
+  project       = var.project_id
+  location      = local.vector_search_location
+  collection_id = var.name
+  display_name  = var.name
+  description   = "Vector Search 2.0 collection."
+  data_schema   = jsonencode(var.vector_search_config.data_schema)
 
-  metadata {
-    contents_delta_uri = module.index-bucket.url
+  dynamic "vector_schema" {
+    for_each = var.vector_search_config.vector_schema
+    content {
+      field_name = vector_schema.key
 
-    config {
-      dimensions                  = var.vector_search_config.dimensions
-      approximate_neighbors_count = var.vector_search_config.approximate_neighbors_count
-      shard_size                  = var.vector_search_config.index_shard_size
-      distance_measure_type       = var.vector_search_config.distance_measure_type
-
-      dynamic "algorithm_config" {
-        for_each = var.vector_search_config.index_shard_size == "SHARD_SIZE_SO_DYNAMIC" ? [] : [1]
+      dynamic "dense_vector" {
+        for_each = vector_schema.value.dense_vector != null ? [vector_schema.value.dense_vector] : []
         content {
-          tree_ah_config {
-            leaf_node_embedding_count    = var.vector_search_config.algorithm_config.tree_ah_config.leaf_node_embedding_count
-            leaf_nodes_to_search_percent = var.vector_search_config.algorithm_config.tree_ah_config.leaf_nodes_to_search_percent
+          dimensions = dense_vector.value.dimensions
+
+          dynamic "vertex_embedding_config" {
+            for_each = dense_vector.value.vertex_embedding_config != null ? [dense_vector.value.vertex_embedding_config] : []
+            content {
+              model_id      = vertex_embedding_config.value.model_id
+              task_type     = vertex_embedding_config.value.task_type
+              text_template = vertex_embedding_config.value.text_template
+            }
           }
         }
+      }
+
+      dynamic "sparse_vector" {
+        for_each = vector_schema.value.sparse_vector ? [1] : []
+        content {}
       }
     }
   }
 }
 
-resource "google_vertex_ai_index_endpoint" "index_endpoint" {
-  display_name = var.name
-  project      = var.project_id
-  region       = var.region
-  description  = "VertexAI index endpoint."
+resource "google_vector_search_index" "index" {
+  count           = var.vector_search_config.index_config.create ? 1 : 0
+  project         = var.project_id
+  location        = local.vector_search_location
+  collection_id   = google_vector_search_collection.collection.collection_id
+  index_id        = "${var.name}-index"
+  display_name    = "${var.name}-index"
+  description     = "Vector Search 2.0 ANN index."
+  index_field     = var.vector_search_config.index_config.index_field
+  distance_metric = var.vector_search_config.index_config.distance_metric
+  filter_fields   = var.vector_search_config.index_config.filter_fields
+  store_fields    = var.vector_search_config.index_config.store_fields
 
-  private_service_connect_config {
-    enable_private_service_connect = true
-    project_allowlist = [
-      var.project_id
-    ]
+  dense_scann {
+    feature_norm_type = var.vector_search_config.index_config.feature_norm_type
   }
-}
 
-resource "google_vertex_ai_index_endpoint_deployed_index" "index_deployment" {
-  deployed_index_id = local.name_to_underscores
-  display_name      = var.name
-  region            = var.region
-  index             = google_vertex_ai_index.index.id
-  index_endpoint    = google_vertex_ai_index_endpoint.index_endpoint.id
-
-
-  dedicated_resources {
-    max_replica_count = var.vector_search_config.max_replica_count
-    min_replica_count = var.vector_search_config.min_replica_count
-
-    machine_spec {
-      machine_type = var.vector_search_config.machine_type
+  dedicated_infrastructure {
+    mode = var.vector_search_config.index_config.mode
+    autoscaling_spec {
+      min_replica_count = var.vector_search_config.index_config.min_replica_count
+      max_replica_count = var.vector_search_config.index_config.max_replica_count
     }
   }
-}
-
-resource "google_compute_address" "vector_search_address" {
-  name         = var.name
-  project      = var.project_id
-  address_type = "INTERNAL"
-  subnetwork   = var.networking_config.subnet
-  region       = var.region
-}
-
-resource "google_compute_forwarding_rule" "vector_search_psc_endpoint" {
-  name                  = var.name
-  project               = var.project_id
-  region                = var.region
-  target                = google_vertex_ai_index_endpoint_deployed_index.index_deployment.private_endpoints[0].service_attachment
-  load_balancing_scheme = ""
-  network               = var.networking_config.vpc
-  ip_address            = google_compute_address.vector_search_address.id
 }

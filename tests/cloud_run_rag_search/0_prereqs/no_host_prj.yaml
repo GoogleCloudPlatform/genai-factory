@@ -186,10 +186,27 @@ values:
   module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/storage.objectViewer"]:
     condition: []
     members:
-      - serviceAccount:gf-rrag-fe-0@your-prefix-gf-rrag-src-0.iam.gserviceaccount.com
       - serviceAccount:gf-rrag-ing-0@your-prefix-gf-rrag-src-0.iam.gserviceaccount.com
     project: your-prefix-gf-rrag-src-0
     role: roles/storage.objectViewer
+  module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/vectorsearch.admin"]:
+    condition: []
+    members:
+      - serviceAccount:iac-rw@your-prefix-gf-rrag-src-0.iam.gserviceaccount.com
+    project: your-prefix-gf-rrag-src-0
+    role: roles/vectorsearch.admin
+  ? module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/vectorsearch.dataObjectWriter"]
+  : condition: []
+    members:
+      - serviceAccount:gf-rrag-ing-0@your-prefix-gf-rrag-src-0.iam.gserviceaccount.com
+    project: your-prefix-gf-rrag-src-0
+    role: roles/vectorsearch.dataObjectWriter
+  module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/vectorsearch.viewer"]:
+    condition: []
+    members:
+      - serviceAccount:gf-rrag-fe-0@your-prefix-gf-rrag-src-0.iam.gserviceaccount.com
+    project: your-prefix-gf-rrag-src-0
+    role: roles/vectorsearch.viewer
   module.projects.module.projects-iam["service-01"].google_project_iam_member.bindings["run_fe_ai_user"]:
     condition: []
     member: serviceAccount:gf-rrag-fe-0@your-prefix-gf-rrag-src-0.iam.gserviceaccount.com
@@ -272,6 +289,10 @@ values:
     condition: []
     project: your-prefix-gf-rrag-src-0
     role: roles/run.serviceAgent
+  module.projects.module.projects["service-01"].google_project_iam_member.service_agents["vectorsearch"]:
+    condition: []
+    project: your-prefix-gf-rrag-src-0
+    role: roles/vectorsearch.serviceAgent
   module.projects.module.projects["service-01"].google_project_iam_member.service_agents["vertex-bp"]:
     condition: []
     project: your-prefix-gf-rrag-src-0
@@ -394,6 +415,13 @@ values:
     project: your-prefix-gf-rrag-src-0
     service: serviceusage.googleapis.com
     timeouts:
+  module.projects.module.projects["service-01"].google_project_service.project_services["vectorsearch.googleapis.com"]:
+    deletion_policy: DELETE
+    disable_dependent_services: false
+    disable_on_destroy: false
+    project: your-prefix-gf-rrag-src-0
+    service: vectorsearch.googleapis.com
+    timeouts:
   module.projects.module.projects["service-01"].google_project_service_identity.default["aiplatform.googleapis.com"]:
     project: your-prefix-gf-rrag-src-0
     service: aiplatform.googleapis.com
@@ -417,6 +445,10 @@ values:
   module.projects.module.projects["service-01"].google_project_service_identity.default["run.googleapis.com"]:
     project: your-prefix-gf-rrag-src-0
     service: run.googleapis.com
+    timeouts:
+  module.projects.module.projects["service-01"].google_project_service_identity.default["vectorsearch.googleapis.com"]:
+    project: your-prefix-gf-rrag-src-0
+    service: vectorsearch.googleapis.com
     timeouts:
   ? module.projects.module.service-accounts-iam["service-01/iac-rw"].google_service_account_iam_member.additive["$service_account_ids:service-01/gf-rrag-fe-0-roles/iam.serviceAccountUser"]
   : condition: []
@@ -516,17 +548,17 @@ values:
 counts:
   google_org_policy_policy: 1
   google_project: 1
-  google_project_iam_binding: 17
-  google_project_iam_member: 29
-  google_project_service: 10
-  google_project_service_identity: 6
+  google_project_iam_binding: 20
+  google_project_iam_member: 30
+  google_project_service: 11
+  google_project_service_identity: 7
   google_service_account: 6
   google_service_account_iam_member: 6
   google_storage_bucket: 1
   google_storage_bucket_iam_binding: 1
   local_file: 2
   modules: 11
-  resources: 82
+  resources: 88
   terraform_data: 2
 
 outputs:

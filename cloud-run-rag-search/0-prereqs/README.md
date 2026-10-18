@@ -16,8 +16,6 @@ The [host](data/projects/host.yaml) and [service](data/projects/service-01.yaml)
 
 ## Required roles
 
-## Required roles
-
 To execute this stage, you need these roles:
 
 - `roles/resourcemanager.projectCreator` on the organization or folder where you will create the project.

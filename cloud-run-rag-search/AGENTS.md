@@ -4,16 +4,16 @@ For repository-wide conventions, Terraform style rules, and cross-cutting learni
 
 ## Overview & Architecture
 
-The `cloud-run-rag-search` factory deploys a **Retrieval-Augmented Generation (RAG)** application on Cloud Run backed by **Vertex AI Vector Search** and **Google Cloud Storage**:
+The `cloud-run-rag-search` factory deploys a **Retrieval-Augmented Generation (RAG)** application on Cloud Run backed by **Vertex AI Vector Search 2.0 (`vectorsearch.googleapis.com`)** and **Google Cloud Storage**:
 
 - **`0-prereqs`** ([`0-prereqs/README.md`](./0-prereqs/README.md)):
   - Service project (`0-prereqs/data/projects/service-01.yaml`) and optional Shared VPC host project (`0-prereqs/data/projects/host.yaml`).
-  - VPC, subnet, Private Services Access (PSA) range for Vertex AI Vector Search private endpoints, Private Google Access, Cloud DNS response policies, and regional PSC endpoint (`0-prereqs/networking.tf`) for multi-regional Vertex AI (`aiplatform.<multi_region>.rep.googleapis.com`).
-  - Stage 1 RW/RO automation service accounts and dedicated service accounts for the Cloud Run frontend, ingestion job, and Cloud Build.
+  - VPC, subnet, Private Google Access, Cloud DNS response policies, and regional PSC endpoint (`0-prereqs/networking.tf`) for multi-regional Vertex AI (`aiplatform.<multi_region>.rep.googleapis.com`).
+  - Stage 1 RW/RO automation service accounts and dedicated service accounts for the Cloud Run frontend (`roles/vectorsearch.viewer`, `roles/aiplatform.user`), ingestion job (`roles/vectorsearch.dataObjectWriter`, `roles/aiplatform.user`, `roles/storage.objectViewer`), and Cloud Build.
 - **`1-apps`** ([`1-apps/README.md`](./1-apps/README.md)):
-  - **Vertex AI Vector Search Index & Endpoint** ([`1-apps/database.tf`](./1-apps/database.tf)): Streaming-update Vector Search index (`3072` dimensions for `gemini-embedding-001`) deployed to a private VPC-peered Index Endpoint.
-  - **Ingestion Pipeline** ([`1-apps/ingestion.tf`](./1-apps/ingestion.tf)): GCS bucket (seeded with [`1-apps/data/data.jsonl`](./1-apps/data/data.jsonl)) and Cloud Run Job that reads JSONL records, generates embeddings in batches, and upserts datapoints into the Vector Search index.
-  - **Frontend & Load Balancer** ([`1-apps/frontend.tf`](./1-apps/frontend.tf), [`1-apps/lb-ext.tf`](./1-apps/lb-ext.tf), [`1-apps/lb-int.tf`](./1-apps/lb-int.tf)): Cloud Run RAG web/API service ([`1-apps/apps/rag/`](./1-apps/apps/rag)) behind an external or internal Application Load Balancer.
+  - **Vector Search 2.0 Collection & Optional Index** ([`1-apps/database.tf`](./1-apps/database.tf)): `google_vector_search_collection` configured with `data_schema` (storing movie metadata directly alongside vectors) and `vector_schema` with `vertex_embedding_config` (`gemini-embedding-001`, `3072` dimensions, `RETRIEVAL_DOCUMENT`) for automatic embedding generation. An optional ScaNN ANN `google_vector_search_index` can be enabled via `var.vector_search_config.index_config.create = true` (`false` by default, using zero-indexing kNN out of the box).
+  - **Ingestion Pipeline** ([`1-apps/ingestion.tf`](./1-apps/ingestion.tf)): GCS bucket (seeded with [`1-apps/data/data.jsonl`](./1-apps/data/data.jsonl)) and Cloud Run Job that reads JSONL records and batch-upserts `DataObject` items into the Vector Search 2.0 Collection (`google-cloud-vectorsearch`), relying on Vector Search 2.0 auto-embeddings.
+  - **Frontend & Load Balancer** ([`1-apps/frontend.tf`](./1-apps/frontend.tf), [`1-apps/lb-ext.tf`](./1-apps/lb-ext.tf), [`1-apps/lb-int.tf`](./1-apps/lb-int.tf)): Cloud Run RAG web/API service ([`1-apps/apps/rag/`](./1-apps/apps/rag)) that queries the Vector Search 2.0 Collection using Hybrid Search (`SemanticSearch` + `TextSearch` combined with Reciprocal Rank Fusion `RRF`) and calls `gemini-4-argon`, behind an external or internal Application Load Balancer.
 
 ## Key Files & Test Cases
 
@@ -52,9 +52,15 @@ uv run yamlfix tests/cloud_run_rag_search
 
 ## Factory-Specific Learnings & Gotchas
 
+- **Vector Search 2.0 Regional Availability (`europe-west1` vs. `europe-west4`):**
+  - While `vectorsearch.googleapis.com` lists `europe-west1` as a location, `CreateCollection` in `europe-west1` fails with `Error code 10, message: Failed to perform tenant project creation`, whereas `europe-west4`, `europe-west2`, `europe-north1`, and `us-central1` succeed.
+  - In [`1-apps/database.tf`](./1-apps/database.tf), `local.vector_search_location` defaults to `europe-west4` when `var.region == "europe-west1"` (unless `var.vector_search_config.location` is explicitly set) and passes `VECTOR_SEARCH_LOCATION` to the Cloud Run ingestion job and frontend service.
 - **Regional Vector Search vs. Multi-Regional Gemini Models:**
-  - Vertex AI Vector Search (`google_vertex_ai_index` and `google_vertex_ai_index_endpoint`) is strictly regional (`var.region`), whereas Gemini models (`gemini-4-argon`, `gemini-embedding-001`) are called on the multi-regional endpoint (`var.multi_region`, e.g., `eu` or `us`). Keep `REGION` and `GOOGLE_CLOUD_LOCATION` separate in the Cloud Run service and job environment variables.
-- **Embedding Batch Size Limit (`<= 250`):**
-  - `client.models.embed_content` enforces a maximum of `250` inputs per request; always chunk input texts into batches of `<= 250` before calling the embeddings API.
+  - Vertex AI Vector Search 2.0 (`google_vector_search_collection` and `google_vector_search_index`) is regional (`local.vector_search_location`), whereas Gemini generative models (`gemini-4-argon`) are called on the multi-regional endpoint (`eu` or `us`). Keep `REGION`, `VECTOR_SEARCH_LOCATION`, and `GOOGLE_CLOUD_LOCATION` distinct in the Cloud Run service and job environment variables.
+- **Auto-Embeddings & Upsert Batch Size Limit (`<= 250`):**
+  - When a Vector Search 2.0 Collection is configured with `vertex_embedding_config` (auto-embeddings), `DataObject` records are upserted with `vectors={}` and Vector Search generates the embeddings automatically.
+  - `batch_create_data_objects` and `batch_update_data_objects` enforce a maximum of `250` items per batch when auto-embeddings are enabled, and `data_object_id` must conform to RFC1035 (`[a-z]([a-z0-9-]{0,61}[a-z0-9])?`).
+- **Collection Deletion Requires Empty Collection (`COLLECTION_HAS_DATA_OBJECTS`):**
+  - `DeleteCollection` (`terraform destroy` on `google_vector_search_collection`) fails with `Error 400: Collection deletion is not allowed because it still has data objects` if `DataObject` records exist in the collection. Delete data objects first via `dataObjects:batchDelete` before destroying a populated collection.
 - **Container Lockfiles (`uv.lock`):**
   - Whenever [`1-apps/apps/rag/frontend/pyproject.toml`](./1-apps/apps/rag/frontend/pyproject.toml) or [`1-apps/apps/rag/ingestion/pyproject.toml`](./1-apps/apps/rag/ingestion/pyproject.toml) is updated, run `uv lock` inside the corresponding subfolder so `uv sync --frozen` succeeds during Cloud Build.

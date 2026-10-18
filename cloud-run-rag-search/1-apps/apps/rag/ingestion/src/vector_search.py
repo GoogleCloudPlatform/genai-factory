@@ -13,51 +13,101 @@
 # limitations under the License.
 
 import logging
-from typing import List, Dict, Any
-from google.cloud.aiplatform import MatchingEngineIndex
+from typing import Any
+
+from google.api_core import exceptions
+from google.cloud import vectorsearch_v1
 
 logger = logging.getLogger(__name__)
 
 
-def upsert_datapoints_to_index(
+def upsert_data_objects_to_collection(
     project: str,
     location: str,
-    index_name: str,
-    datapoints: List[Dict[str, Any]],
+    collection_id: str,
+    data_objects: list[dict[str, Any]],
 ) -> None:
-  """
-    Upserts a list of datapoints into a Vertex AI Vector Search index.
-    This method is suitable for streaming-enabled indexes.
+  """Upserts a batch of DataObjects into a Vector Search 2.0 collection.
 
-    Args:
-        project (str): The GCP project ID.
-        location (str): The region where the index is located.
-        index_name (str): The ID or full resource name of the Vector Search index.
-        datapoints (List[Dict[str, Any]]): A list of datapoint dictionaries.
-            Each dict must have 'datapoint_id' and 'feature_vector'.
-    """
-  if not datapoints:
-    logger.warning("No datapoints provided to upsert.")
+  Vector Search 2.0 collections configured with `vertex_embedding_config`
+  automatically generate embeddings from the `data` payload when `vectors` is
+  left empty (`{}`).
+
+  Args:
+      project: The GCP project ID.
+      location: The region where the collection is located.
+      collection_id: The ID of the Vector Search 2.0 collection.
+      data_objects: A list of dictionaries with `data_object_id` and `data`.
+  """
+  if not data_objects:
+    logger.warning("No data objects provided to upsert.")
     return
 
+  parent = (
+      f"projects/{project}/locations/{location}/collections/{collection_id}")
+  client = vectorsearch_v1.DataObjectServiceClient()
+
   logger.info(
-      f"Sending {len(datapoints)} datapoints to be upserted into index '{index_name}'."
-  )
+      f"Upserting {len(data_objects)} data objects into collection '{parent}'.")
+
+  create_requests = [
+      vectorsearch_v1.CreateDataObjectRequest(
+          parent=parent,
+          data_object_id=item["data_object_id"],
+          data_object=vectorsearch_v1.DataObject(
+              data=item["data"],
+              vectors={},
+          ),
+      ) for item in data_objects
+  ]
+
   try:
-    # Initialize the MatchingEngineIndex object
-    index = MatchingEngineIndex(index_name=index_name, project=project,
-                                location=location)
-
-    # Call the method for streaming updates
-    index.upsert_datapoints(datapoints=datapoints)
-
+    client.batch_create_data_objects(
+        vectorsearch_v1.BatchCreateDataObjectsRequest(
+            parent=parent,
+            requests=create_requests,
+        ))
     logger.info(
-        f"Successfully sent {len(datapoints)} datapoints to index '{index_name}'."
-    )
-
+        f"Successfully created {len(data_objects)} data objects in '{parent}'.")
+    return
+  except exceptions.AlreadyExists:
+    logger.info(
+        "Some or all data objects already exist; falling back to batch update.")
   except Exception as e:
     logger.error(
-        f"Failed to upsert to Vector Search index '{index_name}'. Error: {e}")
-    # Depending on the desired behavior, you might want to retry or handle this error.
-    # For a batch job, raising the exception will cause the job to fail.
+        f"Failed to batch create data objects in '{parent}'. Error: {e}")
+    raise
+
+  update_requests = [
+      vectorsearch_v1.UpdateDataObjectRequest(
+          data_object=vectorsearch_v1.DataObject(
+              name=f"{parent}/dataObjects/{item['data_object_id']}",
+              data=item["data"],
+              vectors={},
+          )) for item in data_objects
+  ]
+
+  try:
+    client.batch_update_data_objects(
+        vectorsearch_v1.BatchUpdateDataObjectsRequest(
+            parent=parent,
+            requests=update_requests,
+        ))
+    logger.info(
+        f"Successfully updated {len(data_objects)} data objects in '{parent}'.")
+  except exceptions.NotFound:
+    logger.info(
+        "Mixed new and existing data objects detected; upserting individually.")
+    for create_req, update_req in zip(create_requests, update_requests,
+                                      strict=True):
+      try:
+        client.create_data_object(create_req)
+      except exceptions.AlreadyExists:
+        client.update_data_object(update_req)
+    logger.info(
+        f"Successfully upserted {len(data_objects)} data objects in '{parent}'."
+    )
+  except Exception as e:
+    logger.error(
+        f"Failed to batch update data objects in '{parent}'. Error: {e}")
     raise

@@ -1,6 +1,6 @@
 # Frontend for RAG Search on Cloud Run
 
-The application answers users prompts by leveraging Gemini and embeddings stored in Vertex AI Vector Search.
+The application answers user prompts by performing Hybrid Search (Semantic Search with auto-embeddings + Text Search combined via Reciprocal Rank Fusion) on a Vertex AI Vector Search 2.0 Collection and generating grounded responses with Gemini.
 
 ## Use the application
 

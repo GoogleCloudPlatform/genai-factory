@@ -21,15 +21,10 @@ REGION = os.environ.get("REGION", "europe-west1")
 GCS_SOURCE_BUCKET = os.environ.get("GCS_SOURCE_BUCKET")
 GCS_SOURCE_BLOB_NAME = os.environ.get("GCS_SOURCE_BLOB_NAME", "data.jsonl")
 
-# Embedding Model Configuration
-EMBEDDING_MODEL_NAME = os.environ.get("EMBEDDING_MODEL_NAME",
-                                      "gemini-embedding-001")
-EMBEDDING_DIMENSIONS = int(os.environ.get("EMBEDDING_DIMENSIONS", 3072))
-EMBEDDING_BATCH_SIZE = int(os.environ.get(
-    "EMBEDDING_BATCH_SIZE", 25))  # Batch for calling the embedding model API
-
-# Vector Search Configuration
-VECTOR_SEARCH_INDEX_NAME = os.environ.get("VECTOR_SEARCH_INDEX_NAME")
-# Batch size for the upsert_datapoints API call (max 1000, recommended 100-200)
+# Vector Search 2.0 Configuration
+VECTOR_SEARCH_COLLECTION_ID = os.environ.get("VECTOR_SEARCH_COLLECTION_ID")
+VECTOR_SEARCH_LOCATION = os.environ.get("VECTOR_SEARCH_LOCATION", REGION)
+# Batch size for batch_create_data_objects / batch_update_data_objects
+# (max 250 when using Vertex AI auto-embeddings)
 VECTOR_SEARCH_UPSERT_BATCH_SIZE = int(
     os.environ.get("VECTOR_SEARCH_UPSERT_BATCH_SIZE", 100))
