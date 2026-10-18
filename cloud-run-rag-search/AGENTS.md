@@ -60,6 +60,10 @@ uv run yamlfix tests/cloud_run_rag_search
 - **Auto-Embeddings & Upsert Batch Size Limit (`<= 250`):**
   - When a Vector Search 2.0 Collection is configured with `vertex_embedding_config` (auto-embeddings), `DataObject` records are upserted with `vectors={}` and Vector Search generates the embeddings automatically.
   - `batch_create_data_objects` and `batch_update_data_objects` enforce a maximum of `250` items per batch when auto-embeddings are enabled, and `data_object_id` must conform to RFC1035 (`[a-z]([a-z0-9-]{0,61}[a-z0-9])?`).
+- **Idempotent Scheduled Ingestion (`AlreadyExists` Fallback):**
+  - Because Cloud Scheduler triggers the ingestion job every 30 minutes and `batch_create_data_objects` is not an upsert (it raises `409 AlreadyExists` if any `data_object_id` in the batch already exists), [`upsert_data_objects_to_collection`](./1-apps/apps/rag/ingestion/src/vector_search.py) catches `AlreadyExists` and falls back to `batch_update_data_objects` (which requires `name = "<parent>/dataObjects/<data_object_id>"` on each `DataObject`).
+- **Caller IAM for Auto-Embeddings (`roles/aiplatform.user`):**
+  - Even though Vector Search 2.0 generates embeddings server-side via `vertex_embedding_config`, both the ingestion service account (`gf-rrag-ing-0`) and the frontend service account (`gf-rrag-fe-0`, when executing `SemanticSearch`) must hold `roles/aiplatform.user` because Vector Search invokes Vertex AI Embeddings on the caller's behalf.
 - **Collection Deletion Requires Empty Collection (`COLLECTION_HAS_DATA_OBJECTS`):**
   - `DeleteCollection` (`terraform destroy` on `google_vector_search_collection`) fails with `Error 400: Collection deletion is not allowed because it still has data objects` if `DataObject` records exist in the collection. Delete data objects first via `dataObjects:batchDelete` before destroying a populated collection.
 - **Container Lockfiles (`uv.lock`):**
