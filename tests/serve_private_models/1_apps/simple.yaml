@@ -1,0 +1,866 @@
+---
+# Copyright 2026 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+values:
+  google_compute_forwarding_rule.psc_consumer_fwd_rule:
+    all_ports:
+    allow_global_access:
+    allow_psc_global_access: true
+    backend_service:
+    deletion_policy: DELETE
+    description:
+    ip_collection:
+    is_mirroring_collector:
+    labels:
+    load_balancing_scheme: ''
+    name: gf-mg-0
+    network: projects/prefix-gf-mg-hp-0/global/networks/net-0
+    no_automate_dns_zone:
+    ports:
+    project: your-project
+    recreate_closed_psc: false
+    region: europe-west4
+    service_label:
+    source_ip_ranges:
+    timeouts:
+  google_compute_region_security_policy.security_policy_internal[0]:
+    advanced_options_config: []
+    ddos_protection_config: []
+    deletion_policy: DELETE
+    description:
+    name: gf-mg-0-internal
+    project: your-project
+    region: europe-west4
+    rules:
+      - action: allow
+        description: Allowed source IP ranges.
+        match:
+          - config:
+              - src_ip_ranges:
+                  - 0.0.0.0/0
+            expr: []
+            versioned_expr: SRC_IPS_V1
+        network_match: []
+        preconfigured_waf_config: []
+        preview:
+        priority: 100
+        rate_limit_options: []
+      - action: deny(403)
+        description: Default deny rule.
+        match:
+          - config:
+              - src_ip_ranges:
+                  - '*'
+            expr: []
+            versioned_expr: SRC_IPS_V1
+        network_match: []
+        preconfigured_waf_config: []
+        preview:
+        priority: 2147483647
+        rate_limit_options: []
+    timeouts:
+    type: CLOUD_ARMOR
+    user_defined_fields: []
+  google_compute_security_policy.security_policy_external[0]:
+    adaptive_protection_config: []
+    deletion_policy: DELETE
+    description:
+    effective_labels:
+      goog-terraform-provisioned: 'true'
+    labels:
+    name: gf-mg-0-external
+    project: your-project
+    recaptcha_options_config: []
+    rule:
+      - action: allow
+        description: Allowed source IP ranges.
+        header_action: []
+        match:
+          - config:
+              - src_ip_ranges:
+                  - 0.0.0.0/0
+            expr: []
+            expr_options: []
+            versioned_expr: SRC_IPS_V1
+        preconfigured_waf_config: []
+        priority: 100
+        rate_limit_options: []
+        redirect_options: []
+      - action: deny(403)
+        description: Default deny rule.
+        header_action: []
+        match:
+          - config:
+              - src_ip_ranges:
+                  - '*'
+            expr: []
+            expr_options: []
+            versioned_expr: SRC_IPS_V1
+        preconfigured_waf_config: []
+        priority: 2147483647
+        rate_limit_options: []
+        redirect_options: []
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
+    timeouts:
+  google_model_armor_floorsetting.floorsetting[0]:
+    ai_platform_floor_setting:
+      - enable_cloud_logging: true
+        inspect_and_block: true
+        inspect_only:
+    enable_floor_setting_enforcement: true
+    filter_config:
+      - malicious_uri_filter_settings:
+          - filter_enforcement: ENABLED
+        pi_and_jailbreak_filter_settings:
+          - confidence_level: HIGH
+            filter_enforcement: ENABLED
+        rai_settings:
+          - rai_filters:
+              - confidence_level: HIGH
+                filter_type: DANGEROUS
+              - confidence_level: HIGH
+                filter_type: HARASSMENT
+              - confidence_level: HIGH
+                filter_type: HATE_SPEECH
+              - confidence_level: HIGH
+                filter_type: SEXUALLY_EXPLICIT
+        sdp_settings:
+          - advanced_config: []
+            basic_config:
+              - filter_enforcement: ENABLED
+    floor_setting_metadata:
+      - multi_language_detection:
+          - enable_multi_language_detection: true
+    google_mcp_server_floor_setting: []
+    integrated_services:
+      - AI_PLATFORM
+    location: global
+    parent: projects/your-project
+    timeouts:
+  google_model_armor_template.model_armor_template[0]:
+    deletion_policy: DELETE
+    effective_labels:
+      goog-terraform-provisioned: 'true'
+    filter_config:
+      - malicious_uri_filter_settings:
+          - filter_enforcement: ENABLED
+        pi_and_jailbreak_filter_settings:
+          - confidence_level: HIGH
+            filter_enforcement: ENABLED
+        rai_settings:
+          - rai_filters:
+              - confidence_level: HIGH
+                filter_type: DANGEROUS
+              - confidence_level: HIGH
+                filter_type: HARASSMENT
+              - confidence_level: HIGH
+                filter_type: HATE_SPEECH
+              - confidence_level: HIGH
+                filter_type: SEXUALLY_EXPLICIT
+        sdp_settings:
+          - advanced_config: []
+            basic_config:
+              - filter_enforcement: ENABLED
+    labels:
+    location: europe-west4
+    project: your-project
+    template_id: model-armor-template
+    template_metadata:
+      - custom_llm_response_safety_error_code: 401
+        custom_llm_response_safety_error_message: This is a custom error message for
+          LLM response
+        custom_prompt_safety_error_code: 400
+        custom_prompt_safety_error_message: This is a custom error message for prompt
+        enforcement_type: INSPECT_AND_BLOCK
+        filter_version_selector: []
+        ignore_partial_invocation_failures: true
+        log_sanitize_operations: true
+        log_template_operations: true
+        multi_language_detection:
+          - enable_multi_language_detection: true
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
+    timeouts:
+  google_vertex_ai_endpoint_with_model_garden_deployment.model_garden:
+    deletion_policy: DELETE
+    deploy_config:
+      - dedicated_resources:
+          - autoscaling_metric_specs: []
+            machine_spec:
+              - accelerator_count: 1
+                accelerator_type: NVIDIA_L4
+                machine_type: g2-standard-12
+                multihost_gpu_node_count:
+                reservation_affinity: []
+                tpu_topology:
+            max_replica_count: 1
+            min_replica_count: 1
+            required_replica_count:
+            spot: true
+        fast_tryout_enabled:
+        system_labels:
+    endpoint_config:
+      - dedicated_endpoint_enabled:
+        endpoint_display_name: gf-mg-0
+        private_service_connect_config:
+          - enable_private_service_connect: true
+            project_allowlist:
+              - your-project
+            psc_automation_configs: []
+    hugging_face_model_id:
+    location: europe-west4
+    model_config:
+      - accept_eula: true
+        container_spec: []
+        hugging_face_access_token:
+        hugging_face_cache_enabled:
+        model_display_name: gf-mg-0
+    project: your-project
+    publisher_model_name: publishers/google/models/gemma3@gemma-3-1b-it
+    timeouts:
+  module.address-ext-glb[0].google_compute_global_address.global["ext-glb-01"]:
+    address_type:
+    deletion_policy: DELETE
+    description: Terraform managed.
+    effective_labels:
+      goog-terraform-provisioned: 'true'
+    ip_version:
+    labels:
+    name: gf-mg-0-ext-glb-01
+    network:
+    project: your-project
+    purpose:
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
+    timeouts:
+  module.address-ilb[0].google_compute_address.internal["ilb-01"]:
+    address_type: INTERNAL
+    deletion_policy: DELETE
+    description: Terraform managed.
+    effective_labels:
+      goog-terraform-provisioned: 'true'
+    ip_collection:
+    ip_version:
+    ipv6_endpoint_type:
+    labels:
+    name: ilb-01
+    network:
+    project: your-project
+    purpose: SHARED_LOADBALANCER_VIP
+    region: europe-west4
+    subnetwork: projects/prefix-gf-mg-hp-0/regions/europe-west4/subnetworks/sub-0
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
+    timeouts:
+  module.cas[0].google_privateca_ca_pool.default[0]:
+    deletion_policy: DELETE
+    effective_labels:
+      goog-terraform-provisioned: 'true'
+    encryption_spec: []
+    issuance_policy: []
+    labels:
+    location: europe-west4
+    name: gf-mg-0-ca-pool-0
+    project: your-project
+    publishing_options: []
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
+    tier: DEVOPS
+    timeouts:
+  module.cas[0].google_privateca_certificate_authority.default["gf-mg-0"]:
+    certificate_authority_id: gf-mg-0
+    config:
+      - subject_config:
+          - subject:
+              - common_name: example.com
+                country_code:
+                locality:
+                organization: gf-mg-0
+                organizational_unit:
+                postal_code:
+                province:
+                street_address:
+            subject_alt_name: []
+        subject_key_id: []
+        x509_config:
+          - additional_extensions: []
+            aia_ocsp_servers:
+            ca_options:
+              - is_ca: true
+                max_issuer_path_length:
+                non_ca:
+                zero_max_issuer_path_length:
+            key_usage:
+              - base_key_usage:
+                  - cert_sign: true
+                    content_commitment: false
+                    crl_sign: true
+                    data_encipherment: false
+                    decipher_only: false
+                    digital_signature: false
+                    encipher_only: false
+                    key_agreement: false
+                    key_encipherment: false
+                extended_key_usage:
+                  - client_auth: false
+                    code_signing: false
+                    email_protection: false
+                    ocsp_signing: false
+                    server_auth: false
+                    time_stamping: false
+                unknown_extended_key_usages: []
+            name_constraints: []
+            policy_ids: []
+    deletion_policy: DELETE
+    deletion_protection: true
+    desired_state:
+    effective_labels:
+      goog-terraform-provisioned: 'true'
+    gcs_bucket:
+    ignore_active_certificates_on_deletion: false
+    key_spec:
+      - algorithm: RSA_PKCS1_2048_SHA256
+        cloud_kms_key_version:
+    labels:
+    lifetime: 315360000s
+    location: europe-west4
+    pem_ca_certificate:
+    project: your-project
+    skip_grace_period: true
+    subordinate_config: []
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
+    timeouts:
+    type: SELF_SIGNED
+    user_defined_access_urls: []
+  module.certificate_manager[0].google_certificate_manager_certificate.certificates["gf-mg-0"]:
+    deletion_policy: DELETE
+    description:
+    effective_labels:
+      goog-terraform-provisioned: 'true'
+    labels:
+    location: europe-west4
+    managed:
+      - dns_authorizations:
+        domains:
+          - example.com
+    name: gf-mg-0
+    project: your-project
+    scope:
+    self_managed: []
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
+    timeouts:
+  module.certificate_manager[0].google_certificate_manager_certificate_issuance_config.default["gf-mg-0"]:
+    certificate_authority_config:
+      - certificate_authority_service_config:
+          - {}
+    deletion_policy: DELETE
+    description:
+    effective_labels:
+      goog-terraform-provisioned: 'true'
+    key_algorithm: ECDSA_P256
+    labels:
+    lifetime: 1814400s
+    location: europe-west4
+    name: gf-mg-0
+    project: your-project
+    rotation_window_percentage: 34
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
+    timeouts:
+  module.cloud_run.google_cloud_run_v2_service.service_unmanaged[0]:
+    annotations:
+    binary_authorization: []
+    build_config: []
+    client:
+    client_version:
+    custom_audiences:
+    default_uri_disabled:
+    deletion_policy: DELETE
+    deletion_protection: true
+    description:
+    effective_labels:
+      goog-terraform-provisioned: 'true'
+    iap_enabled: false
+    ingress: INGRESS_TRAFFIC_INTERNAL_LOAD_BALANCER
+    invoker_iam_disabled: false
+    labels:
+    location: europe-west4
+    multi_region_settings: []
+    name: gf-mg-0
+    project: your-project
+    ssh_enabled:
+    tags:
+    template:
+      - annotations:
+        containers:
+          - args:
+            base_image_uri:
+            command:
+            depends_on:
+            env: []
+            image: us-docker.pkg.dev/cloudrun/container/hello
+            liveness_probe: []
+            name: ai
+            readiness_probe: []
+            sandbox_launcher:
+            source_code: []
+            volume_mounts: []
+            working_dir:
+        encryption_key:
+        execution_environment: EXECUTION_ENVIRONMENT_GEN2
+        gpu_zonal_redundancy_disabled:
+        health_check_disabled:
+        labels:
+        node_selector: []
+        revision:
+        sandboxes: []
+        scaling:
+          - concurrency_utilization:
+            cpu_utilization:
+            max_instance_count: 3
+            min_instance_count: 1
+        service_account: crun-0@prefix-gf-mg-0.iam.gserviceaccount.com
+        service_mesh: []
+        session_affinity:
+        volumes: []
+        vpc_access:
+          - connector:
+            egress: ALL_TRAFFIC
+            network_interfaces:
+              - network: projects/prefix-gf-mg-hp-0/global/networks/net-0
+                subnetwork: projects/prefix-gf-mg-hp-0/regions/europe-west4/subnetworks/sub-0
+                tags: []
+
+        workload_identity_config: []
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
+    timeouts:
+  module.cloud_run.google_cloud_run_v2_service_iam_binding.binding["roles/run.invoker"]:
+    condition: []
+    members:
+    role: roles/run.invoker
+  module.lb_ext_glb[0].google_compute_backend_service.default["default"]:
+    affinity_cookie_ttl_sec:
+    backend:
+      - balancing_mode: UTILIZATION
+        capacity_scaler: 1
+        custom_metrics: []
+        description: Terraform managed.
+        preference: ''
+        traffic_duration: ''
+    circuit_breakers: []
+    compression_mode:
+    connection_draining_timeout_sec: 300
+    consistent_hash: []
+    custom_metrics: []
+    custom_request_headers:
+    custom_response_headers:
+    deletion_policy: DELETE
+    description: Terraform managed.
+    dynamic_forwarding: []
+    edge_security_policy:
+    enable_cdn:
+    external_managed_migration_state:
+    external_managed_migration_testing_percentage:
+    health_checks:
+    iap:
+      - enabled: false
+        oauth2_client_id:
+        oauth2_client_id_wo:
+        oauth2_client_id_wo_version:
+        oauth2_client_secret:
+        oauth2_client_secret_wo:
+        oauth2_client_secret_wo_version:
+    ip_address_selection_policy:
+    load_balancing_scheme: EXTERNAL_MANAGED
+    locality_lb_policies: []
+    locality_lb_policy:
+    max_stream_duration: []
+    name: gf-mg-0-ext-glb-01-default
+    network_pass_through_lb_traffic_policy: []
+    outlier_detection: []
+    params: []
+    project: your-project
+    protocol: HTTPS
+    security_settings: []
+    service_lb_policy:
+    strong_session_affinity_cookie: []
+    timeouts:
+    tls_settings: []
+  module.lb_ext_glb[0].google_compute_global_forwarding_rule.default[""]:
+    allow_psc_global_access:
+    deletion_policy: DELETE
+    description: Terraform managed.
+    external_managed_backend_bucket_migration_state:
+    external_managed_backend_bucket_migration_testing_percentage:
+    ip_protocol: TCP
+    ip_version: IPV4
+    labels:
+    load_balancing_scheme: EXTERNAL_MANAGED
+    metadata_filters: []
+    name: gf-mg-0-ext-glb-01
+    no_automate_dns_zone:
+    port_range: '443'
+    project: your-project
+    source_ip_ranges:
+    timeouts:
+  module.lb_ext_glb[0].google_compute_managed_ssl_certificate.default["default"]:
+    deletion_policy: DELETE
+    description:
+    managed:
+      - domains:
+          - your-domain.com
+    name: gf-mg-0-ext-glb-01-default
+    project: your-project
+    timeouts:
+    type: MANAGED
+  module.lb_ext_glb[0].google_compute_region_network_endpoint_group.serverless["gf-mg-0-ext-glb"]:
+    app_engine: []
+    cloud_function: []
+    cloud_run:
+      - tag:
+        url_mask:
+    deletion_policy: DELETE
+    description: Terraform managed.
+    name: gf-mg-0-ext-glb-01-gf-mg-0-ext-glb
+    network_endpoint_type: SERVERLESS
+    project: your-project
+    psc_target_service:
+    region: europe-west4
+    serverless_deployment: []
+    subnetwork:
+    timeouts:
+  module.lb_ext_glb[0].google_compute_target_https_proxy.new[0]:
+    certificate_manager_certificates:
+    certificate_map:
+    deletion_policy: DELETE
+    description: Terraform managed.
+    http_keep_alive_timeout_sec:
+    name: gf-mg-0-ext-glb-01
+    project: your-project
+    quic_override: NONE
+    server_tls_policy:
+    ssl_policy:
+    timeouts:
+  module.lb_ext_glb[0].google_compute_url_map.default:
+    default_custom_error_response_policy: []
+    default_route_action: []
+    default_url_redirect: []
+    deletion_policy: DELETE
+    description: Terraform managed.
+    header_action: []
+    host_rule: []
+    name: gf-mg-0-ext-glb-01
+    path_matcher: []
+    project: your-project
+    test: []
+    timeouts:
+  module.lb_ext_glb_redirect[0].google_compute_global_forwarding_rule.default[""]:
+    allow_psc_global_access:
+    deletion_policy: DELETE
+    description: Terraform managed.
+    external_managed_backend_bucket_migration_state:
+    external_managed_backend_bucket_migration_testing_percentage:
+    ip_protocol: TCP
+    ip_version: IPV4
+    labels:
+    load_balancing_scheme: EXTERNAL_MANAGED
+    metadata_filters: []
+    name: gf-mg-0-external-redirect
+    no_automate_dns_zone:
+    port_range: '80'
+    project: your-project
+    source_ip_ranges:
+    timeouts:
+  module.lb_ext_glb_redirect[0].google_compute_target_http_proxy.new[0]:
+    deletion_policy: DELETE
+    description: Terraform managed.
+    http_keep_alive_timeout_sec:
+    name: gf-mg-0-external-redirect
+    project: your-project
+    timeouts:
+  module.lb_ext_glb_redirect[0].google_compute_url_map.default:
+    default_custom_error_response_policy: []
+    default_route_action: []
+    default_service:
+    default_url_redirect:
+      - host_redirect:
+        https_redirect: true
+        path_redirect:
+        prefix_redirect:
+        redirect_response_code: MOVED_PERMANENTLY_DEFAULT
+        strip_query: false
+    deletion_policy: DELETE
+    description: HTTP to HTTPS redirect.
+    header_action: []
+    host_rule: []
+    name: gf-mg-0-external-redirect
+    path_matcher: []
+    project: your-project
+    test: []
+    timeouts:
+  module.lb_internal[0].google_compute_forwarding_rule.default:
+    all_ports:
+    allow_global_access:
+    allow_psc_global_access:
+    backend_service:
+    deletion_policy: DELETE
+    description: Terraform managed.
+    ip_collection:
+    ip_protocol: TCP
+    is_mirroring_collector:
+    labels:
+    load_balancing_scheme: INTERNAL_MANAGED
+    name: gf-mg-0-internal
+    network: projects/prefix-gf-mg-hp-0/global/networks/net-0
+    network_tier: PREMIUM
+    no_automate_dns_zone:
+    port_range: '443'
+    ports:
+    project: your-project
+    recreate_closed_psc: false
+    region: europe-west4
+    service_label:
+    source_ip_ranges:
+    subnetwork: projects/prefix-gf-mg-hp-0/regions/europe-west4/subnetworks/sub-0
+    timeouts:
+  module.lb_internal[0].google_compute_region_backend_service.default["default"]:
+    affinity_cookie_ttl_sec:
+    backend:
+      - balancing_mode: UTILIZATION
+        capacity_scaler: 1
+        custom_metrics: []
+        description: Terraform managed.
+        max_connections:
+        max_connections_per_endpoint:
+        max_connections_per_instance:
+        max_rate:
+        max_rate_per_endpoint:
+        max_rate_per_instance:
+        max_utilization:
+        traffic_duration: ''
+    circuit_breakers: []
+    connection_draining_timeout_sec: 300
+    connection_tracking_policy: []
+    consistent_hash: []
+    custom_metrics: []
+    deletion_policy: DELETE
+    description: Terraform managed.
+    dynamic_forwarding: []
+    enable_cdn:
+    failover_policy: []
+    ha_policy: []
+    health_checks:
+    iap:
+      - enabled: false
+        oauth2_client_id:
+        oauth2_client_secret:
+    ip_address_selection_policy:
+    load_balancing_scheme: INTERNAL_MANAGED
+    locality_lb_policy:
+    name: gf-mg-0-internal-default
+    network:
+    network_pass_through_lb_traffic_policy: []
+    outlier_detection: []
+    params: []
+    project: your-project
+    protocol: HTTPS
+    region: europe-west4
+    service_lb_policy:
+    strong_session_affinity_cookie: []
+    subsetting: []
+    timeouts:
+    tls_settings: []
+  module.lb_internal[0].google_compute_region_network_endpoint_group.default["gf-mg-0-internal"]:
+    app_engine: []
+    cloud_function: []
+    cloud_run:
+      - tag:
+        url_mask:
+    deletion_policy: DELETE
+    description: Terraform managed.
+    name: gf-mg-0-internal-gf-mg-0-internal
+    network_endpoint_type: SERVERLESS
+    project: your-project
+    psc_target_service:
+    region: europe-west4
+    subnetwork:
+    timeouts:
+  module.lb_internal[0].google_compute_region_target_https_proxy.default[0]:
+    deletion_policy: DELETE
+    description: Terraform managed.
+    http_keep_alive_timeout_sec:
+    name: gf-mg-0-internal
+    project: your-project
+    region: europe-west4
+    server_tls_policy:
+    ssl_certificates:
+    ssl_policy:
+    timeouts:
+  module.lb_internal[0].google_compute_region_url_map.default:
+    default_route_action: []
+    default_url_redirect: []
+    deletion_policy: DELETE
+    description: Terraform managed.
+    header_action: []
+    host_rule: []
+    name: gf-mg-0-internal
+    path_matcher: []
+    project: your-project
+    region: europe-west4
+    test: []
+    timeouts:
+  module.lb_internal_dns[0].google_dns_managed_zone.dns_managed_zone[0]:
+    cloud_logging_config:
+      - enable_logging: false
+    deletion_policy: DELETE
+    description: Terraform managed.
+    dns_name: example.com.
+    effective_labels:
+      goog-terraform-provisioned: 'true'
+    force_destroy: false
+    forwarding_config: []
+    labels:
+    name: gf-mg-0
+    peering_config: []
+    private_visibility_config:
+      - gke_clusters: []
+        networks:
+          - network_url: projects/prefix-gf-mg-hp-0/global/networks/net-0
+    project: your-project
+    reverse_lookup: false
+    service_directory_config: []
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
+    timeouts:
+    visibility: private
+  module.lb_internal_dns[0].google_dns_record_set.dns_record_set["A example.com"]:
+    deletion_policy: DELETE
+    managed_zone: gf-mg-0
+    name: example.com.example.com.
+    project: your-project
+    routing_policy: []
+    ttl: 300
+    type: A
+  module.lb_internal_redirect[0].google_compute_forwarding_rule.default:
+    all_ports:
+    allow_global_access:
+    allow_psc_global_access:
+    backend_service:
+    deletion_policy: DELETE
+    description: Terraform managed.
+    ip_collection:
+    ip_protocol: TCP
+    is_mirroring_collector:
+    labels:
+    load_balancing_scheme: INTERNAL_MANAGED
+    name: gf-mg-0-internal-redirect
+    network: projects/prefix-gf-mg-hp-0/global/networks/net-0
+    network_tier: PREMIUM
+    no_automate_dns_zone:
+    port_range: '80'
+    ports:
+    project: your-project
+    recreate_closed_psc: false
+    region: europe-west4
+    service_label:
+    source_ip_ranges:
+    subnetwork: projects/prefix-gf-mg-hp-0/regions/europe-west4/subnetworks/sub-0
+    timeouts:
+  module.lb_internal_redirect[0].google_compute_region_target_http_proxy.default[0]:
+    deletion_policy: DELETE
+    description: Terraform managed.
+    http_keep_alive_timeout_sec:
+    name: gf-mg-0-internal-redirect
+    project: your-project
+    region: europe-west4
+    timeouts:
+  module.lb_internal_redirect[0].google_compute_region_url_map.default:
+    default_route_action: []
+    default_service:
+    default_url_redirect:
+      - host_redirect:
+        https_redirect: true
+        path_redirect:
+        prefix_redirect:
+        redirect_response_code: MOVED_PERMANENTLY_DEFAULT
+        strip_query: false
+    deletion_policy: DELETE
+    description: HTTP to HTTPS redirect.
+    header_action: []
+    host_rule: []
+    name: gf-mg-0-internal-redirect
+    path_matcher: []
+    project: your-project
+    region: europe-west4
+    test: []
+    timeouts:
+  module.psc_consumer_address.google_compute_address.internal["gf-mg-0"]:
+    address_type: INTERNAL
+    deletion_policy: DELETE
+    description: Terraform managed.
+    effective_labels:
+      goog-terraform-provisioned: 'true'
+    ip_collection:
+    ip_version:
+    ipv6_endpoint_type:
+    labels:
+    name: gf-mg-0
+    network:
+    project: your-project
+    region: europe-west4
+    subnetwork: projects/prefix-gf-mg-hp-0/regions/europe-west4/subnetworks/sub-0
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
+    timeouts:
+
+counts:
+  google_certificate_manager_certificate: 1
+  google_certificate_manager_certificate_issuance_config: 1
+  google_cloud_run_v2_service: 1
+  google_cloud_run_v2_service_iam_binding: 1
+  google_compute_address: 2
+  google_compute_backend_service: 1
+  google_compute_forwarding_rule: 3
+  google_compute_global_address: 1
+  google_compute_global_forwarding_rule: 2
+  google_compute_managed_ssl_certificate: 1
+  google_compute_region_backend_service: 1
+  google_compute_region_network_endpoint_group: 2
+  google_compute_region_security_policy: 1
+  google_compute_region_target_http_proxy: 1
+  google_compute_region_target_https_proxy: 1
+  google_compute_region_url_map: 2
+  google_compute_security_policy: 1
+  google_compute_target_http_proxy: 1
+  google_compute_target_https_proxy: 1
+  google_compute_url_map: 2
+  google_dns_managed_zone: 1
+  google_dns_record_set: 1
+  google_model_armor_floorsetting: 1
+  google_model_armor_template: 1
+  google_privateca_ca_pool: 1
+  google_privateca_certificate_authority: 1
+  google_vertex_ai_endpoint_with_model_garden_deployment: 1
+  modules: 11
+  resources: 34
+
+outputs:
+  commands: __missing__
+  ip_addresses: __missing__
+  model_garden_endpoint: __missing__

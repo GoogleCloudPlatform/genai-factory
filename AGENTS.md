@@ -31,6 +31,7 @@ Each factory has a dedicated `AGENTS.md` file in its root directory containing f
 | `ge-agent-platform` | [`ge-agent-platform/AGENTS.md`](./ge-agent-platform/AGENTS.md) | Gemini Enterprise & Agent Platform (Discovery Engine Search/Assistant, native & 3rd-party SaaS data connectors, location-level IdP/ACL config, Agent Registry, custom MCP servers, Model Armor, and IAM v3 UAPs). |
 | `gecx-agent-studio` | [`gecx-agent-studio/AGENTS.md`](./gecx-agent-studio/AGENTS.md) | Gemini Enterprise for Customer Experience (CX Agent Studio) with GCS data store and private Cloud Run OpenAPI toolset via Service Directory & Internal TCP Proxy LB. |
 | `gecx-dialogflow` | [`gecx-dialogflow/AGENTS.md`](./gecx-dialogflow/AGENTS.md) | Dialogflow CX Conversational Agent with FAQ/unstructured data stores and private Cloud Run Function webhook via Service Directory & Internal TCP Proxy LB. |
+| `serve-private-models` | [`serve-private-models/AGENTS.md`](./serve-private-models/AGENTS.md) | Vertex AI Model Garden open models (e.g., Gemma 3) privately exposed via Private Service Connect (PSC) to a Cloud Run application with Load Balancer, Cloud Armor, and Model Armor. |
 
 ### Creating a New Factory
 
