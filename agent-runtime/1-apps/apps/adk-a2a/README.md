@@ -5,6 +5,14 @@ The application demonstrates the deployment of [Agent Development Kit (ADK)](htt
 ## Get the agent card
 
 ```shell
+curl -X GET https://$REGION-aiplatform.googleapis.com/v1beta1/$AGENT_ID/.well-known/agent-card.json \
+     -H "Authorization: Bearer $ACCESS_TOKEN" \
+     -H "Content-Type: application/json"
+```
+
+Or via the A2A v1 card endpoint:
+
+```shell
 curl -X GET https://$REGION-aiplatform.googleapis.com/v1beta1/$AGENT_ID/a2a/v1/card \
      -H "Authorization: Bearer $ACCESS_TOKEN" \
      -H "Content-Type: application/json"

@@ -15,6 +15,9 @@
 # limitations under the License.
 
 import os
+import sys
+from typing import Any, Dict
+import fastapi
 import requests
 
 import vertexai
@@ -214,7 +217,84 @@ llm_agent = LlmAgent(
             thinking_level=config.THINKING_LEVEL),),
 )
 
-agent = A2aAgent(
+
+class WellKnownCardA2aAgent(A2aAgent):
+  """A2aAgent subclass that also exposes the A2A Agent Card at /.well-known/agent-card.json."""
+
+  def set_up(self):
+    super().set_up()
+    self._register_well_known_agent_card_routes()
+
+  def _get_agent_card_dict(self) -> Dict[str, Any]:
+    if hasattr(self.agent_card, "model_dump"):
+      return self.agent_card.model_dump(mode="json",
+                                        by_alias=True,
+                                        exclude_none=True)
+    return dict(self.agent_card)
+
+  def _register_well_known_agent_card_routes(self) -> None:
+    """Registers /.well-known/agent-card.json on the Reasoning Engine FastAPI app."""
+    agent_self = self
+
+    async def serve_well_known_agent_card(request: fastapi.Request):
+      return fastapi.responses.JSONResponse(
+          content=agent_self._get_agent_card_dict())
+
+    well_known_paths = (
+        "/.well-known/agent-card.json",
+        "/.well-known/agent.json",
+        "/a2a/.well-known/agent-card.json",
+        "/a2a/.well-known/agent.json",
+    )
+
+    def _ensure_routes(target: Any, prefix: str = "") -> None:
+      existing = {
+          getattr(r, "path", None) for r in getattr(target, "routes", [])
+      }
+      for path in well_known_paths:
+        full_path = f"{prefix}{path}"
+        if full_path not in existing:
+          target.add_api_route(full_path,
+                               serve_well_known_agent_card,
+                               methods=["GET"])
+          existing.add(full_path)
+
+    if not getattr(fastapi.FastAPI, "_well_known_card_patched", False):
+      orig_fastapi_init = fastapi.FastAPI.__init__
+
+      def patched_fastapi_init(fastapi_app, *args, **kwargs):
+        orig_fastapi_init(fastapi_app, *args, **kwargs)
+        _ensure_routes(fastapi_app, "")
+        _ensure_routes(fastapi_app, "/api")
+
+      fastapi.FastAPI.__init__ = patched_fastapi_init
+      fastapi.FastAPI._well_known_card_patched = True
+
+    for mod in list(sys.modules.values()):
+      orig_create = getattr(mod, "_create_app_from_router", None)
+      if callable(orig_create) and not getattr(
+          orig_create, "_well_known_card_patched", False):
+
+        def _make_patched(fn):
+
+          def _patched(router, metrics_state=None):
+            if router is not None:
+              _ensure_routes(router, "")
+            app_instance = fn(router, metrics_state)
+            _ensure_routes(app_instance, "")
+            _ensure_routes(app_instance, "/api")
+            return app_instance
+
+          _patched._well_known_card_patched = True
+          return _patched
+
+        try:
+          setattr(mod, "_create_app_from_router", _make_patched(orig_create))
+        except Exception:
+          pass
+
+
+agent = WellKnownCardA2aAgent(
     agent_card=agent_card,
     agent_executor_builder=lambda: CurrencyAgentExecutorWithRunner(agent=
                                                                    llm_agent),
