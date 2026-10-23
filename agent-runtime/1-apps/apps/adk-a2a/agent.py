@@ -227,8 +227,7 @@ class WellKnownCardA2aAgent(A2aAgent):
 
   def _get_agent_card_dict(self) -> Dict[str, Any]:
     if hasattr(self.agent_card, "model_dump"):
-      return self.agent_card.model_dump(mode="json",
-                                        by_alias=True,
+      return self.agent_card.model_dump(mode="json", by_alias=True,
                                         exclude_none=True)
     return dict(self.agent_card)
 
@@ -254,8 +253,7 @@ class WellKnownCardA2aAgent(A2aAgent):
       for path in well_known_paths:
         full_path = f"{prefix}{path}"
         if full_path not in existing:
-          target.add_api_route(full_path,
-                               serve_well_known_agent_card,
+          target.add_api_route(full_path, serve_well_known_agent_card,
                                methods=["GET"])
           existing.add(full_path)
 
