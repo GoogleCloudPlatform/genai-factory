@@ -18,7 +18,6 @@ curl -X GET https://$REGION-aiplatform.googleapis.com/v1beta1/$AGENT_ID/a2a/v1/c
      -H "Content-Type: application/json"
 ```
 
-
 ## Query the agent
 
 ```shell
