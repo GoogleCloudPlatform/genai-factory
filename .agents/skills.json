@@ -1,0 +1,15 @@
+{
+  "entries": [
+    {
+      "path": ".",
+      "exclude": [
+        "tests",
+        "tools",
+        "\\..*"
+      ]
+    },
+    {
+      "path": ".agents/skills"
+    }
+  ]
+}
