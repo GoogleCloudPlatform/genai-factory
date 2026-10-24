@@ -1,5 +1,5 @@
 ---
-name: release-process
+name: maintain-release-process
 description: Guide for cutting a new release of the GenAI Factory repository. Use this skill when asked to create, prepare, or draft a new release.
 ---
 
@@ -33,7 +33,7 @@ LATEST_RELEASE=$(git tag --sort=-v:refname | head -n 1)
 echo "Latest release is: $LATEST_RELEASE"
 ```
 
-Confirm `master` is green before releasing — the nightly [Linting](../../.github/workflows/linting.yml), [Tests](../../.github/workflows/tests.yml), and [Integration Tests](../../.github/workflows/tests-integration.yml) workflows all gate the release:
+Confirm `master` is green before releasing — the nightly [Linting](../../../.github/workflows/linting.yml), [Tests](../../../.github/workflows/tests.yml), and [Integration Tests](../../../.github/workflows/tests-integration.yml) workflows all gate the release:
 
 ```bash
 gh run list --branch master --limit 10
@@ -69,7 +69,7 @@ echo "New release is: $NEW_RELEASE"
 
 Every factory pins the same Fabric tag.
 
-Verify the pin and make sure the compatibility statement in the [main README.md](../../README.md) matches it:
+Verify the pin and make sure the compatibility statement in the [main README.md](../../../README.md) matches it:
 
 ```bash
 grep -rho "ref=v[0-9.]*" --include="*.tf" . | sort -u
