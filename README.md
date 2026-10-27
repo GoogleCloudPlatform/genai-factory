@@ -75,7 +75,7 @@ It deploys the core platform resources within the project and the generative AI 
 
 If you created the project outside genai-factory (instead of using [0-prereqs](#0-prereqs)), make sure to provide the `1-apps` stage with the projects, APIs, service accounts, roles and networking components it requires. We pass these information to `1-apps` via `terraform.auto.tfvars` files that we automatically create when [0-prereqs](#0-prereqs) runs.
 
-# Networking Configuration
+## Networking Configuration
 
 By default, the [0-prereqs](#0-prereqs) stages create the networking components that the generative AI applications need. These include shared VPCs, subnets, routes, firewall policies, DNS zones, Private Google Access (PGA), and more.
 
