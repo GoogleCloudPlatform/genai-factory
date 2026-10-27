@@ -28,6 +28,7 @@ ______________________________________________________________________
 
 ## Shared Factory Deployment & Operation Skills
 
+- **[genai-factory](./genai-factory/SKILL.md)**: Master router and index skill for choosing, configuring, deploying, and troubleshooting any GenAI Factory blueprint.
 - **[prerequisites-and-fast](./prerequisites-and-fast/SKILL.md)**: Configuring and deploying Stage 0 (`0-prereqs`), Bring Your Own Shared VPC (`networking_config.create = false`), Fabric FAST integration (`variables-fast.tf`), and `.rep.googleapis.com` regional PSC endpoints and Cloud DNS policies.
 - **[cloud-run-and-load-balancers](./cloud-run-and-load-balancers/SKILL.md)**: Configuring Cloud Run services/jobs, External HTTPS GLB, Internal ALB + CAS (`ca_pool_name_suffix`), Direct Cloud Run ingress, Cloud Build container submissions, and Python GenAI/ADK conventions.
 - **[model-armor](./model-armor/SKILL.md)**: Configuring regional Model Armor templates (`google_model_armor_template`), project floor settings (`google_model_armor_floorsetting`), filter confidence thresholds, and regional modality constraints.
