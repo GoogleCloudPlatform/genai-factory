@@ -26,13 +26,13 @@ requires:
 skills:
   genai-factory:
     path: .agents/skills/genai-factory
-  prerequisites-and-fast:
-    path: .agents/skills/prerequisites-and-fast
-  cloud-run-and-load-balancers:
-    path: .agents/skills/cloud-run-and-load-balancers
-  model-armor:
-    path: .agents/skills/model-armor
-  discovery-engine-and-gecx:
-    path: .agents/skills/discovery-engine-and-gecx
-  operations-and-teardown:
-    path: .agents/skills/operations-and-teardown
+  genai-factory-prerequisites-and-fast:
+    path: .agents/skills/genai-factory-prerequisites-and-fast
+  genai-factory-cloud-run-and-load-balancers:
+    path: .agents/skills/genai-factory-cloud-run-and-load-balancers
+  genai-factory-model-armor:
+    path: .agents/skills/genai-factory-model-armor
+  genai-factory-discovery-engine-and-gecx:
+    path: .agents/skills/genai-factory-discovery-engine-and-gecx
+  genai-factory-operations-and-teardown:
+    path: .agents/skills/genai-factory-operations-and-teardown

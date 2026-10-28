@@ -1,57 +1,35 @@
 ---
-name: ai-apps-search
-description: Actionable runbook for configuring, deploying, customizing, and operating the ai-apps-search factory (Vertex AI Search / Discovery Engine public website search application). Use this skill whenever a user asks to deploy or configure ai-apps-search, customize target website URI patterns in Discovery Engine, query the Vertex AI Search servingConfig API, or embed the search widget.
+name: genai-factory-ai-apps-search
+description: Use when deploying or configuring the genai-factory ai-apps-search blueprint (Vertex AI Search / Discovery Engine public website search engine), customizing target website URI patterns (target_sites), querying the servingConfigs/default_search:search API, or troubleshooting empty basic website search results.
 ---
 
-# AI Apps Search — Deployment & Operations Runbook
+# GenAI Factory — AI Apps Search (`ai-apps-search`)
 
-This skill guides you through configuring, deploying, customizing, and troubleshooting the [`ai-apps-search`](./README.md) factory: a **Vertex AI Search (Discovery Engine)** application indexing public website URI patterns (`PUBLIC_WEBSITE` content configuration) with an Enterprise-tier search engine (`SEARCH_TIER_ENTERPRISE`), deployed via the Cloud Foundation Fabric `ai-applications` module.
+## Overview
 
-> [!NOTE]
-> For repository contributor workflows (regenerating `plan_summary.py` test inventories and running `pytest`), also consult [`ai-apps-search/AGENTS.md`](./AGENTS.md).
+Deploys a **Vertex AI Search (Discovery Engine)** application ([`ai-apps-search`](./README.md)) indexing public website URI patterns (`PUBLIC_WEBSITE` content configuration) with an Enterprise-tier search engine (`SEARCH_TIER_ENTERPRISE`) via the Cloud Foundation Fabric `ai-applications` module.
 
-______________________________________________________________________
+## When to Use
 
-## 1. Shared Skills Reference (Do Not Duplicate)
+- Deploying or customizing [`0-prereqs/`](./0-prereqs/README.md) or [`1-apps/`](./1-apps/README.md) in `ai-apps-search`.
+- Customizing included/excluded website URI patterns (`ai_apps_configs.target_sites`) or querying the search engine.
+- **REQUIRED SUB-SKILL:** Load [`genai-factory-prerequisites-and-fast`](../.agents/skills/genai-factory-prerequisites-and-fast/SKILL.md) for Stage 0 (`0-prereqs`) project creation (`gf-ai-apps-srch-0`, no VPC required).
+- **REQUIRED SUB-SKILL:** Load [`genai-factory-discovery-engine-and-gecx`](../.agents/skills/genai-factory-discovery-engine-and-gecx/SKILL.md) for Discovery Engine data store/engine conventions.
+- **REQUIRED SUB-SKILL:** Load [`genai-factory-operations-and-teardown`](../.agents/skills/genai-factory-operations-and-teardown/SKILL.md) for `CLOUDSDK_BILLING_QUOTA_PROJECT` and clean teardown.
+- For contributor test inventory workflows (`plan_summary.py` / `pytest`), see [`AGENTS.md`](./AGENTS.md).
 
-This factory relies on the repository's shared skills in [`../.agents/skills/`](../.agents/skills/README.md) for cross-cutting workflows. Always load the relevant shared skill first:
+## Quick Reference
 
-| Workflow Area | Shared Skill | How `ai-apps-search` Uses It |
-| :--- | :--- | :--- |
-| **Stage 0 (`0-prereqs`) & Custom Project Setup** | [`prerequisites-and-fast`](../.agents/skills/prerequisites-and-fast/SKILL.md) | Deploys the single service project (`gf-ai-apps-srch-0`) and Terraform state bucket (no Shared VPC host project is required). |
-| **Discovery Engine Data Stores & Search API** | [`discovery-engine-and-gecx`](../.agents/skills/discovery-engine-and-gecx/SKILL.md) | Covers Discovery Engine data store / engine architecture and multi-region / regional API concepts. |
-| **Impersonation Quota Fixes & Clean Teardown** | [`operations-and-teardown`](../.agents/skills/operations-and-teardown/SKILL.md) | Resolves `403 serviceusage.services.use` and cleans up generated `1-apps` files (`providers.tf`, `terraform.auto.tfvars`). |
+| Attribute | Value / Definition |
+| :--- | :--- |
+| **Service Project (`0-prereqs`)** | `gf-ai-apps-srch-0` ([`service-01.yaml`](./0-prereqs/data/projects/service-01.yaml)) — no Host project or VPC required |
+| **Default Name (`var.name`)** | `srch-0` (creates data store `srch-0-ds` and search engine `srch-0-app`) |
+| **Required SA Key (`0-prereqs`)** | `service-01/iac-rw` (`roles/discoveryengine.admin`) |
+| **Default Target Site** | `github.com/GoogleCloudPlatform/cloud-foundation-fabric/*` ([`1-apps/variables.tf`](./1-apps/variables.tf)) |
 
-______________________________________________________________________
+## Core Patterns
 
-## 2. Factory-Specific Resource & Identity Identifiers
-
-When applying the patterns in [`prerequisites-and-fast`](../.agents/skills/prerequisites-and-fast/SKILL.md), use these exact `ai-apps-search` identifiers:
-
-- **Default Resource Name (`var.name` in `1-apps`):** `"srch-0"` (creates data store `srch-0-ds` and search engine `srch-0-app`).
-- **Stage 0 Project YAML Template:**
-  - Service project (`gf-ai-apps-srch-0`): [`0-prereqs/data/projects/service-01.yaml`](./0-prereqs/data/projects/service-01.yaml)
-  - Note: `ai-apps-search` does **not** create a Host project or VPC because Vertex AI Search is a fully managed Google API service.
-- **Required Service Account in `0-prereqs`:**
-  - `service-01/iac-rw` — Stage 1 Terraform deployer SA (`<prefix>-gf-ai-apps-srch-0-rw@...`, holds `roles/discoveryengine.admin`).
-
-______________________________________________________________________
-
-## 3. Step-by-Step Deployment Workflow
-
-### Step 1: Run Stage 0 (`0-prereqs`)
-
-In [`0-prereqs/`](./0-prereqs/README.md), create `terraform.tfvars` (`billing_account`, `parent`, `prefix`, `region`) and run `terraform init && terraform apply`. This generates `1-apps/providers.tf` and `1-apps/terraform.auto.tfvars`.
-
-### Step 2: Configure Stage 1 (`1-apps/terraform.tfvars`)
-
-#### Recipe A: Default Target Site (`github.com/GoogleCloudPlatform/cloud-foundation-fabric/*`)
-
-No overrides are needed; [`1-apps/variables.tf`](./1-apps/variables.tf) defaults `ai_apps_configs.target_sites` to index `github.com/GoogleCloudPlatform/cloud-foundation-fabric/*`.
-
-#### Recipe B: Custom Included & Excluded Website URI Patterns
-
-Override `ai_apps_configs.target_sites` in `1-apps/terraform.tfvars`:
+### Custom Included & Excluded Website URI Patterns (`1-apps/terraform.tfvars`)
 
 ```hcl
 ai_apps_configs = {
@@ -70,37 +48,20 @@ ai_apps_configs = {
 }
 ```
 
-> [!IMPORTANT]
-> **URI Pattern Format (`provided_uri_pattern`):**
-> Do **not** include the `https://` scheme prefix in `provided_uri_pattern` unless required by specific Discovery Engine target site rules; follow the format `"domain.com/path/*"`.
-
-### Step 3: Apply Stage 1 (`1-apps`)
+### Apply & Query the Search Engine
 
 ```shell
 cd 1-apps
-terraform init
-terraform apply
-```
+terraform init && terraform apply
 
-### Step 4: Query the Search Engine
-
-View and run the generated `curl` search command:
-
-```shell
+# Prints POST .../servingConfigs/default_search:search curl command and Web Widget Console URL
 terraform output -raw commands
 ```
 
-As defined in [`1-apps/outputs.tf`](./1-apps/outputs.tf), this sends a `POST` request to `https://discoveryengine.googleapis.com/v1/<search_engine_name>/servingConfigs/default_search:search` with automatic query expansion and spell correction enabled, and prints the Google Cloud Console URL for the embeddable Web Widget (`https://console.cloud.google.com/gen-app-builder/locations/global/engines/<name>-app/integration/widget?project=<project_id>`).
+## Common Mistakes
 
-______________________________________________________________________
-
-## 4. Factory-Specific Troubleshooting (`ai-apps-search`)
-
-### 1. Empty Search Results Immediately After `terraform apply`
-
-- **Cause:** Basic website search (`create_advanced_site_search = false`) relies on Google Search index coverage for the target URI patterns (`provided_uri_pattern`). If a site or sub-path is newly published or not indexed by Google Search, or if you need live crawling/sitemap indexing of private or unindexed pages, basic site search may return empty results.
-- **Fix:** Verify the URI pattern is publicly indexed, or customize [`1-apps/main.tf`](./1-apps/main.tf) to enable Advanced Site Search (`create_advanced_site_search = true`) and domain verification in the Discovery Engine console.
-
-### 2. Switching to GCS Unstructured Document Search
-
-- If you want to index PDFs/HTML/JSONL stored in Google Cloud Storage instead of public websites, inspect the Cloud Foundation Fabric [`ai-applications` module variables](https://github.com/GoogleCloudPlatform/cloud-foundation-fabric/blob/master/modules/ai-applications/variables.tf) or see [`ge-agent-platform`](../ge-agent-platform/SKILL.md) and [`gecx-dialogflow`](../gecx-dialogflow/SKILL.md) for GCS-backed Discovery Engine data store patterns.
+| Symptom / Error | Cause | Fix |
+| :--- | :--- | :--- |
+| Invalid `provided_uri_pattern` error during `terraform apply` | Included `https://` scheme prefix in `provided_uri_pattern` | Omit the scheme prefix and use `"domain.com/path/*"` format. |
+| Search returns empty results right after `terraform apply` | Basic site search (`create_advanced_site_search = false`) relies on public Google Search index coverage for `provided_uri_pattern` | Verify the target site is indexed by Google Search, or enable `create_advanced_site_search = true` in [`1-apps/main.tf`](./1-apps/main.tf) with domain verification. |
+| Need to index private PDFs/HTML/JSONL in GCS instead of public websites | `ai-apps-search` is pre-configured for `PUBLIC_WEBSITE` | Use [`genai-factory-gecx-dialogflow`](../gecx-dialogflow/SKILL.md), [`genai-factory-gecx-agent-studio`](../gecx-agent-studio/SKILL.md), or [`genai-factory-ge-agent-platform`](../ge-agent-platform/SKILL.md) for GCS-backed Discovery Engine data stores. |
