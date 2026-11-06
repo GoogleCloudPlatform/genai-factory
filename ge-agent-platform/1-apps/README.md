@@ -385,7 +385,7 @@ Rules accept both native IAM v3 principal URIs and standard IAM v1 prefixes (whi
 - **Agent identities:** `principal://agents.global.proj-PROJECT_NUMBER.system.id.goog/resources/aiplatform/projects/PROJECT_NUMBER/locations/REGION/reasoningEngines/REASONING_ENGINE_ID` (returned in the `agent_identity` output of the [agent-runtime](../../agent-runtime/README.md) factory).
 - **All agents in a project:** `principalSet://agents.global.proj-PROJECT_NUMBER.system.id.goog/*`
 - **Workload Identity Federation:** `principal://iam.googleapis.com/projects/PROJECT_NUMBER/locations/global/workloadIdentityPools/POOL_ID/subject/SUBJECT`
-- **Users, groups, service accounts, domains:** Either IAM v3 URIs (`principal://goog/subject/USER`, `principalSet://goog/group/GROUP`, `principal://iam.googleapis.com/projects/-/serviceAccounts/SA_EMAIL`, `principalSet://goog/cloudIdentityCustomerId/DOMAIN`) or standard IAM v1 prefixes (`user:...`, `group:...`, `serviceAccount:...`, `domain:...`, `allUsers`, `allAuthenticatedUsers`).
+- **Users, groups, service accounts, domains:** Either IAM v3 URIs (`principal://goog/subject/USER`, `principalSet://goog/group/GROUP`, `principal://iam.googleapis.com/projects/-/serviceAccounts/SA_EMAIL`, `principalSet://goog/cloudIdentityCustomerId/CUSTOMER_ID`) or standard IAM v1 prefixes (`user:...`, `group:...`, `serviceAccount:...`, `allUsers`).
 
 Agent identifiers in URN format (`urn:agent:...`) are used for catalog lookups only and are not valid in access policy rules.
 

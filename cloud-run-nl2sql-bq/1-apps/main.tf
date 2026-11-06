@@ -20,7 +20,7 @@ locals {
 }
 
 module "cloud_run" {
-  source              = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/cloud-run-v2?ref=v59.2.0"
+  source              = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/cloud-run-v2?ref=v60.0.0"
   type                = "SERVICE"
   project_id          = var.project_id
   name                = var.name
