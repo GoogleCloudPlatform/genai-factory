@@ -51,7 +51,7 @@ resource "google_vertex_ai_endpoint_with_model_garden_deployment" "model_garden"
 
 # Create a PSC endpoint using the Model Garden PSC service attachment
 module "psc_consumer_address" {
-  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-address?ref=v59.2.0"
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-address?ref=v60.0.0"
   project_id = var.project_id
   internal_addresses = {
     (var.name) = {
