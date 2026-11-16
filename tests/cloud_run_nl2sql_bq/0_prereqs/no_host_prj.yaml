@@ -74,6 +74,24 @@ values:
       - serviceAccount:iac-rw@your-prefix-gf-nl2sql-0.iam.gserviceaccount.com
     role: roles/storage.objectViewer
     timeouts:
+  module.projects.module.projects-iam["service-01"].google_org_policy_policy.default["compute.restrictSharedVpcSubnetworks"]:
+    dry_run_spec: []
+    name: projects/your-prefix-gf-nl2sql-0/policies/compute.restrictSharedVpcSubnetworks
+    parent: projects/your-prefix-gf-nl2sql-0
+    spec:
+      - inherit_from_parent:
+        reset:
+        rules:
+          - allow_all:
+            condition: []
+            deny_all:
+            enforce:
+            parameters:
+            values:
+              - allowed_values:
+                  - projects/host-prj/regions/europe-west1/subnetworks/sub-0
+                denied_values:
+    timeouts:
   module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/artifactregistry.admin"]:
     condition: []
     members:
@@ -86,17 +104,16 @@ values:
       - serviceAccount:nl2sql-build-0@your-prefix-gf-nl2sql-0.iam.gserviceaccount.com
     project: your-prefix-gf-nl2sql-0
     role: roles/artifactregistry.writer
-  module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/bigquery.dataViewer"]:
+  module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/bigquery.jobUser"]:
     condition: []
     members:
       - serviceAccount:nl2sql-0@your-prefix-gf-nl2sql-0.iam.gserviceaccount.com
     project: your-prefix-gf-nl2sql-0
-    role: roles/bigquery.dataViewer
+    role: roles/bigquery.jobUser
   module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/bigquery.user"]:
     condition: []
     members:
       - serviceAccount:iac-rw@your-prefix-gf-nl2sql-0.iam.gserviceaccount.com
-      - serviceAccount:nl2sql-0@your-prefix-gf-nl2sql-0.iam.gserviceaccount.com
     project: your-prefix-gf-nl2sql-0
     role: roles/bigquery.user
   ? module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/certificatemanager.owner"]
@@ -137,6 +154,22 @@ values:
       - serviceAccount:nl2sql-build-0@your-prefix-gf-nl2sql-0.iam.gserviceaccount.com
     project: your-prefix-gf-nl2sql-0
     role: roles/logging.logWriter
+  module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/modelarmor.admin"]:
+    condition: []
+    members:
+      - serviceAccount:iac-rw@your-prefix-gf-nl2sql-0.iam.gserviceaccount.com
+    project: your-prefix-gf-nl2sql-0
+    role: roles/modelarmor.admin
+  ? module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/modelarmor.floorSettingsAdmin"]
+  : condition: []
+    members:
+      - serviceAccount:iac-rw@your-prefix-gf-nl2sql-0.iam.gserviceaccount.com
+    project: your-prefix-gf-nl2sql-0
+    role: roles/modelarmor.floorSettingsAdmin
+  module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/modelarmor.user"]:
+    condition: []
+    project: your-prefix-gf-nl2sql-0
+    role: roles/modelarmor.user
   module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/privateca.admin"]:
     condition: []
     members:
@@ -154,6 +187,12 @@ values:
       - serviceAccount:nl2sql-build-0@your-prefix-gf-nl2sql-0.iam.gserviceaccount.com
     project: your-prefix-gf-nl2sql-0
     role: roles/run.admin
+  ? module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/serviceusage.serviceUsageConsumer"]
+  : condition: []
+    members:
+      - serviceAccount:iac-rw@your-prefix-gf-nl2sql-0.iam.gserviceaccount.com
+    project: your-prefix-gf-nl2sql-0
+    role: roles/serviceusage.serviceUsageConsumer
   module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/storage.admin"]:
     condition: []
     members:
@@ -231,6 +270,10 @@ values:
     condition: []
     project: your-prefix-gf-nl2sql-0
     role: roles/compute.serviceAgent
+  module.projects.module.projects["service-01"].google_project_iam_member.service_agents["modelarmor"]:
+    condition: []
+    project: your-prefix-gf-nl2sql-0
+    role: roles/modelarmor.serviceAgent
   module.projects.module.projects["service-01"].google_project_iam_member.service_agents["serverless-robot-prod"]:
     condition: []
     project: your-prefix-gf-nl2sql-0
@@ -343,6 +386,13 @@ values:
     project: your-prefix-gf-nl2sql-0
     service: compute.googleapis.com
     timeouts:
+  module.projects.module.projects["service-01"].google_project_service.project_services["modelarmor.googleapis.com"]:
+    deletion_policy: DELETE
+    disable_dependent_services: false
+    disable_on_destroy: false
+    project: your-prefix-gf-nl2sql-0
+    service: modelarmor.googleapis.com
+    timeouts:
   module.projects.module.projects["service-01"].google_project_service.project_services["privateca.googleapis.com"]:
     deletion_policy: DELETE
     disable_dependent_services: false
@@ -356,6 +406,13 @@ values:
     disable_on_destroy: false
     project: your-prefix-gf-nl2sql-0
     service: run.googleapis.com
+    timeouts:
+  module.projects.module.projects["service-01"].google_project_service.project_services["serviceusage.googleapis.com"]:
+    deletion_policy: DELETE
+    disable_dependent_services: false
+    disable_on_destroy: false
+    project: your-prefix-gf-nl2sql-0
+    service: serviceusage.googleapis.com
     timeouts:
   module.projects.module.projects["service-01"].google_project_service_identity.default["aiplatform.googleapis.com"]:
     project: your-prefix-gf-nl2sql-0
@@ -372,6 +429,10 @@ values:
   module.projects.module.projects["service-01"].google_project_service_identity.default["cloudscheduler.googleapis.com"]:
     project: your-prefix-gf-nl2sql-0
     service: cloudscheduler.googleapis.com
+    timeouts:
+  module.projects.module.projects["service-01"].google_project_service_identity.default["modelarmor.googleapis.com"]:
+    project: your-prefix-gf-nl2sql-0
+    service: modelarmor.googleapis.com
     timeouts:
   module.projects.module.projects["service-01"].google_project_service_identity.default["privateca.googleapis.com"]:
     project: your-prefix-gf-nl2sql-0
@@ -433,18 +494,19 @@ values:
 
 counts:
   google_bigquery_default_service_account: 1
+  google_org_policy_policy: 1
   google_project: 1
-  google_project_iam_binding: 15
-  google_project_iam_member: 27
-  google_project_service: 11
-  google_project_service_identity: 6
+  google_project_iam_binding: 18
+  google_project_iam_member: 28
+  google_project_service: 12
+  google_project_service_identity: 7
   google_service_account: 3
   google_service_account_iam_member: 3
   google_storage_bucket: 1
   google_storage_bucket_iam_binding: 2
   local_file: 2
   modules: 8
-  resources: 75
+  resources: 81
   terraform_data: 2
 
 outputs:
