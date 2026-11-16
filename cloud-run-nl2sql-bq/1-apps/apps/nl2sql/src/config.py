@@ -21,6 +21,7 @@ GOOGLE_CLOUD_LOCATION = os.environ.get("GOOGLE_CLOUD_LOCATION", "eu")
 
 ROOT_AGENT_MODEL = os.environ.get("MODEL_NAME", "gemini-4-argon")
 THINKING_LEVEL = os.environ.get("THINKING_LEVEL", "MEDIUM")
+MODEL_ARMOR_TEMPLATE = os.environ.get("MODEL_ARMOR_TEMPLATE")
 BQ_COMPUTE_PROJECT_ID = os.environ.get("BQ_COMPUTE_PROJECT_ID", PROJECT_ID)
 BQ_DATA_PROJECT_ID = os.environ.get("BQ_DATA_PROJECT_ID")
 BQ_DATASET_ID = os.environ.get("BQ_DATASET_ID")

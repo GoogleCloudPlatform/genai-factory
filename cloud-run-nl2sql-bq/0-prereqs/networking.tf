@@ -16,6 +16,7 @@ locals {
   multi_region = startswith(var.region, "europe") ? "eu" : "us"
   rep_endpoints = var.networking_config.create ? {
     aiplatform-mrep = "aiplatform.${local.multi_region}.rep.googleapis.com"
+    modelarmor-rep  = "modelarmor.${var.region}.rep.googleapis.com"
   } : {}
 }
 

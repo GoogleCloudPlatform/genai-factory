@@ -28,10 +28,12 @@ from google.genai import types
 
 from src import config
 from src.agents.bigquery_agent.prompts import ROOT_AGENT_PROMPT
+from src.agents.bigquery_agent.sql_validator import validate_sql_tool_call
 from src.agents.bigquery_agent.utils import (
     get_database_settings,
     get_dataset_definitions_for_instructions,
 )
+from src.model_armor import model_armor
 
 os.environ["GOOGLE_CLOUD_PROJECT"] = os.environ["PROJECT_ID"]
 os.environ["GOOGLE_CLOUD_LOCATION"] = config.GOOGLE_CLOUD_LOCATION
@@ -88,14 +90,18 @@ def get_root_agent() -> LlmAgent:
           ),
       ),
       name="bigquery_agent",
-      instruction=(
-          ROOT_AGENT_PROMPT.format(bq_data_project_id=config.BQ_DATA_PROJECT_ID,
-                                   bq_dataset_id=config.BQ_DATASET_ID) +
-          get_dataset_definitions_for_instructions(database_settings)),
+      instruction=(ROOT_AGENT_PROMPT.format(
+          bq_compute_project_id=config.BQ_COMPUTE_PROJECT_ID,
+          bq_data_project_id=config.BQ_DATA_PROJECT_ID,
+          bq_dataset_id=config.BQ_DATASET_ID,
+      ) + get_dataset_definitions_for_instructions(database_settings)),
       global_instruction=(
           f"You are a BigQuery NL2SQL agent. Today's date: {date.today()}\n"),
       tools=[bigquery_toolset],
       before_agent_callback=load_database_settings_in_context,
+      before_model_callback=model_armor.sanitize_request,
+      after_model_callback=model_armor.sanitize_response,
+      before_tool_callback=validate_sql_tool_call,
       generate_content_config=types.GenerateContentConfig(
           temperature=0.01,
           thinking_config=types.ThinkingConfig(

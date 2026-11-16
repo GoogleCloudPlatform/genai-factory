@@ -8,7 +8,9 @@ This factory deploys a "Natural Language 2 SQL" (NL2SQL) agent on Cloud Run that
 
 The deployment includes:
 
-- An **agent** running on **Cloud Run** (configured with authentication and direct VPC egress).
+- An **agent** running on **Cloud Run** (configured with authentication, direct VPC egress, Model Armor prompt/response screening, and an AST-enforced BigQuery dataset SQL allowlist).
+
+- **Model Armor** template and Vertex AI floor settings to inspect and block prompt injection, jailbreak attempts, sensitive data exposure, malicious URIs, and unsafe content.
 
 - An **exposure layer** that allows you to securely access your instance of Cloud Run, made of:
   - a **Global external application load balancer** (+ Cloud Armor IP allowlist security backend policy + HTTP to HTTPS redirect + managed certificates). This is created by default.

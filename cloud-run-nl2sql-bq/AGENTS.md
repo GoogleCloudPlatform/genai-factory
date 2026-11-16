@@ -8,11 +8,11 @@ The `cloud-run-nl2sql-bq` factory deploys a **Natural Language to SQL (NL2SQL)**
 
 - **`0-prereqs`** ([`0-prereqs/README.md`](./0-prereqs/README.md)):
   - Service project (`0-prereqs/data/projects/service-01.yaml`) and optional Shared VPC host project (`0-prereqs/data/projects/host.yaml`).
-  - VPC, subnet, Private Google Access, Cloud DNS response policies, and regional PSC endpoint (`0-prereqs/networking.tf`) for multi-regional Vertex AI (`aiplatform.<multi_region>.rep.googleapis.com`).
-  - Stage 1 RW/RO automation service accounts and Cloud Run / Cloud Build service accounts.
+  - VPC, subnet, Private Google Access, Cloud DNS response policies, and regional PSC endpoints (`0-prereqs/networking.tf`) for multi-regional Vertex AI (`aiplatform.<multi_region>.rep.googleapis.com`) and regional Model Armor (`modelarmor.<region>.rep.googleapis.com`).
+  - Stage 1 RW/RO automation service accounts and least-privilege Cloud Run (`roles/bigquery.jobUser`, `roles/modelarmor.user`, `roles/aiplatform.user`) / Cloud Build service accounts.
 - **`1-apps`** ([`1-apps/README.md`](./1-apps/README.md)):
-  - **BigQuery Dataset & Table** ([`1-apps/main.tf`](./1-apps/main.tf)): Target dataset queried by the NL2SQL agent.
-  - **Cloud Run Service & Artifact Registry** ([`1-apps/main.tf`](./1-apps/main.tf)): Runs the NL2SQL container ([`1-apps/apps/nl2sql/`](./1-apps/apps/nl2sql)) with Direct VPC egress (`PRIVATE_RANGES_ONLY`).
+  - **Cloud Run Service & Artifact Registry** ([`1-apps/main.tf`](./1-apps/main.tf)): Runs the NL2SQL container ([`1-apps/apps/nl2sql/`](./1-apps/apps/nl2sql)) with Direct VPC egress, Model Armor `before_model_callback`/`after_model_callback`, and a `sqlglot` AST `before_tool_callback` enforcing the configured `BQ_DATA_PROJECT_ID.BQ_DATASET_ID` allowlist.
+  - **Model Armor** ([`1-apps/model-armor.tf`](./1-apps/model-armor.tf)): Regional Model Armor template (`google_model_armor_template`) and project-level floor settings (`google_model_armor_floorsetting`).
   - **Application Load Balancer & Cloud Armor** ([`1-apps/lb-ext.tf`](./1-apps/lb-ext.tf), [`1-apps/lb-int.tf`](./1-apps/lb-int.tf), [`1-apps/lb-int-cert.tf`](./1-apps/lb-int-cert.tf)): External or internal HTTPS load balancer fronting Cloud Run.
 
 ## Key Files & Test Cases
@@ -22,7 +22,7 @@ The `cloud-run-nl2sql-bq` factory deploys a **Natural Language to SQL (NL2SQL)**
   - [`0-prereqs/data/projects/host.yaml`](./0-prereqs/data/projects/host.yaml)
   - [`0-prereqs/networking.tf`](./0-prereqs/networking.tf)
 - **Stage 1 (`1-apps`)**:
-  - [`1-apps/main.tf`](./1-apps/main.tf), [`1-apps/lb-ext.tf`](./1-apps/lb-ext.tf), [`1-apps/lb-int.tf`](./1-apps/lb-int.tf), [`1-apps/variables.tf`](./1-apps/variables.tf), [`1-apps/outputs.tf`](./1-apps/outputs.tf)
+  - [`1-apps/main.tf`](./1-apps/main.tf), [`1-apps/model-armor.tf`](./1-apps/model-armor.tf), [`1-apps/lb-ext.tf`](./1-apps/lb-ext.tf), [`1-apps/lb-int.tf`](./1-apps/lb-int.tf), [`1-apps/variables.tf`](./1-apps/variables.tf), [`1-apps/outputs.tf`](./1-apps/outputs.tf)
   - Sample application: [`1-apps/apps/nl2sql/`](./1-apps/apps/nl2sql)
 - **Tests** ([`tests/cloud_run_nl2sql_bq/`](../tests/cloud_run_nl2sql_bq)):
   - `0_prereqs`: `simple`, `no_host_prj`

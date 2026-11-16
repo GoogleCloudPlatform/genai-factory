@@ -13,13 +13,19 @@
 # limitations under the License.
 
 locals {
-  _env_vars = [
+  _env_vars = compact([
     "BQ_DATA_PROJECT_ID=bigquery-public-data",
     "BQ_DATASET_ID=thelook_ecommerce",
     "DB_SA=${local._sa_db}",
+    "GOOGLE_CLOUD_LOCATION=${local._multi_region}",
     "PROJECT_ID=${var.project_id}",
-    "REGION=${var.region}"
-  ]
+    "REGION=${var.region}",
+    try(
+      "MODEL_ARMOR_TEMPLATE=${google_model_armor_template.model_armor_template[0].name}",
+      null
+    )
+  ])
+  _multi_region = startswith(var.region, "europe") ? "eu" : "us"
   _sa_db = trimsuffix(
     local.service_account_emails["service-01/nl2sql-0"],
     ".gserviceaccount.com"
