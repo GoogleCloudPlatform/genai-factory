@@ -203,6 +203,7 @@ test = [
     { name = "pytest-xdist" },
     { name = "python-hcl2" },
     { name = "pyyaml" },
+    { name = "requests" },
     { name = "tftest" },
 ]
 tools = [
@@ -237,6 +238,7 @@ test = [
     { name = "pytest-xdist", specifier = ">=3.7.0" },
     { name = "python-hcl2", specifier = ">=7.2.1" },
     { name = "pyyaml", specifier = ">=6.0.2" },
+    { name = "requests", specifier = ">=2.34.2" },
     { name = "tftest", specifier = ">=1.8.5" },
 ]
 tools = [
