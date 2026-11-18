@@ -830,3 +830,55 @@ variable "region" {
   nullable    = false
   default     = "europe-west1"
 }
+
+variable "workspace_mcp_proxy_config" {
+  description = "Optional private Cloud Run MCP proxy enforcing internal corporate recipient domains on Gmail and Google Calendar actions."
+  type = object({
+    access_principals          = optional(list(string), [])
+    allowed_domains            = optional(list(string), [])
+    app_ids                    = optional(list(string), [])
+    automated_send_self_only   = optional(bool, true)
+    enable                     = optional(bool, false)
+    enable_automated_send_tool = optional(bool, false)
+    image                      = optional(string, "us-docker.pkg.dev/cloudrun/container/hello")
+    ingress                    = optional(string, "INGRESS_TRAFFIC_INTERNAL_ONLY")
+    max_instance_count         = optional(number, 4)
+    min_instance_count         = optional(number, 0)
+    oauth_config = optional(object({
+      auth_uri                     = string
+      client_id                    = string
+      token_uri                    = string
+      auth_uri_params              = optional(string)
+      client_secret                = optional(string)
+      client_secret_basic_override = optional(bool, true)
+      pkce_support_enabled         = optional(bool, true)
+      scopes                       = optional(list(string), [])
+    }))
+    service_account_email = optional(string)
+    service_id            = optional(string, "workspace-mcp-proxy")
+    service_invokers      = optional(list(string), [])
+    vpc_access_egress     = optional(string, "PRIVATE_RANGES_ONLY")
+  })
+  nullable = false
+  default  = {}
+
+  validation {
+    condition = (
+      !var.workspace_mcp_proxy_config.enable
+      || length(var.workspace_mcp_proxy_config.allowed_domains) > 0
+    )
+    error_message = "Set at least one domain in workspace_mcp_proxy_config.allowed_domains when workspace_mcp_proxy_config.enable is true."
+  }
+
+  validation {
+    condition = contains(
+      [
+        "INGRESS_TRAFFIC_ALL",
+        "INGRESS_TRAFFIC_INTERNAL_LOAD_BALANCER",
+        "INGRESS_TRAFFIC_INTERNAL_ONLY",
+      ],
+      var.workspace_mcp_proxy_config.ingress
+    )
+    error_message = "The workspace_mcp_proxy_config.ingress must be 'INGRESS_TRAFFIC_INTERNAL_ONLY', 'INGRESS_TRAFFIC_INTERNAL_LOAD_BALANCER', or 'INGRESS_TRAFFIC_ALL'."
+  }
+}

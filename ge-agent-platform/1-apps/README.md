@@ -487,6 +487,43 @@ access_policies = {
 }
 ```
 
+## Internal-Domain-Only Workspace MCP Proxy & ADK Callback Guardrail
+
+When organizations want workforce agents to search Google Workspace (Drive, Gmail, Calendar) freely while deterministically blocking outbound emails or calendar invites to external recipient domains:
+
+1. **Keep native Workspace connectors read-only (`FEDERATED`):** Configure `google_drive`, `google_mail`, and `google_calendar` in `var.gemini_enterprise_data_connectors` with `connector_modes = ["FEDERATED"]` and no mutative actions enabled.
+2. **Route mutative Gmail & Calendar actions through `var.workspace_mcp_proxy_config`:** Enables a private **Cloud Run v2** Streamable HTTP MCP proxy ([`apps/workspace-mcp-proxy`](./apps/workspace-mcp-proxy/README.md)) with `INGRESS_TRAFFIC_INTERNAL_ONLY`, automatically registered in Agent Registry (`workspace-mcp-proxy`), governed by IAM v3 Unified Access Policies on the Egress Agent Gateway over Shared VPC PSC-I, and attached as a `custom_mcp` data connector to `app_ids`.
+3. **Deterministic RFC-5322 domain enforcement + HITL control:**
+   - Every `to`, `cc`, `bcc`, and `attendees` value is parsed with `email.utils.getaddresses` in [`domain_guardrail.py`](./apps/workspace-mcp-proxy/src/domain_guardrail.py) and rejected before calling Workspace APIs if any domain is outside `allowed_domains`.
+   - By default (`enable_automated_send_tool = false`), `send_internal_email` and `create_internal_calendar_event` set `readOnlyHint: false`, so Gemini Enterprise still requires Human-in-the-Loop confirmation on internal sends while deterministically blocking external domains.
+   - For Scheduled Chat Agent runs requiring unattended internal notifications without pausing on a confirmation card, set `enable_automated_send_tool = true` (which exposes `send_automated_internal_email` with `readOnlyHint: true`, restricted by default to the caller's own verified Gmail address via `automated_send_self_only = true`).
+   - Custom Vertex AI Agent Engine or Cloud Run ADK agents can import `create_workspace_domain_before_tool_callback` directly from [`domain_guardrail.py`](./apps/workspace-mcp-proxy/src/domain_guardrail.py) to enforce the same recipient-domain guardrail in-process.
+
+```hcl
+workspace_mcp_proxy_config = {
+  enable          = true
+  allowed_domains = ["example.com"]
+  app_ids         = ["gemini-enterprise-prod", "gemini-enterprise-validation"]
+  access_principals = [
+    "group:employees@example.com"
+  ]
+  oauth_config = {
+    auth_uri        = "https://accounts.google.com/o/oauth2/v2/auth"
+    auth_uri_params = "&access_type=offline&prompt=consent"
+    client_id       = "projects/my-service-project/secrets/ws-oauth-client-id/versions/1"
+    client_secret   = "projects/my-service-project/secrets/ws-oauth-client-secret/versions/1"
+    scopes = [
+      "https://www.googleapis.com/auth/gmail.send",
+      "https://www.googleapis.com/auth/gmail.compose",
+      "https://www.googleapis.com/auth/calendar.events",
+    ]
+    token_uri = "https://oauth2.googleapis.com/token"
+  }
+}
+```
+
+After `terraform apply`, run the commands returned in `terraform output -raw workspace_mcp_proxy_deploy_commands` to build and deploy the proxy container image to Cloud Run.
+
 ## Manage prerequisites independently
 
 The [0-prereqs stage](../0-prereqs/README.md) generates the necessary Terraform input files for this stage. If you manage prerequisites independently (without the [0-prereqs stage](../0-prereqs/README.md)), you'll need to manually set values for your variables in a `terraform.tfvars` file (by following what is defined in [variables.tf](./variables.tf)), and provide a `providers.tf` file.
@@ -522,6 +559,7 @@ You can create your host project and network resources using your FAST networkin
 | [region](variables.tf#L827) | The GCP region where to deploy the resources. | <code>string</code> |  | <code>&#34;europe-west1&#34;</code> |
 | [subnet_self_links](variables-fast.tf#L15) | Shared VPCs subnet IDs. | <code>map&#40;string&#41;</code> |  | <code>&#123;&#125;</code> |
 | [vpc_self_links](variables-fast.tf#L23) | Shared VPC name => self link mappings. | <code>map&#40;string&#41;</code> |  | <code>&#123;&#125;</code> |
+| [workspace_mcp_proxy_config](variables.tf#L834) | Optional private Cloud Run MCP proxy enforcing internal corporate recipient domains on Gmail and Google Calendar actions. | <code title="object&#40;&#123;&#10;  access_principals          &#61; optional&#40;list&#40;string&#41;, &#91;&#93;&#41;&#10;  allowed_domains            &#61; optional&#40;list&#40;string&#41;, &#91;&#93;&#41;&#10;  app_ids                    &#61; optional&#40;list&#40;string&#41;, &#91;&#93;&#41;&#10;  automated_send_self_only   &#61; optional&#40;bool, true&#41;&#10;  enable                     &#61; optional&#40;bool, false&#41;&#10;  enable_automated_send_tool &#61; optional&#40;bool, false&#41;&#10;  image                      &#61; optional&#40;string, &#34;us-docker.pkg.dev&#47;cloudrun&#47;container&#47;hello&#34;&#41;&#10;  ingress                    &#61; optional&#40;string, &#34;INGRESS_TRAFFIC_INTERNAL_ONLY&#34;&#41;&#10;  max_instance_count         &#61; optional&#40;number, 4&#41;&#10;  min_instance_count         &#61; optional&#40;number, 0&#41;&#10;  oauth_config &#61; optional&#40;object&#40;&#123;&#10;    auth_uri                     &#61; string&#10;    client_id                    &#61; string&#10;    token_uri                    &#61; string&#10;    auth_uri_params              &#61; optional&#40;string&#41;&#10;    client_secret                &#61; optional&#40;string&#41;&#10;    client_secret_basic_override &#61; optional&#40;bool, true&#41;&#10;    pkce_support_enabled         &#61; optional&#40;bool, true&#41;&#10;    scopes                       &#61; optional&#40;list&#40;string&#41;, &#91;&#93;&#41;&#10;  &#125;&#41;&#41;&#10;  service_account_email &#61; optional&#40;string&#41;&#10;  service_id            &#61; optional&#40;string, &#34;workspace-mcp-proxy&#34;&#41;&#10;  service_invokers      &#61; optional&#40;list&#40;string&#41;, &#91;&#93;&#41;&#10;  vpc_access_egress     &#61; optional&#40;string, &#34;PRIVATE_RANGES_ONLY&#34;&#41;&#10;&#125;&#41;">object&#40;&#123;&#8230;&#125;&#41;</code> |  | <code>&#123;&#125;</code> |
 
 ## Outputs
 
@@ -538,4 +576,6 @@ You can create your host project and network resources using your FAST networkin
 | [gemini_enterprise_data_connector_names](outputs.tf#L68) | The resource names of the Gemini Enterprise data connectors, keyed by connector id (or service id and app id for MCP connectors). |  |
 | [model_armor_template_names](outputs.tf#L86) | The resource names of the Model Armor templates, keyed by interaction direction. |  |
 | [policy_binding_ids](outputs.tf#L94) | The IAM v3 Policy Binding resource names, keyed by policy id. |  |
+| [workspace_mcp_proxy_deploy_commands](outputs.tf#L99) | Commands to build and deploy the Workspace internal-domain MCP proxy image to Cloud Run. |  |
+| [workspace_mcp_proxy_uri](outputs.tf#L108) | The Cloud Run URI of the Workspace internal-domain MCP proxy when enabled. |  |
 <!-- END TFDOC -->

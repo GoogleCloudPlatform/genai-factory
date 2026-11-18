@@ -1,0 +1,826 @@
+---
+# Copyright 2026 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+values:
+  google_agent_registry_service.agent_registry_services["workspace-mcp-proxy"]:
+    agent_spec: []
+    deletion_policy: PREVENT
+    description: Cloud Run MCP proxy enforcing internal corporate recipient domains
+      on Gmail and Google Calendar.
+    display_name: Workspace Domain-Guardrail MCP Proxy
+    endpoint_spec: []
+    interfaces:
+      - protocol_binding: JSONRPC
+    location: us-central1
+    mcp_server_spec:
+      - content: "{\"tools\":[{\"annotations\":{\"destructiveHint\":true,\"idempotentHint\"\
+          :false,\"openWorldHint\":false,\"readOnlyHint\":false},\"description\":\"\
+          Sends a Gmail message strictly to allowlisted internal corporate domains\
+          \ after Human-in-the-Loop confirmation.\",\"inputSchema\":{\"properties\"\
+          :{\"bcc\":{\"description\":\"Optional BCC email addresses inside the allowed\
+          \ corporate domain.\",\"items\":{\"type\":\"string\"},\"type\":\"array\"\
+          },\"body\":{\"description\":\"Plain-text email body.\",\"type\":\"string\"\
+          },\"cc\":{\"description\":\"Optional CC email addresses inside the allowed\
+          \ corporate domain.\",\"items\":{\"type\":\"string\"},\"type\":\"array\"\
+          },\"subject\":{\"description\":\"Email subject line.\",\"type\":\"string\"\
+          },\"to\":{\"description\":\"Recipient email addresses inside the allowed\
+          \ corporate domain.\",\"items\":{\"type\":\"string\"},\"type\":\"array\"\
+          }},\"required\":[\"to\",\"subject\",\"body\"],\"type\":\"object\"},\"name\"\
+          :\"send_internal_email\"},{\"annotations\":{\"destructiveHint\":false,\"\
+          idempotentHint\":false,\"openWorldHint\":false,\"readOnlyHint\":false},\"\
+          description\":\"Creates a Gmail draft while deterministically rejecting\
+          \ any external recipient domain.\",\"inputSchema\":{\"properties\":{\"bcc\"\
+          :{\"description\":\"Optional internal BCC email addresses.\",\"items\":{\"\
+          type\":\"string\"},\"type\":\"array\"},\"body\":{\"description\":\"Draft\
+          \ email body.\",\"type\":\"string\"},\"cc\":{\"description\":\"Optional\
+          \ internal CC email addresses.\",\"items\":{\"type\":\"string\"},\"type\"\
+          :\"array\"},\"subject\":{\"description\":\"Draft email subject line.\",\"\
+          type\":\"string\"},\"to\":{\"description\":\"Optional internal recipient\
+          \ email addresses.\",\"items\":{\"type\":\"string\"},\"type\":\"array\"\
+          }},\"required\":[\"subject\",\"body\"],\"type\":\"object\"},\"name\":\"\
+          create_email_draft\"},{\"annotations\":{\"destructiveHint\":true,\"idempotentHint\"\
+          :false,\"openWorldHint\":false,\"readOnlyHint\":false},\"description\":\"\
+          Creates a Google Calendar event on the caller's primary calendar, allowing\
+          \ only internal corporate attendee domains.\",\"inputSchema\":{\"properties\"\
+          :{\"attendees\":{\"description\":\"Optional internal attendee email addresses.\"\
+          ,\"items\":{\"type\":\"string\"},\"type\":\"array\"},\"description\":{\"\
+          description\":\"Optional event description.\",\"type\":\"string\"},\"end_time\"\
+          :{\"description\":\"RFC-3339 end timestamp (for example, 2026-11-17T15:30:00Z).\"\
+          ,\"type\":\"string\"},\"start_time\":{\"description\":\"RFC-3339 start timestamp\
+          \ (for example, 2026-11-17T15:00:00Z).\",\"type\":\"string\"},\"summary\"\
+          :{\"description\":\"Calendar event title.\",\"type\":\"string\"}},\"required\"\
+          :[\"summary\",\"start_time\",\"end_time\"],\"type\":\"object\"},\"name\"\
+          :\"create_internal_calendar_event\"}]}"
+        type: TOOL_SPEC
+    project: test-gf-geap-0
+    service_id: workspace-mcp-proxy
+    timeouts:
+  google_compute_network_attachment.agw_network_attachment:
+    connection_preference: ACCEPT_MANUAL
+    deletion_policy: DELETE
+    description:
+    name: agw-geap
+    producer_accept_lists:
+      - test-gf-geap-0
+    producer_reject_lists:
+    project: test-gf-geap-0
+    region: us-central1
+    subnetworks:
+      - projects/test-gf-geap-hp-0/regions/us-central1/subnetworks/sub-0
+    timeouts:
+  google_discovery_engine_acl_config.default[0]:
+    idp_config:
+      - external_idp_config:
+          - workforce_pool_name: locations/global/workforcePools/corp-sso-pool
+        idp_type: THIRD_PARTY
+    location: us
+    project: test-gf-geap-0
+    timeouts:
+  google_discovery_engine_assistant.default["ge-app-prod"]:
+    assistant_id: default_assistant
+    collection_id: default_collection
+    customer_policy:
+      - banned_phrases: []
+        model_armor_config:
+          - failure_mode: FAIL_CLOSED
+    default_web_grounding_toggle_off:
+    deletion_policy: ABANDON
+    description:
+    display_name: Default Assistant
+    engine_id: ge-app-prod
+    generation_config: []
+    location: us
+    project: test-gf-geap-0
+    timeouts:
+    web_grounding_type: WEB_GROUNDING_TYPE_DISABLED
+  google_discovery_engine_assistant.default["ge-app-validation"]:
+    assistant_id: default_assistant
+    collection_id: default_collection
+    customer_policy:
+      - banned_phrases: []
+        model_armor_config:
+          - failure_mode: FAIL_CLOSED
+    default_web_grounding_toggle_off:
+    deletion_policy: ABANDON
+    description:
+    display_name: Default Assistant
+    engine_id: ge-app-validation
+    generation_config: []
+    location: us
+    project: test-gf-geap-0
+    timeouts:
+    web_grounding_type: WEB_GROUNDING_TYPE_DISABLED
+  google_discovery_engine_data_connector.default["google-calendar"]:
+    action_config: []
+    auto_run_disabled: true
+    bap_config: []
+    collection_display_name: Google Calendar (Read-Only Federated)
+    collection_id: google-calendar
+    connector_modes:
+      - FEDERATED
+    data_source: google_calendar
+    deletion_policy: PREVENT
+    destination_configs: []
+    entities:
+      - entity_name: google_calendar
+        params:
+    incremental_refresh_interval:
+    incremental_sync_disabled:
+    json_params: '{}'
+    kms_key_name: projects/test-gf-geap-0/locations/us/keyRings/ge-ring/cryptoKeys/ge-key
+    location: us
+    params:
+    project: test-gf-geap-0
+    refresh_interval: 0s
+    static_ip_enabled: false
+    sync_mode:
+    tag: google-calendar
+    timeouts:
+  google_discovery_engine_data_connector.default["google-drive"]:
+    action_config: []
+    auto_run_disabled: true
+    bap_config: []
+    collection_display_name: Google Drive (Read-Only Federated)
+    collection_id: google-drive
+    connector_modes:
+      - FEDERATED
+    data_source: google_drive
+    deletion_policy: PREVENT
+    destination_configs: []
+    entities:
+      - entity_name: google_drive
+        params:
+    incremental_refresh_interval:
+    incremental_sync_disabled:
+    json_params: '{}'
+    kms_key_name: projects/test-gf-geap-0/locations/us/keyRings/ge-ring/cryptoKeys/ge-key
+    location: us
+    params:
+    project: test-gf-geap-0
+    refresh_interval: 0s
+    static_ip_enabled: false
+    sync_mode:
+    tag: google-drive
+    timeouts:
+  google_discovery_engine_data_connector.default["google-mail"]:
+    action_config: []
+    auto_run_disabled: true
+    bap_config: []
+    collection_display_name: Gmail (Read-Only Federated)
+    collection_id: google-mail
+    connector_modes:
+      - FEDERATED
+    data_source: google_mail
+    deletion_policy: PREVENT
+    destination_configs: []
+    entities:
+      - entity_name: google_mail
+        params:
+    incremental_refresh_interval:
+    incremental_sync_disabled:
+    json_params: '{}'
+    kms_key_name: projects/test-gf-geap-0/locations/us/keyRings/ge-ring/cryptoKeys/ge-key
+    location: us
+    params:
+    project: test-gf-geap-0
+    refresh_interval: 0s
+    static_ip_enabled: false
+    sync_mode:
+    tag: google-mail
+    timeouts:
+  google_discovery_engine_data_connector.mcp["workspace-mcp-proxy/ge-app-prod"]:
+    action_config:
+      - create_bap_connection: true
+    auto_run_disabled:
+    bap_config: []
+    collection_display_name: Workspace+Domain-Guardrail+MCP+Proxy
+    collection_id: workspace-mcp-proxy-ge-app-prod
+    connector_modes:
+      - FEDERATED
+    data_source: custom_mcp
+    deletion_policy: PREVENT
+    destination_configs: []
+    entities:
+      - entity_name: mcp_data
+        params:
+    incremental_refresh_interval:
+    incremental_sync_disabled:
+    json_params:
+    kms_key_name:
+    location: us
+    params:
+      oauth_access_token: none
+    project: test-gf-geap-0
+    refresh_interval: 86400s
+    static_ip_enabled: false
+    sync_mode:
+    tag: workspace-mcp-proxy-ge-app-prod
+    timeouts:
+  google_discovery_engine_data_connector.mcp["workspace-mcp-proxy/ge-app-validation"]:
+    action_config:
+      - create_bap_connection: true
+    auto_run_disabled:
+    bap_config: []
+    collection_display_name: Workspace+Domain-Guardrail+MCP+Proxy
+    collection_id: workspace-mcp-proxy-ge-app-validation
+    connector_modes:
+      - FEDERATED
+    data_source: custom_mcp
+    deletion_policy: PREVENT
+    destination_configs: []
+    entities:
+      - entity_name: mcp_data
+        params:
+    incremental_refresh_interval:
+    incremental_sync_disabled:
+    json_params:
+    kms_key_name:
+    location: us
+    params:
+      oauth_access_token: none
+    project: test-gf-geap-0
+    refresh_interval: 86400s
+    static_ip_enabled: false
+    sync_mode:
+    tag: workspace-mcp-proxy-ge-app-validation
+    timeouts:
+  google_discovery_engine_data_store.companion["ge-app-prod"]:
+    acl_enabled:
+    content_config: NO_CONTENT
+    create_advanced_site_search: false
+    data_store_id: ge-app-prod-companion
+    deletion_policy: DELETE
+    display_name: Gemini Enterprise Production-companion
+    document_processing_config: []
+    industry_vertical: GENERIC
+    kms_key_name:
+    location: us
+    project: test-gf-geap-0
+    skip_default_schema_creation: false
+    solution_types:
+      - SOLUTION_TYPE_SEARCH
+    timeouts:
+  google_discovery_engine_data_store.companion["ge-app-validation"]:
+    acl_enabled:
+    content_config: NO_CONTENT
+    create_advanced_site_search: false
+    data_store_id: ge-app-validation-companion
+    deletion_policy: DELETE
+    display_name: Gemini Enterprise Validation-companion
+    document_processing_config: []
+    industry_vertical: GENERIC
+    kms_key_name:
+    location: us
+    project: test-gf-geap-0
+    skip_default_schema_creation: false
+    solution_types:
+      - SOLUTION_TYPE_SEARCH
+    timeouts:
+  google_discovery_engine_search_engine.default["ge-app-prod"]:
+    app_type: APP_TYPE_INTRANET
+    collection_id: default_collection
+    common_config: []
+    data_store_ids: []
+    deletion_policy: PREVENT
+    disable_analytics:
+    display_name: Gemini Enterprise Production
+    engine_id: ge-app-prod
+    features:
+      agent-gallery: FEATURE_STATE_ON
+      agent-sharing-without-admin-approval: FEATURE_STATE_OFF
+      enable-end-user-sharing-with-groups: FEATURE_STATE_OFF
+      model-selector: FEATURE_STATE_ON
+      workflow-agents: FEATURE_STATE_ON
+    industry_vertical: GENERIC
+    kms_key_name:
+    knowledge_graph_config:
+      - cloud_knowledge_graph_types: []
+        enable_cloud_knowledge_graph: false
+        enable_private_knowledge_graph: true
+        feature_config: []
+    location: us
+    procurement_contact_emails:
+    project: test-gf-geap-0
+    search_engine_config:
+      - required_subscription_tier: SUBSCRIPTION_TIER_SEARCH_AND_ASSISTANT
+        search_add_ons:
+          - SEARCH_ADD_ON_LLM
+        search_tier: SEARCH_TIER_ENTERPRISE
+    timeouts:
+  google_discovery_engine_search_engine.default["ge-app-validation"]:
+    app_type: APP_TYPE_INTRANET
+    collection_id: default_collection
+    common_config: []
+    data_store_ids: []
+    deletion_policy: PREVENT
+    disable_analytics:
+    display_name: Gemini Enterprise Validation
+    engine_id: ge-app-validation
+    industry_vertical: GENERIC
+    kms_key_name:
+    knowledge_graph_config:
+      - cloud_knowledge_graph_types: []
+        enable_cloud_knowledge_graph: false
+        enable_private_knowledge_graph: false
+        feature_config: []
+    location: us
+    procurement_contact_emails:
+    project: test-gf-geap-0
+    search_engine_config:
+      - required_subscription_tier: SUBSCRIPTION_TIER_SEARCH_AND_ASSISTANT
+        search_add_ons:
+          - SEARCH_ADD_ON_LLM
+        search_tier: SEARCH_TIER_ENTERPRISE
+    timeouts:
+  google_discovery_engine_search_engine_iam_binding.default["ge-app-prod roles/discoveryengine.agentspaceUser"]:
+    collection_id: default_collection
+    condition: []
+    engine_id: ge-app-prod
+    location: us
+    members:
+      - group:workforce@example.com
+    project: test-gf-geap-0
+    role: roles/discoveryengine.agentspaceUser
+  google_discovery_engine_search_engine_iam_binding.default["ge-app-validation roles/discoveryengine.agentspaceUser"]:
+    collection_id: default_collection
+    condition: []
+    engine_id: ge-app-validation
+    location: us
+    members:
+      - group:ai-security-validators@example.com
+    project: test-gf-geap-0
+    role: roles/discoveryengine.agentspaceUser
+  google_model_armor_floorsetting.floorsetting[0]:
+    ai_platform_floor_setting:
+      - enable_cloud_logging: true
+        inspect_and_block: true
+        inspect_only:
+    enable_floor_setting_enforcement: true
+    filter_config:
+      - malicious_uri_filter_settings:
+          - filter_enforcement: ENABLED
+        pi_and_jailbreak_filter_settings:
+          - confidence_level: HIGH
+            filter_enforcement: ENABLED
+        rai_settings:
+          - rai_filters:
+              - confidence_level: HIGH
+                filter_type: DANGEROUS
+              - confidence_level: HIGH
+                filter_type: HARASSMENT
+              - confidence_level: HIGH
+                filter_type: HATE_SPEECH
+              - confidence_level: HIGH
+                filter_type: SEXUALLY_EXPLICIT
+        sdp_settings:
+          - advanced_config: []
+            basic_config:
+              - filter_enforcement: ENABLED
+    floor_setting_metadata:
+      - multi_language_detection:
+          - enable_multi_language_detection: true
+    google_mcp_server_floor_setting: []
+    integrated_services:
+      - AI_PLATFORM
+    location: global
+    parent: projects/test-gf-geap-0
+    timeouts:
+  google_model_armor_template.default["ge-to-user"]:
+    deletion_policy: PREVENT
+    effective_labels:
+      goog-terraform-provisioned: 'true'
+    filter_config:
+      - filter_rule_settings: []
+        malicious_uri_filter_settings:
+          - filter_enforcement: ENABLED
+        pi_and_jailbreak_filter_settings:
+          - confidence_level: MEDIUM_AND_ABOVE
+            filter_enforcement: ENABLED
+        rai_settings:
+          - rai_filters:
+              - confidence_level: LOW_AND_ABOVE
+                filter_type: DANGEROUS
+              - confidence_level: LOW_AND_ABOVE
+                filter_type: HARASSMENT
+              - confidence_level: LOW_AND_ABOVE
+                filter_type: HATE_SPEECH
+              - confidence_level: LOW_AND_ABOVE
+                filter_type: SEXUALLY_EXPLICIT
+        sdp_settings:
+          - advanced_config: []
+            basic_config:
+              - filter_enforcement: ENABLED
+    labels:
+    location: us
+    project: test-gf-geap-0
+    template_id: ge-to-user
+    template_metadata:
+      - custom_llm_response_safety_error_code: 401
+        custom_llm_response_safety_error_message: This is a custom error message for
+          LLM response
+        custom_prompt_safety_error_code: 400
+        custom_prompt_safety_error_message: This is a custom error message for prompt
+        enforcement_type: INSPECT_AND_BLOCK
+        filter_version_selector:
+          - alias: FILTER_VERSION_ALIAS_STABLE
+            version:
+        ignore_partial_invocation_failures: false
+        log_sanitize_operations: true
+        log_template_operations: true
+        modalities:
+        multi_language_detection:
+          - enable_multi_language_detection: true
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
+    timeouts:
+  google_model_armor_template.default["user-to-ge"]:
+    deletion_policy: PREVENT
+    effective_labels:
+      goog-terraform-provisioned: 'true'
+    filter_config:
+      - filter_rule_settings: []
+        malicious_uri_filter_settings:
+          - filter_enforcement: ENABLED
+        pi_and_jailbreak_filter_settings:
+          - confidence_level: MEDIUM_AND_ABOVE
+            filter_enforcement: ENABLED
+        rai_settings:
+          - rai_filters:
+              - confidence_level: LOW_AND_ABOVE
+                filter_type: DANGEROUS
+              - confidence_level: LOW_AND_ABOVE
+                filter_type: HARASSMENT
+              - confidence_level: LOW_AND_ABOVE
+                filter_type: HATE_SPEECH
+              - confidence_level: LOW_AND_ABOVE
+                filter_type: SEXUALLY_EXPLICIT
+        sdp_settings:
+          - advanced_config: []
+            basic_config:
+              - filter_enforcement: ENABLED
+    labels:
+    location: us
+    project: test-gf-geap-0
+    template_id: user-to-ge
+    template_metadata:
+      - custom_llm_response_safety_error_code: 401
+        custom_llm_response_safety_error_message: This is a custom error message for
+          LLM response
+        custom_prompt_safety_error_code: 400
+        custom_prompt_safety_error_message: This is a custom error message for prompt
+        enforcement_type: INSPECT_AND_BLOCK
+        filter_version_selector:
+          - alias: FILTER_VERSION_ALIAS_STABLE
+            version:
+        ignore_partial_invocation_failures: false
+        log_sanitize_operations: true
+        log_template_operations: true
+        modalities:
+        multi_language_detection:
+          - enable_multi_language_detection: true
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
+    timeouts:
+  google_project_iam_member.agentspace_restricted_user["group:ai-security-validators@example.com"]:
+    condition: []
+    member: group:ai-security-validators@example.com
+    project: test-gf-geap-0
+    role: roles/discoveryengine.agentspaceRestrictedUser
+  google_project_iam_member.agentspace_restricted_user["group:workforce@example.com"]:
+    condition: []
+    member: group:workforce@example.com
+    project: test-gf-geap-0
+    role: roles/discoveryengine.agentspaceRestrictedUser
+  module.agent_gateway_egress.google_iam_project_access_policy.default["agw-geap"]:
+    access_policy_id: agw-geap
+    annotations:
+    deletion_policy: DELETE
+    details:
+      - rules:
+          - description: Allow governed agents and apps to invoke the internal-domain
+              Workspace MCP proxy.
+            effect: ALLOW
+            excluded_principals: []
+            operation:
+              - excluded_permissions: []
+                permissions:
+                  - iap.googleapis.com/resources.egressViaIAP
+            principals:
+              - principal://goog/subject/user@example.com
+    display_name:
+    location: global
+    project: test-gf-geap-0
+    timeouts:
+  module.agent_gateway_egress.google_iam_projects_policy_binding.default["agw-geap"]:
+    annotations:
+    condition: []
+    deletion_policy: DELETE
+    display_name:
+    location: global
+    policy: projects/test-gf-geap-0/locations/global/accessPolicies/agw-geap
+    policy_binding_id: agw-geap
+    policy_kind: ACCESS
+    project: test-gf-geap-0
+    target:
+      - principal_set:
+        resource: //cloudresourcemanager.googleapis.com/projects/test-gf-geap-0
+    timeouts:
+  module.agent_gateway_egress.google_network_security_authz_policy.iap[0]:
+    action: CUSTOM
+    custom_provider:
+      - authz_extension:
+          - {}
+        cloud_iap: []
+    deletion_policy: DELETE
+    description:
+    effective_labels:
+      goog-terraform-provisioned: 'true'
+    http_rules: []
+    labels:
+    location: us-central1
+    name: agw-geap-iap
+    network_rules: []
+    policy_profile: REQUEST_AUTHZ
+    project: test-gf-geap-0
+    target:
+      - load_balancing_scheme:
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
+    timeouts:
+  module.agent_gateway_egress.google_network_services_agent_connectivity_template.default[0]:
+    access_path: AGENT_TO_ANYWHERE
+    access_types:
+      - PRIVATE
+    agent_compute:
+    agent_connectivity_template_id: agw-geap
+    deletion_policy: DELETE
+    deployment_model:
+    description: Terraform managed.
+    effective_labels:
+      goog-terraform-provisioned: 'true'
+    egress_network_config:
+      - dns_peering_config: []
+        tls_config: []
+        vpc_egress: ALL_TRAFFIC
+    labels:
+    location: us-central1
+    project: test-gf-geap-0
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
+    timeouts:
+  module.agent_gateway_egress.google_network_services_agent_gateway.default:
+    agent_connectivity_template: projects/1234567890/locations/us-central1/agentConnectivityTemplates/agw-geap
+    deletion_policy: DELETE
+    description: Terraform managed.
+    effective_labels:
+      goog-terraform-provisioned: 'true'
+    google_managed:
+      - governed_access_path: AGENT_TO_ANYWHERE
+    labels:
+    location: us-central1
+    name: agw-geap
+    network_config: []
+    project: test-gf-geap-0
+    protocols:
+    registries:
+      - //agentregistry.googleapis.com/projects/test-gf-geap-0/locations/us-central1
+    self_managed: []
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
+    timeouts:
+  module.agent_gateway_egress.google_network_services_authz_extension.iap[0]:
+    authority:
+    deletion_policy: DELETE
+    description:
+    effective_labels:
+      goog-terraform-provisioned: 'true'
+    fail_open: true
+    forward_attributes:
+    forward_headers:
+    labels:
+    load_balancing_scheme:
+    location: us-central1
+    metadata:
+      iapPolicyVersion: V2
+    name: agw-geap-iap
+    project: test-gf-geap-0
+    service: iap.googleapis.com
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
+    timeout: 2s
+    timeouts:
+  module.workspace_mcp_proxy[0].google_cloud_run_v2_service.service_unmanaged[0]:
+    annotations:
+    binary_authorization: []
+    build_config: []
+    client:
+    client_version:
+    custom_audiences:
+    default_uri_disabled:
+    deletion_policy: DELETE
+    deletion_protection: true
+    description:
+    effective_labels:
+      goog-terraform-provisioned: 'true'
+    iap_enabled: false
+    ingress: INGRESS_TRAFFIC_INTERNAL_ONLY
+    invoker_iam_disabled: false
+    labels:
+    location: us-central1
+    multi_region_settings: []
+    name: agw-geap-ws-mcp-proxy
+    project: test-gf-geap-0
+    ssh_enabled:
+    tags:
+    template:
+      - annotations:
+        containers:
+          - args:
+            base_image_uri:
+            command:
+            depends_on:
+            env:
+              - name: ALLOWED_RECIPIENT_DOMAINS
+                value: example.com
+                value_source: []
+              - name: AUTOMATED_SEND_SELF_ONLY
+                value: 'true'
+                value_source: []
+              - name: ENABLE_AUTOMATED_INTERNAL_SEND_TOOL
+                value: 'false'
+                value_source: []
+            image: us-docker.pkg.dev/cloudrun/container/hello
+            liveness_probe: []
+            name: proxy
+            ports:
+              - container_port: 8080
+                name: http1
+            readiness_probe: []
+            sandbox_launcher:
+            source_code: []
+            volume_mounts: []
+            working_dir:
+        encryption_key:
+        execution_environment: EXECUTION_ENVIRONMENT_GEN2
+        gpu_zonal_redundancy_disabled:
+        health_check_disabled:
+        labels:
+        node_selector: []
+        revision:
+        sandboxes: []
+        scaling:
+          - concurrency_utilization:
+            cpu_utilization:
+            max_instance_count: 4
+            min_instance_count: 0
+        service_account: agw-geap-ws-mcp-proxy@test-gf-geap-0.iam.gserviceaccount.com
+        service_mesh: []
+        session_affinity:
+        volumes: []
+        vpc_access:
+          - connector:
+            egress: PRIVATE_RANGES_ONLY
+            network_interfaces:
+              - network: projects/test-gf-geap-hp-0/global/networks/net-0
+                subnetwork: projects/test-gf-geap-hp-0/regions/us-central1/subnetworks/sub-0
+                tags:
+        workload_identity_config: []
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
+    timeouts:
+  module.workspace_mcp_proxy[0].google_cloud_run_v2_service_iam_binding.binding["roles/run.invoker"]:
+    condition: []
+    members:
+      - serviceAccount:service-1234567890@gcp-sa-dep.iam.gserviceaccount.com
+      - serviceAccount:service-1234567890@gcp-sa-discoveryengine.iam.gserviceaccount.com
+    role: roles/run.invoker
+  module.workspace_mcp_proxy[0].google_project_iam_member.default["roles/logging.logWriter"]:
+    condition: []
+    member: serviceAccount:agw-geap-ws-mcp-proxy@test-gf-geap-0.iam.gserviceaccount.com
+    project: test-gf-geap-0
+    role: roles/logging.logWriter
+  module.workspace_mcp_proxy[0].google_project_iam_member.default["roles/monitoring.metricWriter"]:
+    condition: []
+    member: serviceAccount:agw-geap-ws-mcp-proxy@test-gf-geap-0.iam.gserviceaccount.com
+    project: test-gf-geap-0
+    role: roles/monitoring.metricWriter
+  module.workspace_mcp_proxy[0].google_service_account.service_account[0]:
+    account_id: agw-geap-ws-mcp-proxy
+    create_ignore_already_exists:
+    deletion_policy: DELETE
+    description:
+    disabled: false
+    display_name: agw-geap-ws-mcp-proxy
+    email: agw-geap-ws-mcp-proxy@test-gf-geap-0.iam.gserviceaccount.com
+    member: serviceAccount:agw-geap-ws-mcp-proxy@test-gf-geap-0.iam.gserviceaccount.com
+    project: test-gf-geap-0
+    timeouts:
+  terraform_data.app_agent_gateway_patch["ge-app-prod"]:
+    input:
+    output:
+    triggers_replace:
+      collection_id: default_collection
+      engine_config: ea76b364aab5b2a313584ced77dc8c007224a1a176d026fc4a4d688994a4d50e
+      engine_id: ge-app-prod
+  terraform_data.app_agent_gateway_patch["ge-app-validation"]:
+    input:
+    output:
+    triggers_replace:
+      collection_id: default_collection
+      engine_config: 74100a2d0fd13c45bcd83439a017a5a5c781c0ec475ca4916c692858795e0326
+      engine_id: ge-app-validation
+  terraform_data.app_data_stores["ge-app-prod"]:
+    input:
+    output:
+    triggers_replace:
+      collection_id: default_collection
+      data_store_ids: '["google-calendar_google_calendar","google-drive_google_drive","google-mail_google_mail","workspace-mcp-proxy-ge-app-prod_mcp_data"]'
+      engine_id: ge-app-prod
+  terraform_data.app_data_stores["ge-app-validation"]:
+    input:
+    output:
+    triggers_replace:
+      collection_id: default_collection
+      data_store_ids: '["google-calendar_google_calendar","google-drive_google_drive","google-mail_google_mail","workspace-mcp-proxy-ge-app-validation_mcp_data"]'
+      engine_id: ge-app-validation
+  terraform_data.mcp_agent_gateway_patch["workspace-mcp-proxy/ge-app-prod"]:
+    input:
+    output:
+    triggers_replace:
+      engine_app_id: ge-app-prod
+  terraform_data.mcp_agent_gateway_patch["workspace-mcp-proxy/ge-app-validation"]:
+    input:
+    output:
+    triggers_replace:
+      engine_app_id: ge-app-validation
+  terraform_data.template_metadata_patch["ge-to-user"]:
+    input:
+    output:
+    triggers_replace:
+      config: 0ca47c2b4077a75768031101f203c6648cee9fe54c1a57c9eb17b28f04fc6118
+  terraform_data.template_metadata_patch["user-to-ge"]:
+    input:
+    output:
+    triggers_replace:
+      config: 0ca47c2b4077a75768031101f203c6648cee9fe54c1a57c9eb17b28f04fc6118
+
+counts:
+  google_agent_registry_service: 1
+  google_cloud_run_v2_service: 1
+  google_cloud_run_v2_service_iam_binding: 1
+  google_compute_network_attachment: 1
+  google_discovery_engine_acl_config: 1
+  google_discovery_engine_assistant: 2
+  google_discovery_engine_data_connector: 5
+  google_discovery_engine_data_store: 2
+  google_discovery_engine_search_engine: 2
+  google_discovery_engine_search_engine_iam_binding: 2
+  google_iam_project_access_policy: 1
+  google_iam_projects_policy_binding: 1
+  google_model_armor_floorsetting: 1
+  google_model_armor_template: 2
+  google_network_security_authz_policy: 1
+  google_network_services_agent_connectivity_template: 1
+  google_network_services_agent_gateway: 1
+  google_network_services_authz_extension: 1
+  google_project_iam_member: 4
+  google_service_account: 1
+  modules: 2
+  resources: 40
+  terraform_data: 8
+
+outputs:
+  access_policy_ids: __missing__
+  agent_connectivity_template_ids:
+    egress: projects/1234567890/locations/us-central1/agentConnectivityTemplates/agw-geap
+  agent_gateway_ids: __missing__
+  agent_registry_service_names: __missing__
+  agent_registry_uris:
+    eu: //agentregistry.googleapis.com/projects/test-gf-geap-0/locations/eu
+    global: //agentregistry.googleapis.com/projects/test-gf-geap-0/locations/global
+    regional: //agentregistry.googleapis.com/projects/test-gf-geap-0/locations/us-central1
+    us: //agentregistry.googleapis.com/projects/test-gf-geap-0/locations/us
+  gemini_enterprise_antigravity_principals: []
+  gemini_enterprise_app_names: __missing__
+  gemini_enterprise_assistant_names: __missing__
+  gemini_enterprise_data_connector_names: __missing__
+  model_armor_template_names: __missing__
+  policy_binding_ids: __missing__
+  workspace_mcp_proxy_deploy_commands: "gcloud artifacts repositories create agw-geap-mcp-repo\
+    \ --repository-format=docker --location=us-central1 --project=test-gf-geap-0 ||\
+    \ true\ngcloud builds submit ./apps/workspace-mcp-proxy --tag=us-central1-docker.pkg.dev/test-gf-geap-0/agw-geap-mcp-repo/workspace-mcp-proxy:latest\
+    \ --project=test-gf-geap-0\ngcloud run services update agw-geap-ws-mcp-proxy --image=us-central1-docker.pkg.dev/test-gf-geap-0/agw-geap-mcp-repo/workspace-mcp-proxy:latest\
+    \ --region=us-central1 --project=test-gf-geap-0"
+  workspace_mcp_proxy_uri: __missing__

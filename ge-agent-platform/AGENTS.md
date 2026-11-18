@@ -39,10 +39,11 @@ The `ge-agent-platform` factory provisions an enterprise-ready **Gemini Enterpri
   - [`1-apps/agent-registry.tf`](./1-apps/agent-registry.tf)
   - [`1-apps/agent-gateway.tf`](./1-apps/agent-gateway.tf)
   - [`1-apps/agent-gateway-model-armor.tf`](./1-apps/agent-gateway-model-armor.tf)
+  - [`1-apps/workspace-mcp-proxy.tf`](./1-apps/workspace-mcp-proxy.tf) & [`1-apps/apps/workspace-mcp-proxy/`](./1-apps/apps/workspace-mcp-proxy)
   - [`1-apps/outputs.tf`](./1-apps/outputs.tf)
 - **Tests** ([`tests/ge_agent_platform/`](../tests/ge_agent_platform)):
   - `0_prereqs`: `simple`, `no_host_prj`
-  - `1_apps`: `simple`, `gemini_enterprise`, `iam`, `model_armor`
+  - `1_apps`: `simple`, `gemini_enterprise`, `iam`, `model_armor`, `workspace_mcp_proxy`
 
 ## Testing & Inventory Regeneration
 

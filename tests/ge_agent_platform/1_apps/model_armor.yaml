@@ -67,7 +67,8 @@ values:
     effective_labels:
       goog-terraform-provisioned: 'true'
     filter_config:
-      - malicious_uri_filter_settings:
+      - filter_rule_settings: []
+        malicious_uri_filter_settings:
           - filter_enforcement: ENABLED
         pi_and_jailbreak_filter_settings:
           - confidence_level: MEDIUM_AND_ABOVE
@@ -103,6 +104,7 @@ values:
         ignore_partial_invocation_failures: false
         log_sanitize_operations: true
         log_template_operations: true
+        modalities:
         multi_language_detection:
           - enable_multi_language_detection: true
     terraform_labels:
@@ -113,7 +115,8 @@ values:
     effective_labels:
       goog-terraform-provisioned: 'true'
     filter_config:
-      - malicious_uri_filter_settings:
+      - filter_rule_settings: []
+        malicious_uri_filter_settings:
           - filter_enforcement: ENABLED
         pi_and_jailbreak_filter_settings:
           - confidence_level: MEDIUM_AND_ABOVE
@@ -149,6 +152,7 @@ values:
         ignore_partial_invocation_failures: false
         log_sanitize_operations: true
         log_template_operations: true
+        modalities:
         multi_language_detection:
           - enable_multi_language_detection: true
     terraform_labels:
@@ -218,8 +222,10 @@ values:
     access_types:
       - PRIVATE
       - PUBLIC
+    agent_compute:
     agent_connectivity_template_id: agw-geap
     deletion_policy: DELETE
+    deployment_model:
     description: Terraform managed.
     effective_labels:
       goog-terraform-provisioned: 'true'
@@ -337,3 +343,5 @@ outputs:
   gemini_enterprise_data_connector_names: {}
   model_armor_template_names: __missing__
   policy_binding_ids: {}
+  workspace_mcp_proxy_deploy_commands:
+  workspace_mcp_proxy_uri:

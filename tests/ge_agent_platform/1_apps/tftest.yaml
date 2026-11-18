@@ -20,3 +20,4 @@ tests:
   iam:
   model_armor:
   gemini_enterprise:
+  workspace_mcp_proxy:

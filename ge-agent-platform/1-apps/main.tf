@@ -74,7 +74,7 @@ locals {
   # segment of 'registry_resource'. Reading it back from the resource
   # also orders the access policy after the registration.
   _svc_ids = {
-    for k, v in var.agent_registry_services : k => {
+    for k, v in local.all_agent_registry_services : k => {
       agent_id      = v.type == "agent" ? local._svc_registry_ids[k] : null
       endpoint_id   = v.type == "endpoint" ? local._svc_registry_ids[k] : null
       mcp_server_id = v.type == "mcp_server" ? local._svc_registry_ids[k] : null
@@ -82,7 +82,7 @@ locals {
   }
 
   _svc_registry_ids = {
-    for k, v in var.agent_registry_services : k => basename(
+    for k, v in local.all_agent_registry_services : k => basename(
       google_agent_registry_service.agent_registry_services[k].registry_resource
     )
   }
@@ -131,12 +131,17 @@ locals {
     us       = "${local._agent_registry_uri_prefix}/us"
   }
 
+  all_agent_registry_services = merge(
+    var.agent_registry_services,
+    local.workspace_mcp_proxy_registry_entry
+  )
+
   # Derive the spec type from the service type and the presence of
   # spec content, so that the spec blocks in the resource can be
   # driven by a uniform object. If content is a path to an existing
   # file, load it; otherwise treat it as an inline JSON string.
   agent_registry_services = {
-    for k, v in var.agent_registry_services : k => merge(v, {
+    for k, v in local.all_agent_registry_services : k => merge(v, {
       content = v.content == null ? null : (
         fileexists("${path.module}/${v.content}")
         ? file("${path.module}/${v.content}")

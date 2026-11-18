@@ -73,7 +73,7 @@ output "gemini_enterprise_data_connector_names" {
       id => dc.name
     },
     {
-      for service_id, s in var.agent_registry_services : service_id => {
+      for service_id, s in local.all_agent_registry_services : service_id => {
         for app_id in toset(coalesce(s.agent_gateway_app_ids, [])) :
         app_id => google_discovery_engine_data_connector.mcp["${service_id}/${app_id}"].name
         if contains(keys(google_discovery_engine_data_connector.mcp), "${service_id}/${app_id}")
@@ -94,4 +94,18 @@ output "model_armor_template_names" {
 output "policy_binding_ids" {
   description = "The IAM v3 Policy Binding resource names, keyed by policy id."
   value       = module.agent_gateway_egress.policy_binding_ids
+}
+
+output "workspace_mcp_proxy_deploy_commands" {
+  description = "Commands to build and deploy the Workspace internal-domain MCP proxy image to Cloud Run."
+  value = !var.workspace_mcp_proxy_config.enable ? null : join("\n", [
+    "gcloud artifacts repositories create ${var.name}-mcp-repo --repository-format=docker --location=${var.region} --project=${var.project_id} || true",
+    "gcloud builds submit ./apps/workspace-mcp-proxy --tag=${var.region}-docker.pkg.dev/${var.project_id}/${var.name}-mcp-repo/workspace-mcp-proxy:latest --project=${var.project_id}",
+    "gcloud run services update ${var.name}-ws-mcp-proxy --image=${var.region}-docker.pkg.dev/${var.project_id}/${var.name}-mcp-repo/workspace-mcp-proxy:latest --region=${var.region} --project=${var.project_id}",
+  ])
+}
+
+output "workspace_mcp_proxy_uri" {
+  description = "The Cloud Run URI of the Workspace internal-domain MCP proxy when enabled."
+  value       = try("${module.workspace_mcp_proxy[0].service.uri}/mcp", null)
 }

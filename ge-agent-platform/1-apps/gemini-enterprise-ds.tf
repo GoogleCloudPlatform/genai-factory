@@ -16,7 +16,7 @@
 
 locals {
   gemini_enterprise_mcp_data_connectors = merge([
-    for service_id, s in var.agent_registry_services : {
+    for service_id, s in local.all_agent_registry_services : {
       for app_id in toset(coalesce(s.agent_gateway_app_ids, [])) :
       "${service_id}/${app_id}" => merge(s, {
         app_id        = app_id

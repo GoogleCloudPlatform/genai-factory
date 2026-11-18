@@ -1,0 +1,144 @@
+{
+  "tools": [
+    {
+      "name": "send_internal_email",
+      "description": "Sends a Gmail message strictly to allowlisted internal corporate domains after Human-in-the-Loop confirmation.",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Recipient email addresses inside the allowed corporate domain."
+          },
+          "subject": {
+            "type": "string",
+            "description": "Email subject line."
+          },
+          "body": {
+            "type": "string",
+            "description": "Plain-text email body."
+          },
+          "cc": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional CC email addresses inside the allowed corporate domain."
+          },
+          "bcc": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional BCC email addresses inside the allowed corporate domain."
+          }
+        },
+        "required": [
+          "to",
+          "subject",
+          "body"
+        ]
+      }
+    },
+    {
+      "name": "create_email_draft",
+      "description": "Creates a Gmail draft while deterministically rejecting any external recipient domain.",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "subject": {
+            "type": "string",
+            "description": "Draft email subject line."
+          },
+          "body": {
+            "type": "string",
+            "description": "Draft email body."
+          },
+          "to": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional internal recipient email addresses."
+          },
+          "cc": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional internal CC email addresses."
+          },
+          "bcc": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional internal BCC email addresses."
+          }
+        },
+        "required": [
+          "subject",
+          "body"
+        ]
+      }
+    },
+    {
+      "name": "create_internal_calendar_event",
+      "description": "Creates a Google Calendar event on the caller's primary calendar, allowing only internal corporate attendee domains.",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "summary": {
+            "type": "string",
+            "description": "Calendar event title."
+          },
+          "start_time": {
+            "type": "string",
+            "description": "RFC-3339 start timestamp (for example, 2026-11-17T15:00:00Z)."
+          },
+          "end_time": {
+            "type": "string",
+            "description": "RFC-3339 end timestamp (for example, 2026-11-17T15:30:00Z)."
+          },
+          "attendees": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional internal attendee email addresses."
+          },
+          "description": {
+            "type": "string",
+            "description": "Optional event description."
+          }
+        },
+        "required": [
+          "summary",
+          "start_time",
+          "end_time"
+        ]
+      }
+    }
+  ]
+}

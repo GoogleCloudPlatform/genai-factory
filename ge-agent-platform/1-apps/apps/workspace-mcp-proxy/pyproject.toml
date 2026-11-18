@@ -1,0 +1,26 @@
+[project]
+name = "workspace-mcp-proxy"
+version = "0.1.0"
+description = "Domain-allowlisted Google Workspace MCP proxy and ADK callback guardrail."
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "fastmcp>=2.13.1",
+    "httpx>=0.28.1",
+    "pydantic>=2.10.0",
+]
+
+[dependency-groups]
+test = [
+    "pytest>=9.0.0",
+    "pytest-asyncio>=0.25.0",
+]
+
+[tool.pytest.ini_options]
+addopts = "--tb=short"
+asyncio_default_fixture_loop_scope = "function"
+pythonpath = ["."]
+
+[[tool.uv.index]]
+url = "https://pypi.org/simple"
+default = true

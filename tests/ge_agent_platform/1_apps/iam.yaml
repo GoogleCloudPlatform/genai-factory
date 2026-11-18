@@ -199,8 +199,10 @@ values:
     access_path: AGENT_TO_ANYWHERE
     access_types:
       - PRIVATE
+    agent_compute:
     agent_connectivity_template_id: agw-geap
     deletion_policy: DELETE
+    deployment_model:
     description: Terraform managed.
     effective_labels:
       goog-terraform-provisioned: 'true'
@@ -286,3 +288,5 @@ outputs:
   gemini_enterprise_data_connector_names: {}
   model_armor_template_names: {}
   policy_binding_ids: __missing__
+  workspace_mcp_proxy_deploy_commands:
+  workspace_mcp_proxy_uri:
