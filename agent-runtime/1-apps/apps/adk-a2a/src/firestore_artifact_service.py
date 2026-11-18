@@ -12,13 +12,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import hashlib
 import time
 from typing import Optional, Union, Any
+import urllib.parse
 
 from google.cloud import firestore
 from google.adk.artifacts import BaseArtifactService
 from google.adk.artifacts.base_artifact_service import ArtifactVersion
 from google.genai import types
+
+
+def _encode_key_part(value: str, field_name: str) -> str:
+  if not isinstance(value, str) or not value.strip():
+    raise ValueError(f"{field_name} must be a non-empty string.")
+  return urllib.parse.quote(value, safe="")
 
 
 class FirestoreArtifactService(BaseArtifactService):
@@ -46,8 +54,16 @@ class FirestoreArtifactService(BaseArtifactService):
 
   def _get_doc_ref(self, app_name: str, user_id: str, session_id: Optional[str],
                    filename: str):
-    sid = session_id if session_id else "user_scoped"
-    doc_id = f"{app_name}_{user_id}_{sid}_{filename}"
+    scope_part = (f"s:{_encode_key_part(session_id, 'session_id')}"
+                  if session_id is not None else "u")
+    encoded = ":".join((
+        _encode_key_part(app_name, "app_name"),
+        _encode_key_part(user_id, "user_id"),
+        scope_part,
+        _encode_key_part(filename, "filename"),
+    ))
+    doc_id = (hashlib.sha256(encoded.encode("utf-8")).hexdigest() if len(
+        encoded.encode("utf-8")) > 500 else encoded)
     return self.db.collection(self.collection_name).document(doc_id)
 
   async def save_artifact(
