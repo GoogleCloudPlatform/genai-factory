@@ -62,8 +62,8 @@ MODEL_CONFIG = types.GenerateContentConfig(
 )
 
 
-def _is_blocked_by_model_armor(text: str) -> bool:
-  """Calls Model Armor API to inspect text if a template is configured."""
+def _is_prompt_blocked_by_model_armor(text: str) -> bool:
+  """Calls Model Armor API to inspect a user prompt if configured."""
   if not config.MODEL_ARMOR_TEMPLATE or not text:
     return False
   sanitize_request = modelarmor_v1.SanitizeUserPromptRequest(
@@ -73,6 +73,33 @@ def _is_blocked_by_model_armor(text: str) -> bool:
   result = model_armor_client.sanitize_user_prompt(request=sanitize_request)
   return (result.sanitization_result.filter_match_state ==
           modelarmor_v1.FilterMatchState.MATCH_FOUND)
+
+
+def _is_response_blocked_by_model_armor(text: str) -> bool:
+  """Calls Model Armor API to inspect a model response if configured."""
+  if not config.MODEL_ARMOR_TEMPLATE or not text:
+    return False
+  sanitize_request = modelarmor_v1.SanitizeModelResponseRequest(
+      name=config.MODEL_ARMOR_TEMPLATE,
+      model_response_data=modelarmor_v1.DataItem(text=text),
+  )
+  result = model_armor_client.sanitize_model_response(request=sanitize_request)
+  return (result.sanitization_result.filter_match_state ==
+          modelarmor_v1.FilterMatchState.MATCH_FOUND)
+
+
+def _extract_response_inspection_text(
+    response: types.GenerateContentResponse,) -> str:
+  """Extracts all text parts across candidates for Model Armor inspection."""
+  segments: list[str] = []
+  for candidate in response.candidates or []:
+    if candidate.content and candidate.content.parts:
+      for part in candidate.content.parts:
+        if part.text:
+          segments.append(part.text)
+  if segments:
+    return "\n".join(segments)
+  return response.text or ""
 
 
 @app.get("/")
@@ -100,7 +127,7 @@ async def predict_route(request: Prompt):
                request.prompt[:100])
 
   try:
-    if _is_blocked_by_model_armor(request.prompt):
+    if _is_prompt_blocked_by_model_armor(request.prompt):
       logger.warning("User prompt was blocked by Model Armor.")
       return {
           "prompt": request.prompt,
@@ -115,13 +142,15 @@ async def predict_route(request: Prompt):
 
     # --- Process Response ---
     prediction_text = response.text
-    if prediction_text:
-      if _is_blocked_by_model_armor(prediction_text):
+    inspection_text = _extract_response_inspection_text(response)
+    if prediction_text or inspection_text:
+      if _is_response_blocked_by_model_armor(inspection_text or
+                                             prediction_text or ""):
         logger.warning("Model response was blocked by Model Armor.")
         prediction_text = "Response was blocked by Model Armor."
       else:
         logger.debug("Successfully received prediction from Vertex AI: %s",
-                     prediction_text[:100])
+                     (prediction_text or "")[:100])
     else:
       prediction_text = "Prompt was blocked by Model Armor."
       logger.warning(

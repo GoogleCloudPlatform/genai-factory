@@ -54,8 +54,8 @@ model_armor_client = modelarmor_v1.ModelArmorClient(
 )
 
 
-def _is_blocked_by_model_armor(text: str) -> bool:
-  """Calls Model Armor API to inspect text if a template is configured."""
+def _is_prompt_blocked_by_model_armor(text: str) -> bool:
+  """Calls Model Armor API to inspect a user prompt if configured."""
   if not config.MODEL_ARMOR_TEMPLATE or not text:
     return False
   sanitize_request = modelarmor_v1.SanitizeUserPromptRequest(
@@ -67,28 +67,54 @@ def _is_blocked_by_model_armor(text: str) -> bool:
           modelarmor_v1.FilterMatchState.MATCH_FOUND)
 
 
+def _is_response_blocked_by_model_armor(text: str) -> bool:
+  """Calls Model Armor API to inspect a model response if configured."""
+  if not config.MODEL_ARMOR_TEMPLATE or not text:
+    return False
+  sanitize_request = modelarmor_v1.SanitizeModelResponseRequest(
+      name=config.MODEL_ARMOR_TEMPLATE,
+      model_response_data=modelarmor_v1.DataItem(text=text),
+  )
+  result = model_armor_client.sanitize_model_response(request=sanitize_request)
+  return (result.sanitization_result.filter_match_state ==
+          modelarmor_v1.FilterMatchState.MATCH_FOUND)
+
+
 def _extract_prediction_text(predictions: Any) -> str:
-  """Extracts text from Model Garden container prediction responses."""
+  """Extracts text across all choices/items from Model Garden responses."""
   if isinstance(predictions, dict):
     choices = predictions.get("choices", [])
-    if choices and isinstance(choices[0], dict):
-      msg = choices[0].get("message", {})
-      if isinstance(msg, dict) and "content" in msg:
-        return str(msg["content"])
-      if "text" in choices[0]:
-        return str(choices[0]["text"])
+    if choices and isinstance(choices, list):
+      segments: list[str] = []
+      for choice in choices:
+        if isinstance(choice, dict):
+          msg = choice.get("message", {})
+          if isinstance(msg, dict) and msg.get("content") is not None:
+            segments.append(str(msg["content"]))
+          elif choice.get("text") is not None:
+            segments.append(str(choice["text"]))
+      if segments:
+        return "\n".join(segments)
     return str(predictions)
   if isinstance(predictions, list) and predictions:
-    first = predictions[0]
-    if isinstance(first, dict):
-      choices = first.get("choices", [])
-      if choices and isinstance(choices[0], dict):
-        msg = choices[0].get("message", {})
-        if isinstance(msg, dict) and "content" in msg:
-          return str(msg["content"])
-      if "content" in first:
-        return str(first["content"])
-    return str(first)
+    segments = []
+    for item in predictions:
+      if isinstance(item, dict):
+        choices = item.get("choices", [])
+        if choices and isinstance(choices, list):
+          for choice in choices:
+            if isinstance(choice, dict):
+              msg = choice.get("message", {})
+              if isinstance(msg, dict) and msg.get("content") is not None:
+                segments.append(str(msg["content"]))
+              elif choice.get("text") is not None:
+                segments.append(str(choice["text"]))
+          continue
+        if item.get("content") is not None:
+          segments.append(str(item["content"]))
+          continue
+      segments.append(str(item))
+    return "\n".join(s for s in segments if s)
   return ""
 
 
@@ -119,7 +145,7 @@ async def predict_route(request: Prompt):
                request.prompt[:100])
 
   try:
-    if _is_blocked_by_model_armor(request.prompt):
+    if _is_prompt_blocked_by_model_armor(request.prompt):
       logger.warning("User prompt was blocked by Model Armor.")
       return {
           "prompt": request.prompt,
@@ -145,7 +171,7 @@ async def predict_route(request: Prompt):
     # --- Process Response ---
     prediction_text = _extract_prediction_text(response.predictions)
     if prediction_text:
-      if _is_blocked_by_model_armor(prediction_text):
+      if _is_response_blocked_by_model_armor(prediction_text):
         logger.warning("Model response was blocked by Model Armor.")
         prediction_text = "Response was blocked by Model Armor."
       else:

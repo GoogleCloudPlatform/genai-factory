@@ -33,6 +33,7 @@ The `cloud-run-single` factory is the reference blueprint for deploying a single
 - **Tests** ([`tests/cloud_run_single/`](../tests/cloud_run_single)):
   - `0_prereqs`: `simple`, `no_host_prj`
   - `1_apps`: `simple`
+  - Unit tests: [`tests/cloud_run_single/test_model_armor.py`](../tests/cloud_run_single/test_model_armor.py)
 
 ## Testing & Inventory Regeneration
 
@@ -60,5 +61,7 @@ uv run yamlfix tests/cloud_run_single
 
 - **Regional Model Armor vs. Multi-Regional Vertex AI:**
   - Model Armor (`modelarmor.<region>.rep.googleapis.com`) is regional (`REGION`), whereas Gemini models (`aiplatform.<multi_region>.rep.googleapis.com`) are multi-regional (`GOOGLE_CLOUD_LOCATION`). Both require their respective regional PSC endpoints in [`0-prereqs/networking.tf`](./0-prereqs/networking.tf) when Cloud Run egress is set to `PRIVATE_RANGES_ONLY`.
+- **Model Armor Multi-Part & Directional Screening:**
+  - ADK `before_model_callback` / `after_model_callback` in [`1-apps/apps/adk/src/model_armor/model_armor.py`](./1-apps/apps/adk/src/model_armor/model_armor.py) and [`1-apps/apps/adk-a2a/src/model_armor/model_armor.py`](./1-apps/apps/adk-a2a/src/model_armor/model_armor.py) must concatenate **all** `part.text` values (including thought parts) and serialized `function_call`/`function_response` payloads across all user-role contents and response parts, use `sanitize_model_response` (`SanitizeModelResponseRequest`) for LLM outputs, and fail closed on client errors.
 - **Container Lockfiles (`uv.lock`):**
   - Each Python sample app under [`1-apps/apps/`](./1-apps/apps) uses `uv sync --frozen` in its `Dockerfile`. Whenever a `pyproject.toml` is updated, run `uv lock` in that app folder and commit the updated `uv.lock`.
