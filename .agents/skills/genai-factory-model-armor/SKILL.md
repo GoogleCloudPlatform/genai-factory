@@ -60,6 +60,11 @@ model_armor_floorsetting_config = {
 - **Assistant directions (`user-to-ge`, `ge-to-user`):** Created in `var.location` (`eu`, `us`, `global`); support `["MODALITY_TEXT", "MODALITY_IMAGE"]`.
 - **Agent Gateway directions (`agent-gateway-to-external`, `external-to-agent-gateway`):** Created in `var.region` (`europe-west1`); must use `modalities = ["MODALITY_TEXT"]`.
 
+### Pattern 3: Application-Layer Sanitization Callbacks (`google-adk` / FastAPI)
+
+- Concatenate **all** `part.text` segments (including `thought=True` parts) and JSON-serialized `function_call` / `function_response` payloads across **all** user-role contents (`role in (None, "user")`) and across all response parts before calling Model Armor—never return on the first text part.
+- Call `sanitize_user_prompt` (`SanitizeUserPromptRequest`) on inputs and `sanitize_model_response` (`SanitizeModelResponseRequest`) on model outputs, and fail closed if the Model Armor API raises an error.
+
 ## Common Mistakes
 
 | Symptom / Error | Cause | Fix |
