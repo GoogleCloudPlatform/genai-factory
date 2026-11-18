@@ -38,10 +38,11 @@ locals {
 }
 
 data "archive_file" "source" {
-  type        = "tar.gz"
-  source_dir  = var.source_config.app_path
-  output_path = "./${local.tar_gz_file_name}"
-  excludes    = ["__pycache__", "src/__pycache__", ".venv", ".DS_Store"]
+  type             = "tar.gz"
+  source_dir       = var.source_config.app_path
+  output_path      = "./${local.tar_gz_file_name}"
+  output_file_mode = "0644"
+  excludes         = ["__pycache__", "src/__pycache__", ".venv", ".DS_Store"]
 }
 
 module "agent" {
