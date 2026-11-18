@@ -37,6 +37,10 @@ curl -X GET https://$REGION-aiplatform.googleapis.com/v1beta1/$AGENT_ID/a2a/v1/t
      -H "Content-Type: application/json"
 ```
 
+## Caller identity and storage isolation
+
+`AuthenticatedCallContextBuilder` ([`src/auth.py`](./src/auth.py)) verifies the incoming `Authorization: Bearer` (Google OIDC ID token or OAuth 2.0 access token) or IAP JWT header and binds the authenticated principal to `ServerCallContext`. Both `FirestoreSessionService` and `FirestoreTaskStore` scope document keys and verify stored ownership against that authenticated principal, ignoring client-supplied `message.metadata.user_id`.
+
 ## Documentation
 
 More info on ADK can be found on the [official website](https://docs.cloud.google.com/agent-builder/agent-engine/develop/adk).
