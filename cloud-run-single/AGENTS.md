@@ -33,7 +33,7 @@ The `cloud-run-single` factory is the reference blueprint for deploying a single
 - **Tests** ([`tests/cloud_run_single/`](../tests/cloud_run_single)):
   - `0_prereqs`: `simple`, `no_host_prj`
   - `1_apps`: `simple`
-  - Unit tests: [`tests/cloud_run_single/test_model_armor.py`](../tests/cloud_run_single/test_model_armor.py)
+  - Unit tests: [`tests/cloud_run_single/test_model_armor.py`](../tests/cloud_run_single/test_model_armor.py), [`tests/cloud_run_single/test_iam_sa_scoping.py`](../tests/cloud_run_single/test_iam_sa_scoping.py)
 
 ## Testing & Inventory Regeneration
 
@@ -63,5 +63,7 @@ uv run yamlfix tests/cloud_run_single
   - Model Armor (`modelarmor.<region>.rep.googleapis.com`) is regional (`REGION`), whereas Gemini models (`aiplatform.<multi_region>.rep.googleapis.com`) are multi-regional (`GOOGLE_CLOUD_LOCATION`). Both require their respective regional PSC endpoints in [`0-prereqs/networking.tf`](./0-prereqs/networking.tf) when Cloud Run egress is set to `PRIVATE_RANGES_ONLY`.
 - **Model Armor Multi-Part & Directional Screening:**
   - ADK `before_model_callback` / `after_model_callback` in [`1-apps/apps/adk/src/model_armor/model_armor.py`](./1-apps/apps/adk/src/model_armor/model_armor.py) and [`1-apps/apps/adk-a2a/src/model_armor/model_armor.py`](./1-apps/apps/adk-a2a/src/model_armor/model_armor.py) must concatenate **all** `part.text` values (including thought parts) and serialized `function_call`/`function_response` payloads across all user-role contents and response parts, use `sanitize_model_response` (`SanitizeModelResponseRequest`) for LLM outputs, and fail closed on client errors.
+- **Least-Privilege `iam_sa_roles` Scoping on `crun-build-0`:**
+  - Always scope `roles/iam.serviceAccountUser` for `crun-build-0` to `$service_account_ids:service-01/crun-0` under `service_accounts.crun-build-0.iam_sa_roles` in [`0-prereqs/data/projects/service-01.yaml`](./0-prereqs/data/projects/service-01.yaml) (never project-wide under `iam_by_principals`), so build pipelines cannot `actAs` the administrative `iac-rw` service account.
 - **Container Lockfiles (`uv.lock`):**
   - Each Python sample app under [`1-apps/apps/`](./1-apps/apps) uses `uv sync --frozen` in its `Dockerfile`. Whenever a `pyproject.toml` is updated, run `uv lock` in that app folder and commit the updated `uv.lock`.
