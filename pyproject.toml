@@ -18,6 +18,7 @@ test = [
     "pytest-xdist>=3.7.0",
     "python-hcl2>=7.2.1",
     "pyyaml>=6.0.2",
+    "requests>=2.34.2",
     "tftest>=1.8.5",
 ]
 tools = [

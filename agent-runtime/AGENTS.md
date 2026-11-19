@@ -12,7 +12,7 @@ The `agent-runtime` factory deploys **Vertex AI Agent Engine** runtimes (ADK and
   - Stage 1 RW/RO automation service accounts and custom reasoning engine runtime service account (`sa-agent-runtime-01`).
 - **`1-apps`** ([`1-apps/README.md`](./1-apps/README.md)):
   - **Reasoning Engine (`google_vertex_ai_reasoning_engine`)** ([`1-apps/main.tf`](./1-apps/main.tf)): Deploys ADK (`1-apps/apps/adk`) or A2A (`1-apps/apps/adk-a2a`) agents using inline source archives (`inline_source[0].source_archive`) and PSC-I private egress (`psc_interface_config`).
-  - **Session & Task Storage**: Native Firestore database (`(default)`) used by the A2A agent to persist conversation sessions and tasks.
+  - **Session & Task Storage**: Native Firestore database (`var.name`, default `agent-0`) used by the ADK and A2A agents to persist conversation sessions, artifacts, memories, and tasks with per-caller document scoping.
   - **Agent Gateways & Model Armor**: Optional integration with `ge-agent-platform` Agent Gateways (`var.agent_gateway_ids`) and Model Armor templates (`var.model_armor_config`).
 
 ## Key Files & Test Cases
@@ -28,6 +28,7 @@ The `agent-runtime` factory deploys **Vertex AI Agent Engine** runtimes (ADK and
 - **Tests** ([`tests/agent_runtime/`](../tests/agent_runtime)):
   - `0_prereqs`: `simple`, `no_host_prj`
   - `1_apps`: `simple`, `a2a`, `agent_gateways`
+  - Unit tests: [`tests/agent_runtime/test_firestore_idor.py`](../tests/agent_runtime/test_firestore_idor.py)
 
 ## Testing & Inventory Regeneration
 
@@ -63,3 +64,6 @@ uv run yamlfix tests/agent_runtime
   - To target multi-regional Vertex AI models (`eu` or `us`), pass the model location via `MODEL_LOCATION` in `spec.deployment_spec.env` and set `os.environ["GOOGLE_CLOUD_LOCATION"] = MODEL_LOCATION` inside `agent.py` before initializing ADK agents.
 - **PSC-I & Regional Endpoints:**
   - Because the reasoning engine runs with PSC-I private egress, calls to `aiplatform.<multi_region>.rep.googleapis.com` and `modelarmor.<region>.rep.googleapis.com` require the regional PSC endpoints provisioned in [`0-prereqs/networking.tf`](./0-prereqs/networking.tf).
+- **Firestore Session/Task Isolation & Verified A2A Caller Identity:**
+  - `FirestoreSessionService` (in both `apps/adk` and `apps/adk-a2a`) and `FirestoreTaskStore` (`apps/adk-a2a`) namespace Firestore document IDs by `(app_name, user_id, session_id)` and `(owner_id, task_id)` and verify stored ownership fields on read/delete.
+  - Never derive `user_id` from untrusted `context.message.metadata`; [`apps/adk-a2a/src/auth.py`](./1-apps/apps/adk-a2a/src/auth.py) (`AuthenticatedCallContextBuilder`) cryptographically verifies inbound Google OIDC/OAuth2 Bearer or IAP JWT credentials and binds `ServerCallContext.user` before session or task access.

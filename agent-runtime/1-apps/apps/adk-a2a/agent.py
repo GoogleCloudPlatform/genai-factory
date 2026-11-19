@@ -23,6 +23,7 @@ import requests
 import vertexai
 from google.adk import Runner
 from google.adk.agents import LlmAgent
+from src.auth import AuthenticatedCallContextBuilder, require_authenticated_user
 from src.firestore_artifact_service import FirestoreArtifactService
 from src.firestore_memory_service import FirestoreMemoryService
 from src.firestore_session_service import FirestoreSessionService
@@ -37,6 +38,7 @@ from a2a.server.tasks import TaskUpdater
 from a2a.types import (
     AgentCard,
     AgentSkill,
+    InvalidRequestError,
     Part,
     TaskState,
     TextPart,
@@ -120,9 +122,10 @@ class CurrencyAgentExecutorWithRunner(AgentExecutor):
     if not context.message:
       return
 
-    user_id = context.message.metadata.get(
-        'user_id'
-    ) if context.message and context.message.metadata else 'a2a_user'
+    try:
+      user_id = require_authenticated_user(context.call_context)
+    except PermissionError as exc:
+      raise ServerError(error=InvalidRequestError(message=str(exc))) from exc
 
     updater = TaskUpdater(event_queue, context.task_id, context.context_id)
     if not context.current_task:
@@ -223,6 +226,8 @@ class WellKnownCardA2aAgent(A2aAgent):
 
   def set_up(self):
     super().set_up()
+    if self.a2a_rest_adapter is not None:
+      self.a2a_rest_adapter._context_builder = AuthenticatedCallContextBuilder()
     self._register_well_known_agent_card_routes()
 
   def _get_agent_card_dict(self) -> Dict[str, Any]:
