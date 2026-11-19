@@ -44,7 +44,8 @@ org_policies:
 custom_roles:
   model_garden_deployer:
     title: Model Garden deployer
-    description: Allows identities to accept Model Garden EULAs and register PSC endpoints in Service Directory.
+    description: Allows identities to accept Model Garden EULAs and register PSC endpoints
+      in Service Directory.
     permissions:
       - aiplatform.consents.update
       - servicedirectory.namespaces.create
@@ -73,7 +74,10 @@ service_accounts:
   # Cloud Run customer service account
   crun-0: {}
   # Cloud Build custom service account
-  crun-build-0: {}
+  crun-build-0:
+    iam_sa_roles:
+      $service_account_ids:service-01/crun-0:
+        - roles/iam.serviceAccountUser
 
 # Grant roles
 iam:
@@ -108,7 +112,6 @@ iam_by_principals:
   $iam_principals:service_accounts/_self_/crun-build-0:
     - roles/artifactregistry.writer
     - roles/cloudbuild.builds.editor
-    - roles/iam.serviceAccountUser
     - roles/logging.logWriter
     - roles/run.admin
     - roles/storage.admin
