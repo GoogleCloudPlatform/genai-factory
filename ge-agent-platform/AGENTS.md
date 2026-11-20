@@ -11,20 +11,13 @@ The `ge-agent-platform` factory provisions an enterprise-ready **Gemini Enterpri
   - VPC, subnet, Private Service Connect (PSC), Private Google Access, Cloud DNS response policies, and regional PSC endpoints (`0-prereqs/networking.tf`).
   - Stage 1 RW/RO automation service accounts, application service accounts, and Discovery Engine / Vertex AI / IAM v3 / Secret Manager permissions.
 - **`1-apps`** ([`1-apps/README.md`](./1-apps/README.md)):
-  - **Gemini Enterprise App & Assistant** ([`1-apps/gemini-enterprise-apps.tf`](./1-apps/gemini-enterprise-apps.tf)): `google_discovery_engine_search_engine` (`INDUSTRY_VERTICAL_GENERIC`, `SOLUTION_TYPE_SEARCH`, `APP_TYPE_INTRANET`), `google_discovery_engine_assistant` (`default_assistant`), and `google_discovery_engine_widget_config`.
-  - **Data Stores, SaaS Data Connectors & Location-Level IdP** ([`1-apps/gemini-enterprise-ds.tf`](./1-apps/gemini-enterprise-ds.tf)):
-    - Native GCP data stores (`google_discovery_engine_data_store`) with optional GCS/BigQuery `import_documents` jobs.
-    - 3rd-party SaaS data connectors (`google_discovery_engine_data_connector.default`, e.g., Jira, Confluence, SharePoint, Outlook, OneDrive, Teams, ServiceNow).
-    - Location-level Identity Provider / ACL configuration (`google_discovery_engine_acl_config.default`).
-    - Companion `NO_CONTENT` data store (`google_discovery_engine_data_store.companion`) when a single data store is attached.
+  - **Gemini Enterprise Apps, Assistants, Data Connectors & Location-Level IdP** ([`1-apps/gemini-enterprise.tf`](./1-apps/gemini-enterprise.tf)): delegates to Fabric's `modules/geap-gemini-enterprise` module (`module.gemini_enterprise`) for `APP_TYPE_INTRANET` search engines, opt-in `default_assistant` management, 1P/3P SaaS data connectors, Custom MCP connectors, location-level ACL config, companion `NO_CONTENT` stores, and app-level IAM, plus project-level `agentspaceRestrictedUser` and Antigravity custom role grants.
   - **Agent Registry & Custom MCP Servers** ([`1-apps/agent-registry.tf`](./1-apps/agent-registry.tf)):
-    - Service Directory namespace, endpoints, and services backing custom MCP servers (`var.custom_mcp_servers`), patched with `agentregistry.googleapis.com/actionConfig` via `local-exec`.
-    - Discovery of `agentregistry-0000...` principal IDs for agents (`var.agents`) and MCP servers (`var.mcp_servers`) via Cloud Asset Inventory (`data.google_cloud_asset_search_all_resources`).
-  - **Model Armor & Agent Gateways** ([`1-apps/agent-gateway-model-armor.tf`](./1-apps/agent-gateway-model-armor.tf)):
-    - Regional Model Armor templates (`google_model_armor_template.default`) patched with `modalities` and `dataResidencyCompliant` metadata.
-    - Agent Gateways (`var.agent_gateways`) enforcing Model Armor policies on target agents and MCP servers.
-  - **Unified Access Policies (IAM v3)** ([`1-apps/agent-gateway.tf`](./1-apps/agent-gateway.tf)):
-    - `google_iam_access_policy` and `google_iam_Organizations_policy_binding` / project policy bindings governing agent-to-agent and agent-to-MCP access via `principalSet://.../attribute.agent_registry_id/<agentregistry-id>`.
+    - Registers REST endpoints, A2A agents, and MCP servers in Agent Registry (`google_agent_registry_service.agent_registry_services`).
+  - **Model Armor** ([`1-apps/agent-gateway-model-armor.tf`](./1-apps/agent-gateway-model-armor.tf)):
+    - Directional Model Armor templates (`google_model_armor_template.default`) with native `modalities` and `data_residency_compliant = true`, plus optional Vertex AI floor settings.
+  - **Agent Gateway & Unified Access Policies (IAM v3)** ([`1-apps/agent-gateway.tf`](./1-apps/agent-gateway.tf)):
+    - Delegates to Fabric's `modules/geap-agent-gateway` (`module.agent_gateway_egress`) with PSC network attachment, connectivity template, IAP/Model Armor authz extensions and policies, and IAM v3 UAPs.
 
 ## Key Files & Test Cases
 
@@ -34,8 +27,7 @@ The `ge-agent-platform` factory provisions an enterprise-ready **Gemini Enterpri
   - [`0-prereqs/networking.tf`](./0-prereqs/networking.tf)
 - **Stage 1 (`1-apps`)**:
   - [`1-apps/variables.tf`](./1-apps/variables.tf) & [`1-apps/variables-fast.tf`](./1-apps/variables-fast.tf)
-  - [`1-apps/gemini-enterprise-apps.tf`](./1-apps/gemini-enterprise-apps.tf)
-  - [`1-apps/gemini-enterprise-ds.tf`](./1-apps/gemini-enterprise-ds.tf)
+  - [`1-apps/gemini-enterprise.tf`](./1-apps/gemini-enterprise.tf)
   - [`1-apps/agent-registry.tf`](./1-apps/agent-registry.tf)
   - [`1-apps/agent-gateway.tf`](./1-apps/agent-gateway.tf)
   - [`1-apps/agent-gateway-model-armor.tf`](./1-apps/agent-gateway-model-armor.tf)
@@ -70,13 +62,13 @@ uv run yamlfix tests/ge_agent_platform
 
 ## Factory-Specific Learnings & Gotchas
 
-### 1. Three-Step Initial Deployment & `default_assistant` Import
+### 1. Initial Deployment & Opt-In `default_assistant` Import
 
 - Creating a `google_discovery_engine_search_engine` with `APP_TYPE_INTRANET` automatically provisions a `default_assistant` resource on the backend.
-- Because the assistant already exists immediately after engine creation, a subsequent `terraform apply` attempting to create `google_discovery_engine_assistant.default` fails with `409 AlreadyExists` unless imported first:
-  1. `terraform apply -target=google_discovery_engine_search_engine.default`
-  2. `terraform import 'google_discovery_engine_assistant.default["<app_key>"]' projects/<project_id>/locations/<location>/collections/default_collection/engines/<app_id>/assistants/default_assistant`
-  3. `terraform apply`
+- `gemini_enterprise_apps[*].assistant` defaults to `null` (opt-in), so the initial `terraform apply` succeeds in a single pass. To manage `default_assistant` with Terraform, import it first and then add the `assistant` block:
+  1. `terraform apply` (with `assistant` omitted)
+  2. `terraform import 'module.gemini_enterprise.google_discovery_engine_assistant.default["<app_key>"]' projects/<project_id>/locations/<location>/collections/default_collection/engines/<app_id>/assistants/default_assistant`
+  3. Add `assistant = { ... }` and run `terraform apply`
 
 ### 2. Decoupled Search Engine `data_store_ids` & Single-Data-Store Companion Workaround
 
@@ -86,7 +78,7 @@ uv run yamlfix tests/ge_agent_platform
   - Instead, `terraform_data.app_data_stores` manages engine `dataStoreIds` via a REST `PATCH` (`?updateMask=dataStoreIds`) on create/update and detaches all data stores (`{"dataStoreIds": []}`) via a `when = destroy` provisioner before any underlying data store or connector is deleted.
 - **Discovery Engine Single-Data-Store Constraint (`0` or `>= 2`):**
   - The Discovery Engine `UpdateEngine` API rejects `PATCH` requests that set `dataStoreIds` to a list of length `1` (`Error 400: Number of DataStores must be 0 or >= 2`), even though `CreateEngine` accepts a single store.
-  - When an app resolves to exactly `1` attached data store, [`1-apps/gemini-enterprise-ds.tf`](./1-apps/gemini-enterprise-ds.tf) automatically provisions a lightweight companion `NO_CONTENT` data store (`google_discovery_engine_data_store.companion`, ID `<app_id>-companion`) and appends it to the engine's `dataStoreIds` payload so the list has length `2`.
+  - When an app resolves to exactly `1` attached data store, Fabric's `geap-gemini-enterprise` module ([`1-apps/gemini-enterprise.tf`](./1-apps/gemini-enterprise.tf)) automatically provisions a lightweight companion `NO_CONTENT` data store (`module.gemini_enterprise.google_discovery_engine_data_store.companion`, ID `<app_id>-companion`) and appends it to the engine's `dataStoreIds` payload so the list has length `2`.
 
 ### 3. Location-Level Identity Provider (`google_discovery_engine_acl_config.default`)
 
@@ -102,7 +94,7 @@ uv run yamlfix tests/ge_agent_platform
   1. **`lifecycle { ignore_changes = [collection_display_name] }`:** Although `collection_display_name` is required in HCL, the Discovery Engine `GetDataConnector` API does not return it on read, leaving it `null` in state after `terraform import` (`ForceNew`). Ignoring changes prevents replacement after import.
   2. **`params = {}` Default in Variable Type:** For `entities` items in `var.gemini_enterprise_data_connectors`, default `params` to `optional(map(any), {})` (and `json_params = optional(string)`). The Google provider enforces `ExactlyOneOf: [entities.0.params, entities.0.json_params]`; if both are `null`, `terraform plan` fails validation.
   3. **Auto-Appended Entities (`outlook` & `sharepoint`):** On creation, the Discovery Engine backend automatically appends a `root` entity to `ms_graph_outlook_connector` (`outlook`) and a `site` entity to `ms_graph_sharepoint_connector` (`sharepoint`). Because `entities` is `ForceNew`, always include `root` for `outlook` and `site` for `sharepoint` in `var.gemini_enterprise_data_connectors[*].entities`.
-  4. **Sequential `terraform import` Guards:** Because `terraform import` evaluates resource references across all keys in `var.gemini_enterprise_data_connectors`, guard cross-resource lookups in `gemini-enterprise-apps.tf` with `contains(keys(google_discovery_engine_data_connector.default), k)` so importing one connector at a time does not fail when other connectors are not yet in state.
+  4. **Sequential `terraform import` Guards:** Because `terraform import` evaluates resource references across all keys in `var.gemini_enterprise_data_connectors`, Fabric's `geap-gemini-enterprise` module guards cross-resource lookups with `contains(keys(google_discovery_engine_data_connector.default), k)` so importing one connector at a time does not fail when other connectors are not yet in state.
   5. **File-or-Inline `params` & `json_params`:** Connector `params` (string) and entity `json_params` (string) support either a path to a JSON file under `1-apps/data/` (detected via `endswith(..., ".json")` and loaded with `file(...)`) or an inline JSON string. Remind users never to use `jsonencode(...)` inside `.tfvars` files (Terraform forbids function calls in `.tfvars`).
   6. **Connector-Specific Validation Rules:**
      - `confluence` entity names must be from `space`, `page`, `whiteboard`, `blog`, `attachment`, `comment` (`blog`, not `blogpost`).
@@ -118,8 +110,8 @@ uv run yamlfix tests/ge_agent_platform
 - **Custom MCP Server Tool Schemas (`var.custom_mcp_servers`):**
   - `tool_schema` accepts either a path to a `.json` file under `1-apps/data/` or an inline JSON string.
   - [`1-apps/agent-registry.tf`](./1-apps/agent-registry.tf) attaches the MCP `actionConfig` metadata to the Service Directory service via a `local-exec` `PATCH` using `agentregistry.googleapis.com/actionConfig`.
-- **Model Armor Regional Modalities & Metadata Patch (`var.model_armor_templates`):**
-  - [`1-apps/agent-gateway-model-armor.tf`](./1-apps/agent-gateway-model-armor.tf) patches `templateMetadata` (`modalities` and `dataResidencyCompliant`) via REST `PATCH` after template creation.
+- **Model Armor Regional Modalities (`var.model_armor_templates`):**
+  - [`1-apps/agent-gateway-model-armor.tf`](./1-apps/agent-gateway-model-armor.tf) sets `modalities` and `data_residency_compliant = true` natively on `google_model_armor_template.default.template_metadata`.
   - Regional Model Armor endpoints (e.g., `europe-west1`) only support `MODALITY_TEXT` (`["MODALITY_TEXT"]`). Passing `MODALITY_IMAGE` or `MODALITY_AUDIO` in unsupported regions causes `400 INVALID_ARGUMENT`.
 - **Stage 0 APIs & Roles (`0-prereqs/data/projects/service-01.yaml`):**
   - Requires `discoveryengine.googleapis.com`, `agentregistry.googleapis.com`, `servicedirectory.googleapis.com`, `cloudasset.googleapis.com`, `modelarmor.googleapis.com`, and `iam.googleapis.com`, plus `roles/discoveryengine.admin`, `roles/iam.accessPolicyAdmin`, `roles/modelarmor.admin`, `roles/servicedirectory.editor`, and `roles/cloudasset.viewer` on the `service-01` RW service account.

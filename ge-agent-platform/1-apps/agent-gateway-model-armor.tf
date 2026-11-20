@@ -23,7 +23,7 @@ locals {
       app.assistant.model_armor.user_prompt_direction,
       app.assistant.model_armor.response_direction,
     ])
-    if app.assistant.model_armor.enable
+    if try(app.assistant.model_armor.enable, false)
   ])
   modelarmor_gateway_directions = (
     var.agent_gateway_config.egress.model_armor_config.enable
@@ -88,10 +88,12 @@ resource "google_model_armor_template" "default" {
     custom_llm_response_safety_error_message = each.value.custom_llm_response_safety_error_message
     custom_prompt_safety_error_code          = each.value.custom_prompt_safety_error_code
     custom_prompt_safety_error_message       = each.value.custom_prompt_safety_error_message
+    data_residency_compliant                 = true
     enforcement_type                         = each.value.enforcement_type
     ignore_partial_invocation_failures       = each.value.ignore_partial_invocation_failures
     log_sanitize_operations                  = each.value.logging
     log_template_operations                  = each.value.logging
+    modalities                               = each.value.modalities
 
     multi_language_detection {
       enable_multi_language_detection = true
@@ -101,52 +103,6 @@ resource "google_model_armor_template" "default" {
       alias = "FILTER_VERSION_ALIAS_STABLE"
     }
   }
-}
-
-# google_model_armor_template (provider 8.4.0) does not support yet
-# templateMetadata.modalities or templateMetadata.dataResidencyCompliant
-# so we set them via local-exec provider
-resource "terraform_data" "template_metadata_patch" {
-  for_each = local.modelarmor_templates
-
-  triggers_replace = {
-    template = google_model_armor_template.default[each.key].name
-    # Any change here means Terraform issues a PATCH carrying templateMetadata,
-    # which clears both fields, so the patch has to run again after it.
-    config = sha256(jsonencode(each.value))
-  }
-
-  provisioner "local-exec" {
-    interpreter = ["/bin/bash", "-c"]
-    command = <<-EOT
-      set -euo pipefail
-
-      endpoint="https://modelarmor.${each.value.location}.rep.googleapis.com/v1"
-      url="$endpoint/${google_model_armor_template.default[each.key].name}"
-      mask="templateMetadata.modalities,templateMetadata.dataResidencyCompliant"
-      body=$(mktemp)
-      trap 'rm -f "$body"' EXIT
-
-      status=$(curl -sS -X PATCH \
-        -H "Authorization: Bearer $(gcloud auth print-access-token)" \
-        -H "Content-Type: application/json" \
-        -H "X-Goog-User-Project: ${var.project_id}" \
-        -d '${jsonencode({
-    templateMetadata = {
-      modalities             = each.value.modalities
-      dataResidencyCompliant = true
-    }
-})}' \
-        -o "$body" -w '%%{http_code}' \
-        "$url?updateMask=$mask")
-
-      if [[ "$status" != 2* ]]; then
-        echo "Model Armor metadata patch failed for ${each.key} (HTTP $status)" >&2
-        cat "$body" >&2
-        exit 1
-      fi
-    EOT
-}
 }
 
 resource "google_model_armor_floorsetting" "floorsetting" {

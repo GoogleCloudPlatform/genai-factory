@@ -357,7 +357,7 @@ variable "gemini_enterprise_apps" {
         user_prompt_direction = optional(string, "user-to-ge")
       }), {})
       web_grounding_type = optional(string)
-    }), {})
+    }))
     collection_id = optional(string, "default_collection")
     # Data stores are attached after the fact, so an app starts without any.
     engine = optional(object({
@@ -424,7 +424,7 @@ variable "gemini_enterprise_apps" {
   validation {
     condition = alltrue(flatten([
       for a in var.gemini_enterprise_apps : [
-        for bp in a.assistant.banned_phrases :
+        for bp in coalesce(try(a.assistant.banned_phrases, null), []) :
         bp.match_type == null || contains(["SIMPLE_STRING_MATCH", "WORD_BOUNDARY_STRING_MATCH"], bp.match_type)
       ]
     ]))
@@ -434,7 +434,7 @@ variable "gemini_enterprise_apps" {
   validation {
     condition = alltrue([
       for a in var.gemini_enterprise_apps :
-      contains(["FAIL_CLOSED", "FAIL_OPEN"], a.assistant.model_armor.failure_mode)
+      a.assistant == null || contains(["FAIL_CLOSED", "FAIL_OPEN"], a.assistant.model_armor.failure_mode)
     ])
     error_message = "The assistant model_armor failure_mode must be either 'FAIL_CLOSED' or 'FAIL_OPEN'."
   }
@@ -451,9 +451,21 @@ variable "gemini_enterprise_apps" {
             var.agent_gateway_config.egress.model_armor_config.request_direction,
             var.agent_gateway_config.egress.model_armor_config.response_direction,
         ]), d)
-      ] if a.assistant.model_armor.enable
+      ] if try(a.assistant.model_armor.enable, false)
     ]))
     error_message = "A Model Armor direction bound to the Agent Gateway cannot also be bound to an assistant: the gateway needs its templates in the gateway region, assistants need them in var.location."
+  }
+
+  validation {
+    condition = alltrue(flatten([
+      for a in var.gemini_enterprise_apps : [
+        for d in compact([
+          a.assistant.model_armor.user_prompt_direction,
+          a.assistant.model_armor.response_direction,
+        ]) : contains(keys(var.model_armor_templates), d)
+      ] if try(a.assistant.model_armor.enable, false)
+    ]))
+    error_message = "Each assistant Model Armor direction must exist in var.model_armor_templates."
   }
 }
 
