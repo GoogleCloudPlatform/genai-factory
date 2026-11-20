@@ -14,51 +14,6 @@
 # limitations under the License.
 
 values:
-  google_agent_registry_service.agent_registry_services["test-agent"]:
-    agent_spec:
-      - content: '{}'
-        type: A2A_AGENT_CARD
-    deletion_policy: PREVENT
-    description:
-    display_name: Test Agent
-    endpoint_spec: []
-    interfaces: []
-    location: europe-west1
-    mcp_server_spec: []
-    project: test-gf-geap-0
-    service_id: test-agent
-    timeouts:
-  google_agent_registry_service.agent_registry_services["test-endpoint"]:
-    agent_spec: []
-    deletion_policy: PREVENT
-    description:
-    display_name: Test Endpoint
-    endpoint_spec:
-      - type: NO_SPEC
-    interfaces:
-      - protocol_binding: HTTP_JSON
-        url: https://endpoint.example.com
-    location: europe-west1
-    mcp_server_spec: []
-    project: test-gf-geap-0
-    service_id: test-endpoint
-    timeouts:
-  google_agent_registry_service.agent_registry_services["test-mcp"]:
-    agent_spec: []
-    deletion_policy: PREVENT
-    description:
-    display_name: Test MCP Server
-    endpoint_spec: []
-    interfaces:
-      - protocol_binding: HTTP_JSON
-        url: https://mcp.example.com
-    location: europe-west1
-    mcp_server_spec:
-      - content: '{}'
-        type: TOOL_SPEC
-    project: test-gf-geap-0
-    service_id: test-mcp
-    timeouts:
   google_compute_network_attachment.agw_network_attachment:
     connection_preference: ACCEPT_MANUAL
     deletion_policy: DELETE
@@ -199,8 +154,10 @@ values:
     access_path: AGENT_TO_ANYWHERE
     access_types:
       - PRIVATE
+    agent_compute:
     agent_connectivity_template_id: agw-geap
     deletion_policy: DELETE
+    deployment_model:
     description: Terraform managed.
     effective_labels:
       goog-terraform-provisioned: 'true'
@@ -256,6 +213,51 @@ values:
       goog-terraform-provisioned: 'true'
     timeout: 2s
     timeouts:
+  module.agent_registry.google_agent_registry_service.default["test-agent"]:
+    agent_spec:
+      - content: '{}'
+        type: A2A_AGENT_CARD
+    deletion_policy: PREVENT
+    description:
+    display_name: Test Agent
+    endpoint_spec: []
+    interfaces: []
+    location: europe-west1
+    mcp_server_spec: []
+    project: test-gf-geap-0
+    service_id: test-agent
+    timeouts:
+  module.agent_registry.google_agent_registry_service.default["test-endpoint"]:
+    agent_spec: []
+    deletion_policy: PREVENT
+    description:
+    display_name: Test Endpoint
+    endpoint_spec:
+      - type: NO_SPEC
+    interfaces:
+      - protocol_binding: HTTP_JSON
+        url: https://endpoint.example.com
+    location: europe-west1
+    mcp_server_spec: []
+    project: test-gf-geap-0
+    service_id: test-endpoint
+    timeouts:
+  module.agent_registry.google_agent_registry_service.default["test-mcp"]:
+    agent_spec: []
+    deletion_policy: PREVENT
+    description:
+    display_name: Test MCP Server
+    endpoint_spec: []
+    interfaces:
+      - protocol_binding: HTTP_JSON
+        url: https://mcp.example.com
+    location: europe-west1
+    mcp_server_spec:
+      - content: '{}'
+        type: TOOL_SPEC
+    project: test-gf-geap-0
+    service_id: test-mcp
+    timeouts:
 
 counts:
   google_agent_registry_service: 3
@@ -266,7 +268,7 @@ counts:
   google_network_services_agent_connectivity_template: 1
   google_network_services_agent_gateway: 1
   google_network_services_authz_extension: 1
-  modules: 1
+  modules: 2
   resources: 10
 
 outputs:

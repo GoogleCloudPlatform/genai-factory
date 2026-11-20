@@ -531,11 +531,11 @@ You can create your host project and network resources using your FAST networkin
 | [agent_connectivity_template_ids](outputs.tf#L20) | The ids of the agent connectivity templates through which the gateways reach the VPC. |  |
 | [agent_gateway_ids](outputs.tf#L27) | The Agent Gateway ids. Pass them to the agent-runtime factory to govern the traffic of an agent. |  |
 | [agent_registry_service_names](outputs.tf#L34) | The resource names of the services registered in Agent Registry, keyed by service id. |  |
-| [agent_registry_uris](outputs.tf#L42) | The Agent Registry URIs. |  |
-| [gemini_enterprise_antigravity_principals](outputs.tf#L47) | The principals holding the Antigravity custom role on the project. |  |
-| [gemini_enterprise_app_names](outputs.tf#L52) | The resource names of the Gemini Enterprise apps Terraform creates, keyed by engine id. Apps that already existed are not listed. |  |
-| [gemini_enterprise_assistant_names](outputs.tf#L60) | The resource names of the managed assistants, keyed by engine id. |  |
-| [gemini_enterprise_data_connector_names](outputs.tf#L68) | The resource names of the Gemini Enterprise data connectors, keyed by connector id (or service id and app id for MCP connectors). |  |
-| [model_armor_template_names](outputs.tf#L86) | The resource names of the Model Armor templates, keyed by interaction direction. |  |
-| [policy_binding_ids](outputs.tf#L94) | The IAM v3 Policy Binding resource names, keyed by policy id. |  |
+| [agent_registry_uris](outputs.tf#L39) | The Agent Registry URIs. |  |
+| [gemini_enterprise_antigravity_principals](outputs.tf#L44) | The principals holding the Antigravity custom role on the project. |  |
+| [gemini_enterprise_app_names](outputs.tf#L49) | The resource names of the Gemini Enterprise apps Terraform creates, keyed by engine id. Apps that already existed are not listed. |  |
+| [gemini_enterprise_assistant_names](outputs.tf#L57) | The resource names of the managed assistants, keyed by engine id. |  |
+| [gemini_enterprise_data_connector_names](outputs.tf#L65) | The resource names of the Gemini Enterprise data connectors, keyed by connector id (or service id and app id for MCP connectors). |  |
+| [model_armor_template_names](outputs.tf#L83) | The resource names of the Model Armor templates, keyed by interaction direction. |  |
+| [policy_binding_ids](outputs.tf#L91) | The IAM v3 Policy Binding resource names, keyed by policy id. |  |
 <!-- END TFDOC -->

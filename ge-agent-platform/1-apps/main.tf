@@ -20,18 +20,10 @@ locals {
   # what the off state has to be for a destroy to work at all.
   deletion_policy = var.enable_deletion_protection ? "PREVENT" : "DELETE"
 
-  # The spec type is implied by the presence of spec content: each
-  # service type only supports NO_SPEC and the value below.
-  _spec_types = {
-    agent      = "A2A_AGENT_CARD"
-    endpoint   = null
-    mcp_server = "TOOL_SPEC"
-  }
-
   # Access policy rules declared directly on services registered by this stage,
   # flattened with the target policy id (defaulting to var.name).
   _svc_access_policy_rules = flatten([
-    for k, v in local.agent_registry_services : [
+    for k, v in var.agent_registry_services : [
       for rk, rv in v.access_policy_rules : {
         policy_id = coalesce(rv.policy_id, var.name)
         rule_key  = "${k}-${rk}"
@@ -44,7 +36,7 @@ locals {
             effect               = rv.effect
             excluded_permissions = rv.excluded_permissions
             excluded_principals  = rv.excluded_principals
-            location             = v.location
+            location             = coalesce(v.location, var.region)
             permissions          = rv.permissions
             principals           = rv.principals
             registry             = false
@@ -81,11 +73,7 @@ locals {
     }
   }
 
-  _svc_registry_ids = {
-    for k, v in var.agent_registry_services : k => basename(
-      google_agent_registry_service.agent_registry_services[k].registry_resource
-    )
-  }
+  _svc_registry_ids = module.agent_registry.registry_resource_ids
 
   # Merge stage-level access_policies with service-level access_policy_rules,
   # resolving any '*_id' attribute naming a service registered in this stage
@@ -129,26 +117,6 @@ locals {
     global   = "${local._agent_registry_uri_prefix}/global"
     regional = "${local._agent_registry_uri_prefix}/${var.region}"
     us       = "${local._agent_registry_uri_prefix}/us"
-  }
-
-  # Derive the spec type from the service type and the presence of
-  # spec content, so that the spec blocks in the resource can be
-  # driven by a uniform object. If content is a path to an existing
-  # file, load it; otherwise treat it as an inline JSON string.
-  agent_registry_services = {
-    for k, v in var.agent_registry_services : k => merge(v, {
-      content = v.content == null ? null : (
-        fileexists("${path.module}/${v.content}")
-        ? file("${path.module}/${v.content}")
-        : (fileexists(v.content) ? file(v.content) : v.content)
-      )
-      location = coalesce(v.location, var.region)
-      spec_type = (
-        v.content == null
-        ? "NO_SPEC"
-        : local._spec_types[v.type]
-      )
-    })
   }
 
   subnetwork = lookup(
