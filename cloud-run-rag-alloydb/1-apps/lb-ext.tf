@@ -66,7 +66,7 @@ module "address-ext-glb" {
     var.lbs_configs.external.ip_address == null
     ? 1 : 0
   )
-  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-address?ref=v60.0.0"
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-address?ref=a578a3bc7f18e5befc0062ace51cf89fe10779df"
   project_id = var.project_id
   global_addresses = {
     ext-glb-01 = {

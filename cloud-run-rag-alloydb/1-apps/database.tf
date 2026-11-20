@@ -60,13 +60,15 @@ module "alloydb" {
 }
 
 # Create a PSC endpoint using the AlloyDB PSC attachment
-module "psc_consumer_address" {
-  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-address?ref=v60.0.0"
+module "psc_endpoint" {
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-psc-endpoint?ref=a578a3bc7f18e5befc0062ace51cf89fe10779df"
   project_id = var.project_id
-  internal_addresses = {
+  published_services = {
     (var.name) = {
-      region     = var.region
-      subnetwork = var.networking_config.subnet
+      global_access = true
+      region        = var.region
+      subnetwork    = var.networking_config.subnet
+      target        = module.alloydb.service_attachment
     }
   }
   context = {
@@ -74,20 +76,8 @@ module "psc_consumer_address" {
   }
 }
 
-resource "google_compute_forwarding_rule" "psc_consumer_fwd_rule" {
-  name    = var.name
-  project = var.project_id
-  region  = var.region
-  target  = module.alloydb.service_attachment
-  # need to override EXTERNAL default when target is a service attachment
-  load_balancing_scheme   = ""
-  network                 = var.networking_config.vpc
-  ip_address              = module.psc_consumer_address.internal_addresses[var.name].id
-  allow_psc_global_access = true
-}
-
 module "psc_consumer_dns_zone" {
-  source        = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/dns?ref=v60.0.0"
+  source        = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/dns?ref=a578a3bc7f18e5befc0062ace51cf89fe10779df"
   project_id    = var.project_id
   name          = "${var.name}-alloydb"
   description   = "DNS Zone for the PSC access to AlloyDB"
@@ -98,17 +88,16 @@ module "psc_consumer_dns_zone" {
       client_networks = [var.networking_config.vpc]
     }
   }
-  recordsets = {}
+  recordsets = {
+    "A " = {
+      ttl     = 300
+      records = ["$addresses:psc"]
+    }
+  }
   context = {
+    addresses = {
+      psc = module.psc_endpoint.addresses.published_services[var.name]
+    }
     networks = var.vpc_self_links
   }
-}
-
-resource "google_dns_record_set" "psc_consumer_dns_record" {
-  name         = module.alloydb.psc_dns_name
-  project      = var.project_id
-  type         = "A"
-  ttl          = 300
-  managed_zone = module.psc_consumer_dns_zone.name
-  rrdatas      = [module.psc_consumer_address.internal_addresses[var.name].address]
 }

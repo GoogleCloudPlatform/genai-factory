@@ -24,20 +24,6 @@ values:
     project: test-gf-ar-hp-0
     region: europe-west1
     timeouts:
-  google_network_connectivity_regional_endpoint.rep["aiplatform-mrep"]:
-    access_type: REGIONAL
-    deletion_policy: DELETE
-    description:
-    effective_labels:
-      goog-terraform-provisioned: 'true'
-    labels:
-    location: europe-west1
-    name: net-0-aiplatform-mrep
-    project: test-gf-ar-hp-0
-    target_google_api: aiplatform.eu.rep.googleapis.com
-    terraform_labels:
-      goog-terraform-provisioned: 'true'
-    timeouts:
   google_service_account_iam_member.me_sa_token_creator[0]:
     condition: []
     role: roles/iam.serviceAccountTokenCreator
@@ -469,7 +455,6 @@ values:
     response_policy: googleapis
     rule_name: gstatic-all
     timeouts:
-
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["kernels-gu"]:
     behavior:
     deletion_policy: DELETE
@@ -853,7 +838,6 @@ values:
     project: test-gf-ar-hp-0
     role: roles/aiplatform.customCodeServiceAgent
   module.projects.module.projects["host"].google_project_iam_member.service_agents["aiplatform-ft"]:
-
     condition: []
     project: test-gf-ar-hp-0
     role: roles/aiplatform.serviceAgent
@@ -1287,6 +1271,37 @@ values:
     input:
     output:
     triggers_replace:
+  module.psc_endpoints[0].google_compute_address.regional_apis["aiplatform-mrep"]:
+    address_type: INTERNAL
+    deletion_policy: DELETE
+    description: Terraform managed.
+    effective_labels:
+      goog-terraform-provisioned: 'true'
+    ip_collection:
+    ip_version:
+    ipv6_endpoint_type:
+    labels:
+    name: net-0-aiplatform-mrep
+    network:
+    project: test-gf-ar-hp-0
+    region: europe-west1
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
+    timeouts:
+  module.psc_endpoints[0].google_network_connectivity_regional_endpoint.regional_apis["aiplatform-mrep"]:
+    access_type: REGIONAL
+    deletion_policy: DELETE
+    description: Terraform managed.
+    effective_labels:
+      goog-terraform-provisioned: 'true'
+    labels:
+    location: europe-west1
+    name: net-0-aiplatform-mrep
+    project: test-gf-ar-hp-0
+    target_google_api: aiplatform.eu.rep.googleapis.com
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
+    timeouts:
   module.secure-web-proxy[0].google_network_security_gateway_security_policy.default:
     deletion_policy: DELETE
     description: Managed by Terraform.
@@ -1442,6 +1457,7 @@ values:
     timeouts:
 
 counts:
+  google_compute_address: 1
   google_compute_network: 1
   google_compute_network_attachment: 1
   google_compute_route: 3
@@ -1467,8 +1483,8 @@ counts:
   google_storage_bucket_iam_binding: 1
   google_storage_project_service_account: 1
   local_file: 2
-  modules: 12
-  resources: 168
+  modules: 13
+  resources: 169
   terraform_data: 2
 
 outputs:

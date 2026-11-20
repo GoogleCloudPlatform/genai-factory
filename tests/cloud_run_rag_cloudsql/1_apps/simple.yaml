@@ -17,6 +17,7 @@ values:
   google_cloud_scheduler_job.ingestion_scheduler:
     app_engine_http_target: []
     attempt_deadline: 60s
+    deletion_policy: DELETE
     description: Scheduler to periodically trigger the data ingestion.
     http_target:
       - body:
@@ -35,45 +36,9 @@ values:
     schedule: '*/30 * * * *'
     time_zone: Etc/UTC
     timeouts:
-  google_compute_address.cloudsql_address:
-    address_type: INTERNAL
-    description:
-    effective_labels:
-      goog-terraform-provisioned: 'true'
-    ip_collection:
-    ip_version:
-    ipv6_endpoint_type:
-    labels:
-    name: gf-rrag-0
-    network:
-    project: prefix-gf-rrag-0
-    region: europe-west1
-    subnetwork: projects/prefix-gf-rrag-hp-0/regions/europe-west1/subnetworks/sub-0
-    terraform_labels:
-      goog-terraform-provisioned: 'true'
-    timeouts:
-  google_compute_forwarding_rule.cloudsql_psc_endpoint:
-    all_ports:
-    allow_global_access:
-    allow_psc_global_access:
-    backend_service:
-    description:
-    ip_collection:
-    is_mirroring_collector:
-    labels:
-    load_balancing_scheme: ''
-    name: gf-rrag-0
-    network: projects/prefix-gf-rrag-hp-0/global/networks/net-0
-    no_automate_dns_zone:
-    ports:
-    project: prefix-gf-rrag-0
-    recreate_closed_psc: false
-    region: europe-west1
-    service_label:
-    source_ip_ranges:
-    timeouts:
   google_compute_global_address.address_external[0]:
     address_type:
+    deletion_policy: DELETE
     description:
     effective_labels:
       goog-terraform-provisioned: 'true'
@@ -89,6 +54,7 @@ values:
   google_compute_region_security_policy.security_policy_internal[0]:
     advanced_options_config: []
     ddos_protection_config: []
+    deletion_policy: DELETE
     description:
     name: gf-rrag-0-internal
     project: prefix-gf-rrag-0
@@ -125,6 +91,7 @@ values:
     user_defined_fields: []
   google_compute_security_policy.security_policy_external[0]:
     adaptive_protection_config: []
+    deletion_policy: DELETE
     description:
     effective_labels:
       goog-terraform-provisioned: 'true'
@@ -164,14 +131,9 @@ values:
     terraform_labels:
       goog-terraform-provisioned: 'true'
     timeouts:
-  google_dns_record_set.cloudsql_dns_record_set:
-    managed_zone: gf-rrag-0-cloudsql
-    project: prefix-gf-rrag-0
-    routing_policy: []
-    ttl: 300
-    type: A
   module.address-ilb[0].google_compute_address.internal["ilb-01"]:
     address_type: INTERNAL
+    deletion_policy: DELETE
     description: Terraform managed.
     effective_labels:
       goog-terraform-provisioned: 'true'
@@ -190,10 +152,13 @@ values:
     timeouts:
   module.bigquery-dataset.google_bigquery_dataset.default:
     dataset_id: gf_rrag_0
+    default_collation:
     default_encryption_configuration: []
     default_partition_expiration_ms:
+    default_rounding_mode:
     default_table_expiration_ms:
     delete_contents_on_destroy: false
+    deletion_policy: DELETE
     description: Terraform managed.
     effective_labels:
       goog-terraform-provisioned: 'true'
@@ -212,6 +177,7 @@ values:
     biglake_configuration: []
     clustering:
     dataset_id: gf_rrag_0
+    deletion_policy: DELETE
     deletion_protection: true
     description: Terraform managed.
     effective_labels:
@@ -238,6 +204,7 @@ values:
     time_partitioning: []
     view: []
   module.cas[0].google_privateca_ca_pool.default[0]:
+    deletion_policy: DELETE
     effective_labels:
       goog-terraform-provisioned: 'true'
     encryption_spec: []
@@ -295,6 +262,7 @@ values:
                 unknown_extended_key_usages: []
             name_constraints: []
             policy_ids: []
+    deletion_policy: DELETE
     deletion_protection: true
     desired_state:
     effective_labels:
@@ -317,6 +285,7 @@ values:
     type: SELF_SIGNED
     user_defined_access_urls: []
   module.certificate_manager[0].google_certificate_manager_certificate.certificates["gf-rrag-0"]:
+    deletion_policy: DELETE
     description:
     effective_labels:
       goog-terraform-provisioned: 'true'
@@ -337,6 +306,7 @@ values:
     certificate_authority_config:
       - certificate_authority_service_config:
           - {}
+    deletion_policy: DELETE
     description:
     effective_labels:
       goog-terraform-provisioned: 'true'
@@ -358,6 +328,7 @@ values:
     client_version:
     custom_audiences:
     default_uri_disabled:
+    deletion_policy: DELETE
     deletion_protection: true
     description:
     effective_labels:
@@ -370,6 +341,8 @@ values:
     multi_region_settings: []
     name: gf-rrag-0-frontend
     project: prefix-gf-rrag-0
+    ssh_enabled:
+    tags:
     template:
       - annotations:
         containers:
@@ -382,6 +355,7 @@ values:
             liveness_probe: []
             name: cloud-sql-proxy
             readiness_probe: []
+            sandbox_launcher:
             source_code: []
             volume_mounts: []
             working_dir:
@@ -396,6 +370,7 @@ values:
             ports:
               - container_port: 8080
             readiness_probe: []
+            sandbox_launcher:
             source_code: []
             volume_mounts: []
             working_dir:
@@ -406,8 +381,11 @@ values:
         labels:
         node_selector: []
         revision:
+        sandboxes: []
         scaling:
-          - max_instance_count: 3
+          - concurrency_utilization:
+            cpu_utilization:
+            max_instance_count: 3
             min_instance_count: 1
         service_account: gf-rrag-fe-0@prefix-gf-rrag-0.iam.gserviceaccount.com
         service_mesh: []
@@ -420,6 +398,7 @@ values:
               - network: projects/prefix-gf-rrag-hp-0/global/networks/net-0
                 subnetwork: projects/prefix-gf-rrag-hp-0/regions/europe-west1/subnetworks/sub-0
                 tags: []
+        workload_identity_config: []
     terraform_labels:
       goog-terraform-provisioned: 'true'
     timeouts:
@@ -432,6 +411,7 @@ values:
     binary_authorization: []
     client:
     client_version:
+    deletion_policy: DELETE
     deletion_protection: true
     effective_labels:
       goog-terraform-provisioned: 'true'
@@ -441,8 +421,10 @@ values:
     project: prefix-gf-rrag-0
     run_execution_token:
     start_execution_token:
+    tags:
     template:
       - annotations:
+        delay_execution:
         labels:
         template:
           - containers:
@@ -453,6 +435,7 @@ values:
                 image: gcr.io/cloud-sql-connectors/cloud-sql-proxy
                 name: cloudsql-proxy
                 ports: []
+                sandbox_launcher:
                 volume_mounts: []
                 working_dir:
               - args:
@@ -462,12 +445,14 @@ values:
                 image: us-docker.pkg.dev/cloudrun/container/hello
                 name: ingestion
                 ports: []
+                sandbox_launcher:
                 volume_mounts: []
                 working_dir:
             encryption_key:
             gpu_zonal_redundancy_disabled:
             max_retries: 3
             node_selector: []
+            sandboxes: []
             service_account: gf-rrag-ing-0@prefix-gf-rrag-0.iam.gserviceaccount.com
             volumes: []
             vpc_access:
@@ -493,10 +478,14 @@ values:
     timeouts:
   module.cloudsql.google_sql_database_instance.primary:
     backupdr_backup:
+    blue_green_deployment: []
     clone: []
+    database_center_integration:
     database_version: POSTGRES_14
+    deletion_policy: DELETE
     deletion_protection: true
     final_backup_description:
+    include_replicas_for_major_version_upgrade:
     name: gf-rrag-0
     point_in_time_restore_context: []
     project: prefix-gf-rrag-0
@@ -535,7 +524,7 @@ values:
             psc_config:
               - allowed_consumer_projects:
                   - prefix-gf-rrag-0
-                network_attachment_uri: ''
+                network_attachment_uri:
                 psc_auto_connections: []
                 psc_enabled: true
             server_ca_pool:
@@ -547,6 +536,7 @@ values:
         sql_server_audit_config: []
         tier: db-f1-micro
         time_zone:
+    switch_transaction_logs_to_cloud_storage_enabled:
     timeouts:
   module.cloudsql.google_sql_user.users["gf-rrag-fe-0@prefix-gf-rrag-0.iam.gserviceaccount.com"]:
     database_roles:
@@ -576,6 +566,7 @@ values:
   module.dns_private_zone_cloudsql.google_dns_managed_zone.dns_managed_zone[0]:
     cloud_logging_config:
       - enable_logging: false
+    deletion_policy: DELETE
     description: Terraform managed.
     effective_labels:
       goog-terraform-provisioned: 'true'
@@ -595,6 +586,13 @@ values:
       goog-terraform-provisioned: 'true'
     timeouts:
     visibility: private
+  module.dns_private_zone_cloudsql.google_dns_record_set.dns_record_set["A "]:
+    deletion_policy: DELETE
+    managed_zone: gf-rrag-0-cloudsql
+    project: prefix-gf-rrag-0
+    routing_policy: []
+    ttl: 300
+    type: A
   module.lb_external[0].google_compute_backend_service.default["default"]:
     affinity_cookie_ttl_sec:
     backend:
@@ -611,6 +609,7 @@ values:
     custom_metrics: []
     custom_request_headers:
     custom_response_headers:
+    deletion_policy: DELETE
     description: Terraform managed.
     dynamic_forwarding: []
     edge_security_policy:
@@ -618,6 +617,14 @@ values:
     external_managed_migration_state:
     external_managed_migration_testing_percentage:
     health_checks:
+    iap:
+      - enabled: false
+        oauth2_client_id:
+        oauth2_client_id_wo:
+        oauth2_client_id_wo_version:
+        oauth2_client_secret:
+        oauth2_client_secret_wo:
+        oauth2_client_secret_wo_version:
     ip_address_selection_policy:
     load_balancing_scheme: EXTERNAL_MANAGED
     locality_lb_policies: []
@@ -636,6 +643,8 @@ values:
     tls_settings: []
   module.lb_external[0].google_compute_global_forwarding_rule.default[""]:
     allow_psc_global_access:
+    backend_service:
+    deletion_policy: DELETE
     description: Terraform managed.
     external_managed_backend_bucket_migration_state:
     external_managed_backend_bucket_migration_testing_percentage:
@@ -651,6 +660,7 @@ values:
     source_ip_ranges:
     timeouts:
   module.lb_external[0].google_compute_managed_ssl_certificate.default["default"]:
+    deletion_policy: DELETE
     description:
     managed:
       - domains:
@@ -665,6 +675,7 @@ values:
     cloud_run:
       - tag:
         url_mask:
+    deletion_policy: DELETE
     description: Terraform managed.
     name: gf-rrag-0-external-gf-rrag-0-external
     network_endpoint_type: SERVERLESS
@@ -675,6 +686,7 @@ values:
     subnetwork:
     timeouts:
   module.lb_external[0].google_compute_target_http_proxy.new[0]:
+    deletion_policy: DELETE
     description: Terraform managed.
     http_keep_alive_timeout_sec:
     name: gf-rrag-0-external
@@ -684,6 +696,7 @@ values:
     default_custom_error_response_policy: []
     default_route_action: []
     default_url_redirect: []
+    deletion_policy: DELETE
     description: Terraform managed.
     header_action: []
     host_rule: []
@@ -694,6 +707,8 @@ values:
     timeouts:
   module.lb_external_redirect[0].google_compute_global_forwarding_rule.default[""]:
     allow_psc_global_access:
+    backend_service:
+    deletion_policy: DELETE
     description: Terraform managed.
     external_managed_backend_bucket_migration_state:
     external_managed_backend_bucket_migration_testing_percentage:
@@ -709,6 +724,7 @@ values:
     source_ip_ranges:
     timeouts:
   module.lb_external_redirect[0].google_compute_target_http_proxy.new[0]:
+    deletion_policy: DELETE
     description: Terraform managed.
     http_keep_alive_timeout_sec:
     name: gf-rrag-0-redirect
@@ -725,6 +741,7 @@ values:
         prefix_redirect:
         redirect_response_code: MOVED_PERMANENTLY_DEFAULT
         strip_query: false
+    deletion_policy: DELETE
     description: HTTP to HTTPS redirect.
     header_action: []
     host_rule: []
@@ -738,6 +755,7 @@ values:
     allow_global_access:
     allow_psc_global_access:
     backend_service:
+    deletion_policy: DELETE
     description: Terraform managed.
     ip_collection:
     ip_protocol: TCP
@@ -764,7 +782,6 @@ values:
         capacity_scaler: 1
         custom_metrics: []
         description: Terraform managed.
-        failover: false
         max_connections:
         max_connections_per_endpoint:
         max_connections_per_instance:
@@ -778,12 +795,17 @@ values:
     connection_tracking_policy: []
     consistent_hash: []
     custom_metrics: []
+    deletion_policy: DELETE
     description: Terraform managed.
     dynamic_forwarding: []
     enable_cdn:
     failover_policy: []
     ha_policy: []
     health_checks:
+    iap:
+      - enabled: false
+        oauth2_client_id:
+        oauth2_client_secret:
     ip_address_selection_policy:
     load_balancing_scheme: INTERNAL_MANAGED
     locality_lb_policy:
@@ -795,6 +817,7 @@ values:
     project: prefix-gf-rrag-0
     protocol: HTTPS
     region: europe-west1
+    service_lb_policy:
     strong_session_affinity_cookie: []
     subsetting: []
     timeouts:
@@ -805,6 +828,7 @@ values:
     cloud_run:
       - tag:
         url_mask:
+    deletion_policy: DELETE
     description: Terraform managed.
     name: gf-rrag-0-internal-gf-rrag-0-internal
     network_endpoint_type: SERVERLESS
@@ -814,6 +838,7 @@ values:
     subnetwork:
     timeouts:
   module.lb_internal[0].google_compute_region_target_https_proxy.default[0]:
+    deletion_policy: DELETE
     description: Terraform managed.
     http_keep_alive_timeout_sec:
     name: gf-rrag-0-internal
@@ -826,6 +851,7 @@ values:
   module.lb_internal[0].google_compute_region_url_map.default:
     default_route_action: []
     default_url_redirect: []
+    deletion_policy: DELETE
     description: Terraform managed.
     header_action: []
     host_rule: []
@@ -838,6 +864,7 @@ values:
   module.lb_internal_dns[0].google_dns_managed_zone.dns_managed_zone[0]:
     cloud_logging_config:
       - enable_logging: false
+    deletion_policy: DELETE
     description: Terraform managed.
     dns_name: example.com.
     effective_labels:
@@ -859,6 +886,7 @@ values:
     timeouts:
     visibility: private
   module.lb_internal_dns[0].google_dns_record_set.dns_record_set["A example.com"]:
+    deletion_policy: DELETE
     managed_zone: gf-rrag-0
     name: example.com.example.com.
     project: prefix-gf-rrag-0
@@ -870,6 +898,7 @@ values:
     allow_global_access:
     allow_psc_global_access:
     backend_service:
+    deletion_policy: DELETE
     description: Terraform managed.
     ip_collection:
     ip_protocol: TCP
@@ -890,6 +919,7 @@ values:
     subnetwork: projects/prefix-gf-rrag-hp-0/regions/europe-west1/subnetworks/sub-0
     timeouts:
   module.lb_internal_redirect[0].google_compute_region_target_http_proxy.default[0]:
+    deletion_policy: DELETE
     description: Terraform managed.
     http_keep_alive_timeout_sec:
     name: gf-rrag-0-internal-redirect
@@ -906,6 +936,7 @@ values:
         prefix_redirect:
         redirect_response_code: MOVED_PERMANENTLY_DEFAULT
         strip_query: false
+    deletion_policy: DELETE
     description: HTTP to HTTPS redirect.
     header_action: []
     host_rule: []
@@ -914,6 +945,45 @@ values:
     project: prefix-gf-rrag-0
     region: europe-west1
     test: []
+    timeouts:
+  module.psc_endpoint.google_compute_address.published_services["gf-rrag-0"]:
+    address_type: INTERNAL
+    deletion_policy: DELETE
+    description: Terraform managed.
+    effective_labels:
+      goog-terraform-provisioned: 'true'
+    ip_collection:
+    ip_version:
+    ipv6_endpoint_type:
+    labels:
+    name: gf-rrag-0
+    network:
+    project: prefix-gf-rrag-0
+    region: europe-west1
+    subnetwork: projects/prefix-gf-rrag-hp-0/regions/europe-west1/subnetworks/sub-0
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
+    timeouts:
+  module.psc_endpoint.google_compute_forwarding_rule.published_services["gf-rrag-0"]:
+    all_ports:
+    allow_global_access:
+    allow_psc_global_access:
+    backend_service:
+    deletion_policy: DELETE
+    description:
+    ip_collection:
+    is_mirroring_collector:
+    labels:
+    load_balancing_scheme: ''
+    name: gf-rrag-0
+    no_automate_dns_zone:
+    ports:
+    project: prefix-gf-rrag-0
+    recreate_closed_psc: true
+    region: europe-west1
+    service_label:
+    source_ip_ranges:
+    subnetwork: projects/prefix-gf-rrag-hp-0/regions/europe-west1/subnetworks/sub-0
     timeouts:
 
 counts:
@@ -948,7 +1018,7 @@ counts:
   google_sql_database: 1
   google_sql_database_instance: 1
   google_sql_user: 2
-  modules: 13
+  modules: 14
   resources: 42
 
 outputs:

@@ -14,34 +14,6 @@
 # limitations under the License.
 
 values:
-  google_network_connectivity_regional_endpoint.rep["aiplatform-mrep"]:
-    access_type: REGIONAL
-    deletion_policy: DELETE
-    description:
-    effective_labels:
-      goog-terraform-provisioned: 'true'
-    labels:
-    location: europe-west4
-    name: net-0-aiplatform-mrep
-    project: your-prefix-gf-mg-hp-0
-    target_google_api: aiplatform.eu.rep.googleapis.com
-    terraform_labels:
-      goog-terraform-provisioned: 'true'
-    timeouts:
-  google_network_connectivity_regional_endpoint.rep["modelarmor-rep"]:
-    access_type: REGIONAL
-    deletion_policy: DELETE
-    description:
-    effective_labels:
-      goog-terraform-provisioned: 'true'
-    labels:
-    location: europe-west4
-    name: net-0-modelarmor-rep
-    project: your-prefix-gf-mg-hp-0
-    target_google_api: modelarmor.europe-west4.rep.googleapis.com
-    terraform_labels:
-      goog-terraform-provisioned: 'true'
-    timeouts:
   google_service_account_iam_member.me_sa_token_creator[0]:
     condition: []
     role: roles/iam.serviceAccountTokenCreator
@@ -588,7 +560,6 @@ values:
             ttl:
             type: CNAME
     project: your-prefix-gf-mg-hp-0
-
     response_policy: googleapis
     rule_name: packages-cloud-all
     timeouts:
@@ -849,7 +820,6 @@ values:
       - serviceAccount:crun-build-0@your-prefix-gf-mg-0.iam.gserviceaccount.com
       - serviceAccount:iac-rw@your-prefix-gf-mg-0.iam.gserviceaccount.com
     project: your-prefix-gf-mg-0
-
     role: roles/run.admin
   ? module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/serviceusage.serviceUsageConsumer"]
   : condition: []
@@ -1220,6 +1190,68 @@ values:
     input:
     output:
     triggers_replace:
+  module.psc_endpoints[0].google_compute_address.regional_apis["aiplatform-mrep"]:
+    address_type: INTERNAL
+    deletion_policy: DELETE
+    description: Terraform managed.
+    effective_labels:
+      goog-terraform-provisioned: 'true'
+    ip_collection:
+    ip_version:
+    ipv6_endpoint_type:
+    labels:
+    name: net-0-aiplatform-mrep
+    network:
+    project: your-prefix-gf-mg-hp-0
+    region: europe-west4
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
+    timeouts:
+  module.psc_endpoints[0].google_compute_address.regional_apis["modelarmor-rep"]:
+    address_type: INTERNAL
+    deletion_policy: DELETE
+    description: Terraform managed.
+    effective_labels:
+      goog-terraform-provisioned: 'true'
+    ip_collection:
+    ip_version:
+    ipv6_endpoint_type:
+    labels:
+    name: net-0-modelarmor-rep
+    network:
+    project: your-prefix-gf-mg-hp-0
+    region: europe-west4
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
+    timeouts:
+  module.psc_endpoints[0].google_network_connectivity_regional_endpoint.regional_apis["aiplatform-mrep"]:
+    access_type: REGIONAL
+    deletion_policy: DELETE
+    description: Terraform managed.
+    effective_labels:
+      goog-terraform-provisioned: 'true'
+    labels:
+    location: europe-west4
+    name: net-0-aiplatform-mrep
+    project: your-prefix-gf-mg-hp-0
+    target_google_api: aiplatform.eu.rep.googleapis.com
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
+    timeouts:
+  module.psc_endpoints[0].google_network_connectivity_regional_endpoint.regional_apis["modelarmor-rep"]:
+    access_type: REGIONAL
+    deletion_policy: DELETE
+    description: Terraform managed.
+    effective_labels:
+      goog-terraform-provisioned: 'true'
+    labels:
+    location: europe-west4
+    name: net-0-modelarmor-rep
+    project: your-prefix-gf-mg-hp-0
+    target_google_api: modelarmor.europe-west4.rep.googleapis.com
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
+    timeouts:
   module.vpc[0].google_compute_network.network[0]:
     auto_create_subnetworks: false
     delete_bgp_always_compare_med: false
@@ -1327,6 +1359,7 @@ values:
     timeouts:
 
 counts:
+  google_compute_address: 2
   google_compute_network: 1
   google_compute_route: 3
   google_compute_shared_vpc_host_project: 1
@@ -1347,8 +1380,8 @@ counts:
   google_storage_bucket: 1
   google_storage_bucket_iam_binding: 2
   local_file: 2
-  modules: 12
-  resources: 141
+  modules: 13
+  resources: 143
   terraform_data: 2
 
 outputs:

@@ -14,27 +14,6 @@
 # limitations under the License.
 
 values:
-  google_compute_forwarding_rule.psc_consumer_fwd_rule:
-    all_ports:
-    allow_global_access:
-    allow_psc_global_access: true
-    backend_service:
-    deletion_policy: DELETE
-    description:
-    ip_collection:
-    is_mirroring_collector:
-    labels:
-    load_balancing_scheme: ''
-    name: gf-mg-0
-    network: projects/prefix-gf-mg-hp-0/global/networks/net-0
-    no_automate_dns_zone:
-    ports:
-    project: your-project
-    recreate_closed_psc: false
-    region: europe-west4
-    service_label:
-    source_ip_ranges:
-    timeouts:
   google_compute_region_security_policy.security_policy_internal[0]:
     advanced_options_config: []
     ddos_protection_config: []
@@ -155,7 +134,8 @@ values:
     effective_labels:
       goog-terraform-provisioned: 'true'
     filter_config:
-      - malicious_uri_filter_settings:
+      - filter_rule_settings: []
+        malicious_uri_filter_settings:
           - filter_enforcement: ENABLED
         pi_and_jailbreak_filter_settings:
           - confidence_level: HIGH
@@ -189,6 +169,7 @@ values:
         ignore_partial_invocation_failures: true
         log_sanitize_operations: true
         log_template_operations: true
+        modalities:
         multi_language_detection:
           - enable_multi_language_detection: true
     terraform_labels:
@@ -445,7 +426,6 @@ values:
               - network: projects/prefix-gf-mg-hp-0/global/networks/net-0
                 subnetwork: projects/prefix-gf-mg-hp-0/regions/europe-west4/subnetworks/sub-0
                 tags: []
-
         workload_identity_config: []
     terraform_labels:
       goog-terraform-provisioned: 'true'
@@ -504,6 +484,7 @@ values:
     tls_settings: []
   module.lb_ext_glb[0].google_compute_global_forwarding_rule.default[""]:
     allow_psc_global_access:
+    backend_service:
     deletion_policy: DELETE
     description: Terraform managed.
     external_managed_backend_bucket_migration_state:
@@ -572,6 +553,7 @@ values:
     timeouts:
   module.lb_ext_glb_redirect[0].google_compute_global_forwarding_rule.default[""]:
     allow_psc_global_access:
+    backend_service:
     deletion_policy: DELETE
     description: Terraform managed.
     external_managed_backend_bucket_migration_state:
@@ -810,7 +792,7 @@ values:
     region: europe-west4
     test: []
     timeouts:
-  module.psc_consumer_address.google_compute_address.internal["gf-mg-0"]:
+  module.psc_endpoint.google_compute_address.published_services["gf-mg-0"]:
     address_type: INTERNAL
     deletion_policy: DELETE
     description: Terraform managed.
@@ -827,6 +809,27 @@ values:
     subnetwork: projects/prefix-gf-mg-hp-0/regions/europe-west4/subnetworks/sub-0
     terraform_labels:
       goog-terraform-provisioned: 'true'
+    timeouts:
+  module.psc_endpoint.google_compute_forwarding_rule.published_services["gf-mg-0"]:
+    all_ports:
+    allow_global_access:
+    allow_psc_global_access: true
+    backend_service:
+    deletion_policy: DELETE
+    description:
+    ip_collection:
+    is_mirroring_collector:
+    labels:
+    load_balancing_scheme: ''
+    name: gf-mg-0
+    no_automate_dns_zone:
+    ports:
+    project: your-project
+    recreate_closed_psc: true
+    region: europe-west4
+    service_label:
+    source_ip_ranges:
+    subnetwork: projects/prefix-gf-mg-hp-0/regions/europe-west4/subnetworks/sub-0
     timeouts:
 
 counts:

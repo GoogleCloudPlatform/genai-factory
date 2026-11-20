@@ -144,7 +144,7 @@ module "lb_internal" {
 # DNS Zone for internal resolution
 module "lb_internal_dns" {
   count      = var.lbs_configs.internal.enable ? 1 : 0
-  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/dns?ref=v60.0.0"
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/dns?ref=a578a3bc7f18e5befc0062ace51cf89fe10779df"
   project_id = var.project_id
   name       = var.name
   zone_config = {

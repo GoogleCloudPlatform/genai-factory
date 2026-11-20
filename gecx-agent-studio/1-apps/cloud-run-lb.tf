@@ -27,7 +27,7 @@ module "certificate-manager" {
 }
 
 module "address-ilb" {
-  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-address?ref=v60.0.0"
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-address?ref=a578a3bc7f18e5befc0062ace51cf89fe10779df"
   project_id = var.project_id
   internal_addresses = {
     ilb-01 = {

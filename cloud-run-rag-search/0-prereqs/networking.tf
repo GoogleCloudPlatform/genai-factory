@@ -37,17 +37,19 @@ module "vpc" {
 }
 
 # Regional PSC endpoints for regional and multi-regional Google APIs
-resource "google_network_connectivity_regional_endpoint" "rep" {
-  for_each          = local.rep_endpoints
-  project           = module.projects.projects["host"].project_id
-  name              = "${var.networking_config.vpc_name}-${each.key}"
-  location          = var.region
-  target_google_api = each.value
-  access_type       = "REGIONAL"
-  network           = module.vpc[0].id
-  subnetwork = (
-    module.vpc[0].subnet_ids["${var.region}/${var.networking_config.subnet.name}"]
-  )
+module "psc_endpoints" {
+  count      = var.networking_config.create ? 1 : 0
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-psc-endpoint?ref=a578a3bc7f18e5befc0062ace51cf89fe10779df"
+  project_id = module.projects.projects["host"].project_id
+  prefix     = var.networking_config.vpc_name
+  regional_apis = {
+    for k, v in local.rep_endpoints : k => {
+      network    = module.vpc[0].id
+      region     = var.region
+      subnetwork = module.vpc[0].subnet_ids["${var.region}/${var.networking_config.subnet.name}"]
+      target     = v
+    }
+  }
 }
 
 # DNS policies for Google APIs
@@ -65,7 +67,7 @@ module "dns_policy_googleapis" {
       local_data = {
         A = {
           rrdatas = [
-            google_network_connectivity_regional_endpoint.rep[k].address
+            module.psc_endpoints[0].addresses.regional_apis[k]
           ]
         }
       }

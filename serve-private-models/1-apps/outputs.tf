@@ -17,7 +17,7 @@ locals {
     "PROJECT_ID=${var.project_id}",
     "REGION=${var.region}",
     "ENDPOINT_ID=${google_vertex_ai_endpoint_with_model_garden_deployment.model_garden.endpoint}",
-    "ENDPOINT_IP_ADDRESS=${module.psc_consumer_address.internal_addresses[var.name].address}",
+    "ENDPOINT_IP_ADDRESS=${module.psc_endpoint.addresses.published_services[var.name]}",
     try(
       "MODEL_ARMOR_TEMPLATE=${google_model_armor_template.model_armor_template[0].name}",
       null
@@ -89,7 +89,7 @@ output "ip_addresses" {
       ? local.address_ilb
       : null
     )
-    model_garden_psc = module.psc_consumer_address.internal_addresses[var.name].address
+    model_garden_psc = module.psc_endpoint.addresses.published_services[var.name]
   }
 }
 
@@ -98,7 +98,7 @@ output "model_garden_endpoint" {
   value = {
     deployed_model_id  = google_vertex_ai_endpoint_with_model_garden_deployment.model_garden.deployed_model_id
     endpoint_id        = google_vertex_ai_endpoint_with_model_garden_deployment.model_garden.endpoint
-    psc_ip_address     = module.psc_consumer_address.internal_addresses[var.name].address
+    psc_ip_address     = module.psc_endpoint.addresses.published_services[var.name]
     service_attachment = google_vertex_ai_endpoint_with_model_garden_deployment.model_garden.endpoint_config[0].private_service_connect_config[0].service_attachment
   }
 }

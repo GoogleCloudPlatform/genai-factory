@@ -28,8 +28,23 @@ module "bigquery-dataset" {
   }
 }
 
+module "psc_endpoint" {
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-psc-endpoint?ref=a578a3bc7f18e5befc0062ace51cf89fe10779df"
+  project_id = var.project_id
+  published_services = {
+    (var.name) = {
+      region     = var.region
+      subnetwork = var.networking_config.subnet
+      target     = module.cloudsql.psc_service_attachment_link
+    }
+  }
+  context = {
+    subnets = var.subnet_self_links
+  }
+}
+
 module "dns_private_zone_cloudsql" {
-  source        = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/dns?ref=v60.0.0"
+  source        = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/dns?ref=a578a3bc7f18e5befc0062ace51cf89fe10779df"
   project_id    = var.project_id
   name          = "${var.name}-cloudsql"
   force_destroy = !var.enable_deletion_protection
@@ -39,37 +54,18 @@ module "dns_private_zone_cloudsql" {
       client_networks = [var.networking_config.vpc]
     }
   }
-  recordsets = {}
+  recordsets = {
+    "A " = {
+      ttl     = 300
+      records = ["$addresses:psc"]
+    }
+  }
   context = {
+    addresses = {
+      psc = module.psc_endpoint.addresses.published_services[var.name]
+    }
     networks = var.vpc_self_links
   }
-}
-
-resource "google_dns_record_set" "cloudsql_dns_record_set" {
-  project      = var.project_id
-  managed_zone = module.dns_private_zone_cloudsql.name
-  name         = module.cloudsql.dns_name
-  type         = "A"
-  ttl          = 300
-  rrdatas      = [google_compute_address.cloudsql_address.address]
-}
-
-resource "google_compute_address" "cloudsql_address" {
-  name         = var.name
-  project      = var.project_id
-  address_type = "INTERNAL"
-  subnetwork   = try(var.subnet_self_links[var.networking_config.subnet], var.networking_config.subnet)
-  region       = var.region
-}
-
-resource "google_compute_forwarding_rule" "cloudsql_psc_endpoint" {
-  name                  = var.name
-  project               = var.project_id
-  region                = var.region
-  target                = module.cloudsql.psc_service_attachment_link
-  load_balancing_scheme = ""
-  network               = try(var.vpc_self_links[var.networking_config.vpc], var.networking_config.vpc)
-  ip_address            = google_compute_address.cloudsql_address.id
 }
 
 module "cloudsql" {

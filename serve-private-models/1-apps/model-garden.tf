@@ -50,33 +50,20 @@ resource "google_vertex_ai_endpoint_with_model_garden_deployment" "model_garden"
 }
 
 # Create a PSC endpoint using the Model Garden PSC service attachment
-module "psc_consumer_address" {
-  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-address?ref=v60.0.0"
+module "psc_endpoint" {
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/net-psc-endpoint?ref=a578a3bc7f18e5befc0062ace51cf89fe10779df"
   project_id = var.project_id
-  internal_addresses = {
+  published_services = {
     (var.name) = {
-      region     = var.region
-      subnetwork = var.networking_config.subnet
+      global_access = true
+      region        = var.region
+      subnetwork    = var.networking_config.subnet
+      target = (
+        google_vertex_ai_endpoint_with_model_garden_deployment.model_garden.endpoint_config[0].private_service_connect_config[0].service_attachment
+      )
     }
   }
   context = {
     subnets = var.subnet_self_links
   }
-}
-
-resource "google_compute_forwarding_rule" "psc_consumer_fwd_rule" {
-  name    = var.name
-  project = var.project_id
-  region  = var.region
-  target = (
-    google_vertex_ai_endpoint_with_model_garden_deployment.model_garden.endpoint_config[0].private_service_connect_config[0].service_attachment
-  )
-  # need to override EXTERNAL default when target is a service attachment
-  load_balancing_scheme = ""
-  network = try(
-    var.vpc_self_links[var.networking_config.vpc],
-    var.networking_config.vpc
-  )
-  ip_address              = module.psc_consumer_address.internal_addresses[var.name].id
-  allow_psc_global_access = true
 }

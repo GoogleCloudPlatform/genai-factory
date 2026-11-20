@@ -73,16 +73,17 @@ service_account_emails = {
 
 ### Regional & Multi-Regional `*.rep.googleapis.com` Routing
 
-`private.googleapis.com` (`199.36.153.8/30`) does **not** route `*.rep.googleapis.com`. Private VPC workloads require a `google_network_connectivity_regional_endpoint` (`access_type = "REGIONAL"`) plus a Cloud DNS Response Policy A-record in the host VPC:
+`private.googleapis.com` (`199.36.153.8/30`) does **not** route `*.rep.googleapis.com`. Private VPC workloads require a regional PSC endpoint (`modules/net-psc-endpoint` `regional_apis`, backed by `google_network_connectivity_regional_endpoint`) plus a Cloud DNS Response Policy A-record (or private DNS zone) in the host VPC:
 
 - Multi-regional Vertex AI (`gemini-3-flash-preview` / `gemini-4-argon`): `aiplatform.${startswith(var.region, "europe") ? "eu" : "us"}.rep.googleapis.com`
 - Regional Model Armor: `modelarmor.${var.region}.rep.googleapis.com`
+- In Fabric FAST `2-networking`, configure these endpoints in `vpcs/<vpc>/psc-endpoints.yaml` under `regional_apis` and interpolate `$addresses:<vpc>/regional_apis/<key>` in Cloud DNS zones or response policies.
 - Requires `networkconnectivity.googleapis.com` enabled and `roles/networkconnectivity.regionalEndpointAdmin` on `service-01/iac-rw` in `0-prereqs/data/projects/host.yaml`.
 
 ## Common Mistakes
 
 | Symptom / Error | Cause | Fix |
 | :--- | :--- | :--- |
-| TLS cert mismatch or timeout on `*.rep.googleapis.com` in BYO-VPC | `private.googleapis.com` wildcard DNS intercepts `.rep.googleapis.com` without a regional PSC endpoint | Provision `google_network_connectivity_regional_endpoint` + Cloud DNS response policy rule in the BYO host VPC |
+| TLS cert mismatch or timeout on `*.rep.googleapis.com` in BYO-VPC | `private.googleapis.com` wildcard DNS intercepts `.rep.googleapis.com` without a regional PSC endpoint | Provision a `regional_apis` endpoint via `modules/net-psc-endpoint` (or FAST `2-networking` `vpcs/<vpc>/psc-endpoints.yaml`) + Cloud DNS response policy rule or private zone in the BYO host VPC |
 | `403 Permission denied` during `1-apps` `terraform apply` | Missing API or IAM role on Stage 0 `service-01/iac-rw` | Add the API/role to `0-prereqs/data/projects/service-01.yaml` (or `host.yaml`) and re-apply `0-prereqs` |
 | `pytest` or `plan_summary.py` fails with GCS backend error | `0-prereqs` generated `1-apps/providers.tf` and `terraform.auto.tfvars` left on disk | Remove `1-apps/providers.tf` and `1-apps/terraform.auto.tfvars` after E2E teardown |

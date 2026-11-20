@@ -87,7 +87,7 @@ module "dns_service_directory" {
     for k, v in var.service_directory_configs
     : k => v if try(v.cloud_dns_domain, null) != null
   }
-  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/dns?ref=v60.0.0"
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/dns?ref=a578a3bc7f18e5befc0062ace51cf89fe10779df"
   project_id = var.project_id
   name       = replace(each.value.cloud_dns_domain, ".", "-")
   zone_config = {

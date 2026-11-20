@@ -14,20 +14,6 @@
 # limitations under the License.
 
 values:
-  google_network_connectivity_regional_endpoint.rep["aiplatform-mrep"]:
-    access_type: REGIONAL
-    deletion_policy: DELETE
-    description:
-    effective_labels:
-      goog-terraform-provisioned: 'true'
-    labels:
-    location: europe-west1
-    name: net-0-aiplatform-mrep
-    project: your-prefix-gf-rrag-src-hp-0
-    target_google_api: aiplatform.eu.rep.googleapis.com
-    terraform_labels:
-      goog-terraform-provisioned: 'true'
-    timeouts:
   google_service_account_iam_member.me_sa_token_creator[0]:
     condition: []
     role: roles/iam.serviceAccountTokenCreator
@@ -489,7 +475,6 @@ values:
     response_policy: googleapis
     rule_name: kernels-gu-all
     timeouts:
-
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["ltsapis-all"]:
     behavior:
     deletion_policy: DELETE
@@ -766,6 +751,12 @@ values:
       - serviceAccount:iac-rw@your-prefix-gf-rrag-src-0.iam.gserviceaccount.com
     project: your-prefix-gf-rrag-src-0
     role: roles/compute.loadBalancerAdmin
+  module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/compute.networkAdmin"]:
+    condition: []
+    members:
+      - serviceAccount:iac-rw@your-prefix-gf-rrag-src-0.iam.gserviceaccount.com
+    project: your-prefix-gf-rrag-src-0
+    role: roles/compute.networkAdmin
   module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/compute.securityAdmin"]:
     condition: []
     members:
@@ -1150,7 +1141,6 @@ values:
     timeouts:
   ? module.projects.module.service-accounts-iam["service-01/iac-rw"].google_service_account_iam_member.additive["$service_account_ids:service-01/gf-rrag-fe-0-roles/iam.serviceAccountUser"]
   : condition: []
-
     role: roles/iam.serviceAccountUser
     service_account_id: projects/your-prefix-gf-rrag-src-0/serviceAccounts/gf-rrag-fe-0@your-prefix-gf-rrag-src-0.iam.gserviceaccount.com
   ? module.projects.module.service-accounts-iam["service-01/iac-rw"].google_service_account_iam_member.additive["$service_account_ids:service-01/gf-rrag-fe-build-0-roles/iam.serviceAccountUser"]
@@ -1243,6 +1233,37 @@ values:
     input:
     output:
     triggers_replace:
+  module.psc_endpoints[0].google_compute_address.regional_apis["aiplatform-mrep"]:
+    address_type: INTERNAL
+    deletion_policy: DELETE
+    description: Terraform managed.
+    effective_labels:
+      goog-terraform-provisioned: 'true'
+    ip_collection:
+    ip_version:
+    ipv6_endpoint_type:
+    labels:
+    name: net-0-aiplatform-mrep
+    network:
+    project: your-prefix-gf-rrag-src-hp-0
+    region: europe-west1
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
+    timeouts:
+  module.psc_endpoints[0].google_network_connectivity_regional_endpoint.regional_apis["aiplatform-mrep"]:
+    access_type: REGIONAL
+    deletion_policy: DELETE
+    description: Terraform managed.
+    effective_labels:
+      goog-terraform-provisioned: 'true'
+    labels:
+    location: europe-west1
+    name: net-0-aiplatform-mrep
+    project: your-prefix-gf-rrag-src-hp-0
+    target_google_api: aiplatform.eu.rep.googleapis.com
+    terraform_labels:
+      goog-terraform-provisioned: 'true'
+    timeouts:
   module.vpc[0].google_compute_network.network[0]:
     auto_create_subnetworks: false
     delete_bgp_always_compare_med: false
@@ -1350,6 +1371,7 @@ values:
     timeouts:
 
 counts:
+  google_compute_address: 1
   google_compute_network: 1
   google_compute_route: 3
   google_compute_shared_vpc_host_project: 1
@@ -1369,8 +1391,8 @@ counts:
   google_storage_bucket: 1
   google_storage_bucket_iam_binding: 1
   local_file: 2
-  modules: 15
-  resources: 148
+  modules: 16
+  resources: 149
   terraform_data: 2
 
 outputs:
