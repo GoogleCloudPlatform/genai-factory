@@ -13,43 +13,25 @@
 # limitations under the License.
 
 # Set custom service endpoints in Agent Registry
-resource "google_agent_registry_service" "agent_registry_services" {
-  for_each        = local.agent_registry_services
-  project         = var.project_id
-  location        = each.value.location
-  service_id      = each.key
-  display_name    = each.value.display_name
-  description     = each.value.description
-  deletion_policy = var.enable_deletion_protection ? "PREVENT" : "ABANDON"
-
-  dynamic "interfaces" {
-    for_each = each.value.spec_type == "A2A_AGENT_CARD" ? [] : [""]
-    content {
-      url              = each.value.url
-      protocol_binding = each.value.protocol
+module "agent_registry" {
+  source          = "github.com/zhhuta/cloud-foundation-fabric//modules/geap-agent-registry?ref=22ad5bc46e4c68640521434d9cffb9f641e4654e"
+  project_id      = var.project_id
+  location        = var.region
+  deletion_policy = local.deletion_policy
+  services = {
+    for k, v in var.agent_registry_services : k => {
+      content      = v.content
+      description  = v.description
+      display_name = v.display_name
+      location     = v.location
+      protocol     = v.protocol
+      type         = v.type
+      url          = v.url
     }
   }
+}
 
-  dynamic "agent_spec" {
-    for_each = each.value.type == "agent" ? [""] : []
-    content {
-      type    = each.value.spec_type
-      content = each.value.content
-    }
-  }
-
-  dynamic "endpoint_spec" {
-    for_each = each.value.type == "endpoint" ? [""] : []
-    content {
-      type = each.value.spec_type
-    }
-  }
-
-  dynamic "mcp_server_spec" {
-    for_each = each.value.type == "mcp_server" ? [""] : []
-    content {
-      type    = each.value.spec_type
-      content = each.value.content
-    }
-  }
+moved {
+  from = google_agent_registry_service.agent_registry_services
+  to   = module.agent_registry.google_agent_registry_service.default
 }

@@ -33,10 +33,7 @@ output "agent_gateway_ids" {
 
 output "agent_registry_service_names" {
   description = "The resource names of the services registered in Agent Registry, keyed by service id."
-  value = {
-    for id, s in google_agent_registry_service.agent_registry_services
-    : id => s.name
-  }
+  value       = module.agent_registry.service_names
 }
 
 output "agent_registry_uris" {
