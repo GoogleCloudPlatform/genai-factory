@@ -412,7 +412,11 @@ values:
     engine_id: ge-app-main
     features:
       agent-gallery: FEATURE_STATE_ON
+      agent-sharing-without-admin-approval: FEATURE_STATE_ON
+      disable-agent-sharing: FEATURE_STATE_OFF
+      enable-end-user-sharing-with-groups: FEATURE_STATE_OFF
       model-selector: FEATURE_STATE_ON
+      workflow-agents: FEATURE_STATE_ON
     industry_vertical: GENERIC
     kms_key_name: null
     location: eu
