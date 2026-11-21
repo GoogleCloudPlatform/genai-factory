@@ -305,7 +305,7 @@ values:
     action_config: []
     auto_run_disabled: null
     bap_config: []
-    collection_display_name: Confluence Cloud
+    collection_display_name: Confluence+Cloud
     collection_id: confluence
     connector_modes:
     - DATA_INGESTION
@@ -438,15 +438,12 @@ values:
     output: null
     triggers_replace:
       collection_id: default_collection
-      engine_config: 2aa24bc300e9ff52645d8e2033c557d45067aae67f2b11aeb213be06a600d7dd
-      engine_id: ge-app-main
   module.gemini_enterprise.terraform_data.app_data_stores["ge-app-main"]:
     input: null
     output: null
     triggers_replace:
       collection_id: default_collection
       data_store_ids: '["confluence_page","confluence_space","onedrive_file","weather-mcp_mcp_data"]'
-      engine_id: ge-app-main
       native_stores: '[]'
   module.gemini_enterprise.terraform_data.mcp_action_config["weather-mcp"]:
     input: null

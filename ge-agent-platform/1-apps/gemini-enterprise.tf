@@ -79,11 +79,11 @@ module "gemini_enterprise" {
         }
         web_grounding_type = app.assistant.web_grounding_type
       }
-      collection_id = app.collection_id
+      collection_id  = app.collection_id
+      data_store_ids = try(app.engine.data_store_ids, null)
       engine = app.engine == null ? null : {
         display_name      = app.engine.display_name
         company_name      = app.engine.company_name
-        data_store_ids    = app.engine.data_store_ids
         disable_analytics = app.engine.disable_analytics
         features = (
           length(app.engine.features) == 0 ? null : app.engine.features
