@@ -52,7 +52,7 @@ output "gemini_enterprise_antigravity_principals" {
 output "gemini_enterprise_app_names" {
   description = "The resource names of the Gemini Enterprise apps Terraform creates, keyed by engine id. Apps that already existed are not listed."
   value = {
-    for id, e in google_discovery_engine_search_engine.default
+    for id, e in module.gemini_enterprise.engines
     : id => e.name
   }
 }
@@ -60,7 +60,7 @@ output "gemini_enterprise_app_names" {
 output "gemini_enterprise_assistant_names" {
   description = "The resource names of the managed assistants, keyed by engine id."
   value = {
-    for id, a in google_discovery_engine_assistant.default
+    for id, a in module.gemini_enterprise.assistants
     : id => a.name
   }
 }
@@ -69,14 +69,16 @@ output "gemini_enterprise_data_connector_names" {
   description = "The resource names of the Gemini Enterprise data connectors, keyed by connector id (or service id and app id for MCP connectors)."
   value = merge(
     {
-      for id, dc in google_discovery_engine_data_connector.default :
+      for id, dc in module.gemini_enterprise.data_connectors :
       id => dc.name
     },
     {
       for service_id, s in var.agent_registry_services : service_id => {
         for app_id in toset(coalesce(s.agent_gateway_app_ids, [])) :
-        app_id => google_discovery_engine_data_connector.mcp["${service_id}/${app_id}"].name
-        if contains(keys(google_discovery_engine_data_connector.mcp), "${service_id}/${app_id}")
+        app_id => try(
+          module.gemini_enterprise.mcp_connectors["${service_id}/${app_id}"].name,
+          module.gemini_enterprise.mcp_connectors[service_id].name
+        )
       }
       if s.type == "mcp_server" && length(coalesce(s.agent_gateway_app_ids, [])) > 0
     }

@@ -54,7 +54,7 @@ gemini_enterprise_apps = {
 Import the auto-created `default_assistant` before managing it:
 
 ```shell
-terraform import 'google_discovery_engine_assistant.default["<APP_ID>"]' \
+terraform import 'module.gemini_enterprise.google_discovery_engine_assistant.default["<APP_ID>"]' \
   "projects/<PROJECT_ID>/locations/<LOCATION>/collections/default_collection/engines/<APP_ID>/assistants/default_assistant"
 ```
 
@@ -93,5 +93,5 @@ agent_registry_services = {
 | Symptom / Error | Cause | Fix |
 | :--- | :--- | :--- |
 | `cannot update agent connectivity template that is referenced by an agent gateway` | Network Connectivity API blocks in-place updates to referenced connectivity templates | Set `agent_gateway_config.egress.networking` up front, or taint/detach the Agent Gateway before changing it. |
-| Extra `<app_id>-companion` data store appears in state | Discovery Engine `UpdateEngine` rejects linking exactly `1` data store (`0` or `>= 2` required) | Keep `<app_id>-companion` ([`1-apps/gemini-enterprise-ds.tf`](./1-apps/gemini-enterprise-ds.tf) creates it automatically when `length == 1`). |
+| Extra `<app_id>-companion` data store appears in state | Discovery Engine `UpdateEngine` rejects linking exactly `1` data store (`0` or `>= 2` required) | Keep `<app_id>-companion` (`module.gemini_enterprise` in [`1-apps/gemini-enterprise.tf`](./1-apps/gemini-enterprise.tf) creates it automatically when `length == 1`). |
 | Custom MCP OAuth 2.0 fails or Secret Manager lookup fails | Missing `/versions/<VERSION>` suffix on secret IDs or missing redirect URI | Append `/versions/1` (or `latest`) to `client_id`/`client_secret` and allow `https://vertexaisearch.cloud.google.com/oauth-redirect` on the OAuth client. |
