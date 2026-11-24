@@ -1,0 +1,13 @@
+{
+  "project_id": "",
+  "project_number": "",
+  "location": "global",
+  "endpoint_location": "global",
+  "delete_unassigned": false,
+  "batch_size": 100,
+  "group_mappings": {
+    "gemini-ent-frontline@yourdomain.com": "SUBSCRIPTION_ID_FRONTLINE",
+    "gemini-ent-standard@yourdomain.com": "SUBSCRIPTION_ID_STANDARD",
+    "gemini-ent-plus@yourdomain.com": "SUBSCRIPTION_ID_PLUS"
+  }
+}
