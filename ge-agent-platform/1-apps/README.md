@@ -552,6 +552,10 @@ access_policies = {
 }
 ```
 
+## Gemini Enterprise license assignment
+
+The [ge-license](./ge-license/README.md) folder contains scripts and a container image for assigning and revoking Gemini Enterprise licenses by edition using Google Group membership, either interactively from Cloud Shell or on a schedule with Cloud Run jobs.
+
 ## Manage prerequisites independently
 
 The [0-prereqs stage](../0-prereqs/README.md) generates the necessary Terraform input files for this stage. If you manage prerequisites independently (without the [0-prereqs stage](../0-prereqs/README.md)), you'll need to manually set values for your variables in a `terraform.tfvars` file (by following what is defined in [variables.tf](./variables.tf)), and provide a `providers.tf` file.
