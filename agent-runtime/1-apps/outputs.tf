@@ -19,9 +19,7 @@ output "agent_id" {
 
 output "agent_identity" {
   description = "The IAM principal the agent calls other services with. Use it in the Agent Registry IAM bindings of the ge-agent-platform factory."
-  # The agent runs under a service account rather than under an agent
-  # identity, so the principal is the account itself.
-  value = "serviceAccount:${var.service_account_emails["service-01/gf-ar-0"]}"
+  value       = module.agent.identity
 }
 
 output "commands" {

@@ -23,7 +23,8 @@ Deploys a **Vertex AI Agent Engine (Reasoning Engine)** runtime ([`agent-runtime
 | :--- | :--- |
 | **Projects (`0-prereqs`)** | Service: `gf-ar-0` ([`service-01.yaml`](./0-prereqs/data/projects/service-01.yaml)); Host: `gf-ar-hp-0` ([`host.yaml`](./0-prereqs/data/projects/host.yaml)) |
 | **Default Name (`var.name`)** | `agent-0` (used for both Reasoning Engine and `FIRESTORE_NATIVE` database) |
-| **Required SA Keys (`1-apps`)** | `service-01/iac-rw` (deployer), `service-01/gf-ar-0` (runtime SA: `aiplatform.user`, `datastore.user`, `modelarmor.user`) |
+| **Required SA Keys (`1-apps`)** | `service-01/iac-rw` (deployer, with a delegated `projectIamAdmin` limited to the agent roles) |
+| **Agent Identity (`1-apps`)** | `identity_type = "AGENT_IDENTITY"`; the module grants `datastore.user` and `storage.objectViewer` to the identity; `agent_identity` output is the `principal://` value |
 | **Host Networking (`0-prereqs`)** | PSC-I `network_attachment` (`ACCEPT_MANUAL`, `ignore_changes = [producer_accept_lists]`), SWP `10.0.0.100:443`, host `aiplatform` SA `compute.networkAdmin`, `service-01/aiplatform` SA `dns.peer` |
 
 ## Core Patterns
@@ -68,6 +69,7 @@ terraform apply -replace="module.agent.google_vertex_ai_reasoning_engine.unmanag
 | :--- | :--- | :--- |
 | Reasoning Engine rejects `GOOGLE_CLOUD_LOCATION` in `env` | `GOOGLE_CLOUD_LOCATION` is reserved by Vertex AI Agent Engine | Pass `REGION` via Terraform env vars and set `os.environ["GOOGLE_CLOUD_LOCATION"] = "eu" if REGION.startswith("europe") else "us"` inside [`agent.py`](./1-apps/apps/adk/agent.py) at import time and in `session_service_builder()` / `_init_adk()`. |
 | Outbound HTTP tool calls time out under PSC-I | PSC-I instances have no direct internet access | Route external requests through `http://{config.PROXY_ADDRESS}:{config.PROXY_PORT}` (`10.0.0.100:443`) and allow the target host in `0-prereqs` `networking_config.proxy_config.policy_rules`. |
-| `Reasoning Engine with 'agent_gateway_config' must use 'AGENT_IDENTITY'` | Vertex AI API rejects `agent_gateway_ids` when `identity_type = "SERVICE_ACCOUNT"` (and `agent_gateway_ids` disables `psc_interface_config`) | See [`1-apps/README.md`](./1-apps/README.md) before setting `agent_gateway_ids`. |
+| `Reasoning Engine with 'agent_gateway_config' must use 'AGENT_IDENTITY'` | `agent_gateway_ids` set on an agent deployed with `identity_type = "SERVICE_ACCOUNT"` | Keep the stage default `identity_type = "AGENT_IDENTITY"` in [`1-apps/main.tf`](./1-apps/main.tf). |
+| Agent gets `PERMISSION_DENIED` on Firestore right after the first deploy | Roles are granted to the agent identity after the Reasoning Engine is created and take time to propagate | Wait a few minutes and retry. |
 | External A2A client gets `404` on `/.well-known/agent-card.json` | Default A2A router only mounts under `/a2a/v1/card` | Keep the `WellKnownCardA2aAgent` subclass in [`1-apps/apps/adk-a2a/agent.py`](./1-apps/apps/adk-a2a/agent.py). |
 | A2A request fails with `Authenticated caller principal is required` or `404` on `tasks/{id}` | `apps/adk-a2a` binds sessions and tasks to the verified `Authorization: Bearer` / IAP principal on `ServerCallContext` (ignoring `message.metadata.user_id`) | Send a valid Google OIDC/OAuth2 Bearer token (or authenticated `ServerCallContext.user`) and query tasks using the same caller identity that created them. |

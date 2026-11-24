@@ -110,7 +110,7 @@ variable "region" {
   nullable    = false
 }
 
-# Expected keys: service-01/gf-ar-0, service-01/iac-rw
+# Expected keys: service-01/iac-rw
 variable "service_account_emails" {
   description = "The service account emails. Each element is the email of the service account or the key of the map var.service_accounts."
   type        = map(string)
