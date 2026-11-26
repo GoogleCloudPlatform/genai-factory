@@ -12,84 +12,392 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# tfdoc:file:description Gemini Enterprise apps, assistants, and IAM.
+# tfdoc:file:description Gemini Enterprise apps, assistants, widgets, gateway bindings, and IAM.
 
 locals {
+  _app_all_raw_principals = flatten([
+    for k, v in local.gemini_enterprise_apps : concat(
+      flatten(values(v.iam)),
+      keys(v.iam_by_principals),
+      flatten([for b in values(v.iam_bindings) : b.members]),
+      [for b in values(v.iam_bindings_additive) : b.member]
+    )
+  ])
+  _app_iam_by_principals = {
+    for k, v in local.gemini_enterprise_apps : k => {
+      for r in distinct(flatten(values(v.iam_by_principals))) : r => [
+        for pk, pv in v.iam_by_principals :
+        pk if contains(pv, r)
+      ]
+    }
+  }
+  _app_iam_merged = {
+    for k, v in local.gemini_enterprise_apps : k => {
+      for role in distinct(concat(
+        keys(v.iam),
+        keys(local._app_iam_by_principals[k])
+        )) : role => distinct(concat(
+        try(v.iam[role], []),
+        try(local._app_iam_by_principals[k][role], [])
+      ))
+    }
+  }
+  _app_raw_data_store_ids = {
+    for k, v in local.gemini_enterprise_apps : k => distinct(concat(
+      [
+        for ds in coalesce(v.data_store_ids, []) : (
+          contains(keys(local.gemini_enterprise_data_stores), ds)
+          ? local.gemini_enterprise_data_stores[ds].data_store_id
+          : ds
+        )
+      ],
+      [
+        for ds_k, ds_v in local.gemini_enterprise_data_stores :
+        ds_v.data_store_id
+        if contains(ds_v.app_ids, k)
+      ],
+      flatten([
+        for dc_k, dc_v in local.gemini_enterprise_data_connectors : [
+          for e in dc_v.entities :
+          "${dc_v.collection_id}_${e.entity_name}"
+          if e.entity_name != null && !contains(["root", "site"], e.entity_name)
+        ]
+        if contains(dc_v.app_ids, k)
+      ]),
+      [
+        for mc_k, mc_v in local.gemini_enterprise_mcp_data_connectors :
+        "${mc_v.collection_id}_mcp_data"
+        if mc_v.app_id == k
+      ]
+    ))
+  }
+  _app_resolved_data_store_ids = {
+    for k, ds_ids in local._app_raw_data_store_ids : k => (
+      local._app_static_store_count[k] == 1
+      && contains(keys(google_discovery_engine_data_store.companion), k)
+      ? concat(
+        ds_ids,
+        [google_discovery_engine_data_store.companion[k].data_store_id]
+      )
+      : ds_ids
+    )
+  }
+  # Plan-known store count avoids calling distinct() on potentially unknown
+  # apply-time data_store_ids elements so companion for_each stays plan-known.
+  _app_static_store_count = {
+    for k, v in local.gemini_enterprise_apps : k => (
+      length(coalesce(v.data_store_ids, []))
+      + length([
+        for ds_k, ds_v in local.gemini_enterprise_data_stores :
+        ds_k
+        if contains(ds_v.app_ids, k)
+        && !contains(coalesce(v.data_store_ids, []), ds_k)
+        && !contains(coalesce(v.data_store_ids, []), ds_v.data_store_id)
+      ])
+      + length(flatten([
+        for dc_k, dc_v in local.gemini_enterprise_data_connectors : [
+          for e in dc_v.entities : e.entity_name
+          if e.entity_name != null && !contains(["root", "site"], e.entity_name)
+        ]
+        if contains(dc_v.app_ids, k)
+      ]))
+      + length([
+        for mc_k, mc_v in local.gemini_enterprise_mcp_data_connectors :
+        mc_k if mc_v.app_id == k
+      ])
+    )
+  }
+  _default_engine_features = {
+    "agent-sharing-without-admin-approval" = "FEATURE_STATE_ON"
+    "disable-agent-sharing"                = "FEATURE_STATE_OFF"
+    "enable-end-user-sharing-with-groups"  = "FEATURE_STATE_OFF"
+    "workflow-agents"                      = "FEATURE_STATE_ON"
+  }
   gemini_enterprise_antigravity_role = coalesce(
     var.gemini_enterprise_iam.antigravity_role,
     "projects/${var.project_id}/roles/discoveryengineUserBusinessAiCodeOnly"
   )
-  gemini_enterprise_app_role_members = merge([
-    for key, binding in local.gemini_enterprise_app_roles : {
-      for member in binding.members :
-      "${key} ${member}" => merge(binding, { member = member })
-    }
-  ]...)
-  gemini_enterprise_app_roles = merge([
-    for app_id, app in var.gemini_enterprise_apps : {
-      for role, members in app.iam : "${app_id} ${role}" => {
-        app_id        = app_id
-        collection_id = app.collection_id
-        role          = role
+  gemini_enterprise_app_iam = merge([
+    for k, v in local.gemini_enterprise_apps : {
+      for role, members in local._app_iam_merged[k] :
+      "${k}/${role}" => {
+        collection_id = v.collection_id
+        engine_id     = v.engine_id
         members       = members
+        role          = role
       }
     }
   ]...)
+  gemini_enterprise_app_iam_bindings = merge([
+    for k, v in local.gemini_enterprise_apps : {
+      for bk, bv in v.iam_bindings :
+      "${k}/${bk}" => {
+        collection_id = v.collection_id
+        engine_id     = v.engine_id
+        members       = bv.members
+        role          = bv.role
+      }
+    }
+  ]...)
+  gemini_enterprise_app_iam_bindings_additive = merge([
+    for k, v in local.gemini_enterprise_apps : {
+      for bk, bv in v.iam_bindings_additive :
+      "${k}/${bk}" => {
+        collection_id = v.collection_id
+        engine_id     = v.engine_id
+        member        = bv.member
+        role          = bv.role
+      }
+    }
+  ]...)
+  gemini_enterprise_apps = {
+    for k, v in var.gemini_enterprise_apps : k => merge(v, {
+      companion_store_id = (
+        length("${replace(coalesce(v.engine_id, k), "_", "-")}-companion") <= 63
+        ? "${replace(coalesce(v.engine_id, k), "_", "-")}-companion"
+        : "${trimsuffix(substr(replace(coalesce(v.engine_id, k), "_", "-"), 0, 44), "-")}-${substr(md5(coalesce(v.engine_id, k)), 0, 8)}-companion"
+      )
+      egress_gateway_resolved = (
+        v.egress_agent_gateway == ""
+        ? null
+        : coalesce(v.egress_agent_gateway, module.agent_gateway_egress.id)
+      )
+      engine_id = coalesce(v.engine_id, k)
+      gateway_patch_body = (
+        v.egress_agent_gateway == ""
+        ? null
+        : jsonencode({
+          agentGatewaySetting = {
+            defaultEgressAgentGateway = {
+              name = coalesce(
+                v.egress_agent_gateway, module.agent_gateway_egress.id
+              )
+            }
+          }
+        })
+      )
+      has_egress_gateway = v.egress_agent_gateway != ""
+      kms_key_name       = try(v.engine.kms_key_name, null)
+    })
+  }
+  gemini_enterprise_apps_with_assistant = {
+    for k, v in local.gemini_enterprise_apps : k => merge(v, {
+      has_customer_policy = (
+        length(v.assistant.banned_phrases) > 0
+        || v.assistant.model_armor.enable
+      )
+    })
+    if v.assistant != null
+  }
+  gemini_enterprise_apps_with_data_stores_reconcile = {
+    for k, v in local.gemini_enterprise_apps : k => v
+    if v.engine != null || v.data_store_ids != null || local._app_static_store_count[k] > 0
+  }
+  gemini_enterprise_apps_with_gateway = {
+    for k, v in local.gemini_enterprise_apps : k => v
+    if v.has_egress_gateway
+  }
+  gemini_enterprise_apps_with_single_store = {
+    for k, v in local.gemini_enterprise_apps : k => v
+    if local._app_static_store_count[k] == 1
+  }
+  gemini_enterprise_apps_with_widget = {
+    for k, v in local.gemini_enterprise_apps : k => merge(v, {
+      data_store_ui_configs = {
+        for ds_k, ds_v in coalesce(
+          try(v.widget_config.ui_settings.data_store_ui_configs, null), {}
+          ) : ds_k => merge(ds_v, {
+            name = (
+              contains(keys(google_discovery_engine_data_store.default), ds_k)
+              ? google_discovery_engine_data_store.default[ds_k].name
+              : ds_k
+            )
+        })
+      }
+    })
+    if v.widget_config != null
+  }
   gemini_enterprise_engines = {
-    for id, app in var.gemini_enterprise_apps : id => app
-    if app.engine != null
-  }
-  gemini_enterprise_engine_raw_data_store_ids = {
-    for id, app in local.gemini_enterprise_engines : id => distinct(concat(
-      app.engine.data_store_ids,
-      flatten([
-        for dc_id, dc in var.gemini_enterprise_data_connectors : [
-          for e in dc.entities :
-          "${google_discovery_engine_data_connector.default[dc_id].collection_id}_${e.entity_name}"
-          if e.entity_name != null && !contains(["root", "site"], e.entity_name)
-        ]
-        if contains(dc.app_ids, id) && contains(keys(google_discovery_engine_data_connector.default), dc_id)
-      ]),
-      [
-        for k, dc in local.gemini_enterprise_mcp_data_connectors :
-        "${google_discovery_engine_data_connector.mcp[k].collection_id}_mcp_data"
-        if dc.app_id == id && contains(keys(google_discovery_engine_data_connector.mcp), k)
-      ]
-    ))
-  }
-  gemini_enterprise_engine_data_store_ids = {
-    for id, ds_ids in local.gemini_enterprise_engine_raw_data_store_ids : id => (
-      length(ds_ids) == 1 && contains(keys(google_discovery_engine_data_store.companion), id)
-      ? concat(ds_ids, [google_discovery_engine_data_store.companion[id].data_store_id])
-      : ds_ids
-    )
+    for k, v in local.gemini_enterprise_apps : k => v
+    if v.engine != null
   }
   # Anyone holding a role on an app also needs the restricted user role on the
   # project to reach it. Principals that cannot hold a project-level grant
   # (allUsers, allAuthenticatedUsers, deleted:) are skipped.
   gemini_enterprise_project_members = toset([
-    for binding in values(local.gemini_enterprise_app_role_members) :
-    binding.member
-    if !contains(["allUsers", "allAuthenticatedUsers"], binding.member)
-    && !startswith(binding.member, "deleted:")
+    for p in distinct(local._app_all_raw_principals) : p
+    if !contains(["allUsers", "allAuthenticatedUsers"], p)
+    && !startswith(p, "deleted:")
   ])
   gemini_enterprise_restricted_user_role = "roles/discoveryengine.agentspaceRestrictedUser"
 }
 
-# Discovery Engine's UpdateEngine API rejects data_store_ids of length 1 (only
-# 0 or >= 2 are allowed). This empty NO_CONTENT companion data store is linked
-# whenever an engine has exactly 1 configured data store.
+# Discovery Engine's UpdateEngine API rejects dataStoreIds of length 1 (only 0
+# or >= 2 are allowed). Create an empty NO_CONTENT companion store whenever an
+# app resolves to exactly 1 attached store. deletion_policy is hardcoded to
+# DELETE so 1 -> 2 and 1 -> 0 store transitions succeed under deletion protection.
 resource "google_discovery_engine_data_store" "companion" {
-  for_each                     = local.gemini_enterprise_engines
-  project                      = var.project_id
-  location                     = var.location
-  data_store_id                = "${replace(each.key, "_", "-")}-companion"
-  display_name                 = "${each.value.engine.display_name}-companion"
-  industry_vertical            = each.value.engine.industry_vertical
-  content_config               = "NO_CONTENT"
-  solution_types               = ["SOLUTION_TYPE_SEARCH"]
-  create_advanced_site_search  = false
+  for_each      = local.gemini_enterprise_apps_with_single_store
+  project       = var.project_id
+  location      = var.location
+  data_store_id = each.value.companion_store_id
+  display_name = (
+    "${coalesce(try(each.value.engine.display_name, null), each.value.engine_id)}-companion"
+  )
+  industry_vertical           = coalesce(try(each.value.engine.industry_vertical, null), "GENERIC")
+  content_config              = "NO_CONTENT"
+  solution_types              = ["SOLUTION_TYPE_SEARCH"]
+  create_advanced_site_search = false
+  deletion_policy             = "DELETE"
+  kms_key_name = try(
+    coalesce(
+      each.value.kms_key_name,
+      try(
+        var.gemini_enterprise_encryption_config.set_default
+        ? var.gemini_enterprise_encryption_config.kms_key
+        : null,
+        null
+      )
+    ),
+    null
+  )
   skip_default_schema_creation = false
+
+  depends_on = [
+    google_discovery_engine_acl_config.default,
+    google_discovery_engine_cmek_config.default,
+    google_discovery_engine_user_store.default,
+  ]
+
+  # Detach the companion store before deletion when an app transitions from 1
+  # attached store to 0 or >= 2 stores.
+  provisioner "local-exec" {
+    when        = destroy
+    interpreter = ["/bin/bash", "-c"]
+    environment = {
+      DATA_STORE_IDS  = jsonencode([self.data_store_id])
+      DELETION_POLICY = coalesce(self.deletion_policy, "DELETE")
+      LOCATION        = self.location
+      PROJECT         = self.project
+    }
+    command = <<-EOT
+      set -euo pipefail
+
+      if [[ "$DELETION_POLICY" != "DELETE" ]]; then
+        exit 0
+      fi
+
+      host_prefix=""
+      [[ "$LOCATION" != "global" ]] && host_prefix="$${LOCATION}-"
+      v1_ep="https://$${host_prefix}discoveryengine.googleapis.com/v1"
+      v1alpha_ep="https://$${host_prefix}discoveryengine.googleapis.com/v1alpha"
+
+      if [[ -n "$${GOOGLE_OAUTH_ACCESS_TOKEN:-}" ]]; then
+        token="$GOOGLE_OAUTH_ACCESS_TOKEN"
+      elif [[ -n "$${GOOGLE_IMPERSONATE_SERVICE_ACCOUNT:-}" ]]; then
+        token="$(gcloud auth print-access-token --impersonate-service-account="$GOOGLE_IMPERSONATE_SERVICE_ACCOUNT")"
+      else
+        token="$(gcloud auth print-access-token 2>/dev/null || gcloud auth application-default print-access-token)"
+      fi
+      quota_project="$${GOOGLE_BILLING_PROJECT:-$${CLOUDSDK_BILLING_QUOTA_PROJECT:-$PROJECT}}"
+
+      hdr=$(mktemp)
+      body=$(mktemp)
+      resp=$(mktemp)
+      chmod 600 "$hdr"
+      printf 'header = "Authorization: Bearer %s"\nheader = "X-Goog-User-Project: %s"\n' "$token" "$quota_project" > "$hdr"
+
+      lockbase="/tmp/ge-ds-sync-$${PROJECT}-$${LOCATION}"
+      if command -v flock >/dev/null 2>&1; then
+        exec 9>"$${lockbase}.lock"
+        flock -w 300 9
+        cleanup() { rm -f "$hdr" "$body" "$resp"; }
+      else
+        lockdir="$${lockbase}.lockdir"
+        waited=0
+        while ! mkdir "$lockdir" 2>/dev/null; do
+          if [[ -f "$lockdir/pid" ]]; then
+            holder=$(cat "$lockdir/pid" 2>/dev/null || true)
+            if [[ -n "$holder" ]] && ! kill -0 "$holder" 2>/dev/null; then
+              rm -rf "$lockdir"
+              continue
+            fi
+          fi
+          if (( waited >= 300 )); then
+            echo "Timed out waiting for lock $lockdir" >&2
+            exit 1
+          fi
+          sleep 1
+          waited=$((waited + 1))
+        done
+        echo "$$" > "$lockdir/pid"
+        cleanup() { rm -rf "$lockdir" "$hdr" "$body" "$resp"; }
+      fi
+      trap cleanup EXIT
+
+      collections=("projects/$${PROJECT}/locations/$${LOCATION}/collections/default_collection")
+      page_token=""
+      while :; do
+        col_url="$${v1alpha_ep}/projects/$${PROJECT}/locations/$${LOCATION}/collections"
+        if [[ -n "$page_token" ]]; then
+          col_url="$${col_url}?pageToken=$(jq -rn --arg t "$page_token" '$t | @uri')"
+        fi
+        status=$(curl -sS -K "$hdr" -o "$body" -w '%%{http_code}' "$col_url")
+        [[ "$status" != 2* ]] && break
+        while IFS= read -r col; do
+          [[ -n "$col" && "$${col##*/}" != "default_collection" ]] && collections+=("$col")
+        done < <(jq -r '.collections[]? | select(.dataConnector == null) | .name' "$body")
+        page_token=$(jq -r '.nextPageToken // empty' "$body")
+        [[ -z "$page_token" ]] && break
+      done
+
+      for col in "$${collections[@]}"; do
+        page_token=""
+        while :; do
+          eng_url="$${v1_ep}/$${col}/engines"
+          if [[ -n "$page_token" ]]; then
+            eng_url="$${eng_url}?pageToken=$(jq -rn --arg t "$page_token" '$t | @uri')"
+          fi
+          status=$(curl -sS -K "$hdr" -o "$body" -w '%%{http_code}' "$eng_url")
+          [[ "$status" == "404" ]] && break
+          if [[ "$status" != 2* ]]; then
+            echo "Failed to list Discovery Engine apps in $col (HTTP $status)" >&2
+            cat "$body" >&2
+            exit 1
+          fi
+          while IFS= read -r engine; do
+            [[ -z "$engine" ]] && continue
+            payload=$(jq -c --arg eng "$engine" --argjson targets "$DATA_STORE_IDS" \
+              '.engines[] | select(.name == $eng) | ((.dataStoreIds // []) - $targets) as $rem | {dataStoreIds: (if ($rem | length) == 1 then [] else $rem end)}' "$body")
+            patch_status=""
+            for attempt in {1..5}; do
+              patch_status=$(printf '%s' "$payload" | curl -sS -X PATCH -K "$hdr" \
+                -H "Content-Type: application/json" \
+                --data-binary @- \
+                -o "$resp" -w '%%{http_code}' \
+                "$${v1_ep}/$${engine}?updateMask=dataStoreIds")
+              if [[ "$patch_status" == 2* || "$patch_status" == "404" ]]; then
+                break
+              fi
+              if [[ "$patch_status" == 5* || "$patch_status" == "429" ]]; then
+                sleep 2
+                continue
+              fi
+              break
+            done
+            if [[ "$patch_status" != 2* && "$patch_status" != "404" ]]; then
+              echo "Failed to detach stores from $engine (HTTP $patch_status)" >&2
+              cat "$resp" >&2
+              exit 1
+            fi
+          done < <(jq -r --argjson targets "$DATA_STORE_IDS" \
+            '.engines[]? | select(any((.dataStoreIds // [])[]; . as $id | $targets | index($id))) | .name' "$body")
+          page_token=$(jq -r '.nextPageToken // empty' "$body")
+          [[ -z "$page_token" ]] && break
+        done
+      done
+    EOT
+  }
 }
 
 # A Gemini Enterprise app is a generic search engine with
@@ -99,50 +407,69 @@ resource "google_discovery_engine_search_engine" "default" {
   project           = var.project_id
   location          = var.location
   collection_id     = each.value.collection_id
-  engine_id         = each.key
+  engine_id         = each.value.engine_id
   display_name      = each.value.engine.display_name
-  data_store_ids    = []
   app_type          = "APP_TYPE_INTRANET"
-  industry_vertical = each.value.engine.industry_vertical
-  disable_analytics = each.value.engine.disable_analytics
-  features          = each.value.engine.features
+  data_store_ids    = []
   deletion_policy   = local.deletion_policy
+  disable_analytics = each.value.engine.disable_analytics
+  features = (
+    each.value.engine.features == null
+    ? null
+    : merge(local._default_engine_features, each.value.engine.features)
+  )
+  industry_vertical          = each.value.engine.industry_vertical
+  kms_key_name               = each.value.kms_key_name
+  model_configs              = each.value.engine.model_configs
+  procurement_contact_emails = each.value.engine.procurement_contact_emails
 
   search_engine_config {
-    search_tier                = each.value.engine.search_tier
-    search_add_ons             = each.value.engine.search_add_ons
     required_subscription_tier = each.value.engine.required_subscription_tier
+    search_add_ons             = each.value.engine.search_add_ons
+    search_tier                = each.value.engine.search_tier
   }
 
-  knowledge_graph_config {
-    enable_cloud_knowledge_graph   = each.value.engine.knowledge_graph.enable_cloud_knowledge_graph
-    cloud_knowledge_graph_types    = each.value.engine.knowledge_graph.cloud_knowledge_graph_types
-    enable_private_knowledge_graph = each.value.engine.knowledge_graph.enable_private_knowledge_graph
+  dynamic "knowledge_graph_config" {
+    for_each = each.value.engine.knowledge_graph == null ? [] : [""]
 
-    dynamic "feature_config" {
-      for_each = (
-        each.value.engine.knowledge_graph.feature_config == null
-        ? {} : { 1 = 1 }
-      )
-      content {
-        disable_private_kg_query_understanding = each.value.engine.knowledge_graph.feature_config.disable_private_kg_query_understanding
-        disable_private_kg_enrichment          = each.value.engine.knowledge_graph.feature_config.disable_private_kg_enrichment
-        disable_private_kg_auto_complete       = each.value.engine.knowledge_graph.feature_config.disable_private_kg_auto_complete
-        disable_private_kg_query_ui_chips      = each.value.engine.knowledge_graph.feature_config.disable_private_kg_query_ui_chips
+    content {
+      cloud_knowledge_graph_types    = each.value.engine.knowledge_graph.cloud_knowledge_graph_types
+      enable_cloud_knowledge_graph   = each.value.engine.knowledge_graph.enable_cloud_knowledge_graph
+      enable_private_knowledge_graph = each.value.engine.knowledge_graph.enable_private_knowledge_graph
+
+      dynamic "feature_config" {
+        for_each = (
+          each.value.engine.knowledge_graph.feature_config == null
+          ? [] : [""]
+        )
+
+        content {
+          disable_private_kg_auto_complete       = each.value.engine.knowledge_graph.feature_config.disable_private_kg_auto_complete
+          disable_private_kg_enrichment          = each.value.engine.knowledge_graph.feature_config.disable_private_kg_enrichment
+          disable_private_kg_query_ui_chips      = each.value.engine.knowledge_graph.feature_config.disable_private_kg_query_ui_chips
+          disable_private_kg_query_understanding = each.value.engine.knowledge_graph.feature_config.disable_private_kg_query_understanding
+        }
       }
     }
   }
 
   dynamic "common_config" {
-    for_each = each.value.engine.company_name == null ? [] : [1]
+    for_each = each.value.engine.company_name == null ? [] : [""]
+
     content {
       company_name = each.value.engine.company_name
     }
   }
 
+  depends_on = [
+    google_discovery_engine_acl_config.default,
+    google_discovery_engine_cmek_config.default,
+    google_discovery_engine_user_store.default,
+  ]
+
   # Data stores are attached and detached via terraform_data.app_data_stores and
-  # connector destroy provisioners so that google_discovery_engine_search_engine
-  # never depends on google_discovery_engine_data_connector resources.
+  # store/connector destroy provisioners so google_discovery_engine_search_engine
+  # never depends on store or connector lifecycles.
   lifecycle {
     ignore_changes = [
       data_store_ids,
@@ -151,111 +478,198 @@ resource "google_discovery_engine_search_engine" "default" {
 }
 
 resource "terraform_data" "app_data_stores" {
-  for_each = local.gemini_enterprise_engines
+  for_each = local.gemini_enterprise_apps_with_data_stores_reconcile
 
   triggers_replace = {
-    collection_id  = each.value.collection_id
-    data_store_ids = jsonencode(sort(local.gemini_enterprise_engine_data_store_ids[each.key]))
-    engine_id      = try(google_discovery_engine_search_engine.default[each.key].engine_id, each.key)
-  }
-
-  provisioner "local-exec" {
-    interpreter = ["/bin/bash", "-c"]
-    command     = <<-EOT
-      set -euo pipefail
-
-      endpoint="https://${var.location == "global" ? "" : "${var.location}-"}discoveryengine.googleapis.com/v1"
-      url="$endpoint/projects/${var.project_id}/locations/${var.location}/collections/${each.value.collection_id}/engines/${each.key}"
-      lockdir="/tmp/ge-mcp-detach-${var.project_id}-${var.location}.lock"
-      body=$(mktemp)
-
-      while ! mkdir "$lockdir" 2>/dev/null; do
-        sleep 1
-      done
-      trap 'rmdir "$lockdir" 2>/dev/null || true; rm -f "$body"' EXIT
-
-      status=$(curl -sS -X PATCH \
-        -H "Authorization: Bearer $(gcloud auth print-access-token)" \
-        -H "Content-Type: application/json" \
-        -H "X-Goog-User-Project: ${var.project_id}" \
-        -d '${jsonencode({ dataStoreIds = local.gemini_enterprise_engine_data_store_ids[each.key] })}' \
-        -o "$body" -w '%%{http_code}' \
-        "$url?updateMask=dataStoreIds")
-
-      if [[ "$status" != 2* ]]; then
-        echo "Failed to update dataStoreIds on ${each.key} (HTTP $status)" >&2
-        cat "$body" >&2
-        exit 1
-      fi
-    EOT
-  }
-}
-
-# google_discovery_engine_search_engine (provider 8.4.0) does not support
-# agentGatewaySetting, so we bind the default egress Agent Gateway via a
-# local-exec PATCH.
-resource "terraform_data" "app_agent_gateway_patch" {
-  for_each = var.gemini_enterprise_apps
-
-  triggers_replace = {
-    agent_gateway = module.agent_gateway_egress.id
     collection_id = each.value.collection_id
-    engine_id     = each.key
-    engine_config = sha256(jsonencode(each.value.engine))
+    connectors = jsonencode([
+      for dc_k, dc_v in local.gemini_enterprise_data_connectors :
+      google_discovery_engine_data_connector.default[dc_k].id
+      if contains(dc_v.app_ids, each.key)
+      && contains(keys(google_discovery_engine_data_connector.default), dc_k)
+    ])
+    data_store_ids = jsonencode(sort(local._app_resolved_data_store_ids[each.key]))
+    engine_id = (
+      contains(keys(google_discovery_engine_search_engine.default), each.key)
+      ? google_discovery_engine_search_engine.default[each.key].id
+      : each.value.engine_id
+    )
+    mcp_connectors = jsonencode([
+      for mc_k, mc_v in local.gemini_enterprise_mcp_data_connectors :
+      google_discovery_engine_data_connector.mcp[mc_k].id
+      if mc_v.app_id == each.key
+      && contains(keys(google_discovery_engine_data_connector.mcp), mc_k)
+    ])
+    native_stores = jsonencode([
+      for ds_k, ds_v in local.gemini_enterprise_data_stores :
+      google_discovery_engine_data_store.default[ds_k].id
+      if(
+        contains(ds_v.app_ids, each.key)
+        || contains(coalesce(each.value.data_store_ids, []), ds_k)
+      ) && contains(keys(google_discovery_engine_data_store.default), ds_k)
+    ])
   }
 
   provisioner "local-exec" {
     interpreter = ["/bin/bash", "-c"]
+    environment = {
+      COLLECTION_ID = each.value.collection_id
+      ENGINE_ID     = each.value.engine_id
+      LOCATION      = var.location
+      PAYLOAD       = jsonencode({ dataStoreIds = local._app_resolved_data_store_ids[each.key] })
+      PROJECT       = var.project_id
+    }
     command = <<-EOT
       set -euo pipefail
 
-      endpoint="https://${var.location == "global" ? "" : "${var.location}-"}discoveryengine.googleapis.com/v1"
-      url="$endpoint/projects/${var.number}/locations/${var.location}/collections/${each.value.collection_id}/engines/${each.key}"
-      mask="agentGatewaySetting.defaultEgressAgentGateway.name"
-      body=$(mktemp)
-      trap 'rm -f "$body"' EXIT
+      host_prefix=""
+      [[ "$LOCATION" != "global" ]] && host_prefix="$${LOCATION}-"
+      endpoint="https://$${host_prefix}discoveryengine.googleapis.com/v1"
+      url="$${endpoint}/projects/$${PROJECT}/locations/$${LOCATION}/collections/$${COLLECTION_ID}/engines/$${ENGINE_ID}"
 
-      status=$(curl -sS -X PATCH \
-        -H "Authorization: Bearer $(gcloud auth print-access-token)" \
+      if [[ -n "$${GOOGLE_OAUTH_ACCESS_TOKEN:-}" ]]; then
+        token="$GOOGLE_OAUTH_ACCESS_TOKEN"
+      elif [[ -n "$${GOOGLE_IMPERSONATE_SERVICE_ACCOUNT:-}" ]]; then
+        token="$(gcloud auth print-access-token --impersonate-service-account="$GOOGLE_IMPERSONATE_SERVICE_ACCOUNT")"
+      else
+        token="$(gcloud auth print-access-token 2>/dev/null || gcloud auth application-default print-access-token)"
+      fi
+      quota_project="$${GOOGLE_BILLING_PROJECT:-$${CLOUDSDK_BILLING_QUOTA_PROJECT:-$PROJECT}}"
+
+      hdr=$(mktemp)
+      body=$(mktemp)
+      chmod 600 "$hdr"
+      printf 'header = "Authorization: Bearer %s"\nheader = "X-Goog-User-Project: %s"\n' "$token" "$quota_project" > "$hdr"
+
+      lockbase="/tmp/ge-ds-sync-$${PROJECT}-$${LOCATION}"
+      if command -v flock >/dev/null 2>&1; then
+        exec 9>"$${lockbase}.lock"
+        flock -w 300 9
+        cleanup() { rm -f "$hdr" "$body"; }
+      else
+        lockdir="$${lockbase}.lockdir"
+        waited=0
+        while ! mkdir "$lockdir" 2>/dev/null; do
+          if [[ -f "$lockdir/pid" ]]; then
+            holder=$(cat "$lockdir/pid" 2>/dev/null || true)
+            if [[ -n "$holder" ]] && ! kill -0 "$holder" 2>/dev/null; then
+              rm -rf "$lockdir"
+              continue
+            fi
+          fi
+          if (( waited >= 300 )); then
+            echo "Timed out waiting for lock $lockdir" >&2
+            exit 1
+          fi
+          sleep 1
+          waited=$((waited + 1))
+        done
+        echo "$$" > "$lockdir/pid"
+        cleanup() { rm -rf "$lockdir" "$hdr" "$body"; }
+      fi
+      trap cleanup EXIT
+
+      status=$(printf '%s' "$PAYLOAD" | curl -sS -X PATCH -K "$hdr" \
         -H "Content-Type: application/json" \
-        -H "X-Goog-User-Project: ${var.project_id}" \
-        -d '${jsonencode({
-    agentGatewaySetting = {
-      defaultEgressAgentGateway = {
-        name = module.agent_gateway_egress.id
-      }
-    }
-})}' \
+        --data-binary @- \
         -o "$body" -w '%%{http_code}' \
-        "$url?updateMask=$mask")
+        "$${url}?updateMask=dataStoreIds")
 
       if [[ "$status" != 2* ]]; then
-        echo "Agent Gateway engine patch failed for ${each.key} (HTTP $status)" >&2
+        echo "Failed to update dataStoreIds on $ENGINE_ID (HTTP $status)" >&2
         cat "$body" >&2
         exit 1
       fi
     EOT
+  }
+
+  depends_on = [
+    terraform_data.mcp_agent_gateway_patch,
+  ]
 }
 
-depends_on = [
-  google_discovery_engine_search_engine.default,
-]
+# google_discovery_engine_search_engine does not yet expose agentGatewaySetting,
+# so bind the default egress Agent Gateway via a local-exec PATCH.
+resource "terraform_data" "app_agent_gateway_patch" {
+  for_each = local.gemini_enterprise_apps_with_gateway
+
+  triggers_replace = {
+    agent_gateway = each.value.egress_gateway_resolved
+    collection_id = each.value.collection_id
+    engine_id = (
+      contains(keys(google_discovery_engine_search_engine.default), each.key)
+      ? google_discovery_engine_search_engine.default[each.key].id
+      : each.value.engine_id
+    )
+  }
+
+  provisioner "local-exec" {
+    interpreter = ["/bin/bash", "-c"]
+    environment = {
+      COLLECTION_ID  = each.value.collection_id
+      ENGINE_ID      = each.value.engine_id
+      LOCATION       = var.location
+      PATCH_BODY     = each.value.gateway_patch_body
+      PROJECT        = var.project_id
+      PROJECT_NUMBER = var.number
+    }
+    command = <<-EOT
+      set -euo pipefail
+
+      host_prefix=""
+      [[ "$LOCATION" != "global" ]] && host_prefix="$${LOCATION}-"
+      endpoint="https://$${host_prefix}discoveryengine.googleapis.com/v1"
+      url="$${endpoint}/projects/$${PROJECT_NUMBER}/locations/$${LOCATION}/collections/$${COLLECTION_ID}/engines/$${ENGINE_ID}"
+      mask="agentGatewaySetting.defaultEgressAgentGateway.name"
+
+      if [[ -n "$${GOOGLE_OAUTH_ACCESS_TOKEN:-}" ]]; then
+        token="$GOOGLE_OAUTH_ACCESS_TOKEN"
+      elif [[ -n "$${GOOGLE_IMPERSONATE_SERVICE_ACCOUNT:-}" ]]; then
+        token="$(gcloud auth print-access-token --impersonate-service-account="$GOOGLE_IMPERSONATE_SERVICE_ACCOUNT")"
+      else
+        token="$(gcloud auth print-access-token 2>/dev/null || gcloud auth application-default print-access-token)"
+      fi
+      quota_project="$${GOOGLE_BILLING_PROJECT:-$${CLOUDSDK_BILLING_QUOTA_PROJECT:-$PROJECT}}"
+
+      hdr=$(mktemp)
+      body=$(mktemp)
+      chmod 600 "$hdr"
+      printf 'header = "Authorization: Bearer %s"\nheader = "X-Goog-User-Project: %s"\n' "$token" "$quota_project" > "$hdr"
+      trap 'rm -f "$hdr" "$body"' EXIT
+
+      status=$(printf '%s' "$PATCH_BODY" | curl -sS -X PATCH -K "$hdr" \
+        -H "Content-Type: application/json" \
+        --data-binary @- \
+        -o "$body" -w '%%{http_code}' \
+        "$${url}?updateMask=$${mask}")
+
+      if [[ "$status" != 2* ]]; then
+        echo "Agent Gateway engine patch failed for $ENGINE_ID (HTTP $status)" >&2
+        cat "$body" >&2
+        exit 1
+      fi
+    EOT
+  }
+
+  depends_on = [
+    google_discovery_engine_search_engine.default,
+  ]
 }
 
-# Gemini Enterprise creates the assistant together with the app, so this
-# adopts an existing resource rather than creating one. Import it before the
-# first apply, see README.md.
+# Gemini Enterprise creates the default_assistant automatically alongside the
+# app, so Terraform adopts it rather than creating one. Import default_assistant
+# before enabling assistant on an app; ABANDON ensures it is never deleted.
 resource "google_discovery_engine_assistant" "default" {
-  for_each = var.gemini_enterprise_apps
-
-  project            = var.project_id
-  location           = var.location
-  collection_id      = each.value.collection_id
-  engine_id          = each.key
-  assistant_id       = each.value.assistant.assistant_id
-  display_name       = each.value.assistant.display_name
-  description        = each.value.assistant.description
-  web_grounding_type = each.value.assistant.web_grounding_type
+  for_each                         = local.gemini_enterprise_apps_with_assistant
+  project                          = var.project_id
+  location                         = var.location
+  collection_id                    = each.value.collection_id
+  engine_id                        = each.value.engine_id
+  assistant_id                     = each.value.assistant.assistant_id
+  display_name                     = each.value.assistant.display_name
+  default_web_grounding_toggle_off = each.value.assistant.default_web_grounding_toggle_off
+  description                      = each.value.assistant.description
+  web_grounding_type               = each.value.assistant.web_grounding_type
 
   # The assistant belongs to the app, not to this configuration: Terraform
   # adopts it rather than creating it, so it is never deleted, whatever
@@ -263,21 +677,24 @@ resource "google_discovery_engine_assistant" "default" {
   deletion_policy = "ABANDON"
 
   dynamic "customer_policy" {
-    for_each = (
-      each.value.assistant.model_armor.enable || length(each.value.assistant.banned_phrases) > 0
-      ? [1] : []
-    )
+    for_each = each.value.has_customer_policy ? [""] : []
+
     content {
       dynamic "banned_phrases" {
         for_each = each.value.assistant.banned_phrases
+
         content {
-          phrase            = banned_phrases.value.phrase
-          match_type        = banned_phrases.value.match_type
           ignore_diacritics = banned_phrases.value.ignore_diacritics
+          match_type        = banned_phrases.value.match_type
+          phrase = coalesce(
+            banned_phrases.value.phrase, banned_phrases.key
+          )
         }
       }
+
       dynamic "model_armor_config" {
-        for_each = each.value.assistant.model_armor.enable ? [1] : []
+        for_each = each.value.assistant.model_armor.enable ? [""] : []
+
         content {
           user_prompt_template = (
             each.value.assistant.model_armor.user_prompt_direction == null
@@ -296,16 +713,21 @@ resource "google_discovery_engine_assistant" "default" {
   }
 
   dynamic "generation_config" {
-    for_each = each.value.assistant.generation_config == null ? [] : [1]
+    for_each = each.value.assistant.generation_config == null ? [] : [""]
+
     content {
       default_language = each.value.assistant.generation_config.default_language
+
       dynamic "system_instruction" {
         for_each = (
           each.value.assistant.generation_config.system_instruction == null
-          ? [] : [1]
+          ? [] : [""]
         )
+
         content {
-          additional_system_instruction = each.value.assistant.generation_config.system_instruction
+          additional_system_instruction = (
+            each.value.assistant.generation_config.system_instruction
+          )
         }
       }
     }
@@ -323,43 +745,194 @@ resource "google_discovery_engine_assistant" "default" {
     }
   }
 
-  # Bind only once the templates carry their final metadata, and only once the
-  # app exists when Terraform is the one creating it.
-  depends_on = [
-    terraform_data.template_metadata_patch,
-    google_discovery_engine_search_engine.default,
-  ]
-}
-
-# App-level IAM. Used when authoritative is false (additive)
-resource "google_discovery_engine_search_engine_iam_member" "default" {
-  for_each = (
-    var.gemini_enterprise_iam.authoritative
-    ? {} : local.gemini_enterprise_app_role_members
-  )
-  project       = var.project_id
-  location      = var.location
-  collection_id = each.value.collection_id
-  engine_id     = each.value.app_id
-  role          = each.value.role
-  member        = each.value.member
   depends_on = [
     google_discovery_engine_search_engine.default,
   ]
 }
 
-# App-level IAM. Used when authoritative is true
-resource "google_discovery_engine_search_engine_iam_binding" "default" {
-  for_each = (
-    var.gemini_enterprise_iam.authoritative
-    ? local.gemini_enterprise_app_roles : {}
-  )
+resource "google_discovery_engine_widget_config" "default" {
+  for_each         = local.gemini_enterprise_apps_with_widget
+  project          = var.project_id
+  location         = var.location
+  collection_id    = each.value.collection_id
+  engine_id        = each.value.engine_id
+  widget_config_id = each.value.widget_config.widget_config_id
+
+  dynamic "access_settings" {
+    for_each = each.value.widget_config.access_settings == null ? [] : [""]
+
+    content {
+      allow_public_access              = each.value.widget_config.access_settings.allow_public_access
+      allowlisted_domains              = each.value.widget_config.access_settings.allowlisted_domains
+      enable_web_app                   = each.value.widget_config.access_settings.enable_web_app
+      language_code                    = each.value.widget_config.access_settings.language_code
+      workforce_identity_pool_provider = each.value.widget_config.access_settings.workforce_identity_pool_provider
+    }
+  }
+
+  dynamic "homepage_setting" {
+    for_each = each.value.widget_config.homepage_setting == null ? [] : [""]
+
+    content {
+      dynamic "shortcuts" {
+        for_each = each.value.widget_config.homepage_setting.shortcuts
+
+        content {
+          destination_uri = shortcuts.value.destination_uri
+          title           = shortcuts.value.title
+
+          dynamic "icon" {
+            for_each = shortcuts.value.icon_url == null ? [] : [""]
+
+            content {
+              url = shortcuts.value.icon_url
+            }
+          }
+        }
+      }
+    }
+  }
+
+  dynamic "ui_branding" {
+    for_each = each.value.widget_config.ui_branding == null ? [] : [""]
+
+    content {
+      dynamic "logo" {
+        for_each = each.value.widget_config.ui_branding.logo == null ? [] : [""]
+
+        content {
+          url = each.value.widget_config.ui_branding.logo.url
+        }
+      }
+    }
+  }
+
+  dynamic "ui_settings" {
+    for_each = each.value.widget_config.ui_settings == null ? [] : [""]
+
+    content {
+      default_search_request_order_by   = each.value.widget_config.ui_settings.default_search_request_order_by
+      disable_user_events_collection    = each.value.widget_config.ui_settings.disable_user_events_collection
+      enable_autocomplete               = each.value.widget_config.ui_settings.enable_autocomplete
+      enable_create_agent_button        = each.value.widget_config.ui_settings.enable_create_agent_button
+      enable_people_search              = each.value.widget_config.ui_settings.enable_people_search
+      enable_quality_feedback           = each.value.widget_config.ui_settings.enable_quality_feedback
+      enable_safe_search                = each.value.widget_config.ui_settings.enable_safe_search
+      enable_search_as_you_type         = each.value.widget_config.ui_settings.enable_search_as_you_type
+      enable_visual_content_summary     = each.value.widget_config.ui_settings.enable_visual_content_summary
+      interaction_type                  = each.value.widget_config.ui_settings.interaction_type
+      result_description_type           = each.value.widget_config.ui_settings.result_description_type
+      source_admin_display_name_enabled = each.value.widget_config.ui_settings.source_admin_display_name_enabled
+
+      dynamic "data_store_ui_configs" {
+        for_each = each.value.data_store_ui_configs
+
+        content {
+          name = data_store_ui_configs.value.name
+
+          dynamic "facet_field" {
+            for_each = data_store_ui_configs.value.facet_fields
+
+            content {
+              display_name = facet_field.value
+              field        = facet_field.key
+            }
+          }
+
+          dynamic "fields_ui_components_map" {
+            for_each = data_store_ui_configs.value.fields_ui_components
+            iterator = ui_component
+
+            content {
+              device_visibility = ui_component.value.device_visibility
+              display_template  = ui_component.value.display_template
+              field             = ui_component.value.field
+              ui_component      = ui_component.key
+            }
+          }
+        }
+      }
+
+      dynamic "generative_answer_config" {
+        for_each = (
+          each.value.widget_config.ui_settings.generative_answer_config == null
+          ? [] : [""]
+        )
+
+        content {
+          disable_related_questions       = each.value.widget_config.ui_settings.generative_answer_config.disable_related_questions
+          ignore_adversarial_query        = each.value.widget_config.ui_settings.generative_answer_config.ignore_adversarial_query
+          ignore_low_relevant_content     = each.value.widget_config.ui_settings.generative_answer_config.ignore_low_relevant_content
+          ignore_non_answer_seeking_query = each.value.widget_config.ui_settings.generative_answer_config.ignore_non_answer_seeking_query
+          image_source                    = each.value.widget_config.ui_settings.generative_answer_config.image_source
+          language_code                   = each.value.widget_config.ui_settings.generative_answer_config.language_code
+          max_rephrase_steps              = each.value.widget_config.ui_settings.generative_answer_config.max_rephrase_steps
+          model_prompt_preamble           = each.value.widget_config.ui_settings.generative_answer_config.model_prompt_preamble
+          model_version                   = each.value.widget_config.ui_settings.generative_answer_config.model_version
+          result_count                    = each.value.widget_config.ui_settings.generative_answer_config.result_count
+        }
+      }
+
+      dynamic "search_addon_spec" {
+        for_each = (
+          each.value.widget_config.ui_settings.search_addon_spec == null
+          ? [] : [""]
+        )
+
+        content {
+          generative_answer_add_on_disabled   = each.value.widget_config.ui_settings.search_addon_spec.generative_answer_add_on_disabled
+          kpi_personalization_add_on_disabled = each.value.widget_config.ui_settings.search_addon_spec.kpi_personalization_add_on_disabled
+          semantic_add_on_disabled            = each.value.widget_config.ui_settings.search_addon_spec.semantic_add_on_disabled
+        }
+      }
+    }
+  }
+
+  depends_on = [
+    google_discovery_engine_search_engine.default,
+  ]
+}
+
+# App-level IAM: authoritative role bindings (iam + iam_by_principals).
+resource "google_discovery_engine_search_engine_iam_binding" "authoritative" {
+  for_each      = local.gemini_enterprise_app_iam
   project       = var.project_id
   location      = var.location
   collection_id = each.value.collection_id
-  engine_id     = each.value.app_id
+  engine_id     = each.value.engine_id
   role          = each.value.role
   members       = each.value.members
+
+  depends_on = [
+    google_discovery_engine_search_engine.default,
+  ]
+}
+
+# App-level IAM: authoritative named bindings (iam_bindings).
+resource "google_discovery_engine_search_engine_iam_binding" "bindings" {
+  for_each      = local.gemini_enterprise_app_iam_bindings
+  project       = var.project_id
+  location      = var.location
+  collection_id = each.value.collection_id
+  engine_id     = each.value.engine_id
+  role          = each.value.role
+  members       = each.value.members
+
+  depends_on = [
+    google_discovery_engine_search_engine.default,
+  ]
+}
+
+# App-level IAM: additive member bindings (iam_bindings_additive).
+resource "google_discovery_engine_search_engine_iam_member" "bindings" {
+  for_each      = local.gemini_enterprise_app_iam_bindings_additive
+  project       = var.project_id
+  location      = var.location
+  collection_id = each.value.collection_id
+  engine_id     = each.value.engine_id
+  role          = each.value.role
+  member        = each.value.member
+
   depends_on = [
     google_discovery_engine_search_engine.default,
   ]

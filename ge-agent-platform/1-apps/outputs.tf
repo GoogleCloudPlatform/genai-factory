@@ -44,13 +44,23 @@ output "agent_registry_uris" {
   value       = local.agent_registry_uris
 }
 
+output "gemini_enterprise_acl_config_id" {
+  description = "Location-level Discovery Engine ACL configuration resource id."
+  value       = try(google_discovery_engine_acl_config.default[0].id, null)
+}
+
 output "gemini_enterprise_antigravity_principals" {
   description = "The principals holding the Antigravity custom role on the project."
   value       = var.gemini_enterprise_antigravity_principals
 }
 
+output "gemini_enterprise_app_iam_principals" {
+  description = "Deduplicated project-eligible IAM principals granted roles across any Gemini Enterprise app."
+  value       = local.gemini_enterprise_project_members
+}
+
 output "gemini_enterprise_app_names" {
-  description = "The resource names of the Gemini Enterprise apps Terraform creates, keyed by engine id. Apps that already existed are not listed."
+  description = "The resource names of the Gemini Enterprise apps Terraform creates, keyed by app key. Apps that already existed are not listed."
   value = {
     for id, e in google_discovery_engine_search_engine.default
     : id => e.name
@@ -58,11 +68,16 @@ output "gemini_enterprise_app_names" {
 }
 
 output "gemini_enterprise_assistant_names" {
-  description = "The resource names of the managed assistants, keyed by engine id."
+  description = "The resource names of the managed assistants, keyed by app key."
   value = {
     for id, a in google_discovery_engine_assistant.default
     : id => a.name
   }
+}
+
+output "gemini_enterprise_cmek_config_id" {
+  description = "Location-level Discovery Engine CMEK configuration resource id."
+  value       = try(google_discovery_engine_cmek_config.default[0].id, null)
 }
 
 output "gemini_enterprise_data_connector_names" {
@@ -81,6 +96,30 @@ output "gemini_enterprise_data_connector_names" {
       if s.type == "mcp_server" && length(coalesce(s.agent_gateway_app_ids, [])) > 0
     }
   )
+}
+
+output "gemini_enterprise_data_store_names" {
+  description = "The resource names of the native Discovery Engine data stores, keyed by store key."
+  value = {
+    for id, ds in google_discovery_engine_data_store.default
+    : id => ds.name
+  }
+  depends_on = [
+    google_discovery_engine_schema.default,
+  ]
+}
+
+output "gemini_enterprise_user_store_id" {
+  description = "Location-level Discovery Engine default_user_store resource id."
+  value       = try(google_discovery_engine_user_store.default[0].id, null)
+}
+
+output "gemini_enterprise_widget_config_names" {
+  description = "The resource names of the managed Gemini Enterprise widget configs, keyed by app key."
+  value = {
+    for id, w in google_discovery_engine_widget_config.default
+    : id => w.name
+  }
 }
 
 output "model_armor_template_names" {
