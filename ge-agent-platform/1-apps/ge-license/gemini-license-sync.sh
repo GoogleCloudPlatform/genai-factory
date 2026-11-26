@@ -477,23 +477,23 @@ resolve_subscriptions() {
 
 # Prompt for a value; returns the answer (or the default on empty/EOF).
 _ask() {
-	local prompt="$1" default="${2:-}" ans
+	local prompt="$1" default="${2:-}" answer
 	if [ -n "$default" ]; then
-		read -r -p "${prompt} [${default}]: " ans || true
-		echo "${ans:-$default}"
+		read -r -p "${prompt} [${default}]: " answer || true
+		echo "${answer:-$default}"
 	else
-		read -r -p "${prompt}: " ans || true
-		echo "$ans"
+		read -r -p "${prompt}: " answer || true
+		echo "$answer"
 	fi
 }
 
 # Yes/no prompt; returns 0 for yes, 1 for no. Second arg is the default (Y or N).
 _ask_yn() {
-	local prompt="$1" default="${2:-N}" ans hint="[y/N]"
+	local prompt="$1" default="${2:-N}" answer hint="[y/N]"
 	[ "$default" = "Y" ] && hint="[Y/n]"
-	read -r -p "${prompt} ${hint}: " ans || true
-	ans="${ans:-$default}"
-	case "$ans" in [Yy]*) return 0 ;; *) return 1 ;; esac
+	read -r -p "${prompt} ${hint}: " answer || true
+	answer="${answer:-$default}"
+	case "$answer" in [Yy]*) return 0 ;; *) return 1 ;; esac
 }
 
 _wiz_rule() { echo -e "${C_CYAN}--------------------------------------------------${C_RESET}"; }
