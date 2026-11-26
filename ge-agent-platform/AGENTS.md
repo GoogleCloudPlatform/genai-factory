@@ -41,6 +41,7 @@ The `ge-agent-platform` factory provisions an enterprise-ready **Gemini Enterpri
   - [`1-apps/agent-gateway.tf`](./1-apps/agent-gateway.tf)
   - [`1-apps/agent-gateway-model-armor.tf`](./1-apps/agent-gateway-model-armor.tf)
   - [`1-apps/outputs.tf`](./1-apps/outputs.tf)
+  - [`1-apps/ge-license/`](./1-apps/ge-license/README.md) (`gemini-license-sync.sh`, `gemini-helpers.sh`, `Dockerfile`, `entrypoint.sh`, `config.json.example`)
 - **Tests** ([`tests/ge_agent_platform/`](../tests/ge_agent_platform)):
   - `0_prereqs`: `simple`, `no_host_prj`
   - `1_apps`: `simple`, `gemini_enterprise`, `iam`, `model_armor`
@@ -128,3 +129,20 @@ uv run yamlfix tests/ge_agent_platform
   - On `google_discovery_engine_user_store.default`, `enable_expired_license_auto_update` and `enable_license_auto_register` can only be set to `true` when `default_license_config` is non-null (enforced via variable validation).
 - **Stage 0 APIs & Roles (`0-prereqs/data/projects/service-01.yaml`):**
   - Requires `discoveryengine.googleapis.com`, `agentregistry.googleapis.com`, `servicedirectory.googleapis.com`, `cloudasset.googleapis.com`, `modelarmor.googleapis.com`, and `iam.googleapis.com`, plus `roles/discoveryengine.admin`, `roles/iam.accessPolicyAdmin`, `roles/modelarmor.admin`, `roles/servicedirectory.editor`, and `roles/cloudasset.viewer` on the `service-01` RW service account.
+
+### 7. Gemini Enterprise License Sync (`1-apps/ge-license`)
+
+- **Multi-Project Architecture & Config Schema:**
+  - `gemini-license-sync.sh` assigns and optionally revokes Gemini Enterprise licenses by edition across one or more projects via the Discovery Engine v1 API (`--setup`, `--dry-run`, `--no-input`, `--project <id>`, `--config <path>`). Both `run_wizard` and `load_config_file` populate `PROJECT_CONFIGS` (compact per-project JSON objects) and iterate `sync_project` with per-project temp dirs, token refresh, and runtime error isolation.
+  - `gemini-helpers.sh` provides discovery/verification utilities (`check-prereqs`, `get-project-number`, `list-configs`, `list-licenses`, `find-user`) supporting `--project <id>`, `--location <loc>`, and `--config <path>`.
+  - `config.json` uses a top-level `projects[]` array and optional `quota_project_id` (`X-Goog-User-Project` resolves `$QUOTA_PROJECT_ID` → `.quota_project_id` → `$CLOUDSDK_CORE_PROJECT` → entry `.project_id`). Legacy flat single-project configs are still auto-wrapped into a single-entry `projects[]` list with a deprecation warning. `project_number` auto-discovers when empty or placeholder, and `"auto"` in `group_mappings` resolves to a project's sole license config (skipping the project if multiple exist).
+- **Verified Discovery Engine v1 License API Facts:**
+  - Endpoint host is `{ENDPOINT_LOCATION}-discoveryengine.googleapis.com` (`global`, `us`, `eu`, or per-customer whitelisted multi-region codes such as `ca`/`au` — region names like `europe-west1` or `northamerica-northeast1` return 404). User store is `default_user_store`. There is no `locations.list` method, so the wizard probes `global us eu ca au` and offers manual entry.
+  - `POST .../userStores/default_user_store:batchUpdateUserLicenses`: `inlineSource.updateMask` must be a **FieldMask string** (`"userPrincipal,licenseConfig"`), not an object. The inline source is an upsert (unlisted users are untouched); to revoke, send `userPrincipal` with no `licenseConfig` and set `deleteUnassignedUserLicenses: true`.
+  - `licenseConfig` path uses the numeric **project number**, not ID: `projects/{PROJECT_NUMBER}/locations/{LOCATION}/licenseConfigs/{ID}`.
+  - `GET .../userStores/default_user_store/userLicenses` paginates via `nextPageToken` (`pageSize` max `1000`); endpoints may disagree on `filter` field naming (`licenseAssignmentState` vs. `license_assignment_state`), so the sync falls back to unfiltered listing on filter errors.
+  - `GET .../userStores/default_user_store/licenseConfigsUsageStats` returns top-level `licenseConfigUsageStats` (singular `Config`) and only surfaces configs that already have usage stats (`billingAccounts/{ID}/billingAccountLicenseConfigs` in `v1alpha` is needed for zero-usage discovery).
+- **Bash Portability & Safety Conventions:**
+  - Target **bash 3.2+** (macOS) and Cloud Shell — never use associative arrays (`declare -A`). Keep per-project state in temp TSV files (`CURRENT_LICENSES_FILE`, `DESIRED_FILE` under `RUN_TMP_DIR`) diffed with `comm`/`awk` under `LC_ALL=C`, and cache group membership lookups across projects in `GROUP_CACHE_DIR`.
+  - Runs under `set -euo pipefail`: never inspect `$?` after a bare `var=$(...)` assignment — branch on the command directly.
+  - Always support `--dry-run`, preserve reconcile cross-checks protecting users moving between editions, and avoid abbreviated local variable names flagged by `codespell` (use full words such as `answer`).

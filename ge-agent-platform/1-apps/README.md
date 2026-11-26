@@ -554,7 +554,7 @@ access_policies = {
 
 ## Gemini Enterprise license assignment
 
-The [ge-license](./ge-license/README.md) folder contains scripts and a container image for assigning and revoking Gemini Enterprise licenses by edition using Google Group membership, either interactively from Cloud Shell or on a schedule with Cloud Run jobs.
+The [ge-license](./ge-license/README.md) folder contains scripts and a container image for assigning and revoking Gemini Enterprise licenses by edition across one or more Google Cloud projects using Google Group membership, either interactively from Cloud Shell or on a schedule with Cloud Run jobs.
 
 ## Manage prerequisites independently
 

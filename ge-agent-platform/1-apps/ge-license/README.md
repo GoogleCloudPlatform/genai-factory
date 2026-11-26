@@ -8,9 +8,9 @@ Gemini Enterprise does not currently support group-based license assignment. The
 
 ## The solution
 
-This script assigns Gemini Enterprise licenses by edition using Google Group membership as the source of truth. You map each Google Group to a subscription edition, and the script:
+This script assigns Gemini Enterprise licenses by edition across **one or more Google Cloud projects** using Google Group membership as the source of truth. Define a `projects` list in `config.json` mapping Google Groups to subscription editions per project, and for each configured project the script:
 
-1. Pulls members from each group via `gcloud identity`
+1. Pulls members from each group via `gcloud identity` (caching group memberships across projects within a single run)
 2. Assigns the matching license edition to each member via `batchUpdateUserLicenses`
 3. Optionally removes licenses from users who are no longer in the group
 
@@ -42,41 +42,43 @@ This script assigns Gemini Enterprise licenses by edition using Google Group mem
 
 ### Required APIs and permissions
 
-Before running the scripts, enable these APIs and grant the required roles in your Google Cloud project.
+Before running the scripts, enable these APIs and grant the required roles in your Google Cloud projects.
 
 #### 1. Enabled APIs
 
-- Cloud Identity API (`cloudidentity.googleapis.com`): queries Google Group memberships.
-- Discovery Engine API (`discoveryengine.googleapis.com`): reads license configurations and assigns licenses to users.
+- **Cloud Identity API** (`cloudidentity.googleapis.com`): required on the quota/execution project to query Google Group memberships.
+- **Discovery Engine API** (`discoveryengine.googleapis.com`): required on every target project where licenses are managed (and on the quota project when `quota_project_id` or `CLOUDSDK_CORE_PROJECT` is set).
 
 #### 2. IAM roles
 
 The authenticated user or service account needs permissions in both Cloud Identity and Google Cloud.
 
 Cloud Identity / Workspace admin roles (for `gcloud identity groups memberships list`):
+
 - Google Workspace Admin with Groups Reader privileges, OR
 - Groups Admin role, OR
 - Groups Reader role in Cloud Identity
 
-Google Cloud IAM roles (for querying and assigning licenses via the Discovery Engine API):
-- Discovery Engine Admin (`roles/discoveryengine.admin`) on the target project, OR
-- Discovery Engine Editor (`roles/discoveryengine.editor`)
+Google Cloud IAM roles (for querying and assigning licenses via the Discovery Engine API across all configured projects):
+
+- **Discovery Engine Admin** (`roles/discoveryengine.admin`) — or **Discovery Engine Editor** (`roles/discoveryengine.editor`) — on **every target project** listed in `projects[]`. (`roles/discoveryengine.admin` also includes `resourcemanager.projects.get`, allowing automatic `project_number` lookup when `project_number` is omitted.)
+- **Service Usage Consumer** (`roles/serviceusage.serviceUsageConsumer`) on the **quota project** sent in `X-Goog-User-Project` (`quota_project_id` or `CLOUDSDK_CORE_PROJECT` when running centrally, or each target project if no central quota project is set).
 
 ## Quick start (guided setup)
 
-Run the interactive wizard to walk through project selection, license editions, group mappings, and revocation settings, then run a dry run before making changes:
+Run the interactive wizard to walk through project selection (one or more projects), license editions, group mappings, optional quota project, and revocation settings, then run a dry run before making changes:
 
 ```bash
 ./gemini-license-sync.sh --setup
 ```
 
-The wizard detects your project, lists available license editions, shows the member count for each group you enter, writes `config.json`, and offers a dry run. Running `./gemini-license-sync.sh` in a terminal with no `config.json` launches the wizard automatically.
+The wizard detects your active project, lists available license editions, shows the member count for each group you enter, writes `config.json`, and offers a dry run. Running `./gemini-license-sync.sh` in a terminal with no `config.json` launches the wizard automatically.
 
 For cron or other non-interactive runs, pass `--no-input` so a missing `config.json` fails immediately instead of prompting.
 
 ## Manual setup (Cloud Shell)
 
-If you prefer writing the config by hand in Cloud Shell, the script discovers your project ID and project number automatically, so you only need to add your group mappings.
+If you prefer writing the config by hand in Cloud Shell, the script discovers your project ID (for single-project configs) and project number automatically, so you only need to add your group mappings.
 
 ```bash
 # 1. Verify your environment is ready
@@ -88,63 +90,74 @@ cp config.json.example config.json
 
 ### 3. Edit your configuration
 
-Click Open Editor at the top of the Cloud Shell window, open `config.json`, and add your group mappings:
+Click Open Editor at the top of the Cloud Shell window, open `config.json`, and define one or more entries in the `projects` array:
 
 ```json
 {
-  "project_id": "",
-  "project_number": "",
-  "location": "global",
-  "endpoint_location": "global",
-  "delete_unassigned": false,
-  "batch_size": 100,
-  "group_mappings": {
-    "marketing-team@example.com": "YOUR_SUBSCRIPTION_ID"
-  }
+  "quota_project_id": "",
+  "projects": [
+    {
+      "project_id": "my-prod-project",
+      "project_number": "",
+      "location": "global",
+      "endpoint_location": "global",
+      "delete_unassigned": false,
+      "batch_size": 100,
+      "group_mappings": {
+        "marketing-team@example.com": "YOUR_SUBSCRIPTION_ID"
+      }
+    }
+  ]
 }
 ```
 
-> Note: Leave `project_id` and `project_number` as empty strings `""` to auto-discover them from your Cloud Shell environment.
+> Note: When `projects` has a single entry, you can leave `project_id` and `project_number` as empty strings `""` to auto-discover them from your active `gcloud` configuration. With multiple projects, set each entry's `project_id` explicitly (`project_number` still auto-discovers if left empty). Legacy flat single-project `config.json` files are still accepted and automatically wrapped with a deprecation warning, but migrating to the `projects` array format is recommended.
 
-> Tip: If your project has a single license config, set the subscription value to `"auto"` and the script resolves it at startup, so you only need to enter the group email:
+> Tip: If a project has a single license config, set the subscription value to `"auto"` and the script resolves it at startup, so you only need to enter the group email:
+>
 > ```json
 > { "group_mappings": { "your-group@example.com": "auto" } }
 > ```
-> If the project has multiple editions, `"auto"` is ambiguous; the script prints the available configs and exits so you can set explicit IDs.
+>
+> If the project has multiple editions, `"auto"` is ambiguous; the script prints the available configs and skips that project so you can set explicit IDs.
 
 ### 4. Find your subscription IDs
 
-To list your subscription IDs:
+To list your subscription IDs across all configured projects, or for a single project:
 
 ```bash
 ./gemini-helpers.sh list-configs
+./gemini-helpers.sh --project my-prod-project --location eu list-configs
 ```
 
 ### 5. Preview with a dry run
 
-Preview what the script will do before changing any licenses:
+Preview what the script will do across all configured projects (or target a single project with `--project`) before changing any licenses:
 
 ```bash
 ./gemini-license-sync.sh --dry-run
+./gemini-license-sync.sh --dry-run --project my-prod-project
 ```
 
-Dry run fetches group members and logs planned actions without calling the API to assign licenses.
+Dry run fetches group members and logs planned actions without calling the API to assign or revoke licenses.
 
 ### 6. Run the sync
 
 ```bash
 ./gemini-license-sync.sh
+./gemini-license-sync.sh --project my-prod-project
 ```
 
-The script writes its output to a timestamped log file (`gemini-license-sync-YYYYMMDD-HHMMSS.log`).
+The script writes its output to a timestamped log file (`gemini-license-sync-YYYYMMDD-HHMMSS.log`). If one project encounters a runtime API error, remaining projects still sync and the script exits non-zero at the end.
 
 ## Local execution (optional)
 
-If you run the script from a local terminal instead of Cloud Shell, set `project_id` and `project_number` in `config.json` manually.
+If you run the script from a local terminal instead of Cloud Shell, set `project_id` (and optionally `project_number`) for each entry in `config.json`.
 
-To find your numeric project number:
+To look up numeric project numbers for all projects in `config.json` (or for a specific project):
 
 ```bash
+./gemini-helpers.sh get-project-number
 ./gemini-helpers.sh get-project-number my-gcp-project
 ```
 
@@ -205,15 +218,22 @@ The `Dockerfile` pins the Cloud CLI version through the `GCLOUD_VERSION` build a
 gcloud iam service-accounts create gemini-license-sync \
   --display-name="Gemini Enterprise license sync"
 
-# Assign and revoke licenses
+# Quota project permissions (on the project hosting the Cloud Run job)
 gcloud projects add-iam-policy-binding "$PROJECT_ID" \
   --member="serviceAccount:${SA}" \
-  --role="roles/discoveryengine.admin"
+  --role="roles/serviceusage.serviceUsageConsumer"
 
-# Let the script auto-discover the project number
+# Optional: let the script auto-discover project numbers if omitted in config.json
 gcloud projects add-iam-policy-binding "$PROJECT_ID" \
   --member="serviceAccount:${SA}" \
   --role="roles/browser"
+
+# Assign and revoke licenses on every target project in config.json
+for TARGET_PROJECT in my-prod-project my-dev-project; do
+  gcloud projects add-iam-policy-binding "$TARGET_PROJECT" \
+    --member="serviceAccount:${SA}" \
+    --role="roles/discoveryengine.admin"
+done
 ```
 
 > Important: The service account also needs permission to read Google Group memberships. In the [Google Workspace Admin console](https://admin.google.com), go to Account > Admin roles > Groups Reader > Assign service accounts and add `${SA}`. Without this, every group lookup returns zero members and the sync does nothing. When `delete_unassigned` is `true`, a failed group lookup is skipped instead of treated as empty, so it cannot trigger a mass revoke (see [`DELETE_UNASSIGNED`](#delete_unassigned)).
@@ -223,7 +243,7 @@ gcloud projects add-iam-policy-binding "$PROJECT_ID" \
 The entrypoint checks for configuration in this order:
 
 | Source | How |
-|--------|-----|
+| --- | --- |
 | `CONFIG_JSON` | Literal JSON string (works well with Secret Manager) |
 | `CONFIG_GCS_URI` | `gs://bucket/path/config.json`, copied in at startup |
 | `/app/config.json` | Baked into the image (if `config.json` exists at build time) or mounted as a volume |
@@ -250,7 +270,7 @@ gcloud secrets versions add gemini-license-sync-config --data-file=config.json
 
 Upload `config.json` to a bucket, grant the service account `roles/storage.objectViewer` on that bucket, and set `CONFIG_GCS_URI` on the job.
 
-For container runs, set `project_id` and `project_number` explicitly in `config.json`, or pass `CLOUDSDK_CORE_PROJECT` (shown below) along with `roles/browser` for auto-discovery.
+For container runs, set `project_id` and `project_number` explicitly in `config.json`, or pass `CLOUDSDK_CORE_PROJECT` (shown below) along with `roles/discoveryengine.admin` / `roles/browser` for auto-discovery.
 
 ### 6. Create the job
 
@@ -274,11 +294,15 @@ The defaults work for a few thousand users. Large tenancies may need a longer `-
 ### 7. Run the job (dry run first)
 
 ```bash
-# Preview without touching any licenses
+# Preview all configured projects without touching any licenses
 gcloud run jobs execute "$JOB" --region="$REGION" --wait \
   --args="--no-input,--dry-run"
 
-# The real thing
+# Preview a single project only
+gcloud run jobs execute "$JOB" --region="$REGION" --wait \
+  --args="--no-input,--dry-run,--project=my-prod-project"
+
+# The real thing (all projects in config.json)
 gcloud run jobs execute "$JOB" --region="$REGION" --wait
 ```
 
@@ -292,7 +316,7 @@ gcloud beta run jobs logs tail "$JOB" --region="$REGION"
 
 The container also writes its timestamped log file to ephemeral `/tmp`, while Cloud Logging keeps the durable copy.
 
-If any group fails to sync, the script exits non-zero and Cloud Run marks the execution failed so you can alert on it. The script skips a failed group instead of treating it as empty.
+If any project or group fails to sync, the script exits non-zero and Cloud Run marks the execution failed so you can alert on it. The script skips a failed group instead of treating it as empty.
 
 ### 8. Schedule it
 
@@ -342,21 +366,33 @@ gcloud run jobs update "$JOB" --region="$REGION" --image="$IMAGE"
 ### Cloud Run troubleshooting
 
 | Symptom | Cause |
-|---------|-------|
+| --- | --- |
 | `ERROR: no configuration found at /app/config.json` | Neither `CONFIG_JSON` nor `CONFIG_GCS_URI` is set and no config was baked in |
 | `No members found in group` | The service account is missing the Workspace Groups Reader role (step 4) |
-| `Could not auto-discover PROJECT_NUMBER` | Grant `roles/browser`, or set `project_number` in `config.json` |
-| HTTP 403 on assignment | Service account lacks `roles/discoveryengine.admin` on the project |
+| `Could not auto-discover PROJECT_NUMBER` | Set `project_number` explicitly in `config.json` or ensure `resourcemanager.projects.get` (`roles/discoveryengine.admin` / `roles/browser`) is granted on that project |
+| HTTP 403 `USER_PROJECT_DENIED` | Service account lacks `roles/serviceusage.serviceUsageConsumer` on the quota project (`quota_project_id` / `CLOUDSDK_CORE_PROJECT`) |
+| HTTP 403 on assignment | Service account lacks `roles/discoveryengine.admin` on the target project |
 | Build pushes but the job fails to start | Image built for the wrong architecture (build with Cloud Build for amd64, not locally on an Apple Silicon Mac) |
 
 ## Configuration options
+
+### `quota_project_id` (top-level, optional)
+
+Specifies the Google Cloud project sent in the `X-Goog-User-Project` header for all Discovery Engine API calls across every project in `projects[]`. Resolution precedence:
+
+1. `$QUOTA_PROJECT_ID` environment variable
+2. `quota_project_id` in `config.json`
+3. `$CLOUDSDK_CORE_PROJECT` environment variable
+4. Each entry's own `project_id`
+
+Pinning `quota_project_id` (or `CLOUDSDK_CORE_PROJECT`) to the central project hosting the Cloud Run job lets the service account sync licenses across multiple target projects while requiring `roles/serviceusage.serviceUsageConsumer` only on that quota project.
 
 ### `DELETE_UNASSIGNED`
 
 Controls whether groups act as the authoritative source for revoking licenses from users who left a group or were licensed manually.
 
 | Value | Behavior |
-|-------|----------|
+| --- | --- |
 | `false` (default) | Only adds or updates licenses. Users who left a group keep their license. Safe for initial runs. |
 | `true` | After assigning, lists every assigned license in the project and revokes anyone who should not hold one, including licenses granted manually in the console. |
 
@@ -378,23 +414,24 @@ The script sends users in batches to stay within API payload limits. The default
 
 ### `location` / `endpoint_location`
 
-Licenses are bound to a specific multi-region. `global`, `us`, and `eu` always work; additional multi-regions (such as `ca` for Canada and `au` for Australia) are whitelisted per project or customer. Use the multi-region code (`ca`), not a region name (`northamerica-northeast1`, which is not valid here). Each run targets one region.
+Licenses are bound to a specific multi-region. `global`, `us`, and `eu` always work; additional multi-regions (such as `ca` for Canada and `au` for Australia) are whitelisted per project or customer. Use the multi-region code (`ca`), not a region name (`northamerica-northeast1`, which is not valid here). Each entry in `projects[]` targets one multi-region.
 
 The `--setup` wizard probes the common multi-regions to detect where your subscriptions live and lets you enter a whitelisted region manually if it cannot detect one. When editing `config.json` by hand, set `location` and `endpoint_location` to the multi-region shown in the Cloud console under Location.
 
 ## Helper script
 
-`gemini-helpers.sh` includes standalone utilities for discovery and verification:
+`gemini-helpers.sh` includes standalone utilities for discovery and verification across one or all configured projects:
 
 ```bash
-./gemini-helpers.sh check-prereqs        # Verify gcloud, curl, and authentication
-./gemini-helpers.sh get-project-number    # Look up numeric project number
-./gemini-helpers.sh list-configs          # List license config IDs and edition info
-./gemini-helpers.sh list-licenses         # List currently assigned user licenses
-./gemini-helpers.sh find-user <email>     # Show the raw license record for one user
+./gemini-helpers.sh check-prereqs                         # Verify gcloud, curl, jq, auth, and per-project IAM
+./gemini-helpers.sh get-project-number [<project_id>]     # Look up numeric project number(s)
+./gemini-helpers.sh list-configs                          # List license config IDs for every project in config.json
+./gemini-helpers.sh --project <id> list-configs           # List license config IDs for a single project
+./gemini-helpers.sh list-licenses                         # List currently assigned user licenses per project
+./gemini-helpers.sh [--project <id>] find-user <email>    # Show the raw license record for one user
 ```
 
-These commands read `config.json` when present, or you can export `PROJECT_ID`, `LOCATION`, and related variables in your shell.
+Optional flags (`--project <id>`, `--location <loc>`, `--config <path>`) can be passed before or after the command, including for projects not yet added to `config.json`. You can also export `PROJECT_ID`, `LOCATION`, `ENDPOINT_LOCATION`, or `QUOTA_PROJECT_ID` in your shell as fallbacks.
 
 ## Scheduling for ongoing sync
 
