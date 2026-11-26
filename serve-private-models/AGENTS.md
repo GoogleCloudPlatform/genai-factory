@@ -62,5 +62,7 @@ uv run yamlfix tests/serve_private_models
   - Granting `roles/aiplatform.user` (additive), `roles/compute.loadBalancerAdmin`, and the 5-permission `model_garden_deployer` custom role avoids granting broad roles like `roles/aiplatform.admin` or `roles/compute.networkAdmin`.
 - **PSC PrivateEndpoint Prediction Calls (`google-cloud-aiplatform[private_endpoints]`):**
   - `aiplatform.PrivateEndpoint(endpoint_name=ENDPOINT_ID).predict(instances=[...], endpoint_override=ENDPOINT_IP_ADDRESS)` sends an HTTPS POST directly to `https://<ENDPOINT_IP_ADDRESS>/v1/projects/<PROJECT_ID>/locations/<REGION>/endpoints/<ENDPOINT_ID>:predict` over the PSC forwarding rule. Ensure `google-cloud-aiplatform[private_endpoints]` is installed so `urllib3` is available.
+- **Least-Privilege `iam_sa_roles` Scoping on `crun-build-0`:**
+  - Always scope `roles/iam.serviceAccountUser` for `crun-build-0` to `$service_account_ids:service-01/crun-0` under `service_accounts.crun-build-0.iam_sa_roles` in [`0-prereqs/data/projects/service-01.yaml`](./0-prereqs/data/projects/service-01.yaml) (never project-wide under `iam_by_principals`), so build pipelines cannot `actAs` the administrative `iac-rw` service account.
 - **Container Lockfiles (`uv.lock`):**
   - [`1-apps/apps/chat/Dockerfile`](./1-apps/apps/chat/Dockerfile) runs `uv sync --locked`. Whenever `pyproject.toml` is updated, run `uv lock` in [`1-apps/apps/chat`](./1-apps/apps/chat) and commit the updated `uv.lock`.
