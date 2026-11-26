@@ -29,20 +29,67 @@ gemini_enterprise_antigravity_principals = [
   "group:developers@example.com"
 ]
 
+gemini_enterprise_encryption_config = {
+  kms_key = "projects/test-gf-geap-0/locations/europe/keyRings/ge/cryptoKeys/default"
+  single_region_keys = [
+    "projects/test-gf-geap-0/locations/europe-west1/keyRings/ge-ew1/cryptoKeys/default",
+    "projects/test-gf-geap-0/locations/europe-west4/keyRings/ge-ew4/cryptoKeys/default",
+    "projects/test-gf-geap-0/locations/europe-north1/keyRings/ge-en1/cryptoKeys/default",
+  ]
+}
+
 gemini_enterprise_iam = {
   idp_type = "GSUITE"
+}
+
+gemini_enterprise_user_store_config = {
+  default_license_config             = "projects/test-gf-geap-0/locations/eu/licenseConfigs/default"
+  enable_expired_license_auto_update = true
+  enable_license_auto_register       = true
+}
+
+gemini_enterprise_data_stores = {
+  kb-docs = {
+    app_ids        = ["ge-app-main"]
+    content_config = "CONTENT_REQUIRED"
+    display_name   = "Knowledge Base Docs"
+    document_processing_config = {
+      chunking_config = {
+        layout_based_chunking_config = {
+          chunk_size                = 500
+          include_ancestor_headings = true
+        }
+      }
+      default_parsing_config = {
+        digital_parsing_config = true
+      }
+      parsing_config_overrides = {
+        pdf = {
+          ocr_parsing_config = {
+            use_native_text = true
+          }
+        }
+      }
+    }
+  }
+  kb-structured = {
+    app_ids        = ["ge-app-single"]
+    content_config = "NO_CONTENT"
+    display_name   = "Structured Catalog"
+    json_schema    = "{\"$schema\":\"https://json-schema.org/draft/2020-12/schema\",\"type\":\"object\",\"properties\":{\"title\":{\"type\":\"string\"}}}"
+  }
 }
 
 gemini_enterprise_apps = {
   ge-app-main = {
     assistant = {
-      banned_phrases = [
-        {
-          phrase            = "competitor-secret"
+      banned_phrases = {
+        competitor-secret = {
           match_type        = "SIMPLE_STRING_MATCH"
           ignore_diacritics = true
         }
-      ]
+      }
+      default_web_grounding_toggle_off = true
       generation_config = {
         default_language   = "en"
         system_instruction = "You are a helpful enterprise assistant."
@@ -64,11 +111,56 @@ gemini_enterprise_apps = {
         agent-gallery  = "FEATURE_STATE_ON"
         model-selector = "FEATURE_STATE_ON"
       }
+      procurement_contact_emails = ["platform@example.com"]
     }
     iam = {
       "roles/discoveryengine.agentspaceUser" = [
         "group:employees@example.com"
       ]
+    }
+    iam_by_principals = {
+      "group:admins@example.com" = [
+        "roles/discoveryengine.agentspaceUser"
+      ]
+    }
+    iam_bindings_additive = {
+      contractor-access = {
+        member = "user:contractor@example.com"
+        role   = "roles/discoveryengine.viewer"
+      }
+    }
+    widget_config = {
+      access_settings = {
+        enable_web_app = true
+        language_code  = "en"
+      }
+      ui_settings = {
+        enable_autocomplete     = true
+        interaction_type        = "SEARCH_WITH_ANSWER"
+        result_description_type = "SNIPPET"
+        data_store_ui_configs = {
+          kb-docs = {
+            facet_fields = {
+              category = "Category"
+            }
+          }
+        }
+      }
+    }
+  }
+  ge-app-single = {
+    egress_agent_gateway = ""
+    engine = {
+      display_name = "Single Store App"
+    }
+  }
+  ge-app-adopted = {
+    data_store_ids = ["kb-docs"]
+    iam_bindings = {
+      adopted-users = {
+        members = ["group:adopted@example.com"]
+        role    = "roles/discoveryengine.agentspaceUser"
+      }
     }
   }
 }
