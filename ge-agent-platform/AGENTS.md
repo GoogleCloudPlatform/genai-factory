@@ -11,12 +11,12 @@ The `ge-agent-platform` factory provisions an enterprise-ready **Gemini Enterpri
   - VPC, subnet, Private Service Connect (PSC), Private Google Access, Cloud DNS response policies, and regional PSC endpoints (`0-prereqs/networking.tf`).
   - Stage 1 RW/RO automation service accounts, application service accounts, and Discovery Engine / Vertex AI / IAM v3 / Secret Manager permissions.
 - **`1-apps`** ([`1-apps/README.md`](./1-apps/README.md)):
-  - **Gemini Enterprise App & Assistant** ([`1-apps/gemini-enterprise-apps.tf`](./1-apps/gemini-enterprise-apps.tf)): `google_discovery_engine_search_engine` (`INDUSTRY_VERTICAL_GENERIC`, `SOLUTION_TYPE_SEARCH`, `APP_TYPE_INTRANET`), `google_discovery_engine_assistant` (`default_assistant`), and `google_discovery_engine_widget_config`.
-  - **Data Stores, SaaS Data Connectors & Location-Level IdP** ([`1-apps/gemini-enterprise-ds.tf`](./1-apps/gemini-enterprise-ds.tf)):
-    - Native GCP data stores (`google_discovery_engine_data_store`) with optional GCS/BigQuery `import_documents` jobs.
+  - **Location-Level Singletons** ([`1-apps/gemini-enterprise.tf`](./1-apps/gemini-enterprise.tf)): `google_discovery_engine_acl_config.default`, `google_discovery_engine_cmek_config.default`, and `google_discovery_engine_user_store.default` (`default_user_store`), ordered before stores, engines, and connectors.
+  - **Gemini Enterprise App, Assistant, Widget & IAM** ([`1-apps/gemini-enterprise-apps.tf`](./1-apps/gemini-enterprise-apps.tf)): `google_discovery_engine_search_engine` (`APP_TYPE_INTRANET`), opt-in `google_discovery_engine_assistant` (`default_assistant`, `ABANDON`), `google_discovery_engine_widget_config`, conditional `NO_CONTENT` companion store (`google_discovery_engine_data_store.companion`, created only when an app has exactly 1 attached store), per-app Egress Agent Gateway binding (`egress_agent_gateway = ""` opts out), and Fabric-style app IAM (`iam`, `iam_by_principals`, `iam_bindings`, `iam_bindings_additive`) + project-level `agentspaceRestrictedUser` and Antigravity grants.
+  - **Native Data Stores, Schemas & SaaS/MCP Data Connectors** ([`1-apps/gemini-enterprise-ds.tf`](./1-apps/gemini-enterprise-ds.tf)):
+    - Native GCP data stores (`google_discovery_engine_data_store.default`) and optional custom JSON schemas (`google_discovery_engine_schema.default`).
     - 3rd-party SaaS data connectors (`google_discovery_engine_data_connector.default`, e.g., Jira, Confluence, SharePoint, Outlook, OneDrive, Teams, ServiceNow).
-    - Location-level Identity Provider / ACL configuration (`google_discovery_engine_acl_config.default`).
-    - Companion `NO_CONTENT` data store (`google_discovery_engine_data_store.companion`) when a single data store is attached.
+    - Custom MCP data connectors (`google_discovery_engine_data_connector.mcp`) derived from `var.agent_registry_services` (`type = "mcp_server"` with `agent_gateway_app_ids`), patched with OAuth 2.0 and Egress Agent Gateway config via `terraform_data.mcp_agent_gateway_patch`.
   - **Agent Registry & Custom MCP Servers** ([`1-apps/agent-registry.tf`](./1-apps/agent-registry.tf)):
     - Service Directory namespace, endpoints, and services backing custom MCP servers (`var.custom_mcp_servers`), patched with `agentregistry.googleapis.com/actionConfig` via `local-exec`.
     - Discovery of `agentregistry-0000...` principal IDs for agents (`var.agents`) and MCP servers (`var.mcp_servers`) via Cloud Asset Inventory (`data.google_cloud_asset_search_all_resources`).
@@ -34,12 +34,14 @@ The `ge-agent-platform` factory provisions an enterprise-ready **Gemini Enterpri
   - [`0-prereqs/networking.tf`](./0-prereqs/networking.tf)
 - **Stage 1 (`1-apps`)**:
   - [`1-apps/variables.tf`](./1-apps/variables.tf) & [`1-apps/variables-fast.tf`](./1-apps/variables-fast.tf)
+  - [`1-apps/gemini-enterprise.tf`](./1-apps/gemini-enterprise.tf)
   - [`1-apps/gemini-enterprise-apps.tf`](./1-apps/gemini-enterprise-apps.tf)
   - [`1-apps/gemini-enterprise-ds.tf`](./1-apps/gemini-enterprise-ds.tf)
   - [`1-apps/agent-registry.tf`](./1-apps/agent-registry.tf)
   - [`1-apps/agent-gateway.tf`](./1-apps/agent-gateway.tf)
   - [`1-apps/agent-gateway-model-armor.tf`](./1-apps/agent-gateway-model-armor.tf)
   - [`1-apps/outputs.tf`](./1-apps/outputs.tf)
+  - [`1-apps/ge-license/`](./1-apps/ge-license/README.md) (`gemini-license-sync.sh`, `gemini-helpers.sh`, `Dockerfile`, `entrypoint.sh`, `config.json.example`)
 - **Tests** ([`tests/ge_agent_platform/`](../tests/ge_agent_platform)):
   - `0_prereqs`: `simple`, `no_host_prj`
   - `1_apps`: `simple`, `gemini_enterprise`, `iam`, `model_armor`
@@ -70,13 +72,14 @@ uv run yamlfix tests/ge_agent_platform
 
 ## Factory-Specific Learnings & Gotchas
 
-### 1. Three-Step Initial Deployment & `default_assistant` Import
+### 1. Opt-In `default_assistant` Import Workflow
 
+- `gemini_enterprise_apps[*].assistant` defaults to `null` (opt-in), so apps without an `assistant` block deploy cleanly in a single `terraform apply`.
 - Creating a `google_discovery_engine_search_engine` with `APP_TYPE_INTRANET` automatically provisions a `default_assistant` resource on the backend.
-- Because the assistant already exists immediately after engine creation, a subsequent `terraform apply` attempting to create `google_discovery_engine_assistant.default` fails with `409 AlreadyExists` unless imported first:
-  1. `terraform apply -target=google_discovery_engine_search_engine.default`
-  2. `terraform import 'google_discovery_engine_assistant.default["<app_key>"]' projects/<project_id>/locations/<location>/collections/default_collection/engines/<app_id>/assistants/default_assistant`
-  3. `terraform apply`
+- When you enable `assistant = { ... }` on an app, import its `default_assistant` first to avoid `409 AlreadyExists`:
+  1. `terraform apply` (with `assistant` omitted, or `-target=google_discovery_engine_search_engine.default`)
+  2. `terraform import 'google_discovery_engine_assistant.default["<app_key>"]' projects/<project_id>/locations/<location>/collections/default_collection/engines/<engine_id>/assistants/default_assistant`
+  3. Add `assistant = { ... }` and run `terraform apply`
 
 ### 2. Decoupled Search Engine `data_store_ids` & Single-Data-Store Companion Workaround
 
@@ -118,8 +121,28 @@ uv run yamlfix tests/ge_agent_platform
 - **Custom MCP Server Tool Schemas (`var.custom_mcp_servers`):**
   - `tool_schema` accepts either a path to a `.json` file under `1-apps/data/` or an inline JSON string.
   - [`1-apps/agent-registry.tf`](./1-apps/agent-registry.tf) attaches the MCP `actionConfig` metadata to the Service Directory service via a `local-exec` `PATCH` using `agentregistry.googleapis.com/actionConfig`.
-- **Model Armor Regional Modalities & Metadata Patch (`var.model_armor_templates`):**
-  - [`1-apps/agent-gateway-model-armor.tf`](./1-apps/agent-gateway-model-armor.tf) patches `templateMetadata` (`modalities` and `dataResidencyCompliant`) via REST `PATCH` after template creation.
+- **Model Armor Regional Modalities (`var.model_armor_templates`):**
+  - [`1-apps/agent-gateway-model-armor.tf`](./1-apps/agent-gateway-model-armor.tf) sets `modalities` and `data_residency_compliant = true` natively in `google_model_armor_template.default.template_metadata` (provider `>= 8.12.0`).
   - Regional Model Armor endpoints (e.g., `europe-west1`) only support `MODALITY_TEXT` (`["MODALITY_TEXT"]`). Passing `MODALITY_IMAGE` or `MODALITY_AUDIO` in unsupported regions causes `400 INVALID_ARGUMENT`.
+- **Location-Level CMEK & User Store Gotchas:**
+  - When `gemini_enterprise_encryption_config` is enabled in `eu` with data connectors, Discovery Engine requires `kms_key` in Cloud KMS location `europe` plus `single_region_keys` covering all three EU connector regions (`europe-west1`, `europe-west4`, `europe-north1`), with `roles/cloudkms.cryptoKeyEncrypterDecrypter` granted to `service-<project_number>@gcp-sa-discoveryengine.iam.gserviceaccount.com`. When `set_default = true`, Discovery Engine stamps `kmsKeyName` on created data connectors on Read, so `google_discovery_engine_data_connector.default`/`.mcp` and `companion` inherit `kms_key` automatically to prevent `ForceNew` drift.
+  - On `google_discovery_engine_user_store.default`, `enable_expired_license_auto_update` and `enable_license_auto_register` can only be set to `true` when `default_license_config` is non-null (enforced via variable validation).
 - **Stage 0 APIs & Roles (`0-prereqs/data/projects/service-01.yaml`):**
   - Requires `discoveryengine.googleapis.com`, `agentregistry.googleapis.com`, `servicedirectory.googleapis.com`, `cloudasset.googleapis.com`, `modelarmor.googleapis.com`, and `iam.googleapis.com`, plus `roles/discoveryengine.admin`, `roles/iam.accessPolicyAdmin`, `roles/modelarmor.admin`, `roles/servicedirectory.editor`, and `roles/cloudasset.viewer` on the `service-01` RW service account.
+
+### 7. Gemini Enterprise License Sync (`1-apps/ge-license`)
+
+- **Multi-Project Architecture & Config Schema:**
+  - `gemini-license-sync.sh` assigns and optionally revokes Gemini Enterprise licenses by edition across one or more projects via the Discovery Engine v1 API (`--setup`, `--dry-run`, `--no-input`, `--project <id>`, `--config <path>`). Both `run_wizard` and `load_config_file` populate `PROJECT_CONFIGS` (compact per-project JSON objects) and iterate `sync_project` with per-project temp dirs, token refresh, and runtime error isolation.
+  - `gemini-helpers.sh` provides discovery/verification utilities (`check-prereqs`, `get-project-number`, `list-configs`, `list-licenses`, `find-user`) supporting `--project <id>`, `--location <loc>`, and `--config <path>`.
+  - `config.json` uses a top-level `projects[]` array and optional `quota_project_id` (`X-Goog-User-Project` resolves `$QUOTA_PROJECT_ID` → `.quota_project_id` → `$CLOUDSDK_CORE_PROJECT` → entry `.project_id`). Legacy flat single-project configs are still auto-wrapped into a single-entry `projects[]` list with a deprecation warning. `project_number` auto-discovers when empty or placeholder, and `"auto"` in `group_mappings` resolves to a project's sole license config (skipping the project if multiple exist).
+- **Verified Discovery Engine v1 License API Facts:**
+  - Endpoint host is `{ENDPOINT_LOCATION}-discoveryengine.googleapis.com` (`global`, `us`, `eu`, or per-customer whitelisted multi-region codes such as `ca`/`au` — region names like `europe-west1` or `northamerica-northeast1` return 404). User store is `default_user_store`. There is no `locations.list` method, so the wizard probes `global us eu ca au` and offers manual entry.
+  - `POST .../userStores/default_user_store:batchUpdateUserLicenses`: `inlineSource.updateMask` must be a **FieldMask string** (`"userPrincipal,licenseConfig"`), not an object. The inline source is an upsert (unlisted users are untouched); to revoke, send `userPrincipal` with no `licenseConfig` and set `deleteUnassignedUserLicenses: true`.
+  - `licenseConfig` path uses the numeric **project number**, not ID: `projects/{PROJECT_NUMBER}/locations/{LOCATION}/licenseConfigs/{ID}`.
+  - `GET .../userStores/default_user_store/userLicenses` paginates via `nextPageToken` (`pageSize` max `1000`); endpoints may disagree on `filter` field naming (`licenseAssignmentState` vs. `license_assignment_state`), so the sync falls back to unfiltered listing on filter errors.
+  - `GET .../userStores/default_user_store/licenseConfigsUsageStats` returns top-level `licenseConfigUsageStats` (singular `Config`) and only surfaces configs that already have usage stats (`billingAccounts/{ID}/billingAccountLicenseConfigs` in `v1alpha` is needed for zero-usage discovery).
+- **Bash Portability & Safety Conventions:**
+  - Target **bash 3.2+** (macOS) and Cloud Shell — never use associative arrays (`declare -A`). Keep per-project state in temp TSV files (`CURRENT_LICENSES_FILE`, `DESIRED_FILE` under `RUN_TMP_DIR`) diffed with `comm`/`awk` under `LC_ALL=C`, and cache group membership lookups across projects in `GROUP_CACHE_DIR`.
+  - Runs under `set -euo pipefail`: never inspect `$?` after a bare `var=$(...)` assignment — branch on the command directly.
+  - Always support `--dry-run`, preserve reconcile cross-checks protecting users moving between editions, and avoid abbreviated local variable names flagged by `codespell` (use full words such as `answer`).

@@ -67,7 +67,8 @@ values:
     effective_labels:
       goog-terraform-provisioned: 'true'
     filter_config:
-      - malicious_uri_filter_settings:
+      - filter_rule_settings: []
+        malicious_uri_filter_settings:
           - filter_enforcement: ENABLED
         pi_and_jailbreak_filter_settings:
           - confidence_level: MEDIUM_AND_ABOVE
@@ -96,6 +97,7 @@ values:
           LLM response
         custom_prompt_safety_error_code: 400
         custom_prompt_safety_error_message: This is a custom error message for prompt
+        data_residency_compliant: true
         enforcement_type: INSPECT_AND_BLOCK
         filter_version_selector:
           - alias: FILTER_VERSION_ALIAS_STABLE
@@ -103,6 +105,8 @@ values:
         ignore_partial_invocation_failures: false
         log_sanitize_operations: true
         log_template_operations: true
+        modalities:
+          - MODALITY_TEXT
         multi_language_detection:
           - enable_multi_language_detection: true
     terraform_labels:
@@ -113,7 +117,8 @@ values:
     effective_labels:
       goog-terraform-provisioned: 'true'
     filter_config:
-      - malicious_uri_filter_settings:
+      - filter_rule_settings: []
+        malicious_uri_filter_settings:
           - filter_enforcement: ENABLED
         pi_and_jailbreak_filter_settings:
           - confidence_level: MEDIUM_AND_ABOVE
@@ -142,6 +147,7 @@ values:
           LLM response
         custom_prompt_safety_error_code: 400
         custom_prompt_safety_error_message: This is a custom error message for prompt
+        data_residency_compliant: true
         enforcement_type: INSPECT_AND_BLOCK
         filter_version_selector:
           - alias: FILTER_VERSION_ALIAS_STABLE
@@ -149,6 +155,8 @@ values:
         ignore_partial_invocation_failures: false
         log_sanitize_operations: true
         log_template_operations: true
+        modalities:
+          - MODALITY_TEXT
         multi_language_detection:
           - enable_multi_language_detection: true
     terraform_labels:
@@ -218,8 +226,10 @@ values:
     access_types:
       - PRIVATE
       - PUBLIC
+    agent_compute:
     agent_connectivity_template_id: agw-geap
     deletion_policy: DELETE
+    deployment_model:
     description: Terraform managed.
     effective_labels:
       goog-terraform-provisioned: 'true'
@@ -297,16 +307,6 @@ values:
       goog-terraform-provisioned: 'true'
     timeout: 2s
     timeouts:
-  terraform_data.template_metadata_patch["agent-gateway-to-external"]:
-    input:
-    output:
-    triggers_replace:
-      config: 0eeb46a5311006487138ec11967cc0d49f03b2936bac19150003193ddff9489b
-  terraform_data.template_metadata_patch["external-to-agent-gateway"]:
-    input:
-    output:
-    triggers_replace:
-      config: 0eeb46a5311006487138ec11967cc0d49f03b2936bac19150003193ddff9489b
 
 counts:
   google_compute_network_attachment: 1
@@ -317,8 +317,7 @@ counts:
   google_network_services_agent_gateway: 1
   google_network_services_authz_extension: 2
   modules: 1
-  resources: 12
-  terraform_data: 2
+  resources: 10
 
 outputs:
   access_policy_ids: {}
@@ -331,9 +330,15 @@ outputs:
     global: //agentregistry.googleapis.com/projects/test-gf-geap-0/locations/global
     regional: //agentregistry.googleapis.com/projects/test-gf-geap-0/locations/europe-west1
     us: //agentregistry.googleapis.com/projects/test-gf-geap-0/locations/us
+  gemini_enterprise_acl_config_id:
   gemini_enterprise_antigravity_principals: []
+  gemini_enterprise_app_iam_principals: []
   gemini_enterprise_app_names: {}
   gemini_enterprise_assistant_names: {}
+  gemini_enterprise_cmek_config_id:
   gemini_enterprise_data_connector_names: {}
+  gemini_enterprise_data_store_names: {}
+  gemini_enterprise_user_store_id:
+  gemini_enterprise_widget_config_names: {}
   model_armor_template_names: __missing__
   policy_binding_ids: {}

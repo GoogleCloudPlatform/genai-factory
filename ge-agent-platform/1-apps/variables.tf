@@ -335,17 +335,18 @@ variable "gemini_enterprise_antigravity_principals" {
 }
 
 variable "gemini_enterprise_apps" {
-  description = "The Gemini Enterprise apps, keyed by engine id."
+  description = "The Gemini Enterprise apps, keyed by logical app id. Omit 'engine' to adopt an existing Console-created app while managing its assistant, widget, gateway binding, data stores, and IAM."
   type = map(object({
     assistant = optional(object({
       assistant_id = optional(string, "default_assistant")
-      banned_phrases = optional(list(object({
-        phrase            = string
+      banned_phrases = optional(map(object({
         ignore_diacritics = optional(bool)
         match_type        = optional(string)
-      })), [])
-      description  = optional(string)
-      display_name = optional(string, "Default Assistant")
+        phrase            = optional(string)
+      })), {})
+      default_web_grounding_toggle_off = optional(bool)
+      description                      = optional(string)
+      display_name                     = optional(string, "Default Assistant")
       generation_config = optional(object({
         default_language   = optional(string)
         system_instruction = optional(string)
@@ -357,32 +358,109 @@ variable "gemini_enterprise_apps" {
         user_prompt_direction = optional(string, "user-to-ge")
       }), {})
       web_grounding_type = optional(string)
-    }), {})
-    collection_id = optional(string, "default_collection")
-    # Data stores are attached after the fact, so an app starts without any.
+    }))
+    collection_id  = optional(string, "default_collection")
+    data_store_ids = optional(list(string))
+    # Null binds the stage's Egress Agent Gateway; "" opts out; set a gateway
+    # resource id to bind a custom gateway.
+    egress_agent_gateway = optional(string)
+    # Data stores are attached after creation via terraform_data.app_data_stores.
     engine = optional(object({
       display_name      = string
       company_name      = optional(string)
-      data_store_ids    = optional(list(string), [])
       disable_analytics = optional(bool)
-      features          = optional(map(string), {})
+      features          = optional(map(string))
       industry_vertical = optional(string, "GENERIC")
+      kms_key_name      = optional(string)
       knowledge_graph = optional(object({
-        cloud_knowledge_graph_types    = optional(list(string), [])
-        enable_cloud_knowledge_graph   = optional(bool, false)
-        enable_private_knowledge_graph = optional(bool, false)
+        cloud_knowledge_graph_types    = optional(list(string))
+        enable_cloud_knowledge_graph   = optional(bool)
+        enable_private_knowledge_graph = optional(bool)
         feature_config = optional(object({
           disable_private_kg_auto_complete       = optional(bool)
           disable_private_kg_enrichment          = optional(bool)
           disable_private_kg_query_ui_chips      = optional(bool)
           disable_private_kg_query_understanding = optional(bool)
         }))
-      }), {})
+      }))
+      model_configs              = optional(map(string))
+      procurement_contact_emails = optional(list(string))
       required_subscription_tier = optional(string)
-      search_add_ons             = optional(list(string))
-      search_tier                = optional(string)
+      search_add_ons             = optional(list(string), ["SEARCH_ADD_ON_LLM"])
+      search_tier                = optional(string, "SEARCH_TIER_ENTERPRISE")
     }))
-    iam = optional(map(list(string)), {})
+    engine_id = optional(string)
+    iam       = optional(map(list(string)), {})
+    iam_bindings = optional(map(object({
+      members = list(string)
+      role    = string
+    })), {})
+    iam_bindings_additive = optional(map(object({
+      member = string
+      role   = string
+    })), {})
+    iam_by_principals = optional(map(list(string)), {})
+    widget_config = optional(object({
+      access_settings = optional(object({
+        allow_public_access              = optional(bool)
+        allowlisted_domains              = optional(list(string))
+        enable_web_app                   = optional(bool)
+        language_code                    = optional(string)
+        workforce_identity_pool_provider = optional(string)
+      }))
+      homepage_setting = optional(object({
+        shortcuts = optional(map(object({
+          destination_uri = optional(string)
+          icon_url        = optional(string)
+          title           = optional(string)
+        })), {})
+      }))
+      ui_branding = optional(object({
+        logo = optional(object({
+          url = optional(string)
+        }))
+      }))
+      ui_settings = optional(object({
+        data_store_ui_configs = optional(map(object({
+          facet_fields = optional(map(string), {})
+          fields_ui_components = optional(map(object({
+            field             = string
+            device_visibility = optional(list(string))
+            display_template  = optional(string)
+          })), {})
+        })), {})
+        default_search_request_order_by = optional(string)
+        disable_user_events_collection  = optional(bool)
+        enable_autocomplete             = optional(bool)
+        enable_create_agent_button      = optional(bool)
+        enable_people_search            = optional(bool)
+        enable_quality_feedback         = optional(bool)
+        enable_safe_search              = optional(bool)
+        enable_search_as_you_type       = optional(bool)
+        enable_visual_content_summary   = optional(bool)
+        generative_answer_config = optional(object({
+          disable_related_questions       = optional(bool)
+          ignore_adversarial_query        = optional(bool)
+          ignore_low_relevant_content     = optional(bool)
+          ignore_non_answer_seeking_query = optional(bool)
+          image_source                    = optional(string)
+          language_code                   = optional(string)
+          max_rephrase_steps              = optional(number)
+          model_prompt_preamble           = optional(string)
+          model_version                   = optional(string)
+          result_count                    = optional(number)
+        }))
+        interaction_type        = optional(string)
+        result_description_type = optional(string)
+        search_addon_spec = optional(object({
+          generative_answer_add_on_disabled   = optional(bool)
+          kpi_personalization_add_on_disabled = optional(bool)
+          semantic_add_on_disabled            = optional(bool)
+        }))
+        source_admin_display_name_enabled = optional(bool)
+      }))
+      widget_config_id = optional(string, "default_search_widget_config")
+    }))
   }))
   nullable = false
   default  = {}
@@ -390,12 +468,15 @@ variable "gemini_enterprise_apps" {
   validation {
     condition = alltrue(flatten([
       for a in var.gemini_enterprise_apps : [
-        for members in values(a.iam) : [
-          for m in members :
-          can(regex("^(user|group|serviceAccount|domain|deleted):.+$", m))
-          || can(regex("^principalSet?://.+$", m))
-          || contains(["allUsers", "allAuthenticatedUsers"], m)
-        ]
+        for m in concat(
+          flatten(values(a.iam)),
+          keys(a.iam_by_principals),
+          flatten([for b in values(a.iam_bindings) : b.members]),
+          [for b in values(a.iam_bindings_additive) : b.member]
+        ) :
+        can(regex("^(user|group|serviceAccount|domain|deleted):.+$", m))
+        || can(regex("^principalSet?://.+$", m))
+        || contains(["allUsers", "allAuthenticatedUsers"], m)
       ]
     ]))
     error_message = "Every IAM principal must be prefixed (user:, group:, serviceAccount:, domain:, deleted:), a principal:// or principalSet:// identity, or allUsers / allAuthenticatedUsers."
@@ -404,9 +485,12 @@ variable "gemini_enterprise_apps" {
   validation {
     condition = alltrue(flatten([
       for a in var.gemini_enterprise_apps : [
-        for members in values(a.iam) : [
-          for m in members : m == trimspace(m)
-        ]
+        for m in concat(
+          flatten(values(a.iam)),
+          keys(a.iam_by_principals),
+          flatten([for b in values(a.iam_bindings) : b.members]),
+          [for b in values(a.iam_bindings_additive) : b.member]
+        ) : m == trimspace(m)
       ]
     ]))
     error_message = "IAM principals must not have leading or trailing whitespace."
@@ -414,17 +498,85 @@ variable "gemini_enterprise_apps" {
 
   validation {
     condition = alltrue(flatten([
-      for a in var.gemini_enterprise_apps : [
-        for members in values(a.iam) : length(members) > 0
-      ]
+      for a in var.gemini_enterprise_apps : concat(
+        [for members in values(a.iam) : length(members) > 0],
+        [for b in values(a.iam_bindings) : length(b.members) > 0]
+      )
     ]))
-    error_message = "An IAM role with no principals should be removed rather than left empty."
+    error_message = "An IAM role or binding with no principals should be removed rather than left empty."
+  }
+
+  validation {
+    condition = alltrue([
+      for a in var.gemini_enterprise_apps :
+      try(a.engine.industry_vertical, null) == null
+      ? true
+      : contains(["GENERIC", "HEALTHCARE_FHIR", "MEDIA"], a.engine.industry_vertical)
+    ])
+    error_message = "gemini_enterprise_apps[*].engine.industry_vertical must be 'GENERIC', 'HEALTHCARE_FHIR', or 'MEDIA'."
+  }
+
+  validation {
+    condition = alltrue([
+      for a in var.gemini_enterprise_apps :
+      try(a.engine.required_subscription_tier, null) == null
+      ? true
+      : contains([
+        "SUBSCRIPTION_TIER_AGENTSPACE_BUSINESS",
+        "SUBSCRIPTION_TIER_AGENTSPACE_STARTER",
+        "SUBSCRIPTION_TIER_EDU",
+        "SUBSCRIPTION_TIER_EDU_EMERGING",
+        "SUBSCRIPTION_TIER_EDU_PRO",
+        "SUBSCRIPTION_TIER_EDU_PRO_EMERGING",
+        "SUBSCRIPTION_TIER_ENTERPRISE",
+        "SUBSCRIPTION_TIER_ENTERPRISE_EMERGING",
+        "SUBSCRIPTION_TIER_FRONTLINE_STARTER",
+        "SUBSCRIPTION_TIER_FRONTLINE_WORKER",
+        "SUBSCRIPTION_TIER_SEARCH",
+        "SUBSCRIPTION_TIER_SEARCH_AND_ASSISTANT"
+      ], a.engine.required_subscription_tier)
+    ])
+    error_message = "Invalid gemini_enterprise_apps[*].engine.required_subscription_tier value."
   }
 
   validation {
     condition = alltrue(flatten([
       for a in var.gemini_enterprise_apps : [
-        for bp in a.assistant.banned_phrases :
+        for ao in coalesce(try(a.engine.search_add_ons, null), []) :
+        contains(["SEARCH_ADD_ON_LLM"], ao)
+      ]
+    ]))
+    error_message = "gemini_enterprise_apps[*].engine.search_add_ons values must be 'SEARCH_ADD_ON_LLM'."
+  }
+
+  validation {
+    condition = alltrue([
+      for a in var.gemini_enterprise_apps :
+      try(a.engine.search_tier, null) == null
+      ? true
+      : contains(["SEARCH_TIER_ENTERPRISE", "SEARCH_TIER_STANDARD"], a.engine.search_tier)
+    ])
+    error_message = "gemini_enterprise_apps[*].engine.search_tier must be 'SEARCH_TIER_ENTERPRISE' or 'SEARCH_TIER_STANDARD'."
+  }
+
+  validation {
+    condition = alltrue([
+      for a in var.gemini_enterprise_apps :
+      try(a.assistant.web_grounding_type, null) == null
+      ? true
+      : contains([
+        "WEB_GROUNDING_TYPE_DISABLED",
+        "WEB_GROUNDING_TYPE_ENTERPRISE_WEB_SEARCH",
+        "WEB_GROUNDING_TYPE_GOOGLE_SEARCH"
+      ], a.assistant.web_grounding_type)
+    ])
+    error_message = "gemini_enterprise_apps[*].assistant.web_grounding_type must be 'WEB_GROUNDING_TYPE_DISABLED', 'WEB_GROUNDING_TYPE_ENTERPRISE_WEB_SEARCH', or 'WEB_GROUNDING_TYPE_GOOGLE_SEARCH'."
+  }
+
+  validation {
+    condition = alltrue(flatten([
+      for a in var.gemini_enterprise_apps : [
+        for bp in values(coalesce(try(a.assistant.banned_phrases, null), {})) :
         bp.match_type == null || contains(["SIMPLE_STRING_MATCH", "WORD_BOUNDARY_STRING_MATCH"], bp.match_type)
       ]
     ]))
@@ -434,7 +586,9 @@ variable "gemini_enterprise_apps" {
   validation {
     condition = alltrue([
       for a in var.gemini_enterprise_apps :
-      contains(["FAIL_CLOSED", "FAIL_OPEN"], a.assistant.model_armor.failure_mode)
+      try(a.assistant.model_armor.failure_mode, null) == null
+      ? true
+      : contains(["FAIL_CLOSED", "FAIL_OPEN"], a.assistant.model_armor.failure_mode)
     ])
     error_message = "The assistant model_armor failure_mode must be either 'FAIL_CLOSED' or 'FAIL_OPEN'."
   }
@@ -451,14 +605,90 @@ variable "gemini_enterprise_apps" {
             var.agent_gateway_config.egress.model_armor_config.request_direction,
             var.agent_gateway_config.egress.model_armor_config.response_direction,
         ]), d)
-      ] if a.assistant.model_armor.enable
+      ] if try(a.assistant.model_armor.enable, false)
     ]))
     error_message = "A Model Armor direction bound to the Agent Gateway cannot also be bound to an assistant: the gateway needs its templates in the gateway region, assistants need them in var.location."
+  }
+
+  validation {
+    condition = alltrue([
+      for a in var.gemini_enterprise_apps :
+      try(a.widget_config.ui_settings.interaction_type, null) == null
+      ? true
+      : contains(
+        ["SEARCH_ONLY", "SEARCH_WITH_ANSWER", "SEARCH_WITH_FOLLOW_UPS"],
+        a.widget_config.ui_settings.interaction_type
+      )
+    ])
+    error_message = "gemini_enterprise_apps[*].widget_config.ui_settings.interaction_type must be 'SEARCH_ONLY', 'SEARCH_WITH_ANSWER', or 'SEARCH_WITH_FOLLOW_UPS'."
+  }
+
+  validation {
+    condition = alltrue([
+      for a in var.gemini_enterprise_apps :
+      try(a.widget_config.ui_settings.result_description_type, null) == null
+      ? true
+      : contains(
+        ["EXTRACTIVE_ANSWER", "SNIPPET"],
+        a.widget_config.ui_settings.result_description_type
+      )
+    ])
+    error_message = "gemini_enterprise_apps[*].widget_config.ui_settings.result_description_type must be 'EXTRACTIVE_ANSWER' or 'SNIPPET'."
+  }
+
+  validation {
+    condition = alltrue([
+      for a in var.gemini_enterprise_apps :
+      try(a.widget_config.ui_settings.generative_answer_config.image_source, null) == null
+      ? true
+      : contains(
+        [
+          "ALL_AVAILABLE_SOURCES",
+          "CORPUS_IMAGE_ONLY",
+          "FIGURE_GENERATION_ONLY"
+        ],
+        a.widget_config.ui_settings.generative_answer_config.image_source
+      )
+    ])
+    error_message = "gemini_enterprise_apps[*].widget_config.ui_settings.generative_answer_config.image_source must be 'ALL_AVAILABLE_SOURCES', 'CORPUS_IMAGE_ONLY', or 'FIGURE_GENERATION_ONLY'."
+  }
+
+  validation {
+    condition = alltrue(flatten([
+      for a in var.gemini_enterprise_apps : [
+        for ds_v in values(coalesce(
+          try(a.widget_config.ui_settings.data_store_ui_configs, null), {}
+          )) : [
+          for comp_k in keys(ds_v.fields_ui_components) :
+          contains(
+            ["custom1", "custom2", "custom3", "thumbnail", "title", "url"],
+            comp_k
+          )
+        ]
+      ]
+    ]))
+    error_message = "Keys in fields_ui_components must be one of 'custom1', 'custom2', 'custom3', 'thumbnail', 'title', or 'url'."
+  }
+
+  validation {
+    condition = alltrue(flatten([
+      for a in var.gemini_enterprise_apps : [
+        for ds_v in values(coalesce(
+          try(a.widget_config.ui_settings.data_store_ui_configs, null), {}
+          )) : [
+          for comp_v in values(ds_v.fields_ui_components) : [
+            for dev in coalesce(comp_v.device_visibility, []) :
+            contains(["DESKTOP", "MOBILE"], dev)
+          ]
+        ]
+      ]
+    ]))
+    error_message = "device_visibility values in fields_ui_components must be 'DESKTOP' or 'MOBILE'."
   }
 }
 
 variable "gemini_enterprise_data_connectors" {
-  description = "The first-party and third-party Gemini Enterprise data connectors, keyed by collection id."
+  description = "The first-party and third-party Gemini Enterprise data connectors, keyed by logical connector id."
   type = map(object({
     data_source = string
     action_config = optional(object({
@@ -472,6 +702,7 @@ variable "gemini_enterprise_data_connectors" {
       supported_connector_modes = optional(list(string))
     }))
     collection_display_name = optional(string)
+    collection_id           = optional(string)
     connector_modes         = optional(list(string))
     data_source_version     = optional(number)
     destination_configs = optional(list(object({
@@ -534,12 +765,128 @@ variable "gemini_enterprise_data_connectors" {
   }
 }
 
+variable "gemini_enterprise_data_stores" {
+  description = "Native Discovery Engine data stores in the location, keyed by logical store id and attached to apps via app_ids or gemini_enterprise_apps[*].data_store_ids."
+  type = map(object({
+    acl_enabled    = optional(bool)
+    app_ids        = optional(list(string), [])
+    content_config = optional(string, "NO_CONTENT")
+    data_store_id  = optional(string)
+    display_name   = optional(string)
+    document_processing_config = optional(object({
+      chunking_config = optional(object({
+        layout_based_chunking_config = optional(object({
+          chunk_size                = optional(number)
+          include_ancestor_headings = optional(bool)
+        }))
+      }))
+      default_parsing_config = optional(object({
+        digital_parsing_config = optional(bool)
+        layout_parsing_config = optional(object({
+          enable_get_processed_document = optional(bool)
+          enable_image_annotation       = optional(bool)
+          enable_llm_layout_parsing     = optional(bool)
+          enable_table_annotation       = optional(bool)
+          exclude_html_classes          = optional(list(string))
+          exclude_html_elements         = optional(list(string))
+          exclude_html_ids              = optional(list(string))
+          structured_content_types      = optional(list(string))
+        }))
+        ocr_parsing_config = optional(object({
+          use_native_text = optional(bool)
+        }))
+      }))
+      parsing_config_overrides = optional(map(object({
+        digital_parsing_config = optional(bool)
+        layout_parsing_config = optional(object({
+          enable_get_processed_document = optional(bool)
+          enable_image_annotation       = optional(bool)
+          enable_llm_layout_parsing     = optional(bool)
+          enable_table_annotation       = optional(bool)
+          exclude_html_classes          = optional(list(string))
+          exclude_html_elements         = optional(list(string))
+          exclude_html_ids              = optional(list(string))
+          structured_content_types      = optional(list(string))
+        }))
+        ocr_parsing_config = optional(object({
+          use_native_text = optional(bool)
+        }))
+      })))
+    }))
+    industry_vertical            = optional(string, "GENERIC")
+    json_schema                  = optional(string)
+    kms_key_name                 = optional(string)
+    schema_id                    = optional(string, "default_schema")
+    skip_default_schema_creation = optional(bool)
+    solution_types               = optional(list(string), ["SOLUTION_TYPE_SEARCH"])
+  }))
+  nullable = false
+  default  = {}
+
+  validation {
+    condition = alltrue([
+      for ds in var.gemini_enterprise_data_stores : contains(
+        ["CONTENT_REQUIRED", "NO_CONTENT"], ds.content_config
+      )
+    ])
+    error_message = "gemini_enterprise_data_stores[*].content_config must be 'CONTENT_REQUIRED' or 'NO_CONTENT'."
+  }
+
+  validation {
+    condition = alltrue([
+      for ds in var.gemini_enterprise_data_stores : contains(
+        ["GENERIC", "HEALTHCARE_FHIR", "MEDIA"], ds.industry_vertical
+      )
+    ])
+    error_message = "gemini_enterprise_data_stores[*].industry_vertical must be 'GENERIC', 'HEALTHCARE_FHIR', or 'MEDIA'."
+  }
+
+  validation {
+    condition = alltrue(flatten([
+      for ds in var.gemini_enterprise_data_stores : [
+        for st in coalesce(ds.solution_types, []) : contains(
+          [
+            "SOLUTION_TYPE_CHAT",
+            "SOLUTION_TYPE_GENERATIVE_CHAT",
+            "SOLUTION_TYPE_RECOMMENDATION",
+            "SOLUTION_TYPE_SEARCH"
+          ],
+          st
+        )
+      ]
+    ]))
+    error_message = "gemini_enterprise_data_stores[*].solution_types values must be valid Discovery Engine solution types."
+  }
+
+  validation {
+    condition = alltrue(flatten([
+      for ds in var.gemini_enterprise_data_stores : [
+        for k in keys(coalesce(
+          try(ds.document_processing_config.parsing_config_overrides, null), {}
+        )) :
+        contains(["docx", "html", "pdf"], k)
+      ]
+    ]))
+    error_message = "Keys in gemini_enterprise_data_stores[*].document_processing_config.parsing_config_overrides must be 'docx', 'html', or 'pdf'."
+  }
+}
+
+variable "gemini_enterprise_encryption_config" {
+  description = "Location-level CMEK configuration registered before stores, engines, and connectors are created."
+  type = object({
+    kms_key            = string
+    cmek_config_id     = optional(string, "default_cmek_config")
+    set_default        = optional(bool, true)
+    single_region_keys = optional(list(string), [])
+  })
+  default = null
+}
+
 variable "gemini_enterprise_iam" {
-  description = "How app IAM and Discovery Engine identity provider (IdP) configuration are applied."
+  description = "Discovery Engine identity provider (IdP) and Antigravity custom role configuration."
   type = object({
     # Defaults to projects/${var.project_id}/roles/discoveryengineUserBusinessAiCodeOnly
     antigravity_role    = optional(string)
-    authoritative       = optional(bool, true)
     idp_type            = optional(string)
     workforce_pool_name = optional(string)
   })
@@ -568,6 +915,28 @@ variable "gemini_enterprise_iam" {
       || var.gemini_enterprise_iam.workforce_pool_name != null
     )
     error_message = "The workforce_pool_name must be set when idp_type is 'THIRD_PARTY'."
+  }
+}
+
+variable "gemini_enterprise_user_store_config" {
+  description = "Location-level default_user_store license assignment configuration."
+  type = object({
+    default_license_config             = optional(string)
+    enable_expired_license_auto_update = optional(bool)
+    enable_license_auto_register       = optional(bool)
+  })
+  default = null
+
+  validation {
+    condition = (
+      var.gemini_enterprise_user_store_config == null
+      || var.gemini_enterprise_user_store_config.default_license_config != null
+      || (
+        var.gemini_enterprise_user_store_config.enable_expired_license_auto_update != true
+        && var.gemini_enterprise_user_store_config.enable_license_auto_register != true
+      )
+    )
+    error_message = "enable_expired_license_auto_update and enable_license_auto_register require default_license_config to be set."
   }
 }
 

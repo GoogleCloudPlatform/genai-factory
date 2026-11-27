@@ -11,7 +11,7 @@ Deploys the **Gemini Enterprise & Agent Platform** blueprint ([`ge-agent-platfor
 
 ## When to Use
 
-- Creating or adopting Gemini Enterprise apps/assistants (`gemini_enterprise_apps`), configuring SaaS connectors (`gemini_enterprise_data_connectors`), or setting location IdP (`gemini_enterprise_iam`).
+- Creating or adopting Gemini Enterprise apps/assistants/widgets (`gemini_enterprise_apps`), provisioning native data stores and schemas (`gemini_enterprise_data_stores`), configuring SaaS connectors (`gemini_enterprise_data_connectors`), or setting location-level IdP/CMEK/user store (`gemini_enterprise_iam`, `gemini_enterprise_encryption_config`, `gemini_enterprise_user_store_config`).
 - Registering endpoints, A2A agents, or Custom MCP servers (`agent_registry_services` + `oauth_config`) and authoring IAM v3 UAP egress rules (`access_policies`).
 - **REQUIRED SUB-SKILL:** Load [`genai-factory-prerequisites-and-fast`](../.agents/skills/genai-factory-prerequisites-and-fast/SKILL.md) for Stage 0 (`0-prereqs`), BYO-VPC, and Fabric FAST.
 - **REQUIRED SUB-SKILL:** Load [`genai-factory-discovery-engine-and-gecx`](../.agents/skills/genai-factory-discovery-engine-and-gecx/SKILL.md) for multi-regional `var.location` (`eu`/`us`/`global`) vs. regional `var.region` (`europe-west1`).
@@ -93,5 +93,5 @@ agent_registry_services = {
 | Symptom / Error | Cause | Fix |
 | :--- | :--- | :--- |
 | `cannot update agent connectivity template that is referenced by an agent gateway` | Network Connectivity API blocks in-place updates to referenced connectivity templates | Set `agent_gateway_config.egress.networking` up front, or taint/detach the Agent Gateway before changing it. |
-| Extra `<app_id>-companion` data store appears in state | Discovery Engine `UpdateEngine` rejects linking exactly `1` data store (`0` or `>= 2` required) | Keep `<app_id>-companion` ([`1-apps/gemini-enterprise-ds.tf`](./1-apps/gemini-enterprise-ds.tf) creates it automatically when `length == 1`). |
+| Extra `<app_id>-companion` data store appears in state | Discovery Engine `UpdateEngine` rejects linking exactly `1` data store (`0` or `>= 2` required) | Keep `<app_id>-companion` ([`1-apps/gemini-enterprise-apps.tf`](./1-apps/gemini-enterprise-apps.tf) creates it automatically only when an app resolves to `1` store and detaches/destroys it on `1 -> 0` or `1 -> 2+` transitions). |
 | Custom MCP OAuth 2.0 fails or Secret Manager lookup fails | Missing `/versions/<VERSION>` suffix on secret IDs or missing redirect URI | Append `/versions/1` (or `latest`) to `client_id`/`client_secret` and allow `https://vertexaisearch.cloud.google.com/oauth-redirect` on the OAuth client. |

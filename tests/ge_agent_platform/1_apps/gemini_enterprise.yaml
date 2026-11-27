@@ -60,6 +60,7 @@ values:
             phrase: competitor-secret
         model_armor_config:
           - failure_mode: FAIL_CLOSED
+    default_web_grounding_toggle_off: true
     deletion_policy: ABANDON
     description:
     display_name: Default Assistant
@@ -72,11 +73,23 @@ values:
     project: test-gf-geap-0
     timeouts:
     web_grounding_type: WEB_GROUNDING_TYPE_DISABLED
+  google_discovery_engine_cmek_config.default[0]:
+    cmek_config_id: default_cmek_config
+    deletion_policy: PREVENT
+    kms_key: projects/test-gf-geap-0/locations/europe/keyRings/ge/cryptoKeys/default
+    location: eu
+    project: test-gf-geap-0
+    set_default: true
+    single_region_keys:
+      - kms_key: projects/test-gf-geap-0/locations/europe-west1/keyRings/ge-ew1/cryptoKeys/default
+      - kms_key: projects/test-gf-geap-0/locations/europe-west4/keyRings/ge-ew4/cryptoKeys/default
+      - kms_key: projects/test-gf-geap-0/locations/europe-north1/keyRings/ge-en1/cryptoKeys/default
+    timeouts:
   google_discovery_engine_data_connector.default["confluence"]:
     action_config: []
     auto_run_disabled:
     bap_config: []
-    collection_display_name: Confluence Cloud
+    collection_display_name: Confluence+Cloud
     collection_id: confluence
     connector_modes:
       - DATA_INGESTION
@@ -91,7 +104,7 @@ values:
     incremental_refresh_interval:
     incremental_sync_disabled:
     json_params:
-    kms_key_name:
+    kms_key_name: projects/test-gf-geap-0/locations/europe/keyRings/ge/cryptoKeys/default
     location: eu
     params:
       api_token: projects/test-gf-geap-0/secrets/confluence-token/versions/1
@@ -131,7 +144,7 @@ values:
     incremental_refresh_interval:
     incremental_sync_disabled:
     json_params:
-    kms_key_name:
+    kms_key_name: projects/test-gf-geap-0/locations/europe/keyRings/ge/cryptoKeys/default
     location: eu
     params:
     project: test-gf-geap-0
@@ -162,7 +175,7 @@ values:
     incremental_refresh_interval:
     incremental_sync_disabled:
     json_params:
-    kms_key_name:
+    kms_key_name: projects/test-gf-geap-0/locations/europe/keyRings/ge/cryptoKeys/default
     location: eu
     params:
       oauth_access_token: none
@@ -172,14 +185,61 @@ values:
     sync_mode:
     tag: weather-mcp-ge-app-main
     timeouts:
-  google_discovery_engine_data_store.companion["ge-app-main"]:
+  google_discovery_engine_data_store.companion["ge-app-adopted"]:
     acl_enabled:
     content_config: NO_CONTENT
     create_advanced_site_search: false
-    data_store_id: ge-app-main-companion
+    data_store_id: ge-app-adopted-companion
     deletion_policy: DELETE
-    display_name: Gemini Enterprise Main-companion
+    display_name: ge-app-adopted-companion
     document_processing_config: []
+    industry_vertical: GENERIC
+    kms_key_name: projects/test-gf-geap-0/locations/europe/keyRings/ge/cryptoKeys/default
+    location: eu
+    project: test-gf-geap-0
+    skip_default_schema_creation: false
+    solution_types:
+      - SOLUTION_TYPE_SEARCH
+    timeouts:
+  google_discovery_engine_data_store.companion["ge-app-single"]:
+    acl_enabled:
+    content_config: NO_CONTENT
+    create_advanced_site_search: false
+    data_store_id: ge-app-single-companion
+    deletion_policy: DELETE
+    display_name: Single Store App-companion
+    document_processing_config: []
+    industry_vertical: GENERIC
+    kms_key_name: projects/test-gf-geap-0/locations/europe/keyRings/ge/cryptoKeys/default
+    location: eu
+    project: test-gf-geap-0
+    skip_default_schema_creation: false
+    solution_types:
+      - SOLUTION_TYPE_SEARCH
+    timeouts:
+  google_discovery_engine_data_store.default["kb-docs"]:
+    acl_enabled:
+    content_config: CONTENT_REQUIRED
+    create_advanced_site_search: false
+    data_store_id: kb-docs
+    deletion_policy: PREVENT
+    display_name: Knowledge Base Docs
+    document_processing_config:
+      - chunking_config:
+          - layout_based_chunking_config:
+              - chunk_size: 500
+                include_ancestor_headings: true
+        default_parsing_config:
+          - digital_parsing_config:
+              - {}
+            layout_parsing_config: []
+            ocr_parsing_config: []
+        parsing_config_overrides:
+          - digital_parsing_config: []
+            file_type: pdf
+            layout_parsing_config: []
+            ocr_parsing_config:
+              - use_native_text: true
     industry_vertical: GENERIC
     kms_key_name:
     location: eu
@@ -187,6 +247,30 @@ values:
     skip_default_schema_creation: false
     solution_types:
       - SOLUTION_TYPE_SEARCH
+    timeouts:
+  google_discovery_engine_data_store.default["kb-structured"]:
+    acl_enabled:
+    content_config: NO_CONTENT
+    create_advanced_site_search: false
+    data_store_id: kb-structured
+    deletion_policy: PREVENT
+    display_name: Structured Catalog
+    document_processing_config: []
+    industry_vertical: GENERIC
+    kms_key_name:
+    location: eu
+    project: test-gf-geap-0
+    skip_default_schema_creation: true
+    solution_types:
+      - SOLUTION_TYPE_SEARCH
+    timeouts:
+  google_discovery_engine_schema.default["kb-structured"]:
+    data_store_id: kb-structured
+    deletion_policy: PREVENT
+    json_schema: '{"$schema":"https://json-schema.org/draft/2020-12/schema","properties":{"title":{"type":"string"}},"type":"object"}'
+    location: eu
+    project: test-gf-geap-0
+    schema_id: default_schema
     timeouts:
   google_discovery_engine_search_engine.default["ge-app-main"]:
     app_type: APP_TYPE_INTRANET
@@ -199,15 +283,16 @@ values:
     engine_id: ge-app-main
     features:
       agent-gallery: FEATURE_STATE_ON
+      agent-sharing-without-admin-approval: FEATURE_STATE_ON
+      disable-agent-sharing: FEATURE_STATE_OFF
+      enable-end-user-sharing-with-groups: FEATURE_STATE_OFF
       model-selector: FEATURE_STATE_ON
+      workflow-agents: FEATURE_STATE_ON
     industry_vertical: GENERIC
     kms_key_name:
-    knowledge_graph_config:
-      - cloud_knowledge_graph_types: []
-        enable_cloud_knowledge_graph: false
-        enable_private_knowledge_graph: false
-        feature_config: []
     location: eu
+    procurement_contact_emails:
+      - platform@example.com
     project: test-gf-geap-0
     search_engine_config:
       - required_subscription_tier: SUBSCRIPTION_TIER_SEARCH_AND_ASSISTANT
@@ -215,21 +300,102 @@ values:
           - SEARCH_ADD_ON_LLM
         search_tier: SEARCH_TIER_ENTERPRISE
     timeouts:
-  google_discovery_engine_search_engine_iam_binding.default["ge-app-main roles/discoveryengine.agentspaceUser"]:
+  google_discovery_engine_search_engine.default["ge-app-single"]:
+    app_type: APP_TYPE_INTRANET
+    collection_id: default_collection
+    common_config: []
+    data_store_ids: []
+    deletion_policy: PREVENT
+    disable_analytics:
+    display_name: Single Store App
+    engine_id: ge-app-single
+    industry_vertical: GENERIC
+    kms_key_name:
+    location: eu
+    procurement_contact_emails:
+    project: test-gf-geap-0
+    search_engine_config:
+      - search_add_ons:
+          - SEARCH_ADD_ON_LLM
+        search_tier: SEARCH_TIER_ENTERPRISE
+    timeouts:
+  google_discovery_engine_search_engine_iam_binding.authoritative["ge-app-main/roles/discoveryengine.agentspaceUser"]:
     collection_id: default_collection
     condition: []
     engine_id: ge-app-main
     location: eu
     members:
+      - group:admins@example.com
       - group:employees@example.com
     project: test-gf-geap-0
     role: roles/discoveryengine.agentspaceUser
+  google_discovery_engine_search_engine_iam_binding.bindings["ge-app-adopted/adopted-users"]:
+    collection_id: default_collection
+    condition: []
+    engine_id: ge-app-adopted
+    location: eu
+    members:
+      - group:adopted@example.com
+    project: test-gf-geap-0
+    role: roles/discoveryengine.agentspaceUser
+  google_discovery_engine_search_engine_iam_member.bindings["ge-app-main/contractor-access"]:
+    collection_id: default_collection
+    condition: []
+    engine_id: ge-app-main
+    location: eu
+    member: user:contractor@example.com
+    project: test-gf-geap-0
+    role: roles/discoveryengine.viewer
+  google_discovery_engine_user_store.default[0]:
+    default_license_config: projects/test-gf-geap-0/locations/eu/licenseConfigs/default
+    enable_expired_license_auto_update: true
+    enable_license_auto_register: true
+    location: eu
+    project: test-gf-geap-0
+    timeouts:
+    user_store_id: default_user_store
+  google_discovery_engine_widget_config.default["ge-app-main"]:
+    access_settings:
+      - allow_public_access:
+        allowlisted_domains:
+        enable_web_app: true
+        language_code: en
+        workforce_identity_pool_provider:
+    collection_id: default_collection
+    engine_id: ge-app-main
+    homepage_setting: []
+    location: eu
+    project: test-gf-geap-0
+    timeouts:
+    ui_branding: []
+    ui_settings:
+      - data_store_ui_configs:
+          - facet_field:
+              - display_name: Category
+                field: category
+            fields_ui_components_map: []
+        default_search_request_order_by:
+        disable_user_events_collection:
+        enable_autocomplete: true
+        enable_create_agent_button:
+        enable_people_search:
+        enable_quality_feedback:
+        enable_safe_search:
+        enable_search_as_you_type:
+        enable_visual_content_summary:
+        generative_answer_config: []
+        interaction_type: SEARCH_WITH_ANSWER
+        result_description_type: SNIPPET
+        search_addon_spec: []
+        source_admin_display_name_enabled:
+    widget_config_id: default_search_widget_config
   google_model_armor_template.default["ge-to-user"]:
     deletion_policy: PREVENT
     effective_labels:
       goog-terraform-provisioned: 'true'
     filter_config:
-      - malicious_uri_filter_settings:
+      - filter_rule_settings: []
+        malicious_uri_filter_settings:
           - filter_enforcement: ENABLED
         pi_and_jailbreak_filter_settings:
           - confidence_level: MEDIUM_AND_ABOVE
@@ -258,6 +424,7 @@ values:
           LLM response
         custom_prompt_safety_error_code: 400
         custom_prompt_safety_error_message: This is a custom error message for prompt
+        data_residency_compliant: true
         enforcement_type: INSPECT_AND_BLOCK
         filter_version_selector:
           - alias: FILTER_VERSION_ALIAS_STABLE
@@ -265,6 +432,9 @@ values:
         ignore_partial_invocation_failures: false
         log_sanitize_operations: true
         log_template_operations: true
+        modalities:
+          - MODALITY_TEXT
+          - MODALITY_IMAGE
         multi_language_detection:
           - enable_multi_language_detection: true
     terraform_labels:
@@ -275,7 +445,8 @@ values:
     effective_labels:
       goog-terraform-provisioned: 'true'
     filter_config:
-      - malicious_uri_filter_settings:
+      - filter_rule_settings: []
+        malicious_uri_filter_settings:
           - filter_enforcement: ENABLED
         pi_and_jailbreak_filter_settings:
           - confidence_level: MEDIUM_AND_ABOVE
@@ -304,6 +475,7 @@ values:
           LLM response
         custom_prompt_safety_error_code: 400
         custom_prompt_safety_error_message: This is a custom error message for prompt
+        data_residency_compliant: true
         enforcement_type: INSPECT_AND_BLOCK
         filter_version_selector:
           - alias: FILTER_VERSION_ALIAS_STABLE
@@ -311,14 +483,32 @@ values:
         ignore_partial_invocation_failures: false
         log_sanitize_operations: true
         log_template_operations: true
+        modalities:
+          - MODALITY_TEXT
+          - MODALITY_IMAGE
         multi_language_detection:
           - enable_multi_language_detection: true
     terraform_labels:
       goog-terraform-provisioned: 'true'
     timeouts:
+  google_project_iam_member.agentspace_restricted_user["group:admins@example.com"]:
+    condition: []
+    member: group:admins@example.com
+    project: test-gf-geap-0
+    role: roles/discoveryengine.agentspaceRestrictedUser
+  google_project_iam_member.agentspace_restricted_user["group:adopted@example.com"]:
+    condition: []
+    member: group:adopted@example.com
+    project: test-gf-geap-0
+    role: roles/discoveryengine.agentspaceRestrictedUser
   google_project_iam_member.agentspace_restricted_user["group:employees@example.com"]:
     condition: []
     member: group:employees@example.com
+    project: test-gf-geap-0
+    role: roles/discoveryengine.agentspaceRestrictedUser
+  google_project_iam_member.agentspace_restricted_user["user:contractor@example.com"]:
+    condition: []
+    member: user:contractor@example.com
     project: test-gf-geap-0
     role: roles/discoveryengine.agentspaceRestrictedUser
   google_project_iam_member.antigravity["group:developers@example.com"]:
@@ -385,8 +575,10 @@ values:
     access_path: AGENT_TO_ANYWHERE
     access_types:
       - PRIVATE
+    agent_compute:
     agent_connectivity_template_id: agw-geap
     deletion_policy: DELETE
+    deployment_model:
     description: Terraform managed.
     effective_labels:
       goog-terraform-provisioned: 'true'
@@ -441,46 +633,60 @@ values:
       goog-terraform-provisioned: 'true'
     timeout: 2s
     timeouts:
+  terraform_data.app_agent_gateway_patch["ge-app-adopted"]:
+    input:
+    output:
+    triggers_replace:
+      collection_id: default_collection
+      engine_id: ge-app-adopted
   terraform_data.app_agent_gateway_patch["ge-app-main"]:
     input:
     output:
     triggers_replace:
       collection_id: default_collection
-      engine_config: 5b8c36f2124b5c3503cb8dd6928babd3923f23aaed7782c752ef1a5464a1f864
-      engine_id: ge-app-main
+  terraform_data.app_data_stores["ge-app-adopted"]:
+    input:
+    output:
+    triggers_replace:
+      collection_id: default_collection
+      connectors: '[]'
+      data_store_ids: '["ge-app-adopted-companion","kb-docs"]'
+      engine_id: ge-app-adopted
+      mcp_connectors: '[]'
   terraform_data.app_data_stores["ge-app-main"]:
     input:
     output:
     triggers_replace:
       collection_id: default_collection
-      data_store_ids: '["confluence_page","confluence_space","onedrive_file","weather-mcp-ge-app-main_mcp_data"]'
-      engine_id: ge-app-main
+      data_store_ids: '["confluence_page","confluence_space","kb-docs","onedrive_file","weather-mcp-ge-app-main_mcp_data"]'
+  terraform_data.app_data_stores["ge-app-single"]:
+    input:
+    output:
+    triggers_replace:
+      collection_id: default_collection
+      connectors: '[]'
+      data_store_ids: '["ge-app-single-companion","kb-structured"]'
+      mcp_connectors: '[]'
   terraform_data.mcp_agent_gateway_patch["weather-mcp/ge-app-main"]:
     input:
     output:
     triggers_replace:
-      engine_app_id: ge-app-main
       patch_body: 38f80b9552e2ff5447c7b0cbbda38c0b56fc2e11eb9380a01878333508b44110
-  terraform_data.template_metadata_patch["ge-to-user"]:
-    input:
-    output:
-    triggers_replace:
-      config: 98e1dd775c73b2f99d8a2923bb46d4ac257ea85b1fe979c7bbdcf0f544cb7228
-  terraform_data.template_metadata_patch["user-to-ge"]:
-    input:
-    output:
-    triggers_replace:
-      config: 98e1dd775c73b2f99d8a2923bb46d4ac257ea85b1fe979c7bbdcf0f544cb7228
 
 counts:
   google_agent_registry_service: 1
   google_compute_network_attachment: 1
   google_discovery_engine_acl_config: 1
   google_discovery_engine_assistant: 1
+  google_discovery_engine_cmek_config: 1
   google_discovery_engine_data_connector: 3
-  google_discovery_engine_data_store: 1
-  google_discovery_engine_search_engine: 1
-  google_discovery_engine_search_engine_iam_binding: 1
+  google_discovery_engine_data_store: 4
+  google_discovery_engine_schema: 1
+  google_discovery_engine_search_engine: 2
+  google_discovery_engine_search_engine_iam_binding: 2
+  google_discovery_engine_search_engine_iam_member: 1
+  google_discovery_engine_user_store: 1
+  google_discovery_engine_widget_config: 1
   google_iam_project_access_policy: 1
   google_iam_projects_policy_binding: 1
   google_model_armor_template: 2
@@ -488,10 +694,10 @@ counts:
   google_network_services_agent_connectivity_template: 1
   google_network_services_agent_gateway: 1
   google_network_services_authz_extension: 1
-  google_project_iam_member: 2
+  google_project_iam_member: 5
   modules: 1
-  resources: 25
-  terraform_data: 5
+  resources: 39
+  terraform_data: 6
 
 outputs:
   access_policy_ids: __missing__
@@ -504,10 +710,20 @@ outputs:
     global: //agentregistry.googleapis.com/projects/test-gf-geap-0/locations/global
     regional: //agentregistry.googleapis.com/projects/test-gf-geap-0/locations/europe-west1
     us: //agentregistry.googleapis.com/projects/test-gf-geap-0/locations/us
+  gemini_enterprise_acl_config_id: __missing__
   gemini_enterprise_antigravity_principals:
     - group:developers@example.com
+  gemini_enterprise_app_iam_principals:
+    - group:admins@example.com
+    - group:adopted@example.com
+    - group:employees@example.com
+    - user:contractor@example.com
   gemini_enterprise_app_names: __missing__
   gemini_enterprise_assistant_names: __missing__
+  gemini_enterprise_cmek_config_id: __missing__
   gemini_enterprise_data_connector_names: __missing__
+  gemini_enterprise_data_store_names: __missing__
+  gemini_enterprise_user_store_id: __missing__
+  gemini_enterprise_widget_config_names: __missing__
   model_armor_template_names: __missing__
   policy_binding_ids: __missing__
