@@ -47,10 +47,13 @@ agent_gateway_ids = {
 An egress gateway only lets the agent reach destinations it is authorized for. Grant that authorization in the `ge-agent-platform` stage, naming the agent by the `agent_identity` output of this stage.
 
 > [!IMPORTANT]
-> Two API constraints apply to an agent attached to a gateway, and this stage does not satisfy the second one yet.
->
-> - **PSC-I and Agent Gateway are mutually exclusive.** The API rejects `psc_interface_config` and `agent_gateway_config` together. Setting `var.agent_gateway_ids` therefore turns PSC-I off, and the agent reaches your VPC through the connectivity template of the gateway instead of through its own network attachment.
-> - **The agent must use `AGENT_IDENTITY`.** This stage deploys the agent with `identity_type = "SERVICE_ACCOUNT"`, using the `gf-ar-0` account created in [0-prereqs](../0-prereqs/README.md), so attaching a gateway currently fails with `Reasoning Engine with 'agent_gateway_config' must use 'AGENT_IDENTITY' identity type`. Moving to agent identities means granting the agent roles to the identity rather than to the account, which is not yet wired here.
+> PSC-I and Agent Gateway are mutually exclusive. The API rejects `psc_interface_config` and `agent_gateway_config` together. Setting `var.agent_gateway_ids` therefore turns PSC-I off, and the agent reaches your VPC through the connectivity template of the gateway instead of through its own network attachment.
+
+## Agent identity
+
+The stage deploys the agent with an [agent identity](https://docs.cloud.google.com/gemini-enterprise-agent-platform/scale/runtime/agent-identity) (`identity_type = "AGENT_IDENTITY"`), which Agent Runtime creates together with the agent. The `agent_identity` output returns it as a `principal://` IAM principal.
+
+The platform grants the agents in the project a default set of roles, such as writing logs and traces and calling models. This stage grants the agent identity the additional roles it needs to use Firestore and read from Cloud Storage. As the identity only exists once the agent is created, the grants are made in this stage, and the [0-prereqs](../0-prereqs/README.md) stage only lets the stage service account grant those roles.
 
 ## Re-deploy or update the agent
 
@@ -109,5 +112,5 @@ Do not edit the `variables-fast.tf` file, as it needs to reflect FAST standard v
 |---|---|:---:|
 | [agent_id](outputs.tf#L15) | The Agent Runtime agent id. |  |
 | [agent_identity](outputs.tf#L20) | The IAM principal the agent calls other services with. Use it in the Agent Registry IAM bindings of the ge-agent-platform factory. |  |
-| [commands](outputs.tf#L27) | Run the following commands when the deployment finalize the setup, deploy and test your agent. |  |
+| [commands](outputs.tf#L25) | Run the following commands when the deployment finalize the setup, deploy and test your agent. |  |
 <!-- END TFDOC -->

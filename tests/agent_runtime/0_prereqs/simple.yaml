@@ -469,7 +469,6 @@ values:
     response_policy: googleapis
     rule_name: gstatic-all
     timeouts:
-
   module.dns_policy_googleapis[0].google_dns_response_policy_rule.default["kernels-gu"]:
     behavior:
     deletion_policy: DELETE
@@ -759,30 +758,12 @@ values:
       - serviceAccount:iac-rw@test-gf-ar-0.iam.gserviceaccount.com
     project: test-gf-ar-0
     role: roles/cloudbuild.builds.editor
-  module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/cloudtrace.agent"]:
-    condition: []
-    members:
-      - serviceAccount:gf-ar-0@test-gf-ar-0.iam.gserviceaccount.com
-    project: test-gf-ar-0
-    role: roles/cloudtrace.agent
   module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/datastore.owner"]:
     condition: []
     members:
       - serviceAccount:iac-rw@test-gf-ar-0.iam.gserviceaccount.com
     project: test-gf-ar-0
     role: roles/datastore.owner
-  module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/datastore.user"]:
-    condition: []
-    members:
-      - serviceAccount:gf-ar-0@test-gf-ar-0.iam.gserviceaccount.com
-    project: test-gf-ar-0
-    role: roles/datastore.user
-  module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/logging.logWriter"]:
-    condition: []
-    members:
-      - serviceAccount:gf-ar-0@test-gf-ar-0.iam.gserviceaccount.com
-    project: test-gf-ar-0
-    role: roles/logging.logWriter
   ? module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/serviceusage.serviceUsageAdmin"]
   : condition: []
     members:
@@ -792,7 +773,6 @@ values:
   ? module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/serviceusage.serviceUsageConsumer"]
   : condition: []
     members:
-      - serviceAccount:gf-ar-0@test-gf-ar-0.iam.gserviceaccount.com
       - serviceAccount:iac-rw@test-gf-ar-0.iam.gserviceaccount.com
     project: test-gf-ar-0
     role: roles/serviceusage.serviceUsageConsumer
@@ -808,23 +788,16 @@ values:
       - serviceAccount:iac-rw@test-gf-ar-0.iam.gserviceaccount.com
     project: test-gf-ar-0
     role: roles/storage.objectUser
-  module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/storage.objectViewer"]:
-    condition: []
+  module.projects.module.projects-iam["service-01"].google_project_iam_binding.bindings["iac_rw_project_iam_delegated"]:
+    condition:
+      - description: Automation service account delegated grants.
+        expression: api.getAttribute('iam.googleapis.com/modifiedGrantsByRole', []).hasOnly(['roles/datastore.user',
+          'roles/storage.objectViewer'])
+        title: iac_rw_delegated_grants
     members:
-      - serviceAccount:gf-ar-0@test-gf-ar-0.iam.gserviceaccount.com
+      - serviceAccount:iac-rw@test-gf-ar-0.iam.gserviceaccount.com
     project: test-gf-ar-0
-    role: roles/storage.objectViewer
-  module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/telemetry.tracesWriter"]:
-    condition: []
-    members:
-      - serviceAccount:gf-ar-0@test-gf-ar-0.iam.gserviceaccount.com
-    project: test-gf-ar-0
-    role: roles/telemetry.tracesWriter
-  module.projects.module.projects-iam["service-01"].google_project_iam_member.bindings["ar_sa_ai_user"]:
-    condition: []
-    member: serviceAccount:gf-ar-0@test-gf-ar-0.iam.gserviceaccount.com
-    project: test-gf-ar-0
-    role: roles/aiplatform.user
+    role: roles/resourcemanager.projectIamAdmin
   module.projects.module.projects["host"].google_project.project[0]:
     auto_create_network: false
     billing_account: 012345-678901-ABCDEF
@@ -853,7 +826,6 @@ values:
     project: test-gf-ar-hp-0
     role: roles/aiplatform.customCodeServiceAgent
   module.projects.module.projects["host"].google_project_iam_member.service_agents["aiplatform-ft"]:
-
     condition: []
     project: test-gf-ar-hp-0
     role: roles/aiplatform.serviceAgent
@@ -1253,21 +1225,6 @@ values:
     project: test-gf-ar-0
     service: networkservices.googleapis.com
     timeouts:
-  ? module.projects.module.service-accounts-iam["service-01/iac-rw"].google_service_account_iam_member.additive["$service_account_ids:service-01/gf-ar-0-roles/iam.serviceAccountUser"]
-  : condition: []
-    role: roles/iam.serviceAccountUser
-    service_account_id: projects/test-gf-ar-0/serviceAccounts/gf-ar-0@test-gf-ar-0.iam.gserviceaccount.com
-  module.projects.module.service-accounts["service-01/gf-ar-0"].google_service_account.service_account[0]:
-    account_id: gf-ar-0
-    create_ignore_already_exists:
-    deletion_policy: DELETE
-    description:
-    disabled: false
-    display_name: Terraform-managed.
-    email: gf-ar-0@test-gf-ar-0.iam.gserviceaccount.com
-    member: serviceAccount:gf-ar-0@test-gf-ar-0.iam.gserviceaccount.com
-    project: test-gf-ar-0
-    timeouts:
   module.projects.module.service-accounts["service-01/iac-rw"].google_service_account.service_account[0]:
     account_id: iac-rw
     create_ignore_already_exists:
@@ -1457,18 +1414,18 @@ counts:
   google_network_services_gateway: 1
   google_org_policy_policy: 1
   google_project: 2
-  google_project_iam_binding: 15
-  google_project_iam_member: 52
+  google_project_iam_binding: 11
+  google_project_iam_member: 51
   google_project_service: 20
   google_project_service_identity: 12
-  google_service_account: 2
-  google_service_account_iam_member: 2
+  google_service_account: 1
+  google_service_account_iam_member: 1
   google_storage_bucket: 1
   google_storage_bucket_iam_binding: 1
   google_storage_project_service_account: 1
   local_file: 2
-  modules: 12
-  resources: 168
+  modules: 10
+  resources: 161
   terraform_data: 2
 
 outputs:
@@ -1478,10 +1435,6 @@ outputs:
   projects: __missing__
   region: europe-west1
   service_accounts:
-    service-01/gf-ar-0:
-      email: gf-ar-0@test-gf-ar-0.iam.gserviceaccount.com
-      iam_email: serviceAccount:gf-ar-0@test-gf-ar-0.iam.gserviceaccount.com
-      id: projects/test-gf-ar-0/serviceAccounts/gf-ar-0@test-gf-ar-0.iam.gserviceaccount.com
     service-01/iac-rw:
       email: iac-rw@test-gf-ar-0.iam.gserviceaccount.com
       iam_email: serviceAccount:iac-rw@test-gf-ar-0.iam.gserviceaccount.com

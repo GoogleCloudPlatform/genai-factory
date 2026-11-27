@@ -32,8 +32,7 @@ networking_config = {
 }
 
 service_account_emails = {
-  "service-01/gf-ar-0" = "agent@test-project.iam.gserviceaccount.com"
-  "service-01/iac-rw"  = "iac-rw@test-project.iam.gserviceaccount.com"
+  "service-01/iac-rw" = "iac-rw@test-project.iam.gserviceaccount.com"
 }
 
 agent_gateway_ids = {

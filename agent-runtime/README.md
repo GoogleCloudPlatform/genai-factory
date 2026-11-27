@@ -13,7 +13,7 @@ After the [1-apps](1-apps/README.md) deployment finishes, the Terraform output w
 The deployment includes:
 
 - The **agent**, that privately access resources in your VPC.
-- A custom **service account** used by your agent.
+- An **agent identity**, the IAM principal your agent runs as.
 - **Firestore** to store ADK sessions and A2A tasks.
 
 - By default, a **host project**, a **shared VPC**, a subnet, private Google APIs routes, DNS policies, a PSC Network Attachment, Secure Web Proxy (SWP) and Cloud NAT so that the agent can privately access your resources and the Internet (through the proxy). Optionally, you can use your own host project and shared VPCs.

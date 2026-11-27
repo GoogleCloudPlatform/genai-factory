@@ -103,30 +103,12 @@ values:
       - serviceAccount:iac-rw@your-prefix-gf-ar-0.iam.gserviceaccount.com
     project: your-prefix-gf-ar-0
     role: roles/cloudbuild.builds.editor
-  module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/cloudtrace.agent"]:
-    condition: []
-    members:
-      - serviceAccount:gf-ar-0@your-prefix-gf-ar-0.iam.gserviceaccount.com
-    project: your-prefix-gf-ar-0
-    role: roles/cloudtrace.agent
   module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/datastore.owner"]:
     condition: []
     members:
       - serviceAccount:iac-rw@your-prefix-gf-ar-0.iam.gserviceaccount.com
     project: your-prefix-gf-ar-0
     role: roles/datastore.owner
-  module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/datastore.user"]:
-    condition: []
-    members:
-      - serviceAccount:gf-ar-0@your-prefix-gf-ar-0.iam.gserviceaccount.com
-    project: your-prefix-gf-ar-0
-    role: roles/datastore.user
-  module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/logging.logWriter"]:
-    condition: []
-    members:
-      - serviceAccount:gf-ar-0@your-prefix-gf-ar-0.iam.gserviceaccount.com
-    project: your-prefix-gf-ar-0
-    role: roles/logging.logWriter
   ? module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/serviceusage.serviceUsageAdmin"]
   : condition: []
     members:
@@ -136,7 +118,6 @@ values:
   ? module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/serviceusage.serviceUsageConsumer"]
   : condition: []
     members:
-      - serviceAccount:gf-ar-0@your-prefix-gf-ar-0.iam.gserviceaccount.com
       - serviceAccount:iac-rw@your-prefix-gf-ar-0.iam.gserviceaccount.com
     project: your-prefix-gf-ar-0
     role: roles/serviceusage.serviceUsageConsumer
@@ -152,23 +133,16 @@ values:
       - serviceAccount:iac-rw@your-prefix-gf-ar-0.iam.gserviceaccount.com
     project: your-prefix-gf-ar-0
     role: roles/storage.objectUser
-  module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/storage.objectViewer"]:
-    condition: []
+  module.projects.module.projects-iam["service-01"].google_project_iam_binding.bindings["iac_rw_project_iam_delegated"]:
+    condition:
+      - description: Automation service account delegated grants.
+        expression: api.getAttribute('iam.googleapis.com/modifiedGrantsByRole', []).hasOnly(['roles/datastore.user',
+          'roles/storage.objectViewer'])
+        title: iac_rw_delegated_grants
     members:
-      - serviceAccount:gf-ar-0@your-prefix-gf-ar-0.iam.gserviceaccount.com
+      - serviceAccount:iac-rw@your-prefix-gf-ar-0.iam.gserviceaccount.com
     project: your-prefix-gf-ar-0
-    role: roles/storage.objectViewer
-  module.projects.module.projects-iam["service-01"].google_project_iam_binding.authoritative["roles/telemetry.tracesWriter"]:
-    condition: []
-    members:
-      - serviceAccount:gf-ar-0@your-prefix-gf-ar-0.iam.gserviceaccount.com
-    project: your-prefix-gf-ar-0
-    role: roles/telemetry.tracesWriter
-  module.projects.module.projects-iam["service-01"].google_project_iam_member.bindings["ar_sa_ai_user"]:
-    condition: []
-    member: serviceAccount:gf-ar-0@your-prefix-gf-ar-0.iam.gserviceaccount.com
-    project: your-prefix-gf-ar-0
-    role: roles/aiplatform.user
+    role: roles/resourcemanager.projectIamAdmin
   module.projects.module.projects["service-01"].data.google_logging_project_settings.logging_sa[0]:
     project: your-prefix-gf-ar-0
   module.projects.module.projects["service-01"].data.google_storage_project_service_account.gcs_sa[0]:
@@ -423,21 +397,6 @@ values:
     project: your-prefix-gf-ar-0
     service: networkservices.googleapis.com
     timeouts:
-  ? module.projects.module.service-accounts-iam["service-01/iac-rw"].google_service_account_iam_member.additive["$service_account_ids:service-01/gf-ar-0-roles/iam.serviceAccountUser"]
-  : condition: []
-    role: roles/iam.serviceAccountUser
-    service_account_id: projects/your-prefix-gf-ar-0/serviceAccounts/gf-ar-0@your-prefix-gf-ar-0.iam.gserviceaccount.com
-  module.projects.module.service-accounts["service-01/gf-ar-0"].google_service_account.service_account[0]:
-    account_id: gf-ar-0
-    create_ignore_already_exists:
-    deletion_policy: DELETE
-    description:
-    disabled: false
-    display_name: Terraform-managed.
-    email: gf-ar-0@your-prefix-gf-ar-0.iam.gserviceaccount.com
-    member: serviceAccount:gf-ar-0@your-prefix-gf-ar-0.iam.gserviceaccount.com
-    project: your-prefix-gf-ar-0
-    timeouts:
   module.projects.module.service-accounts["service-01/iac-rw"].google_service_account.service_account[0]:
     account_id: iac-rw
     create_ignore_already_exists:
@@ -462,18 +421,18 @@ counts:
   google_logging_project_settings: 1
   google_org_policy_policy: 1
   google_project: 1
-  google_project_iam_binding: 13
-  google_project_iam_member: 28
+  google_project_iam_binding: 9
+  google_project_iam_member: 27
   google_project_service: 14
   google_project_service_identity: 7
-  google_service_account: 2
-  google_service_account_iam_member: 2
+  google_service_account: 1
+  google_service_account_iam_member: 1
   google_storage_bucket: 1
   google_storage_bucket_iam_binding: 1
   google_storage_project_service_account: 1
   local_file: 2
-  modules: 7
-  resources: 76
+  modules: 5
+  resources: 69
   terraform_data: 2
 
 outputs:
@@ -485,10 +444,6 @@ outputs:
   projects: __missing__
   region: europe-west1
   service_accounts:
-    service-01/gf-ar-0:
-      email: gf-ar-0@your-prefix-gf-ar-0.iam.gserviceaccount.com
-      iam_email: serviceAccount:gf-ar-0@your-prefix-gf-ar-0.iam.gserviceaccount.com
-      id: projects/your-prefix-gf-ar-0/serviceAccounts/gf-ar-0@your-prefix-gf-ar-0.iam.gserviceaccount.com
     service-01/iac-rw:
       email: iac-rw@your-prefix-gf-ar-0.iam.gserviceaccount.com
       iam_email: serviceAccount:iac-rw@your-prefix-gf-ar-0.iam.gserviceaccount.com

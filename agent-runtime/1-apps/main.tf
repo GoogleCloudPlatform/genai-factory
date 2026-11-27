@@ -74,7 +74,7 @@ module "agent" {
       GOOGLE_CLOUD_AGENT_ENGINE_ENABLE_TELEMETRY         = tostring(var.agent_runtime_config.enable_adk_telemetry),
       OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT = tostring(var.agent_runtime_config.enable_adk_msg_capture),
     }
-    identity_type = "SERVICE_ACCOUNT"
+    identity_type = "AGENT_IDENTITY"
     max_instances = var.agent_runtime_config.max_instances
     min_instances = var.agent_runtime_config.min_instances
   }
@@ -105,9 +105,15 @@ module "agent" {
       }
     } : {}
   }
+  # The agent runs under its own agent identity. The module grants these
+  # roles to it; the platform grants the defaults (logging, tracing,
+  # inference) through roles/aiplatform.agentDefaultAccess.
   service_account_config = {
     create = false
-    email  = var.service_account_emails["service-01/gf-ar-0"]
+    roles = [
+      "roles/datastore.user",
+      "roles/storage.objectViewer"
+    ]
   }
   context = {
     iam_principals = local.iam_principals
